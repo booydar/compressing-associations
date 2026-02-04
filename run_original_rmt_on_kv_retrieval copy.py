@@ -19,8 +19,6 @@ from transformers import (
     HfArgumentParser
 )
 
-from rmt import RMT2Segm
-
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
@@ -32,33 +30,117 @@ logger = logging.getLogger('')
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
 
-def collate_fn(batch, tokenizer):
-    context = [item['context'] for item in batch]
-    query = [item['query'] + item['target'] for item in batch]
+# def collate_fn(batch, tokenizer):
+#     context = [item['context'] for item in batch]
+#     query = [item['query'] + item['target'] for item in batch]
 
-    context_input_ids = tokenizer(context, return_tensors="pt", add_special_tokens=False,
-                                  padding=True, pad_to_multiple_of=8).input_ids
-    query_input_ids = tokenizer(query, return_tensors="pt", add_special_tokens=False,
-                                padding=True, pad_to_multiple_of=8).input_ids
-    # add labels_mask
-    # input_seq: 0, target_seq: 1, seq = input_seq + target_seq
-    labels_mask = torch.zeros_like(query_input_ids)
-    for i, item in enumerate(batch):
-        query_seq_len = len(item['query'])
-        target_seq_len = len(item['target'])
-        labels_mask[i, query_seq_len:query_seq_len+target_seq_len] = 1
+#     context_input_ids = tokenizer(context, return_tensors="pt", add_special_tokens=False,
+#                                   padding=True, pad_to_multiple_of=8).input_ids
+#     query_input_ids = tokenizer(query, return_tensors="pt", add_special_tokens=False,
+#                                 padding=True, pad_to_multiple_of=8).input_ids
+#     # add labels_mask
+#     # input_seq: 0, target_seq: 1, seq = input_seq + target_seq
+#     labels_mask = torch.zeros_like(query_input_ids)
+#     for i, item in enumerate(batch):
+#         query_seq_len = len(item['query'])
+#         target_seq_len = len(item['target'])
+#         labels_mask[i, query_seq_len:query_seq_len+target_seq_len] = 1
 
-    labels = query_input_ids * labels_mask + (1 - labels_mask) * -100
-    return {
-        'input_ids': {
-            'context_input_ids': context_input_ids,
-            'query_input_ids': query_input_ids,
-        },
-        'labels': labels,
-    }
+#     labels = query_input_ids * labels_mask + (1 - labels_mask) * -100
+#     return {
+#         # 'context_input_ids': context_input_ids,
+#         # 'query_input_ids': query_input_ids,
+#         'input_ids': {
+#             'context_input_ids': context_input_ids,
+#             'query_input_ids': query_input_ids,
+#         },
+#         'labels': labels,
+#     }
 
+def collate_fn(batch):
+    """
+    Collate function that splits each sample into two segments:
+    - First segment: context
+    - Second segment: query + target
+    Pads segments across the batch to the same length.
+    """
+    from torch.nn.utils.rnn import pad_sequence
+    import torch
+
+    # Helper to encode a string to ids
+    def encode(text):
+        return tokenizer.encode(text, add_special_tokens=False)
+
+    # Prepare segments for each sample
+    segments_batch = []
+    for sample in batch:
+        context = sample['context']
+        query = sample['query']
+        target = sample['target']
+
+        # Segment 1: context
+        context_ids = encode(context)
+        # Segment 2: query + target
+        query_ids = encode(query)
+        target_ids = encode(target)
+        qt_ids = query_ids + target_ids
+
+        # Each segment: dict with input_ids, attention_mask, labels, labels_mask
+        # For context segment, no loss (labels = -100)
+        seg1 = {
+            'input_ids': torch.tensor(context_ids, dtype=torch.long),
+            'attention_mask': torch.ones(len(context_ids), dtype=torch.long),
+            'labels': torch.full((len(context_ids),), -100, dtype=torch.long),
+            'labels_mask': torch.zeros(len(context_ids), dtype=torch.bool)
+        }
+        # For query+target segment, loss only on target tokens
+        qt_input_ids = torch.tensor(qt_ids, dtype=torch.long)
+        qt_attention_mask = torch.ones(len(qt_ids), dtype=torch.long)
+        # labels: -100 for query, target tokens as labels
+        labels = torch.full((len(qt_ids),), -100, dtype=torch.long)
+        if len(target_ids) > 0:
+            labels[-len(target_ids):] = torch.tensor(target_ids, dtype=torch.long)
+            labels_mask = torch.zeros(len(qt_ids), dtype=torch.bool)
+            labels_mask[-len(target_ids) - 1:] = True
+        else:
+            labels_mask = torch.zeros(len(qt_ids), dtype=torch.bool)
+        seg2 = {
+            'input_ids': qt_input_ids,
+            'attention_mask': qt_attention_mask,
+            'labels': labels,
+            'labels_mask': labels_mask
+        }
+        segments_batch.append([seg1, seg2])
+
+    # Pad segments across the batch
+    batch_segments = []
+    num_segments = 2
+    id_pad_value = tokenizer.pad_token_id if hasattr(tokenizer, "pad_token_id") and tokenizer.pad_token_id is not None else 0
+    for i in range(num_segments):
+        input_ids = [s[i]['input_ids'] for s in segments_batch]
+        attention_mask = [s[i]['attention_mask'] for s in segments_batch]
+        labels = [s[i]['labels'] for s in segments_batch]
+        labels_mask = [s[i]['labels_mask'] for s in segments_batch]
+
+        input_ids = pad_sequence(input_ids, batch_first=True, padding_value=id_pad_value)
+        attention_mask = pad_sequence(attention_mask, batch_first=True, padding_value=0)
+        labels = pad_sequence(labels, batch_first=True, padding_value=-100)
+        labels_mask = pad_sequence(labels_mask, batch_first=True, padding_value=False)
+
+        batch_segment = {
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'labels': labels,
+            'labels_mask': labels_mask
+        }
+        batch_segments.append(batch_segment)
+
+    # Concatenate all labels for the batch (for loss computation)
+    full_labels = torch.cat([s['labels'] for s in batch_segments], dim=1)
+    return {"segments": batch_segments, "labels": full_labels}
 
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
+    print('\n\n\nHERE\n\n\n')
     predictions, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
     logits, inner_loop_stats = predictions
     logits = logits[..., :-1, :]
@@ -99,8 +181,12 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     return {
         "token_accuracy": float(accuracy),
         "exact_match": float(exact_match),
-        "mem_norm_mean": float(inner_loop_stats['mem_norm_mean'].mean()),
-        "mem_norm_max": float(inner_loop_stats['mem_norm_max'].max()),
+        # "inner_loss": float(inner_loop_stats['inner_loss'].mean()),
+        # "inner_grad_norm": float(inner_loop_stats['inner_grad_norm_mean'].mean()),
+        # "inner_grad_norm_max": float(inner_loop_stats['inner_grad_norm_max'].max()),
+        # "inner_grad_norm_min": float(inner_loop_stats['inner_grad_norm_min'].min()),
+        # "mem_norm_mean": float(inner_loop_stats['mem_norm_mean'].mean()),
+        # "mem_norm_max": float(inner_loop_stats['mem_norm_max'].max()),
     }
 
 
@@ -141,10 +227,10 @@ class ExperimentArgs:
     exp_path: str = field()
     per_device_batch_size: int = field()
     data_path: str = field(
-        default='/home/jovyan/kuratov/data/test_time_gd/data/N2-K4V4-S4(32-64)_1M',
+        default='./data/N2-K4V4-S4(32-64)_1M',
     )
     tokenizer_path: str = field(
-        default='/home/jovyan/kuratov/data/test_time_gd/tokenizers/kv_alphabet_62/',
+        default='./tokenizers/kv_alphabet_62/',
     )
     gradient_accumulation_steps: Optional[int] = field(default=1)
     total_batch_size: Optional[int] = field(default=None)
@@ -162,11 +248,22 @@ class ExperimentArgs:
     n_layer: Optional[int] = field(default=4)
     n_head: Optional[int] = field(default=4)
     n_embd: Optional[int] = field(default=128)
-    # RMT parameters
+    # Model args
+    from_pretrained: Optional[str] = field(default=None)
+    model_cfg: Optional[str] = field(default=None)
+    model_cls: Optional[str] = field(default='transformers:AutoModel')
+    # GradMemGPT parameters (legacy, not used for RMT)
     n_mem_tokens: Optional[int] = field(default=8)
+    K: Optional[int] = field(default=3)
+    inner_lr: Optional[float] = field(default=0.01)
+    use_adam: Optional[bool] = field(default=True)
+    grad_mode: Optional[str] = field(default="none")
     n_ctrl_tokens: Optional[int] = field(default=0)
+    inner_clip_value: Optional[float] = field(default=None)
+    inner_clip_norm: Optional[float] = field(default=None)
     use_mem_proj: Optional[bool] = field(default=False)
     mem_proj_mode: Optional[str] = field(default="none")
+    use_write_head: Optional[bool] = field(default=False)
 
 
 if __name__ == '__main__':
@@ -176,7 +273,6 @@ if __name__ == '__main__':
     accel = accelerate.Accelerator()
     from accelerate.logging import get_logger
     logger = get_logger('')
-    # datasets.utils.logging.set_verbosity(logger.log_level)
     transformers.utils.logging.set_verbosity(log_lvl)
 
     logger.info(f'num processes: {accel.num_processes}')
@@ -188,34 +284,39 @@ if __name__ == '__main__':
             'cli_args': dict(vars(args)),
         }
         logger.info(f'saving experiment configuration to {args.exp_path}')
-        Path(args.exp_path).mkdir(parents=True)
+        Path(args.exp_path).mkdir(parents=True, exist_ok=True)
         json.dump(config, open(os.path.join(args.exp_path, 'config.json'), 'w'), indent=4)
 
     # create tokenizer
     tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
 
     # create model config
-    if args.base_model == 'gpt2':
-        config = AutoConfig.from_pretrained('gpt2')
-        config.n_layer = args.n_layer
-        config.n_head = args.n_head
-        config.n_embd = args.n_embd
-    elif args.base_model == 'pythia':
-        config = AutoConfig.from_pretrained('EleutherAI/pythia-160m')
-        config.num_hidden_layers = args.n_layer
-        config.num_attention_heads = args.n_head
-        config.hidden_size = args.n_embd
-        config.intermediate_size = config.hidden_size * 4
-    elif args.base_model == 'llama':
-        config = AutoConfig.from_pretrained('NousResearch/Llama-3.2-1B')
-        config.num_hidden_layers = args.n_layer
-        config.num_attention_heads = args.n_head
-        config.num_key_value_heads = args.n_head
-        config.hidden_size = args.n_embd
-        config.head_dim = config.hidden_size // config.num_attention_heads
-        config.intermediate_size = config.hidden_size * 4
+    if args.model_cfg is not None:
+        config = AutoConfig.from_pretrained(args.model_cfg)
+    elif args.from_pretrained is not None:
+        config = AutoConfig.from_pretrained(args.from_pretrained)
     else:
-        raise ValueError(f'Unsupported base model: {args.base_model}')
+        if args.base_model == 'gpt2':
+            config = AutoConfig.from_pretrained('gpt2')
+            config.n_layer = args.n_layer
+            config.n_head = args.n_head
+            config.n_embd = args.n_embd
+        elif args.base_model == 'pythia':
+            config = AutoConfig.from_pretrained('EleutherAI/pythia-160m')
+            config.num_hidden_layers = args.n_layer
+            config.num_attention_heads = args.n_head
+            config.hidden_size = args.n_embd
+            config.intermediate_size = config.hidden_size * 4
+        elif args.base_model == 'llama':
+            config = AutoConfig.from_pretrained('NousResearch/Llama-3.2-1B')
+            config.num_hidden_layers = args.n_layer
+            config.num_attention_heads = args.n_head
+            config.num_key_value_heads = args.n_head
+            config.hidden_size = args.n_embd
+            config.head_dim = config.hidden_size // config.num_attention_heads
+            config.intermediate_size = config.hidden_size * 4
+        else:
+            raise ValueError(f'Unsupported base model: {args.base_model}')
 
     config.torch_dtype = "float32"  # weights in float32, at training precision is controlled by accelerate
     config.vocab_size = tokenizer.vocab_size
@@ -223,20 +324,34 @@ if __name__ == '__main__':
     config.bos_token_id = tokenizer.convert_tokens_to_ids('[BOS]')
     config.eos_token_id = tokenizer.convert_tokens_to_ids('[EOS]')
 
-    # Create rmt model
-    model = RMT2Segm(config, n_mem_tokens=args.n_mem_tokens, n_ctrl_tokens=args.n_ctrl_tokens,
-                     use_mem_proj=args.use_mem_proj, mem_proj_mode=args.mem_proj_mode)
+    # # Create gradmemgpt model
+    # model = GradMemGPT(config, n_mem_tokens=args.n_mem_tokens, K=args.K, lr=args.inner_lr,
+    #                    use_adam=args.use_adam, grad_mode=args.grad_mode, n_ctrl_tokens=args.n_ctrl_tokens,
+    #                    inner_clip_value=args.inner_clip_value, inner_clip_norm=args.inner_clip_norm,
+    #                    use_mem_proj=args.use_mem_proj, mem_proj_mode=args.mem_proj_mode,
+    #                    use_write_head=args.use_write_head)
+    # Load model class dynamically
+    # Load RMT as in debug_rmt.ipynb
+    from modeling_rmt.huggingface import RMTForReasoning, RMTConfig
+
+    rmt_config = RMTConfig()
+    rmt_config.base_model_config = config
+    rmt_config.num_mem_tokens = args.n_mem_tokens
+    rmt_config.max_n_segments = 10
+    rmt_config.think_token_id = tokenizer.convert_tokens_to_ids('[THINK]')
+    rmt_config.answer_token_id = tokenizer.convert_tokens_to_ids('[ANSWER]')
+    rmt_config.bos_token_id = tokenizer.convert_tokens_to_ids('[BOS]')
+    rmt_config.eos_token_id = tokenizer.convert_tokens_to_ids('[EOS]')
+
+    model = RMTForReasoning(rmt_config)
 
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
 
-    try:
-        dataset = datasets.load_from_disk(args.data_path)
-    except Exception as e:
-        dataset = datasets.load_dataset(args.data_path)
-
-    def data_collator(batch):
-        return collate_fn(batch, tokenizer)
+    # try:
+    #     dataset = datasets.load_from_disk(args.data_path)
+    # except Exception as e:
+    dataset = datasets.load_dataset(f"yurakuratov/{args.data_path}")
 
     # Target sequence looks like: "XXXX!|"
     # Let's not count ! and | in the accuracy calculation
@@ -280,7 +395,7 @@ if __name__ == '__main__':
         greater_is_better=True,
         remove_unused_columns=False,
         include_num_input_tokens_seen=False,  # input_ids is a dict, so HF Trainer cant get number of tokens
-        include_for_metrics=['inputs'],
+        include_for_metrics=['input_ids', 'labels', 'labels_mask'],
         save_total_limit=3,
         dataloader_num_workers=4,
         dataloader_pin_memory=True,
@@ -293,7 +408,7 @@ if __name__ == '__main__':
         args=training_args,
         train_dataset=dataset['train'],
         eval_dataset=dataset['valid'],
-        data_collator=data_collator,
+        data_collator=collate_fn,
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=args.early_stopping_patience),
                    StopOnMetricValue(metric_name='exact_match', value=1.0, higher_is_better=True),

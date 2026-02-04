@@ -1,0 +1,114 @@
+#!/bin/bash
+set -e
+
+# Define arguments for the script
+NP=${NP:-1}  # Default to 1 process if not set
+TBS=256
+PER_DEVICE_BATCH_SIZE=256
+GRAD_ACC_STEPS=$(($TBS/($PER_DEVICE_BATCH_SIZE*$NP)))
+
+L=4
+H=4
+D=128
+BASE_MODEL=llama
+N_MEM_TOKENS=8
+
+LR=3e-04
+
+K=2
+V=2
+
+TOKENIZER_PATH="./tokenizers/kv_alphabet_62/"
+
+# RMT/GradMemGPT specific parameters (legacy, not used for RMT, but kept for compatibility)
+N_CTRL_TOKENS=0
+USE_MEM_PROJ=false
+MEM_PROJ_MODE="proj"
+
+N_SEGMENTS_VALUES=(16 24 32)
+PAIRS_PER_SEGMENT=4
+
+# for N in 41 42 43; do
+for N in 41 42 43; do
+  for i in "${!N_SEGMENTS_VALUES[@]}"; do
+    N_SEGMENTS=${N_SEGMENTS_VALUES[$i]}
+
+    N_PAIRS=$((N_SEGMENTS * PAIRS_PER_SEGMENT))
+    DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
+
+    RUN_NAME=original_rmt_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${N_SEGMENTS}x${PAIRS_PER_SEGMENT}
+
+    if [ $i -eq 0 ]; then
+      PREV_RUN_NAME=None
+      PREV_EXP_PATH=None
+    else
+      PREV_PAIRS_PER_SEGMENT=4
+      PREV_N_SEGMENTS=${N_SEGMENTS_VALUES[$((i-1))]}
+      PREV_N_PAIRS=$((PREV_N_SEGMENTS * PAIRS_PER_SEGMENT))
+      PREV_DATA_PATH="N${PREV_N_PAIRS}-K${K}V${V}-V62_1M"
+      PREV_RUN_NAME=original_rmt_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${PREV_N_SEGMENTS}x${PAIRS_PER_SEGMENT}
+      if [ "$N_CTRL_TOKENS" -gt 0 ]; then
+        PREV_RUN_NAME=${PREV_RUN_NAME}_c${N_CTRL_TOKENS}
+      fi
+      if [ "$USE_MEM_PROJ" = true ]; then
+        PREV_RUN_NAME=${PREV_RUN_NAME}_mem_proj
+      fi
+
+      PREV_RUN_NAME=${PREV_RUN_NAME}_bs_${TBS}_lr_${LR}-gen
+      PREV_EXP_PATH="/workspace-SR006.nfs2/bulatov/rmt/runs/test-time-pps-v1/${PREV_DATA_PATH}/${PREV_RUN_NAME}/run_$N"
+    fi
+
+    if [ "$N_CTRL_TOKENS" -gt 0 ]; then
+      RUN_NAME=${RUN_NAME}_c${N_CTRL_TOKENS}
+    fi
+    if [ "$USE_MEM_PROJ" = true ]; then
+      RUN_NAME=${RUN_NAME}_mem_proj
+    fi
+
+    RUN_NAME=${RUN_NAME}_bs_${TBS}_lr_${LR}-gen
+
+    # Path to save experiment results
+    EXP_PATH="/workspace-SR006.nfs2/bulatov/rmt/runs/test-time-pps-v1/${DATA_PATH}/${RUN_NAME}/run_$N"
+    # if path exists, skip
+    if [ -d "$EXP_PATH" ]; then
+      echo "Path $EXP_PATH already exists, skipping"
+      continue
+    fi
+
+    # Execute the script using accelerate for parallel processing
+    accelerate launch \
+      --main_process_port 0 \
+      --num_processes $NP \
+      --mixed_precision bf16 \
+      --config_file accelerate.yaml \
+      run_original_rmt_on_kv_retrieval-v3-gen.py \
+      --exp_path $EXP_PATH \
+      --model_cpt $PREV_EXP_PATH \
+      --per_device_batch_size $PER_DEVICE_BATCH_SIZE \
+      --gradient_accumulation_steps $GRAD_ACC_STEPS \
+      --total_batch_size $TBS \
+      --data_path $DATA_PATH \
+      --tokenizer_path $TOKENIZER_PATH \
+      --learning_rate $LR \
+      --n_layer $L \
+      --n_head $H \
+      --n_embd $D \
+      --n_pairs $N_PAIRS \
+      --n_keys $K \
+      --n_values $V \
+      --base_model $BASE_MODEL \
+      --n_mem_tokens $N_MEM_TOKENS \
+      --n_ctrl_tokens $N_CTRL_TOKENS \
+      $( [ "$USE_MEM_PROJ" = true ] && echo "--use_mem_proj" ) \
+      $( [ "$USE_MEM_PROJ" = true ] && echo "--mem_proj_mode $MEM_PROJ_MODE" ) \
+      --pairs_per_segment $PAIRS_PER_SEGMENT \
+      --max_steps 80000 \
+      --eval_steps 500 \
+      --logging_steps 500 \
+      --warmup_steps 10000 \
+      --early_stopping_patience 500 \
+      --seed $((142 + N))
+  done
+done
+
+echo "Done"

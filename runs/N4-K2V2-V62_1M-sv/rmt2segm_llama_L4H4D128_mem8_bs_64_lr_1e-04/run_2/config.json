@@ -1,0 +1,28 @@
+{
+    "cli_args": {
+        "exp_path": "./runs/N4-K2V2-V62_1M/rmt2segm_llama_L4H4D128_mem8_bs_64_lr_1e-04/run_2",
+        "per_device_batch_size": 64,
+        "data_path": "yurakuratov/N4-K2V2-V62_1M",
+        "tokenizer_path": "./tokenizers/kv_alphabet_62/",
+        "gradient_accumulation_steps": 1,
+        "total_batch_size": 64,
+        "metric_for_best_model": "token_accuracy",
+        "warmup_steps": 10000,
+        "max_steps": 200000,
+        "logging_steps": 500,
+        "eval_steps": 500,
+        "weight_decay": 0.0,
+        "learning_rate": 0.0001,
+        "lr_scheduler_type": "constant_with_warmup",
+        "early_stopping_patience": 500,
+        "seed": 144,
+        "base_model": "llama",
+        "n_layer": 4,
+        "n_head": 4,
+        "n_embd": 128,
+        "n_mem_tokens": 8,
+        "n_ctrl_tokens": 0,
+        "use_mem_proj": false,
+        "mem_proj_mode": "none"
+    }
+}
