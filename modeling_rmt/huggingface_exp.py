@@ -680,3 +680,165 @@ class RMTSlidingWindowForReasoning(RMTForReasoning):
             bos_token_id=config.bos_token_id,
             eos_token_id=config.eos_token_id
         )
+
+# ================================================
+# memory evenly distributed
+# ================================================
+
+class MemoryCellWithSpreadPositions(MemoryCell):
+    """Memory tokens get position_ids evenly spread across the content range,
+    so every content token perceives some memory token as positionally close."""
+
+    def process_input(self, input_ids, memory_state, write_mem, **kwargs):
+        seg_kwargs = dict(**kwargs)
+
+        inputs_embeds = kwargs.get('inputs_embeds')
+        if inputs_embeds is None:
+            inputs_embeds = self.model.get_input_embeddings()(input_ids)
+
+        N = inputs_embeds.shape[1]  # content sequence length
+        M = self.num_mem_tokens
+        device = inputs_embeds.device
+
+        if M > 0:
+            if write_mem:
+                inputs_embeds = torch.cat([memory_state, inputs_embeds, memory_state], dim=1)
+
+                # Content: standard sequential [0, 1, ..., N-1]
+                content_pos = torch.arange(N, device=device)
+                # Left memory: evenly spread across content range
+                left_mem_pos = torch.linspace(0, N - 1, M, device=device).long()
+                # Right memory: evenly spread (offset by half step)
+                step = N / M
+                right_mem_pos = torch.linspace(step / 2, N - 1 - step / 2, M, device=device).long()
+
+                position_ids = torch.cat([left_mem_pos, content_pos, right_mem_pos])
+            else:
+                inputs_embeds = torch.cat([memory_state, inputs_embeds], dim=1)
+                content_pos = torch.arange(N, device=device)
+                left_mem_pos = torch.linspace(0, N - 1, M, device=device).long()
+                position_ids = torch.cat([left_mem_pos, content_pos])
+
+            position_ids = position_ids.unsqueeze(0).expand(inputs_embeds.shape[0], -1)
+        else:
+            position_ids = None
+
+        seg_kwargs['input_ids'] = None
+        seg_kwargs['inputs_embeds'] = inputs_embeds
+        if position_ids is not None:
+            seg_kwargs['position_ids'] = position_ids
+        if kwargs.get('attention_mask') is not None:
+            seg_kwargs['attention_mask'] = self.pad_attention_mask(kwargs['attention_mask'], inputs_embeds.shape)
+        seg_kwargs['output_hidden_states'] = True
+        return seg_kwargs
+
+class RMTWithSpreadPositionsForReasoning(RMTForReasoning):
+    def __init__(self, config, **kwargs):
+        super().__init__(config, **kwargs)
+        from transformers import AutoConfig, AutoModelForCausalLM
+        if config.from_pretrained:
+            base_model = AutoModelForCausalLM.from_pretrained(config.from_pretrained)
+        else:
+            if config.base_model_config is None:
+                base_config = AutoConfig.from_pretrained(config.base_model_name)
+            else:
+                base_config = config.base_model_config
+            base_model = AutoModelForCausalLM.from_config(base_config)
+
+        self.rmt_config = config
+        memory_cell = MemoryCellWithSpreadPositions(base_model, num_mem_tokens=config.num_mem_tokens)
+        self.rmt = RecurrentWrapperNoSegmentationGenerate(
+            memory_cell,
+            max_n_segments=config.max_n_segments,
+            think_token_id=config.think_token_id,
+            answer_token_id=config.answer_token_id,
+            bos_token_id=config.bos_token_id,
+            eos_token_id=config.eos_token_id
+        )
+
+# ================================================
+# memory no positional encoding
+# ================================================
+
+class MemoryCellNoPosEnc(MemoryCell):
+    """Memory tokens receive no positional encoding.
+    
+    GPT-2: pre-subtracts wpe(0) from memory embeddings so the model's
+           addition of wpe(position_ids=0) cancels out → net zero pos enc.
+    RoPE (Pythia/Llama): position_ids=0 → identity rotation (no rotation applied).
+    
+    Content tokens always get standard positions [0, 1, ..., N-1].
+    """
+
+    def _has_absolute_pos_emb(self):
+        """Check if model uses absolute position embeddings (GPT-2 style)."""
+        return hasattr(self.model, 'transformer') and hasattr(self.model.transformer, 'wpe')
+
+    def process_input(self, input_ids, memory_state, write_mem, **kwargs):
+        seg_kwargs = dict(**kwargs)
+
+        inputs_embeds = kwargs.get('inputs_embeds')
+        if inputs_embeds is None:
+            inputs_embeds = self.model.get_input_embeddings()(input_ids)
+
+        N = inputs_embeds.shape[1]  # content sequence length
+        M = self.num_mem_tokens
+        device = inputs_embeds.device
+
+        if M > 0:
+            # For GPT-2: cancel the wpe(0) that the model will add to memory positions
+            if self._has_absolute_pos_emb():
+                pos_zero = torch.zeros(1, dtype=torch.long, device=device)
+                pos0_embed = self.model.transformer.wpe(pos_zero)  # (1, hidden_dim)
+                memory_state_adj = memory_state - pos0_embed.unsqueeze(0)  # broadcast over (batch, M, hidden_dim)
+            else:
+                # RoPE models: position 0 = identity rotation, nothing extra needed
+                memory_state_adj = memory_state
+
+            # Build position_ids: all memory at 0, content at [0..N-1]
+            content_pos = torch.arange(N, dtype=torch.long, device=device)
+            mem_pos = torch.zeros(M, dtype=torch.long, device=device)
+
+            if write_mem:
+                inputs_embeds = torch.cat([memory_state_adj, inputs_embeds, memory_state_adj], dim=1)
+                position_ids = torch.cat([mem_pos, content_pos, mem_pos])
+            else:
+                inputs_embeds = torch.cat([memory_state_adj, inputs_embeds], dim=1)
+                position_ids = torch.cat([mem_pos, content_pos])
+
+            position_ids = position_ids.unsqueeze(0).expand(inputs_embeds.shape[0], -1)
+        else:
+            position_ids = None
+
+        seg_kwargs['input_ids'] = None
+        seg_kwargs['inputs_embeds'] = inputs_embeds
+        if position_ids is not None:
+            seg_kwargs['position_ids'] = position_ids
+        if kwargs.get('attention_mask') is not None:
+            seg_kwargs['attention_mask'] = self.pad_attention_mask(kwargs['attention_mask'], inputs_embeds.shape)
+        seg_kwargs['output_hidden_states'] = True
+        return seg_kwargs
+
+class RMTNoPosEncForReasoning(RMTForReasoning):
+    def __init__(self, config, **kwargs):
+        super().__init__(config, **kwargs)
+        from transformers import AutoConfig, AutoModelForCausalLM
+        if config.from_pretrained:
+            base_model = AutoModelForCausalLM.from_pretrained(config.from_pretrained)
+        else:
+            if config.base_model_config is None:
+                base_config = AutoConfig.from_pretrained(config.base_model_name)
+            else:
+                base_config = config.base_model_config
+            base_model = AutoModelForCausalLM.from_config(base_config)
+
+        self.rmt_config = config
+        memory_cell = MemoryCellNoPosEnc(base_model, num_mem_tokens=config.num_mem_tokens)
+        self.rmt = RecurrentWrapperNoSegmentationGenerate(
+            memory_cell,
+            max_n_segments=config.max_n_segments,
+            think_token_id=config.think_token_id,
+            answer_token_id=config.answer_token_id,
+            bos_token_id=config.bos_token_id,
+            eos_token_id=config.eos_token_id
+        )

@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 
 import torch
+from torch.nn.utils.rnn import pad_sequence
 import numpy as np
 from typing import Dict, Optional
 from dataclasses import dataclass, field
@@ -29,24 +30,29 @@ logger = logging.getLogger('')
 
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
+def split_context_into_segments(context, pairs_per_segment=None):
+    if pairs_per_segment is None:
+        return [context]
+    clean_context = context[1:-2].strip()
+    pairs = [f"!{p}!" for p in clean_context.split("!!")]
+
+    segments = [pairs[i:i + pairs_per_segment] for i in range(0, len(pairs), pairs_per_segment)]
+    segments = [''.join(s) for s in segments]
+    return segments
+
 
 def collate_fn(batch):
     """
-    Collate function that splits each sample into two segments:
-    - First segment: context
-    - Second segment: query + target
+    Collate function that splits each sample into multiple segments:
+    - Context segments: one or more, depending on pairs_per_segment
+    - Last segment: query + target
     Pads segments across the batch to the same length.
     """
-    from torch.nn.utils.rnn import pad_sequence
-    import torch
-
-    # Helper to encode a string to ids
     def encode(text):
         return tokenizer.encode(text, add_special_tokens=False)
 
-    # Prepare segments for each sample
     segments_batch = []
-    for sample in batch:
+    for idx, sample in enumerate(batch):
         context = sample['context']
         
         perform_memory_task = torch.rand(1) < args.memory_task_freq
@@ -62,21 +68,22 @@ def collate_fn(batch):
             query = sample['query']
             target = sample['target']
 
-        # Segment 1: context
-        context_ids = encode(context)
-        # Segment 2: query + target
         query_ids = encode(query)
         target_ids = encode(target)
         qt_ids = query_ids + target_ids
+        context_pairs = split_context_into_segments(context, pairs_per_segment=args.pairs_per_segment)
 
-        # Each segment: dict with input_ids, attention_mask, labels, labels_mask
-        # For context segment, no loss (labels = -100)
-        seg1 = {
-            'input_ids': torch.tensor(context_ids, dtype=torch.long),
-            'attention_mask': torch.ones(len(context_ids), dtype=torch.long),
-            'labels': torch.full((len(context_ids),), -100, dtype=torch.long),
-            'labels_mask': torch.zeros(len(context_ids), dtype=torch.bool)
-        }
+        segments = []
+        for context_pair in context_pairs:
+            context_ids = encode(context_pair)
+            seg = {
+                'input_ids': torch.tensor(context_ids, dtype=torch.long),
+                'attention_mask': torch.ones(len(context_ids), dtype=torch.long),
+                'labels': torch.full((len(context_ids),), -100, dtype=torch.long),
+                'labels_mask': torch.zeros(len(context_ids), dtype=torch.bool)
+            }
+            segments.append(seg)
+
         # For query+target segment, loss only on target tokens
         qt_input_ids = torch.tensor(qt_ids, dtype=torch.long)
         qt_attention_mask = torch.ones(len(qt_ids), dtype=torch.long)
@@ -88,17 +95,17 @@ def collate_fn(batch):
             labels_mask[-len(target_ids) - 1:] = True
         else:
             labels_mask = torch.zeros(len(qt_ids), dtype=torch.bool)
-        seg2 = {
+        segments.append({
             'input_ids': qt_input_ids,
             'attention_mask': qt_attention_mask,
             'labels': labels,
-            'labels_mask': labels_mask
-        }
-        segments_batch.append([seg1, seg2])
+            'labels_mask': labels_mask,
+        })
+        segments_batch.append(segments)
 
     # Pad segments across the batch
     batch_segments = []
-    num_segments = 2
+    num_segments = len(segments_batch[0])
     id_pad_value = tokenizer.pad_token_id if hasattr(tokenizer, "pad_token_id") and tokenizer.pad_token_id is not None else 0
     for i in range(num_segments):
         input_ids = [s[i]['input_ids'] for s in segments_batch]
@@ -248,6 +255,7 @@ class ExperimentArgs:
     memory_value_size: Optional[int] = field(default=4)
     d_mem: Optional[int] = field(default=128)
     correction: Optional[bool] = field(default=True)
+    pairs_per_segment: Optional[int] = field(default=None)
 
 if __name__ == '__main__':
     parser = HfArgumentParser(ExperimentArgs)

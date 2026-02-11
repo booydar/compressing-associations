@@ -74,21 +74,6 @@ def collate_fn(batch):
         qt_ids = query_ids + target_ids
         context_pairs = split_context_into_segments(context, pairs_per_segment=args.pairs_per_segment)
 
-        # # DEBUG: Print sample info about context segmentation
-        # if idx < 2:  # Print for first two samples in the batch for brevity
-        #     print("=" * 40)
-        #     print(f"[collate_fn][DEBUG] Sample idx {idx}")
-        #     print(f"  pairs_per_segment: {args.pairs_per_segment}")
-        #     print(f"  Original Context: {repr(context)}")
-        #     print(f"  Segments produced by split_context_into_segments:")
-        #     for i, cp in enumerate(context_pairs):
-        #         print(f"    Segment {i}: {repr(cp)} ({len(cp)} chars)")
-        #     print(f"  Query: {repr(query)} | Target: {repr(target)}")
-        #     print(f"  Query IDs: {query_ids}")
-        #     print(f"  Target IDs: {target_ids}")
-        #     print(f"  Query+Target IDs: {qt_ids}")
-        #     print("=" * 40)
-
         segments = []
         for context_pair in context_pairs:
             context_ids = encode(context_pair)
@@ -143,18 +128,7 @@ def collate_fn(batch):
         }
         batch_segments.append(batch_segment)
 
-    # # DEBUG: After padding, print shapes
-    # print("[collate_fn][DEBUG] Segment shapes after padding:")
-    # for i, seg in enumerate(batch_segments):
-    #     print(f"  Segment {i}:")
-    #     print(f"    input_ids: {seg['input_ids'].shape}")
-    #     print(f"    attention_mask: {seg['attention_mask'].shape}")
-    #     print(f"    labels: {seg['labels'].shape}")
-    #     print(f"    labels_mask: {seg['labels_mask'].shape}")
-
-    # Concatenate all labels for the batch (for loss computation)
     full_labels = torch.cat([s['labels'] for s in batch_segments], dim=1)
-    # print(f"[collate_fn][DEBUG] full_labels shape: {full_labels.shape}")
 
     return {"segments": batch_segments, "labels": full_labels}
 
@@ -179,24 +153,9 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     accuracy = (masked_predictions == masked_labels).mean()
 
     # get exact_match per-sample accuracy, ignore masked tokens
-    # predictions.shape = (batch_size, seq_len)
-    # exact_match = np.mean([
-    #     np.all(pred[mask[i]] == lab[mask[i]])
-    #     for i, (pred, lab) in enumerate(zip(preds, labels))
-    #     if np.any(mask[i])  # Skip samples that are all masked
-    # ])
-    # cleaned_labels = [labels[i][labels[i] != -100] for i in range(len(labels))]
-    # reconstruct_mask = [cleaned_labels[i][:2] == tokenizer.convert_tokens_to_ids('??') for i in range(len(cleaned_labels))]
-    # continue_mask = [cleaned_labels[i][:1] == tokenizer.convert_tokens_to_ids('!') for i in range(len(cleaned_labels))]
     decoded_labels = [tokenizer.decode(label[label != -100], skip_special_tokens=True).replace(' ', '') for label in labels]
     memory_task_mask = [decoded_labels[i][:2] == '!?' for i in range(len(decoded_labels))]
-    # print(f"[compute_metrics_fn] memory_task_mask: {memory_task_mask[:5]}")
-    # print(f"[compute_metrics_fn] continue_mask: {continue_mask[:5]}")
-    # print(f"[compute_metrics_fn] reconstruct_mask", [decoded_labels[i][:2] for i in range(len(labels))[:5]])
-    # print(f"[compute_metrics_fn] continue_mask", [decoded_labels[i][:1] for i in range(len(labels))[:5]])
-    # print(f"[compute_metrics_fn] masked_labels: {masked_labels[:5]}")
 
-    # print(f"[compute_metrics_fn] inputs: {eval_pred.inputs}")
     exact_match_memory_task = np.mean([
         np.all(pred[mask[i]] == lab[mask[i]])
         for i, (pred, lab) in enumerate(zip(preds, labels))

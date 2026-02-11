@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from pathlib import Path
+import math
 
 import torch
 import numpy as np
@@ -14,12 +15,13 @@ import transformers
 from transformers import (
     AutoConfig, AutoTokenizer,
     AutoModelForCausalLM,
-    Trainer,
+    Trainer, TrainerState,
     TrainingArguments,
     EarlyStoppingCallback, TrainerCallback,
     HfArgumentParser
 )
 
+from transformers.trainer_utils import get_last_checkpoint
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
@@ -31,10 +33,14 @@ logger = logging.getLogger('')
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
 
-def collate_fn(batch, tokenizer):
+def collate_fn(batch, tokenizer, max_input_length=None):
     seq = [item['context'] + item['query'] + item['target'] for item in batch]
-    input_ids = tokenizer(seq, return_tensors="pt", add_special_tokens=False,
-                          padding=True, pad_to_multiple_of=8).input_ids
+    seq_encoded = tokenizer(seq, return_tensors="pt", add_special_tokens=True,
+                            padding=True, pad_to_multiple_of=8, max_length=max_input_length, truncation=True,
+                            return_offsets_mapping=True)
+    input_ids = seq_encoded['input_ids']
+    offsets_mapping = seq_encoded['offset_mapping']
+
     attn_mask = (input_ids != tokenizer.pad_token_id).to(dtype=torch.long)
     # add labels_mask
     # input_seq: 0, target_seq: 1, seq = input_seq + target_seq
@@ -42,7 +48,19 @@ def collate_fn(batch, tokenizer):
     for i, item in enumerate(batch):
         input_seq_len = len(item['context']) + len(item['query'])
         target_seq_len = len(item['target'])
-        labels_mask[i, input_seq_len:input_seq_len+target_seq_len] = 1
+        target_st, target_end = input_seq_len, input_seq_len + target_seq_len
+
+        # find target tokens
+        # since target is closer to the end, search from the end
+        in_target = False
+        for j in range(len(offsets_mapping[i]) - 1, -1, -1):
+            st, end = offsets_mapping[i][j]
+            # if (target_st, target_end) intersects with (st, end), it is a target token
+            if st < target_end and end > target_st:
+                labels_mask[i, j] = 1
+                in_target = True
+            elif in_target:
+                break
 
     labels = input_ids * labels_mask + (1 - labels_mask) * -100
     return {
@@ -52,11 +70,17 @@ def collate_fn(batch, tokenizer):
     }
 
 
+def preprocess_logits_for_metrics(logits, labels):
+    # saves gpu RAM, as HF Trainer accumulates all eval logits on GPU
+    return logits.argmax(dim=-1)
+
+
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
-    logits, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
-    logits = logits[..., :-1, :]
+    predictions, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
+
+    # shift for lm loss
+    predictions = predictions[..., :-1]
     labels = labels[..., 1:]
-    predictions = np.argmax(logits, axis=-1)
 
     # Create a mask for tokens that are not padding (-100) and ignored tokens (like ! and |)
     mask = (labels != -100)
@@ -79,11 +103,11 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     for pred, label, inp in zip(predictions[:5], labels[:5], inputs[:5]):
         mask = (label != -100)
         pred = pred[mask]
-        inp[inp == -100] = 0
-        label[label == -100] = 0
-        print('i:', tokenizer.decode(inp, skip_special_tokens=True).replace(' ', ''))
-        print('p:', tokenizer.decode(pred, skip_special_tokens=True).replace(' ', ''))
-        print('t:', tokenizer.decode(label, skip_special_tokens=True).replace(' ', ''))
+        inp[inp == -100] = tokenizer.pad_token_id
+        label[label == -100] = tokenizer.pad_token_id
+        print('i:', tokenizer.decode(inp, skip_special_tokens=True).strip())
+        print('p:', tokenizer.decode(pred, skip_special_tokens=True).strip())
+        print('t:', tokenizer.decode(label, skip_special_tokens=True).strip())
         print('-' * 50)
 
     return {
@@ -143,13 +167,25 @@ class ExperimentArgs:
     eval_steps: Optional[int] = field(default=100)
     weight_decay: Optional[float] = field(default=0.0)
     learning_rate: Optional[float] = field(default=1e-04)
+    adam_beta1: Optional[float] = field(default=0.9)
+    adam_beta2: Optional[float] = field(default=0.999)
+    adam_epsilon: Optional[float] = field(default=1e-8)
     lr_scheduler_type: Optional[str] = field(default='constant_with_warmup')
     early_stopping_patience: Optional[int] = field(default=50)
     seed: Optional[int] = field(default=142)
-    base_model: Optional[str] = field(default='gpt2')
+    base_model: Optional[str] = field(default=None)
+    pretrained_model: Optional[str] = field(default=None)
     n_layer: Optional[int] = field(default=4)
     n_head: Optional[int] = field(default=4)
     n_embd: Optional[int] = field(default=128)
+    max_position_embeddings: Optional[int] = field(default=None)
+    max_input_length: Optional[int] = field(default=None)
+    attn_implementation: Optional[str] = field(default=None)
+
+    # allow writing to existing folder & resume
+    overwrite_output_dir: Optional[bool] = field(default=False)
+    # skip training; evaluate best checkpoint
+    do_eval_only: Optional[bool] = field(default=False)
 
 
 if __name__ == '__main__':
@@ -166,56 +202,104 @@ if __name__ == '__main__':
     logger.info(f'mixed precision: {accel.mixed_precision}')
     logger.info(f'accelerator state: {accel.state}')
 
-    if accel.is_main_process:
+    assert not (args.pretrained_model is not None and args.base_model is not None), "only one of these args must be set"
+
+    output_dir = Path(args.exp_path)
+    if accel.is_main_process and output_dir.exists() and not args.overwrite_output_dir and not args.do_eval_only:
+        raise RuntimeError(f"Output directory already exists: {output_dir}. "
+                           f"Pass --overwrite_output_dir to resume/continue here, or choose a new --exp_path.")
+
+    if accel.is_main_process and not args.do_eval_only:
         config = {
             'cli_args': dict(vars(args)),
         }
         logger.info('saving experiment configuration..')
-        Path(args.exp_path).mkdir(parents=True)
+        Path(args.exp_path).mkdir(parents=True, exist_ok=True)
         json.dump(config, open(os.path.join(args.exp_path, 'config.json'), 'w'), indent=4)
 
-    # create tokenizer
-    tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
-
-    # create model config
-    if args.base_model == 'gpt2':
-        config = AutoConfig.from_pretrained('gpt2')
-        config.n_layer = args.n_layer
-        config.n_head = args.n_head
-        config.n_embd = args.n_embd
-    elif args.base_model == 'pythia':
-        config = AutoConfig.from_pretrained('EleutherAI/pythia-160m')
-        config.num_hidden_layers = args.n_layer
-        config.num_attention_heads = args.n_head
-        config.hidden_size = args.n_embd
-        config.intermediate_size = config.hidden_size * 4
-    elif args.base_model == 'llama':
-        config = AutoConfig.from_pretrained('meta-llama/Llama-3.2-1B')
-        config.num_hidden_layers = args.n_layer
-        config.num_attention_heads = args.n_head
-        config.num_key_value_heads = args.n_head
-        config.hidden_size = args.n_embd
-        config.head_dim = config.hidden_size // config.num_attention_heads
-        config.intermediate_size = config.hidden_size * 4
+    if accel.mixed_precision == 'bf16':
+        dtype = torch.bfloat16
+    elif accel.mixed_precision == 'fp16':
+        dtype = torch.float16
     else:
-        raise ValueError(f'Unsupported base model: {args.base_model}')
+        dtype = torch.float32
+        args.attn_implementation = None
 
-    config.torch_dtype = "float32"  # weights in float32, at training precision is controlled by accelerate
-    config.vocab_size = tokenizer.vocab_size
-    config.pad_token_id = tokenizer.convert_tokens_to_ids('[PAD]')
-    config.bos_token_id = tokenizer.convert_tokens_to_ids('[BOS]')
-    config.eos_token_id = tokenizer.convert_tokens_to_ids('[EOS]')
+    if args.pretrained_model is not None:
+        tokenizer = AutoTokenizer.from_pretrained(args.pretrained_model)
+        if tokenizer.pad_token_id is None:
+            tokenizer.pad_token_id = tokenizer.eos_token_id
+        model = AutoModelForCausalLM.from_pretrained(args.pretrained_model, torch_dtype=dtype,
+                                                     attn_implementation=args.attn_implementation)
+    else:
+        # create tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
+        # create model config
+        if args.base_model == 'gpt2':
+            config = AutoConfig.from_pretrained('gpt2')
+            config.n_layer = args.n_layer
+            config.n_head = args.n_head
+            config.n_embd = args.n_embd
+            if args.max_position_embeddings is not None:
+                config.n_positions = args.max_position_embeddings
+        elif args.base_model == 'pythia':
+            config = AutoConfig.from_pretrained('EleutherAI/pythia-160m')
+            config.num_hidden_layers = args.n_layer
+            config.num_attention_heads = args.n_head
+            config.hidden_size = args.n_embd
+            config.intermediate_size = config.hidden_size * 4
+            if args.max_position_embeddings is not None:
+                config.max_position_embeddings = args.max_position_embeddings
+        elif args.base_model == 'llama':
+            config = AutoConfig.from_pretrained('meta-llama/Llama-3.2-1B')
+            config.num_hidden_layers = args.n_layer
+            config.num_attention_heads = args.n_head
+            config.num_key_value_heads = args.n_head
+            config.hidden_size = args.n_embd
+            config.head_dim = config.hidden_size // config.num_attention_heads
+            config.intermediate_size = config.hidden_size * 4
+            if args.max_position_embeddings is not None:
+                config.rope_scaling = None
+                config.rope_theta = 10000.0
+                config.max_position_embeddings = args.max_position_embeddings
+        elif args.base_model == 'mamba':
+            config = AutoConfig.from_pretrained('state-spaces/mamba-130m-hf')
+            config.num_hidden_layers = args.n_layer
+            config.n_layer = args.n_layer
+            config.hidden_size = args.n_embd
+            config.d_model = args.n_embd
+            config.expand = 4
+            config.intermediate_size = config.expand * config.hidden_size
+            config.d_inner = config.expand * config.hidden_size
+            config.time_step_rank = math.ceil(config.hidden_size / 16)
+            args.attn_implementation = None
+        else:
+            raise ValueError(f'Unsupported base model: {args.base_model}')
 
-    # create model
-    model = AutoModelForCausalLM.from_config(config)
+        config.torch_dtype = dtype  # weights in float32, at training precision is controlled by accelerate
+        config.vocab_size = tokenizer.vocab_size
+        config.pad_token_id = tokenizer.pad_token_id
+        config.bos_token_id = tokenizer.bos_token_id
+        config.eos_token_id = tokenizer.eos_token_id
+        tokenizer.truncation_side = 'left'  # to truncate context tokens, not query or target
+        # create model
+        model = AutoModelForCausalLM.from_config(config, torch_dtype=dtype,
+                                                 attn_implementation=args.attn_implementation)
+
+    model.config.use_cache = False
 
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
+    logger.info(f'model.dtype: {model.dtype}')
+    logger.info(f'attn_implementation: {args.attn_implementation}')
 
-    dataset = datasets.load_from_disk(args.data_path)
+    try:
+        dataset = datasets.load_from_disk(args.data_path)
+    except Exception as e:
+        dataset = datasets.load_dataset(args.data_path)
 
     def data_collator(batch):
-        return collate_fn(batch, tokenizer)
+        return collate_fn(batch, tokenizer, max_input_length=args.max_input_length)
 
     # Target sequence looks like: "XXXX!|"
     # Let's not count ! and | in the accuracy calculation
@@ -225,8 +309,6 @@ if __name__ == '__main__':
     def compute_metrics(eval_pred):
         return compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer)
 
-    output_dir = Path(args.exp_path)
-
     if args.total_batch_size is None:
         args.total_batch_size = args.per_device_batch_size * accel.num_processes * args.gradient_accumulation_steps
     else:
@@ -235,8 +317,9 @@ if __name__ == '__main__':
 
     # Training arguments
     training_args = TrainingArguments(
-        output_dir=output_dir,
-        logging_dir=output_dir,
+        output_dir=str(output_dir),
+        logging_dir=str(output_dir),
+        # overwrite_output_dir=args.overwrite_output_dir,
 
         max_steps=args.max_steps,
         per_device_train_batch_size=args.per_device_batch_size,
@@ -245,6 +328,9 @@ if __name__ == '__main__':
         warmup_steps=args.warmup_steps,
         weight_decay=args.weight_decay,
         learning_rate=args.learning_rate,
+        adam_beta1=args.adam_beta1,
+        adam_beta2=args.adam_beta2,
+        adam_epsilon=args.adam_epsilon,
         lr_scheduler_type=args.lr_scheduler_type,
 
         eval_strategy='steps',
@@ -260,7 +346,7 @@ if __name__ == '__main__':
         remove_unused_columns=False,
         include_num_input_tokens_seen=True,
         include_for_metrics=['inputs'],
-        save_total_limit=3,
+        save_total_limit=1,
         dataloader_num_workers=4,
         dataloader_pin_memory=True,
         seed=args.seed,
@@ -274,13 +360,33 @@ if __name__ == '__main__':
         eval_dataset=dataset['valid'],
         data_collator=data_collator,
         compute_metrics=compute_metrics,
+        preprocess_logits_for_metrics=preprocess_logits_for_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=args.early_stopping_patience),
                    StopOnMetricValue(metric_name='exact_match', value=1.0, higher_is_better=True),
                    ],
     )
-    # Train the model
-    trainer.train()
-    logger.info('training done. running final evaluation...')
+
+    last_ckpt = get_last_checkpoint(output_dir)
+
+    if args.do_eval_only:
+        # load best checkpoint and run eval
+        try:
+            state_path = Path(last_ckpt) / "trainer_state.json"
+            trainer.state = TrainerState.load_from_json(state_path)
+            trainer._load_best_model()
+            logger.info(f'Successfully loaded best model from {trainer.state.best_model_checkpoint}')
+        except Exception as e:
+            logger.error(f"Failed to load best model from {output_dir}: {e}")
+            exit(1)
+    else:
+        if last_ckpt:
+            logger.info(f'Resuming training from last checkpoint: {last_ckpt}')
+        # run training
+        trainer.train(resume_from_checkpoint=last_ckpt)
+        logger.info('training done. running final evaluation...')
+    # run final evaluation
     metrics = trainer.evaluate(dataset['valid'])
     logger.info(f'{metrics}')
     trainer.save_metrics(split='all', metrics=metrics)
+    if not args.do_eval_only:
+        trainer.state.save_to_json(output_dir / 'trainer_state.json')
