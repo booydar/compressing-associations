@@ -23,6 +23,9 @@ class RMCAConfig(PretrainedConfig):
                  bos_token_id=None,
                  eos_token_id=None,
                  num_mem_heads=8,
+                 num_read_blocks=1,
+                 num_write_blocks=1,
+                 memory_feedforward=False,
                  **kwargs):
         super().__init__(**kwargs)
         self.base_model_name = base_model_name
@@ -34,6 +37,9 @@ class RMCAConfig(PretrainedConfig):
         self.answer_token_id = answer_token_id
         self.bos_token_id = bos_token_id
         self.eos_token_id = eos_token_id
+        self.num_read_blocks = num_read_blocks
+        self.num_write_blocks = num_write_blocks
+        self.memory_feedforward = memory_feedforward
         self.memory_cell_cls = "RMCACell"
         self.recurrent_wrapper_cls = "RMCAWrapperNoSegmentation"
 
@@ -44,122 +50,238 @@ class RMCAConfig(PretrainedConfig):
             return default
 
 
-class CrossAttention(nn.Module):
-    """Standard multi-head cross-attention"""
-    def __init__(self, hidden_size, num_heads=8, dropout=0.1):
+from transformers.models.llama.modeling_llama import apply_rotary_pos_emb
+
+
+class LlamaCrossAttention(nn.Module):
+    """Cross-attention with same structure as Llama (q/k/v/o, optional RoPE). Returns (attn_output, attn_weights).
+
+    Differences from original Llama self-attention (LlamaAttention):
+    - Cross-attention: Q from from_states, K/V from to_states (no past_key_values/cache).
+    - Init from explicit args (hidden_size, num_heads, ...) instead of LlamaConfig and layer_idx.
+    - Optional RoPE: position_embeddings is (cos_q, sin_q, cos_k, sin_k) for query/key positions; when None, no RoPE.
+    - No causal mask or attention_implementation: plain scaled dot-product attention.
+    - Always returns (output, attn_weights); attn_weights may be used for output_attentions.
+    """
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        head_dim: int | None = None,
+        num_key_value_heads: int | None = None,
+        dropout: float = 0.0,
+        bias: bool = False,
+    ):
         super().__init__()
-        assert hidden_size % num_heads == 0, "hidden_size must be divisible by num_heads"
-        
         self.hidden_size = hidden_size
         self.num_heads = num_heads
-        self.head_dim = hidden_size // num_heads
-        self.scale = self.head_dim ** -0.5
-        
-        self.q_proj = nn.Linear(hidden_size, hidden_size, bias=False)
-        self.k_proj = nn.Linear(hidden_size, hidden_size, bias=False)
-        self.v_proj = nn.Linear(hidden_size, hidden_size, bias=False)
-        self.o_proj = nn.Linear(hidden_size, hidden_size, bias=False)
-        
-        self.dropout = nn.Dropout(dropout)
-    
-    def forward(self, from_states, to_states, attention_mask=None):
-        batch_size, seq_len, _ = from_states.shape
-        mem_len = to_states.shape[1]
-        
-        Q = self.q_proj(from_states)
-        K = self.k_proj(to_states)
-        V = self.v_proj(to_states)
-        
-        Q = Q.view(batch_size, seq_len, self.num_heads, self.head_dim).transpose(1, 2)
-        K = K.view(batch_size, mem_len, self.num_heads, self.head_dim).transpose(1, 2)
-        V = V.view(batch_size, mem_len, self.num_heads, self.head_dim).transpose(1, 2)
-        
-        attn_scores = torch.matmul(Q, K.transpose(-2, -1)) * self.scale
-        
+        self.head_dim = head_dim if head_dim is not None else hidden_size // num_heads
+        self.num_key_value_heads = num_key_value_heads if num_key_value_heads is not None else num_heads
+        self.num_key_value_groups = num_heads // self.num_key_value_heads
+        self.scaling = self.head_dim**-0.5
+        self.attention_dropout = dropout
+
+        self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=bias)
+        self.k_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
+        self.v_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
+        self.o_proj = nn.Linear(num_heads * self.head_dim, hidden_size, bias=bias)
+
+    def forward(
+        self,
+        from_states: torch.Tensor,
+        to_states: torch.Tensor,
+        position_embeddings: tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor] | None = None,
+        attention_mask: torch.Tensor | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor | None]:
+        batch_size, q_len, _ = from_states.shape
+        k_len = to_states.shape[1]
+        input_shape = from_states.shape[:-1]
+        q_hidden_shape = (*input_shape, -1, self.head_dim)
+        kv_hidden_shape = (batch_size, k_len, -1, self.head_dim)
+
+        query_states = self.q_proj(from_states).view(q_hidden_shape).transpose(1, 2)
+        key_states = self.k_proj(to_states).view(kv_hidden_shape).transpose(1, 2)
+        value_states = self.v_proj(to_states).view(kv_hidden_shape).transpose(1, 2)
+
+        if position_embeddings is not None:
+            cos_q, sin_q, cos_k, sin_k = position_embeddings
+            query_states, _ = apply_rotary_pos_emb(query_states, query_states, cos_q, sin_q)
+            _, key_states = apply_rotary_pos_emb(key_states, key_states, cos_k, sin_k)
+
+        if self.num_key_value_groups > 1:
+            key_states = key_states.repeat_interleave(self.num_key_value_groups, dim=1)
+            value_states = value_states.repeat_interleave(self.num_key_value_groups, dim=1)
+
+        attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1)) * self.scaling
         if attention_mask is not None:
-            attn_scores = attn_scores + attention_mask
-        
-        attn_probs = F.softmax(attn_scores, dim=-1)
-        attn_probs = self.dropout(attn_probs)
-        
-        attn_output = torch.matmul(attn_probs, V)
-        attn_output = attn_output.transpose(1, 2).contiguous()
-        attn_output = attn_output.view(batch_size, seq_len, self.hidden_size)
-        
-        return self.o_proj(attn_output)
+            attn_weights = attn_weights + attention_mask
+        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
+        attn_weights = F.dropout(
+            attn_weights, p=self.attention_dropout if self.training else 0.0, training=self.training
+        )
+
+        attn_output = torch.matmul(attn_weights, value_states)
+        attn_output = attn_output.transpose(1, 2).reshape(*input_shape, -1).contiguous()
+        return self.o_proj(attn_output), attn_weights
+
+
+class LlamaMLP(nn.Module):
+    """Llama-style gated MLP (SwiGLU): gate_proj * silu(up_proj) -> down_proj."""
+
+    def __init__(self, hidden_size: int, intermediate_size: int, bias: bool = False):
+        super().__init__()
+        self.gate_proj = nn.Linear(hidden_size, intermediate_size, bias=bias)
+        self.up_proj = nn.Linear(hidden_size, intermediate_size, bias=bias)
+        self.down_proj = nn.Linear(intermediate_size, hidden_size, bias=bias)
+        self.act_fn = nn.SiLU()
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        return self.down_proj(self.act_fn(self.gate_proj(x)) * self.up_proj(x))
+
+
+class CrossAttentionBlock(nn.Module):
+    """Single Llama-style cross-attention block: pre-norm cross-attn + pre-norm FFN, each with residual.
+
+    Query source is `x`; key/value source is `context`.
+    Both inputs and context are normalized inside the block, so raw (un-normed) tensors should be passed in.
+    """
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        head_dim: int | None,
+        num_key_value_heads: int | None,
+        intermediate_size: int,
+        dropout: float = 0.0,
+        bias: bool = False,
+    ):
+        super().__init__()
+        self.input_norm = nn.RMSNorm(hidden_size)
+        self.context_norm = nn.RMSNorm(hidden_size)
+        self.attn = LlamaCrossAttention(
+            hidden_size=hidden_size,
+            num_heads=num_heads,
+            head_dim=head_dim,
+            num_key_value_heads=num_key_value_heads,
+            dropout=dropout,
+            bias=bias,
+        )
+        self.ffn_norm = nn.RMSNorm(hidden_size)
+        self.ffn = LlamaMLP(hidden_size=hidden_size, intermediate_size=intermediate_size, bias=bias)
+
+    def forward(self, x: torch.Tensor, context: torch.Tensor) -> torch.Tensor:
+        x = x + self.attn(self.input_norm(x), self.context_norm(context))[0]
+        x = x + self.ffn(self.ffn_norm(x))
+        return x
+
+
+class CrossAttentionStack(nn.Module):
+    """Stack of `num_blocks` CrossAttentionBlocks applied sequentially."""
+
+    def __init__(
+        self,
+        num_blocks: int,
+        hidden_size: int,
+        num_heads: int,
+        head_dim: int | None,
+        num_key_value_heads: int | None,
+        intermediate_size: int,
+        dropout: float = 0.0,
+        bias: bool = False,
+    ):
+        super().__init__()
+        block_kwargs = dict(
+            hidden_size=hidden_size,
+            num_heads=num_heads,
+            head_dim=head_dim,
+            num_key_value_heads=num_key_value_heads,
+            intermediate_size=intermediate_size,
+            dropout=dropout,
+            bias=bias,
+        )
+        self.blocks = nn.ModuleList([CrossAttentionBlock(**block_kwargs) for _ in range(num_blocks)])
+
+    def forward(self, x: torch.Tensor, context: torch.Tensor) -> torch.Tensor:
+        for block in self.blocks:
+            x = block(x, context)
+        return x
 
 
 class MemoryAugmentedLayer(nn.Module):
-    """Wraps a transformer layer with memory read/write via cross-attention"""
-    def __init__(self, base_layer, memory_read_layer, memory_write_layer, initial_memory_state):
+    """Wraps a transformer layer with memory read/write via cross-attention stacks."""
+
+    def __init__(self, base_layer, memory_read_stack, memory_write_stack, initial_memory_state):
         super().__init__()
         self.base_layer = base_layer
-        self.memory_read = memory_read_layer
-        self.memory_write = memory_write_layer
+        self.memory_read = memory_read_stack
+        self.memory_write = memory_write_stack
         self.register_buffer('initial_memory_state', initial_memory_state)
         self.memory_state = initial_memory_state
-        self.ln_memory_read = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        self.ln_memory_write = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        # self.ln_hidden_states = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-    
+
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
-        # Expand memory to match batch size
         if self.memory_state.shape[0] != batch_size:
             memory = self.initial_memory_state.expand(batch_size, -1, -1).to(hidden_states.device)
         else:
             memory = self.memory_state.to(hidden_states.device)
-        
-        # Read from memory
-        memory = self.ln_memory_read(memory)
-        hidden_states = hidden_states + self.memory_read(hidden_states, memory)
-        # log norm and std b4 and after memory read
-        norm_before = hidden_states.norm(dim=-1).mean()
-        std_before = hidden_states.std(dim=-1).mean()
-        print(f"norm_before: {norm_before}, std_before: {std_before}")
-        
-        # log norm and std after base layer forward
-        norm_after = hidden_states.norm(dim=-1).mean()
-        std_after = hidden_states.std(dim=-1).mean()
-        print(f"norm_after: {norm_after}, std_after: {std_after}")
-        # log to layer output
-        
-        # Base layer forward
-        # hidden_states = self.ln_hidden_states(hidden_states)
-        output = self.base_layer(hidden_states, *args, **kwargs)        
-        hidden_states = hidden_states + (output[0] if isinstance(output, tuple) else output)
-        
-        # Write to memory
-        memory = self.ln_memory_write(memory)
-        memory = memory + self.memory_write(memory, hidden_states)
+
+        # Read: update hidden states using memory as context
+        hidden_states = self.memory_read(hidden_states, memory)
+
+        # Write: update memory using (updated) hidden states as context
+        memory = self.memory_write(memory, hidden_states)
         self.memory_state = memory
-        
-        return (hidden_states,) + output[1:] if isinstance(output, tuple) else hidden_states
-    
+
+        output = self.base_layer(hidden_states, *args, **kwargs)
+        hidden_states = output[0] if isinstance(output, tuple) else output
+
+        if isinstance(output, tuple):
+            return (hidden_states,) + output[1:]
+        return hidden_states
+
     def reset_memory(self):
         self.memory_state = self.initial_memory_state
 
 
 class RMCACell(torch.nn.Module):
-    def __init__(self, base_model, num_mem_tokens, num_heads=8):
+    def __init__(self, base_model, num_mem_tokens, num_heads=8,
+                 num_read_blocks=1, num_write_blocks=1):
         super().__init__()
         self.model = base_model
         self.num_mem_tokens = num_mem_tokens
-        
-        hidden_size = getattr(base_model.config, 'n_embd', base_model.config.hidden_size)
-        
+
+        hidden_size = getattr(base_model.config, "n_embd", base_model.config.hidden_size)
+        num_attention_heads = getattr(base_model.config, "num_attention_heads", num_heads)
+        num_key_value_heads = getattr(base_model.config, "num_key_value_heads", num_attention_heads)
+        head_dim = getattr(base_model.config, "head_dim", hidden_size // num_attention_heads)
+        attention_dropout = getattr(base_model.config, "attention_dropout", 0.0)
+        attention_bias = getattr(base_model.config, "attention_bias", False)
+        intermediate_size = getattr(base_model.config, "intermediate_size", hidden_size * 4)
+
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
+
+        stack_kwargs = dict(
+            hidden_size=hidden_size,
+            num_heads=num_attention_heads,
+            head_dim=head_dim,
+            num_key_value_heads=num_key_value_heads,
+            intermediate_size=intermediate_size,
+            dropout=attention_dropout,
+            bias=attention_bias,
+        )
+
         for i, layer in enumerate(self.model.model.layers):
-            memory_read = CrossAttention(hidden_size, num_heads).to(dtype=model_dtype, device=model_device)
-            memory_write = CrossAttention(hidden_size, num_heads).to(dtype=model_dtype, device=model_device)
-            # initial_memory = self.memory.unsqueeze(0).to(dtype=model_dtype, device=model_device)
+            memory_read = CrossAttentionStack(num_blocks=num_read_blocks, **stack_kwargs)
+            memory_write = CrossAttentionStack(num_blocks=num_write_blocks, **stack_kwargs)
             initial_memory = torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size)
             wrapped_layer = MemoryAugmentedLayer(
                 layer.to(dtype=model_dtype, device=model_device),
                 memory_read.to(dtype=model_dtype, device=model_device),
                 memory_write.to(dtype=model_dtype, device=model_device),
-                initial_memory.to(dtype=model_dtype, device=model_device)
+                initial_memory.to(dtype=model_dtype, device=model_device),
             )
             self.model.model.layers[i] = wrapped_layer
 
@@ -315,7 +437,13 @@ class RMCABase(PreTrainedModel):
             base_model = AutoModelForCausalLM.from_config(base_config)
 
         self.rmt_config = config
-        memory_cell = RMCACell(base_model, num_mem_tokens=config.num_mem_tokens, num_heads=config.num_mem_heads)
+        memory_cell = RMCACell(
+            base_model,
+            num_mem_tokens=config.num_mem_tokens,
+            num_heads=config.num_mem_heads,
+            num_read_blocks=config.num_read_blocks,
+            num_write_blocks=config.num_write_blocks,
+        )
         self.rmt = RMCAWrapperBase(
             memory_cell,
             max_n_segments=config.max_n_segments,

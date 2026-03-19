@@ -183,7 +183,7 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     res = {
         "token_accuracy": float(accuracy),
         # "exact_match": float(exact_match),
-        "exact_match_base": float(exact_match_base),
+        "exact_match": float(exact_match_base),
     }
     res[f"exact_match_{args.memory_task}"] = float(exact_match_memory_task)
     return res
@@ -322,19 +322,20 @@ if __name__ == '__main__':
     #                    use_mem_proj=args.use_mem_proj, mem_proj_mode=args.mem_proj_mode,
     #                    use_write_head=args.use_write_head)
     # Load model class dynamically
-    # Load RMT as in debug_rmt.ipynb
-    from modeling_rmt.huggingface import RMTForReasoning, RMTConfig
+    # Load RMCA with cross-attention
+    from modeling_rmt.huggingface_rmca import RMCABase, RMCAConfig
 
-    rmt_config = RMTConfig()
+    rmt_config = RMCAConfig()
     rmt_config.base_model_config = config
     rmt_config.num_mem_tokens = args.n_mem_tokens
+    rmt_config.num_mem_heads = config.num_attention_heads
     rmt_config.max_n_segments = 10
     rmt_config.think_token_id = tokenizer.convert_tokens_to_ids('[THINK]')
     rmt_config.answer_token_id = tokenizer.convert_tokens_to_ids('[ANSWER]')
     rmt_config.bos_token_id = tokenizer.convert_tokens_to_ids('[BOS]')
     rmt_config.eos_token_id = tokenizer.convert_tokens_to_ids('[EOS]')
 
-    model = RMTForReasoning(rmt_config)
+    model = RMCABase(rmt_config)
     model.main_input_name = 'labels'
 
     if args.model_cpt and args.model_cpt != 'None':
@@ -426,19 +427,18 @@ if __name__ == '__main__':
 
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
+    logger.info(f"number of model parameters: {sum(p.numel() for p in model.parameters()):,}")
 
     # Try to load existing dataset, otherwise generate it
     # data_path = "/workspace-SR006.nfs2/bulatov/rmt/data/associative_retrieval"
     # dataset_name = f"N{args.n_pairs}-K{args.n_keys}V{args.n_values}-V62_1M"
-    # data_path = f"/workspace-SR006.nfs2/bulatov/rmt/data/associative_retrieval/{dataset_name}"
-    data_path = args.data_path
+    # data_path = f"./data/associative_retrieval/{dataset_name}"
     try:
-        logger.info(f'Attempting to load dataset from: {data_path}')
-        dataset = datasets.load_from_disk(data_path)
-        logger.info(f'Successfully loaded existing dataset from {data_path}')
+        logger.info(f'Attempting to load dataset from: {args.data_path}')
+        dataset = datasets.load_from_disk(args.data_path)
+        logger.info(f'Successfully loaded existing dataset from {args.data_path}')
     except Exception as e:
-        logger.info(f'Could not load dataset from {data_path}: {e}')
-        logger.info(f'Generating new dataset with n_pairs={args.n_pairs}, n_keys={args.n_keys}, n_values={args.n_values}')
+        logger.info(f'Could not load dataset from {args.data_path}: {e}')
         from kv_dataset_utils import generate_sequence
         
         # Generate samples with all fields needed for collate_fn
@@ -467,7 +467,7 @@ if __name__ == '__main__':
                 "train": dataset["train"],
                 "valid": dataset["test"],
             })
-        dataset.save_to_disk(data_path)
+        dataset.save_to_disk(args.data_path)
         logger.info(f'Successfully generated dataset with {len(dataset["train"])} train samples and {len(dataset["valid"])} validation samples')
 
     # Target sequence looks like: "XXXX!|"

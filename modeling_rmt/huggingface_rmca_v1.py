@@ -89,6 +89,152 @@ class CrossAttention(nn.Module):
         return self.o_proj(attn_output)
 
 
+# class LlamaAttention(nn.Module):
+#     """Multi-headed attention from 'Attention Is All You Need' paper"""
+
+#     def __init__(self, config: LlamaConfig, layer_idx: int):
+#         super().__init__()
+#         self.config = config
+#         self.layer_idx = layer_idx
+#         self.head_dim = getattr(config, "head_dim", config.hidden_size // config.num_attention_heads)
+#         self.num_key_value_groups = config.num_attention_heads // config.num_key_value_heads
+#         self.scaling = self.head_dim**-0.5
+#         self.attention_dropout = config.attention_dropout
+#         self.is_causal = True
+
+#         self.q_proj = nn.Linear(
+#             config.hidden_size, config.num_attention_heads * self.head_dim, bias=config.attention_bias
+#         )
+#         self.k_proj = nn.Linear(
+#             config.hidden_size, config.num_key_value_heads * self.head_dim, bias=config.attention_bias
+#         )
+#         self.v_proj = nn.Linear(
+#             config.hidden_size, config.num_key_value_heads * self.head_dim, bias=config.attention_bias
+#         )
+#         self.o_proj = nn.Linear(
+#             config.num_attention_heads * self.head_dim, config.hidden_size, bias=config.attention_bias
+#         )
+
+#     def forward(
+#         self,
+#         hidden_states: torch.Tensor,
+#         position_embeddings: tuple[torch.Tensor, torch.Tensor] | None = None,
+#         attention_mask: torch.Tensor | None = None,
+#         past_key_values: Cache | None = None,
+#         cache_position: torch.LongTensor | None = None,
+#         **kwargs: Unpack[TransformersKwargs],
+#     ) -> tuple[torch.Tensor, torch.Tensor]:
+#         input_shape = hidden_states.shape[:-1]
+#         hidden_shape = (*input_shape, -1, self.head_dim)
+
+#         query_states = self.q_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+#         key_states = self.k_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+#         value_states = self.v_proj(hidden_states).view(hidden_shape).transpose(1, 2)
+
+#         cos, sin = position_embeddings
+#         query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+
+#         if past_key_values is not None:
+#             # sin and cos are specific to RoPE models; cache_position needed for the static cache
+#             cache_kwargs = {"sin": sin, "cos": cos, "cache_position": cache_position}
+#             key_states, value_states = past_key_values.update(key_states, value_states, self.layer_idx, cache_kwargs)
+
+#         attention_interface: Callable = ALL_ATTENTION_FUNCTIONS.get_interface(
+#             self.config._attn_implementation, eager_attention_forward
+#         )
+
+#         attn_output, attn_weights = attention_interface(
+#             self,
+#             query_states,
+#             key_states,
+#             value_states,
+#             attention_mask,
+#             dropout=0.0 if not self.training else self.attention_dropout,
+#             scaling=self.scaling,
+#             **kwargs,
+#         )
+
+#         attn_output = attn_output.reshape(*input_shape, -1).contiguous()
+#         attn_output = self.o_proj(attn_output)
+#         return attn_output, attn_weights
+
+
+from transformers.models.llama.modeling_llama import apply_rotary_pos_emb
+
+
+class LlamaCrossAttention(nn.Module):
+    """Cross-attention with same structure as Llama (q/k/v/o, optional RoPE). Returns (attn_output, attn_weights).
+
+    Differences from original Llama self-attention (LlamaAttention):
+    - Cross-attention: Q from from_states, K/V from to_states (no past_key_values/cache).
+    - Init from explicit args (hidden_size, num_heads, ...) instead of LlamaConfig and layer_idx.
+    - Optional RoPE: position_embeddings is (cos_q, sin_q, cos_k, sin_k) for query/key positions; when None, no RoPE.
+    - No causal mask or attention_implementation: plain scaled dot-product attention.
+    - Always returns (output, attn_weights); attn_weights may be used for output_attentions.
+    """
+
+    def __init__(
+        self,
+        hidden_size: int,
+        num_heads: int,
+        head_dim: int | None = None,
+        num_key_value_heads: int | None = None,
+        dropout: float = 0.0,
+        bias: bool = False,
+    ):
+        super().__init__()
+        self.hidden_size = hidden_size
+        self.num_heads = num_heads
+        self.head_dim = head_dim if head_dim is not None else hidden_size // num_heads
+        self.num_key_value_heads = num_key_value_heads if num_key_value_heads is not None else num_heads
+        self.num_key_value_groups = num_heads // self.num_key_value_heads
+        self.scaling = self.head_dim**-0.5
+        self.attention_dropout = dropout
+
+        self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=bias)
+        self.k_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
+        self.v_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
+        self.o_proj = nn.Linear(num_heads * self.head_dim, hidden_size, bias=bias)
+
+    def forward(
+        self,
+        from_states: torch.Tensor,
+        to_states: torch.Tensor,
+        position_embeddings: tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor] | None = None,
+        attention_mask: torch.Tensor | None = None,
+    ) -> tuple[torch.Tensor, torch.Tensor | None]:
+        batch_size, q_len, _ = from_states.shape
+        k_len = to_states.shape[1]
+        input_shape = from_states.shape[:-1]
+        q_hidden_shape = (*input_shape, -1, self.head_dim)
+        kv_hidden_shape = (batch_size, k_len, -1, self.head_dim)
+
+        query_states = self.q_proj(from_states).view(q_hidden_shape).transpose(1, 2)
+        key_states = self.k_proj(to_states).view(kv_hidden_shape).transpose(1, 2)
+        value_states = self.v_proj(to_states).view(kv_hidden_shape).transpose(1, 2)
+
+        if position_embeddings is not None:
+            cos_q, sin_q, cos_k, sin_k = position_embeddings
+            query_states, _ = apply_rotary_pos_emb(query_states, query_states, cos_q, sin_q)
+            _, key_states = apply_rotary_pos_emb(key_states, key_states, cos_k, sin_k)
+
+        if self.num_key_value_groups > 1:
+            key_states = key_states.repeat_interleave(self.num_key_value_groups, dim=1)
+            value_states = value_states.repeat_interleave(self.num_key_value_groups, dim=1)
+
+        attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1)) * self.scaling
+        if attention_mask is not None:
+            attn_weights = attn_weights + attention_mask
+        attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
+        attn_weights = F.dropout(
+            attn_weights, p=self.attention_dropout if self.training else 0.0, training=self.training
+        )
+
+        attn_output = torch.matmul(attn_weights, value_states)
+        attn_output = attn_output.transpose(1, 2).reshape(*input_shape, -1).contiguous()
+        return self.o_proj(attn_output), attn_weights
+
+
 class MemoryAugmentedLayer(nn.Module):
     """Wraps a transformer layer with memory read/write via cross-attention"""
     def __init__(self, base_layer, memory_read_layer, memory_write_layer, initial_memory_state):
@@ -98,9 +244,15 @@ class MemoryAugmentedLayer(nn.Module):
         self.memory_write = memory_write_layer
         self.register_buffer('initial_memory_state', initial_memory_state)
         self.memory_state = initial_memory_state
-        self.ln_memory_read = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        self.ln_memory_write = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        # self.ln_hidden_states = torch.nn.LayerNorm(initial_memory_state.shape[-1])
+        # self.memory_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
+        # self.input_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
+        # self.pre_base_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
+        # self.post_base_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
+
+        self.memory_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
+        self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
+        self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
+        self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
@@ -111,30 +263,33 @@ class MemoryAugmentedLayer(nn.Module):
             memory = self.memory_state.to(hidden_states.device)
         
         # Read from memory
-        memory = self.ln_memory_read(memory)
-        hidden_states = hidden_states + self.memory_read(hidden_states, memory)
-        # log norm and std b4 and after memory read
-        norm_before = hidden_states.norm(dim=-1).mean()
-        std_before = hidden_states.std(dim=-1).mean()
-        print(f"norm_before: {norm_before}, std_before: {std_before}")
+        memory_normed = self.memory_layer_norm(memory)
+        hidden_states_normed = self.input_layer_norm(hidden_states)
         
-        # log norm and std after base layer forward
-        norm_after = hidden_states.norm(dim=-1).mean()
-        std_after = hidden_states.std(dim=-1).mean()
-        print(f"norm_after: {norm_after}, std_after: {std_after}")
-        # log to layer output
-        
+        read_out = self.memory_read(hidden_states_normed, memory_normed)
+        read_residual = read_out[0] if isinstance(read_out, tuple) else read_out
+        read_attn_weights = read_out[1] if isinstance(read_out, tuple) and len(read_out) > 1 else None
+        hidden_states = hidden_states + read_residual
+
         # Base layer forward
-        # hidden_states = self.ln_hidden_states(hidden_states)
-        output = self.base_layer(hidden_states, *args, **kwargs)        
-        hidden_states = hidden_states + (output[0] if isinstance(output, tuple) else output)
-        
+        # hidden_states = self.pre_base_layer_norm(hidden_states)
+        output = self.base_layer(hidden_states, *args, **kwargs)
+        # hidden_states = hidden_states + (output[0] if isinstance(output, tuple) else output)
+        hidden_states = output[0] if isinstance(output, tuple) else output
+
         # Write to memory
-        memory = self.ln_memory_write(memory)
-        memory = memory + self.memory_write(memory, hidden_states)
+        hidden_states_normed = self.post_base_layer_norm(hidden_states)
+        write_out = self.memory_write(memory_normed, hidden_states_normed)
+        write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
+        write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
+        memory = memory + write_residual
         self.memory_state = memory
-        
-        return (hidden_states,) + output[1:] if isinstance(output, tuple) else hidden_states
+
+        # Pass through base layer outputs (hidden_states, cache?, attentions?) and append cross-attention weights
+        if isinstance(output, tuple):
+            cross_attentions = (read_attn_weights, write_attn_weights)
+            return (hidden_states,) + output[1:] + (cross_attentions,)
+        return hidden_states
     
     def reset_memory(self):
         self.memory_state = self.initial_memory_state
@@ -145,14 +300,33 @@ class RMCACell(torch.nn.Module):
         super().__init__()
         self.model = base_model
         self.num_mem_tokens = num_mem_tokens
-        
-        hidden_size = getattr(base_model.config, 'n_embd', base_model.config.hidden_size)
-        
+
+        hidden_size = getattr(base_model.config, "n_embd", base_model.config.hidden_size)
+        num_attention_heads = getattr(base_model.config, "num_attention_heads", num_heads)
+        num_key_value_heads = getattr(base_model.config, "num_key_value_heads", num_attention_heads)
+        head_dim = getattr(base_model.config, "head_dim", hidden_size // num_attention_heads)
+        attention_dropout = getattr(base_model.config, "attention_dropout", 0.0)
+        attention_bias = getattr(base_model.config, "attention_bias", False)
+
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
         for i, layer in enumerate(self.model.model.layers):
-            memory_read = CrossAttention(hidden_size, num_heads).to(dtype=model_dtype, device=model_device)
-            memory_write = CrossAttention(hidden_size, num_heads).to(dtype=model_dtype, device=model_device)
+            memory_read = LlamaCrossAttention(
+                hidden_size=hidden_size,
+                num_heads=num_attention_heads,
+                head_dim=head_dim,
+                num_key_value_heads=num_key_value_heads,
+                dropout=attention_dropout,
+                bias=attention_bias,
+            ).to(dtype=model_dtype, device=model_device)
+            memory_write = LlamaCrossAttention(
+                hidden_size=hidden_size,
+                num_heads=num_attention_heads,
+                head_dim=head_dim,
+                num_key_value_heads=num_key_value_heads,
+                dropout=attention_dropout,
+                bias=attention_bias,
+            ).to(dtype=model_dtype, device=model_device)
             # initial_memory = self.memory.unsqueeze(0).to(dtype=model_dtype, device=model_device)
             initial_memory = torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size)
             wrapped_layer = MemoryAugmentedLayer(

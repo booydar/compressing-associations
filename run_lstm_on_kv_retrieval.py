@@ -23,6 +23,8 @@ from transformers import (
 
 from transformers.trainer_utils import get_last_checkpoint
 
+from flashrnn_model import FlashRNNForCausalLM, FLASHRNN_MODELS
+
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 
 logger_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -181,6 +183,11 @@ class ExperimentArgs:
     max_position_embeddings: Optional[int] = field(default=None)
     max_input_length: Optional[int] = field(default=None)
     attn_implementation: Optional[str] = field(default=None)
+    flashrnn_backend: Optional[str] = field(default='vanilla')
+    # Data generation parameters
+    n_pairs: Optional[int] = field(default=None)
+    n_keys: Optional[int] = field(default=None)
+    n_values: Optional[int] = field(default=None)
 
     # allow writing to existing folder & resume
     overwrite_output_dir: Optional[bool] = field(default=False)
@@ -273,31 +280,82 @@ if __name__ == '__main__':
             config.d_inner = config.expand * config.hidden_size
             config.time_step_rank = math.ceil(config.hidden_size / 16)
             args.attn_implementation = None
+        elif args.base_model in FLASHRNN_MODELS:
+            pass  # handled below
         else:
             raise ValueError(f'Unsupported base model: {args.base_model}')
 
-        config.torch_dtype = dtype  # weights in float32, at training precision is controlled by accelerate
-        config.vocab_size = tokenizer.vocab_size
-        config.pad_token_id = tokenizer.pad_token_id
-        config.bos_token_id = tokenizer.bos_token_id
-        config.eos_token_id = tokenizer.eos_token_id
         tokenizer.truncation_side = 'left'  # to truncate context tokens, not query or target
-        # create model
-        model = AutoModelForCausalLM.from_config(config, torch_dtype=dtype,
-                                                 attn_implementation=args.attn_implementation)
+
+        if args.base_model in FLASHRNN_MODELS:
+            flashrnn_fn = FLASHRNN_MODELS[args.base_model]
+            dtype_str = {torch.bfloat16: "bfloat16", torch.float16: "float16"}.get(dtype, "float32")
+            model = FlashRNNForCausalLM(
+                vocab_size=tokenizer.vocab_size,
+                hidden_size=args.n_embd,
+                num_layers=args.n_layer,
+                num_heads=args.n_head,
+                function=flashrnn_fn,
+                backend=args.flashrnn_backend,
+                dtype_str=dtype_str,
+                pad_token_id=tokenizer.pad_token_id,
+            )
+        else:
+            config.torch_dtype = dtype  # weights in float32, at training precision is controlled by accelerate
+            config.vocab_size = tokenizer.vocab_size
+            config.pad_token_id = tokenizer.pad_token_id
+            config.bos_token_id = tokenizer.bos_token_id
+            config.eos_token_id = tokenizer.eos_token_id
+            # create model
+            model = AutoModelForCausalLM.from_config(config, torch_dtype=dtype,
+                                                     attn_implementation=args.attn_implementation)
 
     model.config.use_cache = False
 
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
     logger.info(f"number of model parameters: {sum(p.numel() for p in model.parameters()):,}")
+
     logger.info(f'model.dtype: {model.dtype}')
     logger.info(f'attn_implementation: {args.attn_implementation}')
 
+    # Try to load existing dataset, otherwise generate it
     try:
+        logger.info(f'Attempting to load dataset from: {args.data_path}')
         dataset = datasets.load_from_disk(args.data_path)
+        logger.info(f'Successfully loaded existing dataset from {args.data_path}')
     except Exception as e:
-        dataset = datasets.load_dataset(args.data_path)
+        logger.info(f'Could not load dataset from {args.data_path}: {e}')
+        from kv_dataset_utils import generate_sequence
+        
+        # Generate samples with all fields needed for collate_fn
+        logger.info('Generating raw samples...')
+        raw_samples = [
+            generate_sequence(num_kv_pairs=args.n_pairs,
+                              n_segments=1,
+                              min_segment_len = 0,
+                              max_segment_len = 0,
+                              k_length=args.n_keys, v_length=args.n_values)
+            for _ in range(1_005_000)
+        ]
+        
+        # Convert to HuggingFace dataset format with context, query, target fields
+        import datasets as ds
+        dataset_dict = {
+            'context': [s['context'] for s in raw_samples],
+            'query': [s['query'] for s in raw_samples],
+            'target': [s['target'] for s in raw_samples],
+        }
+        dataset = ds.Dataset.from_dict(dataset_dict)
+        dataset = dataset.train_test_split(test_size=5_000, seed=args.seed)
+        # Ensure test set is called "valid" (for legacy code compatibility)
+        if "test" in dataset:
+            dataset = datasets.DatasetDict({
+                "train": dataset["train"],
+                "valid": dataset["test"],
+            })
+        dataset.save_to_disk(args.data_path)
+        logger.info(f'Successfully generated dataset with {len(dataset["train"])} train samples and {len(dataset["valid"])} validation samples')
 
     def data_collator(batch):
         return collate_fn(batch, tokenizer, max_input_length=args.max_input_length)

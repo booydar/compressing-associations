@@ -31,6 +31,7 @@ logging.basicConfig(format=logger_fmt, level=log_lvl)
 logger = logging.getLogger('')
 
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
+from fla_model import FLAForCausalLM, FLA_MODELS
 
 
 def collate_fn(batch, tokenizer, max_input_length=None):
@@ -181,6 +182,10 @@ class ExperimentArgs:
     max_position_embeddings: Optional[int] = field(default=None)
     max_input_length: Optional[int] = field(default=None)
     attn_implementation: Optional[str] = field(default=None)
+    # Data generation parameters
+    n_pairs: Optional[int] = field(default=None)
+    n_keys: Optional[int] = field(default=None)
+    n_values: Optional[int] = field(default=None)
 
     # allow writing to existing folder & resume
     overwrite_output_dir: Optional[bool] = field(default=False)
@@ -234,57 +239,18 @@ if __name__ == '__main__':
     else:
         # create tokenizer
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
-        # create model config
-        if args.base_model == 'gpt2':
-            config = AutoConfig.from_pretrained('gpt2')
-            config.n_layer = args.n_layer
-            config.n_head = args.n_head
-            config.n_embd = args.n_embd
-            if args.max_position_embeddings is not None:
-                config.n_positions = args.max_position_embeddings
-        elif args.base_model == 'pythia':
-            config = AutoConfig.from_pretrained('EleutherAI/pythia-160m')
-            config.num_hidden_layers = args.n_layer
-            config.num_attention_heads = args.n_head
-            config.hidden_size = args.n_embd
-            config.intermediate_size = config.hidden_size * 4
-            if args.max_position_embeddings is not None:
-                config.max_position_embeddings = args.max_position_embeddings
-        elif args.base_model == 'llama':
-            config = AutoConfig.from_pretrained('meta-llama/Llama-3.2-1B')
-            config.num_hidden_layers = args.n_layer
-            config.num_attention_heads = args.n_head
-            config.num_key_value_heads = args.n_head
-            config.hidden_size = args.n_embd
-            config.head_dim = config.hidden_size // config.num_attention_heads
-            config.intermediate_size = config.hidden_size * 4
-            if args.max_position_embeddings is not None:
-                config.rope_scaling = None
-                config.rope_theta = 10000.0
-                config.max_position_embeddings = args.max_position_embeddings
-        elif args.base_model == 'mamba':
-            config = AutoConfig.from_pretrained('state-spaces/mamba-130m-hf')
-            config.num_hidden_layers = args.n_layer
-            config.n_layer = args.n_layer
-            config.hidden_size = args.n_embd
-            config.d_model = args.n_embd
-            config.expand = 4
-            config.intermediate_size = config.expand * config.hidden_size
-            config.d_inner = config.expand * config.hidden_size
-            config.time_step_rank = math.ceil(config.hidden_size / 16)
-            args.attn_implementation = None
+        tokenizer.truncation_side = 'left'
+        if args.base_model in FLA_MODELS:
+            model = FLAForCausalLM(
+                vocab_size=tokenizer.vocab_size,
+                hidden_size=args.n_embd,
+                num_layers=args.n_layer,
+                num_heads=args.n_head,
+                layer_type=FLA_MODELS[args.base_model],
+                pad_token_id=tokenizer.pad_token_id,
+            )
         else:
-            raise ValueError(f'Unsupported base model: {args.base_model}')
-
-        config.torch_dtype = dtype  # weights in float32, at training precision is controlled by accelerate
-        config.vocab_size = tokenizer.vocab_size
-        config.pad_token_id = tokenizer.pad_token_id
-        config.bos_token_id = tokenizer.bos_token_id
-        config.eos_token_id = tokenizer.eos_token_id
-        tokenizer.truncation_side = 'left'  # to truncate context tokens, not query or target
-        # create model
-        model = AutoModelForCausalLM.from_config(config, torch_dtype=dtype,
-                                                 attn_implementation=args.attn_implementation)
+            raise ValueError(f"Invalid base model: {args.base_model}")
 
     model.config.use_cache = False
 
@@ -294,10 +260,43 @@ if __name__ == '__main__':
     logger.info(f'model.dtype: {model.dtype}')
     logger.info(f'attn_implementation: {args.attn_implementation}')
 
+    # Try to load existing dataset, otherwise generate it
     try:
+        logger.info(f'Attempting to load dataset from: {args.data_path}')
         dataset = datasets.load_from_disk(args.data_path)
+        logger.info(f'Successfully loaded existing dataset from {args.data_path}')
     except Exception as e:
-        dataset = datasets.load_dataset(args.data_path)
+        logger.info(f'Could not load dataset from {args.data_path}: {e}')
+        from kv_dataset_utils import generate_sequence
+        
+        # Generate samples with all fields needed for collate_fn
+        logger.info('Generating raw samples...')
+        raw_samples = [
+            generate_sequence(num_kv_pairs=args.n_pairs,
+                              n_segments=1,
+                              min_segment_len = 0,
+                              max_segment_len = 0,
+                              k_length=args.n_keys, v_length=args.n_values)
+            for _ in range(1_005_000)
+        ]
+        
+        # Convert to HuggingFace dataset format with context, query, target fields
+        import datasets as ds
+        dataset_dict = {
+            'context': [s['context'] for s in raw_samples],
+            'query': [s['query'] for s in raw_samples],
+            'target': [s['target'] for s in raw_samples],
+        }
+        dataset = ds.Dataset.from_dict(dataset_dict)
+        dataset = dataset.train_test_split(test_size=5_000, seed=args.seed)
+        # Ensure test set is called "valid" (for legacy code compatibility)
+        if "test" in dataset:
+            dataset = datasets.DatasetDict({
+                "train": dataset["train"],
+                "valid": dataset["test"],
+            })
+        dataset.save_to_disk(args.data_path)
+        logger.info(f'Successfully generated dataset with {len(dataset["train"])} train samples and {len(dataset["valid"])} validation samples')
 
     def data_collator(batch):
         return collate_fn(batch, tokenizer, max_input_length=args.max_input_length)

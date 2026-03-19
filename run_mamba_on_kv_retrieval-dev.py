@@ -290,7 +290,6 @@ if __name__ == '__main__':
 
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
-    logger.info(f"number of model parameters: {sum(p.numel() for p in model.parameters()):,}")
     logger.info(f'model.dtype: {model.dtype}')
     logger.info(f'attn_implementation: {args.attn_implementation}')
 
