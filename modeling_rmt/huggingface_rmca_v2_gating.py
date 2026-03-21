@@ -43,38 +43,25 @@ class RMCAConfig(PretrainedConfig):
         else:
             return default
 
-
-# from transformers.models.llama.modeling_llama import apply_rotary_pos_emb
-
-
 class GatingLayer(nn.Module):
-    """Gating layer that gates the memory read and write attention weights."""
-
-    def __init__(
-        self,
-        hidden_size: int,
-    ):
+    def __init__(self, hidden_size) -> None:
         super().__init__()
-        self.hidden_size = hidden_size
-        self.gating_layer = nn.Linear(hidden_size, hidden_size, activation=nn.Sigmoid())
+        self.linear = nn.Linear(hidden_size, 1)
+        self.act = nn.Sigmoid()
     
-    def forward(self, inputs, outputs) -> torch.Tensor:
-        
+    def forward(self, hidden_states):
+        return self.act(self.linear(hidden_states))
 
 
 class MemoryAugmentedLayer(nn.Module):
     """Wraps a transformer layer with memory read/write via cross-attention"""
-    def __init__(self, base_layer, memory_read_layer, memory_write_layer, initial_memory_state):
+    def __init__(self, base_layer, memory_read_gate, memory_write_gate, initial_memory_state):
         super().__init__()
         self.base_layer = base_layer
-        self.memory_read = memory_read_layer
-        self.memory_write = memory_write_layer
+        self.memory_read_gate = memory_read_gate
+        self.memory_write_gate = memory_write_gate
         self.register_buffer('initial_memory_state', initial_memory_state)
         self.memory_state = initial_memory_state
-        # self.memory_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        # self.input_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        # self.pre_base_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
-        # self.post_base_layer_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1])
 
         self.memory_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
@@ -82,7 +69,7 @@ class MemoryAugmentedLayer(nn.Module):
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
     
     def forward(self, hidden_states, *args, **kwargs):
-        batch_size = hidden_states.shape[0]
+        batch_size, dim = hidden_states.shape[0], hidden_states.shape[2]
         # Expand memory to match batch size
         if self.memory_state.shape[0] != batch_size:
             memory = self.initial_memory_state.expand(batch_size, -1, -1).to(hidden_states.device)
@@ -93,22 +80,25 @@ class MemoryAugmentedLayer(nn.Module):
         memory_normed = self.memory_layer_norm(memory)
         hidden_states_normed = self.input_layer_norm(hidden_states)
         
-        read_out = self.memory_read(hidden_states_normed, memory_normed)
-        read_residual = read_out[0] if isinstance(read_out, tuple) else read_out
-        read_attn_weights = read_out[1] if isinstance(read_out, tuple) and len(read_out) > 1 else None
+        # read_out = self.memory_read(hidden_states_normed, memory_normed)
+        gate_read_coefs = self.memory_read_gate(hidden_states_normed)
+        read_residual = memory_normed * gate_read_coefs
+
+        read_attn_weights = gate_read_coefs
         hidden_states = hidden_states + read_residual
 
         # Write to memory
-        write_out = self.memory_write(memory_normed, hidden_states_normed)
-        write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
-        write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
+        # write_out = self.memory_write(memory_normed, hidden_states_normed)
+        gate_write_coefs = self.memory_write_gate(hidden_states_normed)
+        gate_write_values = hidden_states_normed * gate_write_coefs
+        write_residual = gate_write_values.sum(dim=1).reshape(batch_size, 1, dim)
+
+        write_attn_weights = gate_write_coefs
         memory = memory + write_residual
         self.memory_state = memory
 
         # Base layer forward
-        # hidden_states = self.pre_base_layer_norm(hidden_states)
         output = self.base_layer(hidden_states, *args, **kwargs)
-        # hidden_states = hidden_states + (output[0] if isinstance(output, tuple) else output)
         hidden_states = output[0] if isinstance(output, tuple) else output
 
         # Pass through base layer outputs (hidden_states, cache?, attentions?) and append cross-attention weights
@@ -126,35 +116,22 @@ class RMCACell(torch.nn.Module):
         super().__init__()
         self.model = base_model
         self.num_mem_tokens = num_mem_tokens
+        if num_mem_tokens != 1:
+            raise NotImplementedError("Gating not implemented for num_mem_tokens != 1.")
 
         hidden_size = getattr(base_model.config, "n_embd", base_model.config.hidden_size)
-        num_attention_heads = getattr(base_model.config, "num_attention_heads", num_heads)
-        num_key_value_heads = getattr(base_model.config, "num_key_value_heads", num_attention_heads)
-        head_dim = getattr(base_model.config, "head_dim", hidden_size // num_attention_heads)
-        attention_dropout = getattr(base_model.config, "attention_dropout", 0.0)
-        attention_bias = getattr(base_model.config, "attention_bias", False)
+        # num_attention_heads = getattr(base_model.config, "num_attention_heads", num_heads)
+        # num_key_value_heads = getattr(base_model.config, "num_key_value_heads", num_attention_heads)
+        # head_dim = getattr(base_model.config, "head_dim", hidden_size // num_attention_heads)
+        # attention_dropout = getattr(base_model.config, "attention_dropout", 0.0)
+        # attention_bias = getattr(base_model.config, "attention_bias", False)
 
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
         for i, layer in enumerate(self.model.model.layers):
-            memory_read = LlamaCrossAttention(
-                hidden_size=hidden_size,
-                num_heads=num_attention_heads,
-                head_dim=head_dim,
-                num_key_value_heads=num_key_value_heads,
-                dropout=attention_dropout,
-                bias=attention_bias,
-            ).to(dtype=model_dtype, device=model_device)
-            memory_write = LlamaCrossAttention(
-                hidden_size=hidden_size,
-                num_heads=num_attention_heads,
-                head_dim=head_dim,
-                num_key_value_heads=num_key_value_heads,
-                dropout=attention_dropout,
-                bias=attention_bias,
-            ).to(dtype=model_dtype, device=model_device)
-            # initial_memory = self.memory.unsqueeze(0).to(dtype=model_dtype, device=model_device)
-            initial_memory = torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size)
+            memory_read = GatingLayer(hidden_size)
+            memory_write = GatingLayer(hidden_size)
+            initial_memory = torch.randn(1, 1, hidden_size) / math.sqrt(hidden_size)
             wrapped_layer = MemoryAugmentedLayer(
                 layer.to(dtype=model_dtype, device=model_device),
                 memory_read.to(dtype=model_dtype, device=model_device),
