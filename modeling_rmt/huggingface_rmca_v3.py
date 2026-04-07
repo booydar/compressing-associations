@@ -75,6 +75,7 @@ class LlamaCrossAttention(nn.Module):
         self.num_key_value_groups = num_heads // self.num_key_value_heads
         self.scaling = self.head_dim**-0.5
         self.attention_dropout = dropout
+        self.temperature = nn.Parameter(torch.tensor(1.0))
 
         self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=bias)
         self.k_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
@@ -110,6 +111,7 @@ class LlamaCrossAttention(nn.Module):
         attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1)) * self.scaling
         if attention_mask is not None:
             attn_weights = attn_weights + attention_mask
+        attn_weights = attn_weights * self.temperature
         attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
         attn_weights = F.dropout(
             attn_weights, p=self.attention_dropout if self.training else 0.0, training=self.training

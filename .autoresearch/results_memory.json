@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_000_baseline",
-    "em": 0.2676,
+    "variant": "iter_007",
+    "em": 0.2698,
     "n_level": 2
   },
   "n_level": 2,
@@ -16,6 +16,93 @@
       "n_level": 2,
       "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_000_baseline",
       "wall_time_min": 9.3
+    },
+    {
+      "id": 1,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 2,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 3,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 4,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 5,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 6,
+      "description": "FAILED: sanity check failed: Expected class 'RMCABase' not found after modification",
+      "hypothesis": {
+        "hypothesis": "Adding layer normalization to memory slot embeddings before attention computation will stabilize the attention distribution and improve exact-match retrieval accuracy.",
+        "target_component": "RMCAMemoryCell",
+        "rationale": "Associative retrieval tasks require discriminative attention over memory slots. Unnormalized memory embeddings can cause attention score instability, leading to diffuse or incorrect slot selection. Layer normalization standardizes the memory representations without adding significant parameters.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the RMCAMemoryCell class. Add a nn.LayerNorm layer with embedding dimension after memory slots are retrieved/encoded but before the cross-attention computation. Apply this normalization to the memory key/value embeddings used in attention scoring."
+      },
+      "em_score": null,
+      "prev_best": 0.2676,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 7,
+      "description": "Adding a learnable temperature parameter to the cross-attention softmax will sharpen attention distributions and improve exact-match retrieval accuracy.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable temperature parameter to the cross-attention softmax will sharpen attention distributions and improve exact-match retrieval accuracy.",
+        "target_component": "compute_attention_weights",
+        "rationale": "Softer attention distributions cause the model to distribute probability mass across multiple memory slots, reducing confidence in correct selections. Sharper attention (via temperature scaling) concentrates probability on the most relevant slot, which is critical for exact-match accuracy in associative retrieval tasks.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable temperature parameter (torch.nn.Parameter initialized to 1.0) to the CrossAttention class. In the compute_attention_weights method, multiply attention scores by this temperature before applying softmax normalization."
+      },
+      "em_score": 0.2698,
+      "prev_best": 0.2676,
+      "verdict": "kept",
+      "n_level": 2,
+      "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_007",
+      "wall_time_min": 26.7
     }
   ]
 }
