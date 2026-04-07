@@ -668,3 +668,10 @@ Better idea: **Add a skip connection from hidden state to memory readout output
 **Rationale:** Standard Transformer attention typically includes bias in linear projections. The current RMCA query projection lacks bias, limiting the model's ability to learn query offsets needed to match keys with non-zero means. This is a small parameter increase (~128 params for d_model=128) with strong theoretical motivation from attention literature.
 
 
+## Iter 55 — kept — EM: 0.2750 (N=2)
+**Hypothesis:** Top-K memory slot selection will reduce noise from irrelevant memory slots during retrieval, improving precision for associative matching.
+**Wall time:** 8.2 min
+**Result:** EM=0.2750 vs prev best=0.2722
+**Rationale:** Cosine similarity (iter_041) normalizes attention scores but the model still attends to all memory slots, introducing noise from irrelevant memories. Top-K selection forces the model to focus on only the most relevant slots (e.g., K=10), which is a standard technique in memory networks to improve retrieval precision. The previous attempt (iter_052) failed due to planner error, not architectural issues.
+
+

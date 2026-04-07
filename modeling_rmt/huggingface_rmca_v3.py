@@ -116,6 +116,17 @@ class RMCAAttention(nn.Module):
         attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1))
         if attention_mask is not None:
             attn_weights = attn_weights + attention_mask
+        
+        # Apply top-k selection to retain only K=10 highest attention scores per query
+        K = 10
+        if attn_weights.shape[-1] > K:
+            topk_values, topk_indices = torch.topk(attn_weights, K, dim=-1)
+            # Create mask for non-top-k positions
+            mask = torch.zeros_like(attn_weights)
+            mask.scatter_(dim=-1, index=topk_indices, value=1.0)
+            # Set non-top-k positions to large negative value
+            attn_weights = attn_weights.masked_fill(mask == 0, -1e9)
+        
         attn_weights = attn_weights / self.attention_scale
         attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
         attn_weights = F.dropout(
