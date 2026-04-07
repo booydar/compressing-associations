@@ -7,28 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 15,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 16,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 17,
       "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 506)\nRaw response:\n{\n  \"hypothesis\": \"Adding a memory slot validity mask that excludes uninitialized slots from cross-attention computation will reduce attention noise and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"Empty memory slots initialized to zeros create spurious attention signals that compete with valid stored associations. Masking out uninitialized slots ensures attention focuses only on written memory content, improving retrieval precision.\",\n  \"instruction\": \"In modeling_rmt/huggingface_rmca_v3.py, modify the RMCAMemory class to: (1) Initialize a validity mask tensor (shape: batch_size, num_memory_slots) of zeros in __init__, (2) Set mask[s,",
       "hypothesis": null,
@@ -659,6 +637,38 @@
       "verdict": "reverted",
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_064",
+      "wall_time_min": 8.0
+    },
+    {
+      "id": 65,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable memory slot importance vector will allow the model to weight different memory slots differently during retrieval, independent of attention scores, improving precision for associative matching.",
+        "target_component": "RMCA.forward",
+        "rationale": "Previous gating attempts focused on value-level or attention-level modifications, but slot-level importance has not been tested. This allows the model to learn which memory slots are more reliable for retrieval, complementing the existing Top-K selection mechanism. The parameter overhead is minimal (one vector per memory slot).",
+        "instruction": "Add a learnable parameter `self.memory_slot_importance` of shape (num_memory_slots,) initialized to zeros. In the memory readout computation after Top-K selection, multiply each selected memory slot's attention weight by its corresponding importance score (exp(importance) to ensure positive scaling). Apply this before computing the final weighted sum of retrieved memory values."
+      },
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 66,
+      "description": "Adding a learnable sigmoid gate on the memory write path will allow the model to control how much new information overwrites existing memory, preserving important associations during training.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable sigmoid gate on the memory write path will allow the model to control how much new information overwrites existing memory, preserving important associations during training.",
+        "target_component": "RMCA._write_memory",
+        "rationale": "Previous gating attempts focused on readout or attention (value gating iter_047, attention scaling iter_046), but memory write gating is fundamentally different. Controlling memory overwrites during the write phase helps preserve critical associative information that might otherwise be lost, which is crucial for retrieval accuracy.",
+        "instruction": "In the _write_memory method of the RMCA class, add a learnable sigmoid gate parameter (nn.Parameter(torch.ones(1))) that multiplies the new memory values before updating the memory slots. This gate should be initialized to 1.0 and learned during training to control how aggressively new information overwrites existing memories."
+      },
+      "em_score": 0.2722,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_066",
       "wall_time_min": 8.0
     }
   ]

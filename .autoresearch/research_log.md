@@ -980,3 +980,14 @@ Actually, looking more carefully at the history, I should propose something genu
 **Rationale:** Single-head attention limits the model's ability to capture multiple aspects of memory associations. Multi-head attention is a standard Transformer technique that allows different attention heads to focus on different retrieval patterns (e.g., exact matches vs. semantic similarity). This change works synergistically with the existing Top-K selection and should improve EM without significantly increasing parameters if total hidden dimension is preserved.
 
 
+## Iter 65 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 66 — reverted — EM: 0.2722 (N=2)
+**Hypothesis:** Adding a learnable sigmoid gate on the memory write path will allow the model to control how much new information overwrites existing memory, preserving important associations during training.
+**Wall time:** 8.0 min
+**Result:** EM=0.2722 vs prev best=0.2750
+**Rationale:** Previous gating attempts focused on readout or attention (value gating iter_047, attention scaling iter_046), but memory write gating is fundamentally different. Controlling memory overwrites during the write phase helps preserve critical associative information that might otherwise be lost, which is crucial for retrieval accuracy.
+
+
