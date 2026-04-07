@@ -1,7 +1,7 @@
 """
 Planner agent.
 
-Input  : program.md content + last N experiment entries from results_memory.json
+Input  : program.md content + last N experiment entries + human_directions.md + results_memory.json
 Output : a JSON hypothesis dict:
   {
     "hypothesis": "One-sentence description of the proposed change",
@@ -14,9 +14,12 @@ import json
 import re
 import sys
 import os
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from llm_client import call_llm
+
+HUMAN_DIRECTIONS_FILE = Path(os.path.dirname(__file__)) / "human_directions.md"
 
 SYSTEM_PROMPT = """\
 You are a research scientist specialising in recurrent neural memory architectures.
@@ -31,6 +34,8 @@ Rules:
 - Do not change the training script or hyperparameters.
 - Prefer changes that have a clear theoretical motivation.
 - Do not repeat a change that has already been tried (see experiment history).
+- HUMAN PRIORITIES: Check the human_directions section. If there are pending suggestions,
+  implement the most recent one unless it has already been tried. Human direction takes precedence.
 
 Respond with ONLY a JSON object, no markdown fences, no extra text:
 {
@@ -47,14 +52,19 @@ def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict) ->
     Raises ValueError if the response cannot be parsed as JSON.
     """
     history_text = _format_history(recent_experiments)
+    human_directions_text = _load_human_directions()
 
     user_content = f"""## Research Program
 {program_md}
 
+## Human Directions (PRIORITY - implement if available)
+{human_directions_text}
+
 ## Recent Experiment History (most recent last)
 {history_text}
 
-Based on the above, propose the next architectural change to try."""
+Based on the above, propose the next architectural change to try.
+If human_directions contains pending suggestions, prioritize implementing the most recent untried one."""
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
@@ -81,6 +91,23 @@ def _format_history(experiments: list[dict]) -> str:
             + (f"\n  hypothesis: {hyp_str}" if hyp_str else "")
         )
     return "\n".join(lines)
+
+
+def _load_human_directions() -> str:
+    """Load human directions file and return the pending suggestions section."""
+    if not HUMAN_DIRECTIONS_FILE.exists():
+        return "(no human directions file found)"
+    
+    content = HUMAN_DIRECTIONS_FILE.read_text()
+    
+    # Extract pending suggestions section
+    pending_match = re.search(r'## Pending Suggestions\n\n(.*?)(?=## |\Z)', content, re.DOTALL)
+    if pending_match:
+        pending_text = pending_match.group(1).strip()
+        if pending_text and pending_text != "(Add your ideas below. Mark as [DONE], [SKIPPED], or [FAILED] when implemented.)":
+            return f"## Pending Human Suggestions\n{pending_text}\n\n## Implementation History\n\n(see below)\n" + content[content.find("## Implementation History"):]
+    
+    return "(no pending suggestions)"
 
 
 def _parse_json_response(raw: str) -> dict:
