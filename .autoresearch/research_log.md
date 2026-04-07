@@ -1066,3 +1066,10 @@ But I need to pick one concrete change. Let me go with **Memory Query
 **Rationale:** Previous gating attempts (value gating iter_047, residual scaling iter_049) did not succeed, but gating specifically the memory readout output before integration with the hidden state is distinct. This allows the model to learn when to trust retrieved memory versus the current hidden state, which is crucial for associative retrieval where memory relevance varies by query.
 
 
+## Iter 69 — reverted — EM: 0.2646 (N=2)
+**Hypothesis:** Applying dropout to memory attention scores before softmax will prevent the model from over-relying on specific memory slots during training, improving generalization for associative retrieval.
+**Wall time:** 8.0 min
+**Result:** EM=0.2646 vs prev best=0.2750
+**Rationale:** Previous attention modifications have focused on scaling and normalization, but dropout regularization on attention scores is untested. This will encourage the model to distribute attention more broadly across relevant slots rather than collapsing to single slots, which is crucial for robust associative retrieval.
+
+

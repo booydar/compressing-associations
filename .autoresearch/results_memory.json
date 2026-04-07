@@ -7,17 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 19,
-      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 20,
       "description": "FAILED: executor error: LLM call failed after 3 retries: Connection error.",
       "hypothesis": {
@@ -675,6 +664,22 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_068",
       "wall_time_min": 8.2
+    },
+    {
+      "id": 69,
+      "description": "Applying dropout to memory attention scores before softmax will prevent the model from over-relying on specific memory slots during training, improving generalization for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Applying dropout to memory attention scores before softmax will prevent the model from over-relying on specific memory slots during training, improving generalization for associative retrieval.",
+        "target_component": "RMCA.forward",
+        "rationale": "Previous attention modifications have focused on scaling and normalization, but dropout regularization on attention scores is untested. This will encourage the model to distribute attention more broadly across relevant slots rather than collapsing to single slots, which is crucial for robust associative retrieval.",
+        "instruction": "Add dropout to memory attention scores before applying softmax in the cross-attention computation. Insert `self.dropout(attn_scores)` after computing attention scores but before the softmax operation in the memory attention mechanism within RMCA.forward method."
+      },
+      "em_score": 0.2646,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_069",
+      "wall_time_min": 8.0
     }
   ]
 }
