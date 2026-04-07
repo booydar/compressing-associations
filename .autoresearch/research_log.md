@@ -507,3 +507,71 @@ Thinking Process:
 **Rationale:** Cosine similarity attention (iter_041) improved retrieval precision by normalizing query-key interactions, but the model may still retrieve noisy values from irrelevant memory slots. A learned gating mechanism on the output values allows the model to learn which retrieved memories to trust, complementing the attention score normalization without disrupting the successful cosine similarity mechanism.
 
 
+## Iter 48 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.
+
+Looking at the history:
+- Current best EM: 0.2722 (iter_041 - cosine similarity attention)
+- Recent iterations (43-47) mostly reverted or failed:
+  - iter_043: LayerNorm after cross-attention (EM=0.2658, reverted)
+  - iter_046: Learnable attention scaling on cosine (EM=0.2664, reverted)
+  - iter_047: Value gating mechanism (EM=0.2668, reverted)
+
+The best performing configuration is still iter_041 (cosine similarity attention with fixed temperature from iter_027).
+
+What hasn't been tried successfully?
+1. Memory slot gating/selection (Top-K)
+2. Multiple attention heads (if not already present)
+3. Skip connections on memory readout (iter_40 failed due to planner error)
+4. Pre-LayerNorm architecture
+5. Query-Key normalization together
+6. Memory write mechanism improvements
+7. Positional encoding improvements for retrieval
+
+Since cosine similarity worked (iter_041), the attention scores are normalized. The next logical step is to improve how the retrieved information is integrated into the hidden state.
+
+A strong theoretical candidate is **Residual Connection on Memory Readout**. This ensures the original hidden state is preserved while adding memory information. This is a standard Transformer pattern that may have been omitted in RMCA's custom memory layer.
+
+Wait, iter_40 tried "residual connection around the cross-attention output before memory readout" but failed due to planner error, not execution. So it hasn't been truly tested.
+
+However, I notice that most recent changes have been reverted, meaning they hurt performance. I need to be more conservative.
+
+Looking at the cosine similarity success - it normalizes query-key interactions. The next issue might be how the memory is stored or updated.
+
+
+For associative retrieval, ensuring the model can distinguish between different memory slots is crucial. **Memory Slot Positional Encoding** could help - adding learnable positional embeddings to memory slots so the model knows which slot is which.
+
+Alternatively, **Cross-Attention with Multi-Query** or improving the query projection could help.
+
+Actually, a simpler change: **Add a bias term to the cross-attention output projection**. This gives the model more flexibility in how it integrates retrieved memory.
+
+Let me propose: **Add a residual connection around the memory readout (cross-attention block)**. This preserves the original hidden state while adding memory information - a fundamental Transformer pattern that may have been omitted.
+
+Since iter_40 failed due to planner error rather than architectural issues, this residual approach is still untested and worth pursuing. The residual connection would let the model decide how much to rely on retrieved memory versus the current state.
+
+I should also consider **Memory Slot Gating** - a sigmoid gate that controls how much of each retrieved slot contributes to the final output. This allows the model to selectively use memory information rather than accepting all retrieved values equally.
+
+Another option is **Query Projection with LayerNorm** - normalizing queries before attention scoring can improve stability. But iter_35 already attempted LayerNorm on query projection and failed.
+
+I'll go with **Residual Connection on Memory Readout** since it's a well-established Transformer pattern that hasn't been properly tested yet, and the previous attempt failed due to a planner error rather than a fundamental design issue.
+
+Actually, I should reconsider the direction. Since cosine similarity attention worked well, the next bottleneck is likely how retrieved information integrates with the hidden state. A **Gated Memory Fusion** mechanism would let the model learn how much retrieved memory to trust versus the current hidden state - this is more targeted than a simple residual connection and directly addresses the retrieval integration problem.
+
+But I notice recent changes have been reverting, suggesting the architecture is fragile. I need something more conservative. **Pre-LayerNorm architecture** (normalizing before attention instead of after) is a well-established improvement in Transformers that improves gradient flow and stability. This is a standard change that's less likely to break things than gating mechanisms.
+
+However, since cosine similarity already normalized the attention scores, I should focus on what comes after. **Add a learnable scaling factor to the residual connection** - this lets the model control how much retrieved memory influences the hidden state, which is more targeted than a raw residual connection and builds on the successful cosine similarity foundation.
+
+Actually, the most fundamental issue might be how memory slots are distinguished. **Add learnable positional embeddings to memory slots** so the model knows which slot is which - this helps with slot-specific associations in associative retrieval.
+
+Let me go with **Add LayerNorm before cross-attention** (Pre-LN). This is a standard Transformer improvement that stabil
+
+
+## Iter 49 — reverted — EM: 0.2722 (N=2)
+**Hypothesis:** Adding a learnable residual scaling parameter to the memory readout path will allow the model to dynamically control how much retrieved memory influences the hidden state, improving associative retrieval precision.
+**Wall time:** 7.7 min
+**Result:** EM=0.2722 vs prev best=0.2722
+**Rationale:** Recent gating mechanisms have failed, but a simple learnable scaling parameter on the residual connection (distinct from iter_40's failed attempt due to planner error) provides flexibility for the model to tune memory integration strength. This builds on the successful cosine similarity foundation while giving the network control over memory influence without the complexity of full gating mechanisms.
+
+
