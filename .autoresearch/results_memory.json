@@ -7,39 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 8,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 9,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 10,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 11,
       "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 221)\nRaw response:\n{\n  \"hypothesis\": \"Adding a gating mechanism to memory slot updates will selectively preserve stable memory representations and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"For associative",
       "hypothesis": null,
@@ -645,6 +612,44 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_057",
       "wall_time_min": 8.0
+    },
+    {
+      "id": 58,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose ONE concrete architectural change to improve RMCA's exact-match accuracy on the associative retrieval task.\n\nLooking at the experiment history:\n- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)\n- N-level: 2\n- Many changes have been tried and reverted or failed\n\nKey successful changes:\n- iter_027: Temperature scaling (fixed) - worked\n- iter_041: Cosine Similarity Attention - worked\n- iter_055: Top-K memory slot selection - worked (CURRENT BEST)\n\nKey failed/reverted changes:\n- LayerNorm after cross-attention (iter_043)\n- Learnable attention scaling (iter_046)\n- Value gating (iter_047)\n- Learnable residual scaling (iter_049)\n- Pre-LN architecture (iter_051)\n- Query bias (iter_054)\n- Residual connection on memory readout (iter_057)\n\nLooking at what hasn't been tried:\n1. Memory write mechanism improvements\n2. Memory slot positional embeddings (iter_050 failed but may be retryable)\n3. Query-Key normalization (different from cosine similarity)\n4. Memory slot content normalization\n5. Multiple attention heads\n6. Skip connections on memory readout (iter_057 tried this)\n\nSince Top-K selection is currently working (iter_055), the next logical improvement could be to improve how the selected memory slots are processed after selection. \n\nA promising direction that hasn't been tried is **Memory Slot Content Normalization** - normalizing each memory slot vector before attention scoring. This ensures all memory slots have comparable magnitudes for fair comparison, which is especially important when using Top-K selection to ensure the K most relevant slots are truly the most relevant.\n\nAnother option is **Attention Score Smoothing** or **Attention Temperature Annealing** during training, but that's more of a training change than architecture.\n\n\nI could try **Memory Slot Content Normalization** applied to the memory values before they're used in attention scoring. This is distinct from cosine similarity (which normalizes the query-key dot product) and Top-K (which selects slots). It ensures all memory slots are on comparable scales, preventing high-magnitude slots from dominating attention scores regardless of relevance.\n\nHowever, I should consider what hasn't been explored yet. Since the model uses cosine similarity for attention and Top-K for slot selection, the next bottleneck might be how retrieved information integrates with the hidden state. A **Memory Readout Gating** mechanism could help - a sigmoid gate applied to the retrieved memory output before combining it with the hidden state, allowing the model to learn how much retrieved memory to trust versus the current state.\n\nActually, value gating was already attempted in iter_047. Let me think of something genuinely new. **Memory Slot Content Normalization** before attention scoring hasn't been properly tested yet. This would normalize each memory slot's value vector to unit length, ensuring fair comparison across slots regardless of their magnitude.\n\nAlternatively, I could try **Query-Key Dot Product with Additive Bias** - adding a learnable bias term to the attention score computation itself, not just the projection layers. This gives the model more flexibility in how it computes attention scores beyond what cosine similarity alone provides.\n\nFor associative retrieval tasks, another strong candidate is **Memory Slot Hard Selection** - using hard attention instead of soft attention for the selected Top-K slots. This would make the selection more decisive and potentially improve precision when retrieving specific associations.\n\nHowever, hard attention is typically non-differentiable and would require Gumbel-Softmax or similar techniques to work with backpropagation. A simpler alternative might be **Memory Readout with Gated Skip Connection** - applying a learned gate to the residual connection itself, controlling how much of the original hidden state is preserved alongside the retrieved memory. This differs from iter_057's residual connection approach by adding explicit gating control over the skip path.\n\nActually, since iter_057 already tested a residual connection that was reverted, I should explore something different. **Memory Slot Content Normalization** before attention scoring seems more promising - normalizing each memory slot to unit length ensures fair comparison across slots, which is especially important when using Top-K selection to prevent high-magnitude slots from dominating attention scores regardless of relevance.\n\nThe implementation would add LayerNorm to memory keys before they're used in the attention computation, keeping the parameter overhead minimal while potentially improving how the model distinguishes between memory slots.\n\nHowever, I should reconsider whether this is truly novel - cosine similarity attention already handles normalization, though it normalizes the query-key interaction rather than the keys themselves. Memory slot normalization could still provide a distinct benefit by ensuring all slots have comparable magnitudes before attention scoring.\n\nAnother angle worth exploring:",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 59,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 688)\nRaw response:\n{\n  \"hypothesis\": \"Adding a learnable sigmoid gate on the memory readout output will allow the model to dynamically control how much retrieved memory influences the hidden state for each query, improving associative retrieval precision.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"Previous attempts at residual scaling (iter_049) and value gating (iter_047) did not succeed, but gating specifically the memory readout output before integration with the hidden state is distinct. This allows the model to learn when to trust retrieved memory versus the current hidden state, which is crucial for associative retrieval where memory relevance varies by query.\",\n  \"instruction\": \"In",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 60,
+      "description": "Normalizing each memory slot's key vector before attention scoring will ensure fair comparison across slots, preventing high-magnitude slots from dominating attention regardless of relevance.",
+      "hypothesis": {
+        "hypothesis": "Normalizing each memory slot's key vector before attention scoring will ensure fair comparison across slots, preventing high-magnitude slots from dominating attention regardless of relevance.",
+        "target_component": "RMCA.forward",
+        "rationale": "While cosine similarity normalizes the query-key dot product, individual memory slot keys may still have varying magnitudes that bias attention scores. Applying LayerNorm to memory keys before attention computation ensures all slots are on comparable scales, which is especially important with Top-K selection to ensure the K most relevant slots are truly the most relevant.",
+        "instruction": "In the RMCA.forward method, after computing memory keys (before the attention score computation), apply LayerNorm to normalize each memory slot's key vector across the hidden dimension. This should be done in-place or by creating a normalized copy that is then used for attention score computation, without changing the original memory representation."
+      },
+      "em_score": 0.2628,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_060",
+      "wall_time_min": 8.4
     }
   ]
 }
