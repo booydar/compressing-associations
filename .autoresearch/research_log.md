@@ -10,3 +10,9 @@ Format per entry:
 **Rationale:** ...
 
 ---
+## Iter 0 — kept — EM: 0.2676 (N=2)
+**Hypothesis:** baseline — exact copy of v2
+**Wall time:** 9.3 min
+**Result:** EM=0.2676 vs prev best=-1.0000
+
+

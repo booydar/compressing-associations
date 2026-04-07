@@ -1,5 +1,21 @@
 {
-  "current_best": {"variant": "none", "em": -1.0, "n_level": 0},
-  "n_level": null,
-  "experiments": []
+  "current_best": {
+    "variant": "iter_000_baseline",
+    "em": 0.2676,
+    "n_level": 2
+  },
+  "n_level": 2,
+  "experiments": [
+    {
+      "id": 0,
+      "description": "baseline \u2014 exact copy of v2",
+      "hypothesis": null,
+      "em_score": 0.2676,
+      "prev_best": -1.0,
+      "verdict": "baseline",
+      "n_level": 2,
+      "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_000_baseline",
+      "wall_time_min": 9.3
+    }
+  ]
 }
