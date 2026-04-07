@@ -834,3 +834,78 @@ Raw response:
 **Rationale:** While cosine similarity normalizes the query-key dot product, individual memory slot keys may still have varying magnitudes that bias attention scores. Applying LayerNorm to memory keys before attention computation ensures all slots are on comparable scales, which is especially important with Top-K selection to ensure the K most relevant slots are truly the most relevant.
 
 
+## Iter 61 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.
+
+Looking at the experiment history:
+- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)
+- N-level: 2
+- Many changes have been tried and reverted or failed
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked
+- iter_055: Top-K memory slot selection - worked (CURRENT BEST)
+
+Key failed/reverted changes:
+- LayerNorm after cross-attention (iter_043)
+- Learnable attention scaling (iter_046)
+- Value gating (iter_047)
+- Learnable residual scaling (iter_049)
+- Pre-LN architecture (iter_051)
+- Query bias (iter_054)
+- Residual connection on memory readout (iter_057)
+- Memory slot content normalization (iter_060)
+
+Looking at what hasn't been properly tried:
+1. Memory write mechanism improvements
+2. Query-Key normalization together (not just cosine similarity)
+3. Multiple attention heads (if not already present)
+4. Memory slot positional embeddings (iter_050 failed but may be retryable)
+5. Hard attention on Top-K slots
+6. Memory readout with different aggregation (mean vs attention)
+
+Since Top-K selection is working (iter_055), the next logical improvement could be to improve how the SELECTED memory slots are processed. One approach that hasn't been tried is **Hard Attention on Top-K Slots** - instead of using softmax over the Top-K selected slots, use uniform averaging or hard selection.
+
+Another promising direction: **Memory Slot Positional Embeddings** - adding positional information to memory slots can help the model distinguish when memories were written, which is important for associative retrieval where temporal order might matter.
+
+However, iter_050 already tried positional embeddings and failed. Let me think of something genuinely new.
+
+
+ 
+I should explore **Multi-Head Cross-Attention** for memory retrieval. Multiple heads can capture different aspects of memory associations - one head might focus on exact matches while another captures semantic similarity. This is a standard Transformer technique that hasn't been properly tested yet.
+
+Actually, looking at the code structure, I should check if multi-head is already implemented. If it's single-head, adding multiple heads would be a significant architectural change.
+
+Another option: **Attention Score Re-weighting based on Slot Position** - give different weights to memory slots based on their position in memory, potentially using a learned position bias.
+
+Or **Memory Readout with Multiple Aggregation Methods** - combine attention-weighted readout with simple averaging of Top-K slots.
+
+Given the current success with Top-K selection, I should focus on improving how those selected slots are processed. A **Memory Slot Positional Bias** added to attention scores could help the model account for when memories were stored, which matters for retrieval order.
+
+Actually, I think the most promising untested direction is **Multi-Scale Memory Readout** - retrieve memory at different temperatures and combine the results. This gives the model flexibility to use both precise and fuzzy matches.
+
+But that's complex. Let me go with something simpler: **Add a learned memory slot importance vector** that scales each slot's contribution independently of attention scores. This is distinct from value gating (iter_047) because it's slot-level rather than value-level.
+
+Wait, iter_060 just tried memory slot normalization. Let me think of something different.
+
+I'll propose **Query-Key Normalization with Learnable Temperature** - normalize both query and key before dot product, with a learnable temperature parameter for fine-grained control. This differs from cosine similarity (iter_041) which doesn't have a learnable temperature.
+
+Actually, I should focus on what would most directly help associative retrieval. The model needs to match queries to the right stored memories. One thing that hasn't been tried is **Memory Slot Attention Dropout** - apply dropout to memory attention to prevent over-reliance on specific slots during training.
+
+But a more impactful change: **Add a memory query projection layer** that transforms the hidden state into a query vector with different dimensionality than the memory keys. This gives more flexibility in how queries are formed.
+
+I'll go with **Query-Key Normalization** (normalize both vectors before dot product) combined with a **learnable temperature** for the attention scores. This is distinct from the existing cosine similarity approach because it normalizes inputs rather than the result, and the temperature gives fine-grained control over attention sharpness.
+
+Actually, let me propose something more novel: **Memory Slot Readout Gating** - a sigmoid gate
+
+
+## Iter 62 — reverted — EM: 0.2696 (N=2)
+**Hypothesis:** Adding a learnable temperature parameter to the softmax over Top-K selected attention scores will provide fine-grained control over attention sharpness after slot selection, improving retrieval precision.
+**Wall time:** 5.8 min
+**Result:** EM=0.2696 vs prev best=0.2750
+**Rationale:** Top-K selection (iter_055) is working but the softmax over selected slots may be too sharp or too soft. A learnable temperature parameter allows the model to dynamically adjust attention sharpness after selection, which is distinct from global temperature scaling (iter_027) and provides targeted control over the final memory readout distribution.
+
+
