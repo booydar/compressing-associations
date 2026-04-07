@@ -18,7 +18,7 @@ _MAX_RETRIES = 3
 _RETRY_BACKOFF_SEC = 5
 
 
-def call_llm(provider_cfg: dict, messages: list[dict], max_tokens: int = 4096) -> str:
+def call_llm(provider_cfg: dict, messages: list[dict], max_tokens: int = 32000) -> str:
     """
     Send a chat completion request and return the assistant reply as a string.
 
@@ -116,7 +116,19 @@ def _call_openai_compat(
         messages=messages,
         max_tokens=max_tokens,
     )
-    return response.choices[0].message.content
+    msg = response.choices[0].message
+    content = msg.content
+
+    # Qwen3 / thinking models sometimes put output in reasoning_content only
+    if not content:
+        content = getattr(msg, "reasoning_content", None)
+
+    if not content:
+        raise RuntimeError(
+            f"Model returned empty content (finish_reason={response.choices[0].finish_reason!r}). "
+            "Check that the model is loaded and max_tokens is sufficient."
+        )
+    return content
 
 
 def _build_base_url(provider_cfg: dict) -> str:
