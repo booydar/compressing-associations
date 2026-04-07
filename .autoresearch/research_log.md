@@ -500,3 +500,10 @@ Thinking Process:
 **Rationale:** Cosine similarity attention (iter_041) improved EM by normalizing magnitude, but used default scaling. A learnable scale parameter allows adaptive attention concentration, similar to CLIP's logit_scale, enabling the model to learn optimal retrieval specificity for different associations without parameter explosion (~1-2 parameters).
 
 
+## Iter 47 — reverted — EM: 0.2668 (N=2)
+**Hypothesis:** Adding a learnable value gating mechanism to modulate retrieved memory values based on attention confidence will filter out noisy retrievals and improve associative matching precision.
+**Wall time:** 8.2 min
+**Result:** EM=0.2668 vs prev best=0.2722
+**Rationale:** Cosine similarity attention (iter_041) improved retrieval precision by normalizing query-key interactions, but the model may still retrieve noisy values from irrelevant memory slots. A learned gating mechanism on the output values allows the model to learn which retrieved memories to trust, complementing the attention score normalization without disrupting the successful cosine similarity mechanism.
+
+

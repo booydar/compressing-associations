@@ -587,6 +587,22 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_046",
       "wall_time_min": 7.7
+    },
+    {
+      "id": 47,
+      "description": "Adding a learnable value gating mechanism to modulate retrieved memory values based on attention confidence will filter out noisy retrievals and improve associative matching precision.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable value gating mechanism to modulate retrieved memory values based on attention confidence will filter out noisy retrievals and improve associative matching precision.",
+        "target_component": "RMCA.forward or cross_attention method",
+        "rationale": "Cosine similarity attention (iter_041) improved retrieval precision by normalizing query-key interactions, but the model may still retrieve noisy values from irrelevant memory slots. A learned gating mechanism on the output values allows the model to learn which retrieved memories to trust, complementing the attention score normalization without disrupting the successful cosine similarity mechanism.",
+        "instruction": "In the cross-attention computation within RMCA.forward, after computing the attention-weighted value sum (output of attention), add a learnable gating layer: create a learnable parameter 'value_gate' (initially 1.0 or sigmoid-initialized), compute gate = sigmoid(value_gate * attention_scores), apply gate to the retrieved values before returning. This should be a small learnable bias/scaling per slot or per attention head that modulates the retrieved memory values based on attention confidence."
+      },
+      "em_score": 0.2668,
+      "prev_best": 0.2722,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_047",
+      "wall_time_min": 8.2
     }
   ]
 }
