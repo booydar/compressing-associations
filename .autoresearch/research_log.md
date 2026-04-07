@@ -332,3 +332,60 @@ Raw response:
 **Rationale:** Associative retrieval requires precise matching between queries and stored memory keys. Dot-product attention can be sensitive to the magnitude of representations, potentially causing irrelevant slots with larger norms to dominate attention. Cosine similarity normalizes vectors before computing attention scores, focusing purely on directional alignment which is more appropriate for content-based retrieval.
 
 
+## Iter 42 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.
+Looking at the history:
+- Current best EM: 0.2722 (iter_041)
+- iter_041: Replaced dot-product attention with cosine similarity attention. This improved EM from 0.2706 (iter_027) to 0.2722.
+- Previous iterations (28-40) mostly failed or had issues.
+- Human directions: None pending.
+
+The current state shows that cosine similarity attention (iter_041) was the most successful change so far, slightly improving over temperature scaling (iter_027).
+The EM is still very low (0.2722) for N=2. We need to push this higher to reach the goal of EM >= 0.99 eventually, but for now, we need incremental improvements.
+
+What else can improve associative retrieval?
+1.  **Memory Content Gating**: Allow the model to decide how much of the retrieved memory to use vs. the current hidden state.
+2.  **Multiple Query Heads**: If not already present, multi-head attention could help. But RMCA might already have this.
+3.  **Softmax Temperature**: iter_027 tried temperature scaling. iter_041 changed the attention mechanism itself.
+4.  **Memory Update Mechanism**: How memory is written. If retrieval is good but memory is noisy, it won't help. But the task is retrieval-focused.
+5.  **Attention Masking**: Ensure the model doesn't attend to irrelevant slots.
+6.  **Query-Key Normalization**: iter_39 tried LayerNorm on keys (failed). iter_35 tried LayerNorm on query (failed).
+7.  **Gating on Memory Slots**: A learnable gate per slot to filter out irrelevant memories before aggregation.
+8.  **Residual on Readout**: iter_40 tried residual on cross-attention output (failed).
+9.  **Memory Slot Gating**: Apply a sigmoid gate to the memory values after retrieval to suppress noise.
+10. **Learnable Query Projection Bias**: Add bias to the query projection.
+
+Given iter_041 succeeded with cosine similarity, which normalizes magnitude, the next logical step is to ensure the *values* retrieved are weighted appropriately. Cosine similarity handles the *score* normalization, but the aggregation of values is still linear.
+A common technique in memory networks is **Gated Attention** or **Value Gating**, where the retrieved values are modulated by a learned gate based on the query-memory similarity. This allows the model to learn to "trust" certain matches more.
+Alternatively, since cosine similarity was used, maybe adding a **Learnable Scaling Factor** (similar to temperature but learned) could fine-tune the concentration of attention. But iter_027 did temperature.
+Another idea: **Memory Slot Pruning/Selection**. If the model attends to all slots, it might be noisy. Top-K attention could help.
+However, a simpler change is **Add LayerNorm after the Cross-Attention output** (before the feed-forward or combination). This is a standard Transformer practice (Pre-Norm or Post-Norm). If RMCA uses Post-Norm, maybe Pre-Norm is better? Or vice versa.
+Let's look at what hasn't been tried successfully.
+- LayerNorm on keys (iter_39) - failed experiment.
+- Residual on readout (iter_40) - failed planner.
+- Cosine Similarity (iter_41) - succeeded, EM=0.2722.
+
+Since cosine similarity worked, the magnitude of keys/queries is now normalized. The next issue might be how the attention weights are combined with values or how the memory is integrated.
+A robust change is adding **Layer Normalization after the cross-attention block output**. This stabilizes the hidden state representation after retrieval, making the subsequent processing more stable. This is a standard Transformer component often omitted in custom memory layers.
+Rationale: Cosine similarity fixes the attention scores, but the output of the attention mechanism (the weighted sum of values) can still vary in magnitude, causing instability in downstream layers. LayerNorm here normalizes the retrieved representation, consistent with iter_027's success on attention stability.
+
+Wait, I need to check if this has been tried.
+iter_30: LayerNorm on memory slots before cross-attention.
+iter_35: LayerNorm on query projection.
+iter_39: LayerNorm on keys.
+None of these are "LayerNorm after cross-attention output".
+This is a distinct change.
+
+Let's refine the instruction to be very clear for the code editor.
+Target: `RMCA.forward` or
+
+
+## Iter 43 — reverted — EM: 0.2658 (N=2)
+**Hypothesis:** Adding Layer Normalization after the cross-attention output will stabilize the retrieved memory representation and improve gradient flow for associative retrieval.
+**Wall time:** 8.2 min
+**Result:** EM=0.2658 vs prev best=0.2722
+**Rationale:** While cosine similarity (iter_041) normalizes attention scores, the weighted value output can still vary in magnitude. LayerNorm stabilizes this representation, following successful transformer practices. This adds minimal parameters (~128 for hidden_size=128).
+
+
