@@ -378,30 +378,40 @@ def _run_iter(
         print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
         description = hypothesis.get("hypothesis", f"iter {iter_id}")
 
-        # ── Executor ──
-        print("[executor] applying change...")
+        # ── Executor + sanity (with retries) ──
+        N_EXECUTOR_RETRIES = 4
         current_code = MODEL_FILE.read_text()
-        try:
-            new_code = execute(hypothesis, current_code, executor_cfg)
-        except Exception as e:
-            print(f"[executor] ERROR: {e}")
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor error: {e}", hypothesis)
-            save_memory(memory)
-            return
+        new_code = None
+        last_error: str | None = None
 
-        # ── Sanity check ──
-        print("[sanity] checking modified code...")
-        try:
-            sanity_check(new_code)
-        except Exception as e:
-            print(f"[sanity] FAILED: {e}")
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"sanity check failed: {e}", hypothesis)
+        for attempt in range(1, N_EXECUTOR_RETRIES + 1):
+            print(f"[executor] applying change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
+            try:
+                new_code = execute(hypothesis, current_code, executor_cfg, error_context=last_error)
+            except Exception as e:
+                last_error = f"Executor error: {e}"
+                print(f"[executor] ERROR: {e}")
+                continue
+
+            print("[sanity] checking modified code...")
+            try:
+                sanity_check(new_code)
+                print("[sanity] OK")
+                break  # success
+            except Exception as e:
+                last_error = f"Sanity check failed: {e}"
+                print(f"[sanity] FAILED (attempt {attempt}): {e}")
+                new_code = None
+                continue
+        else:
+            # All attempts exhausted
+            print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
+            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/sanity failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
             save_memory(memory)
             return
 
         MODEL_FILE.write_text(new_code)
         change_applied = True
-        print("[sanity] OK")
 
     # ── Run experiment ──
     t0 = time.time()

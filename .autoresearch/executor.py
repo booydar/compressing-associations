@@ -32,21 +32,33 @@ Rules:
 - The returned file must be syntactically valid Python."""
 
 
-def execute(hypothesis: dict, model_file_content: str, provider_cfg: dict) -> str:
+def execute(
+    hypothesis: dict,
+    model_file_content: str,
+    provider_cfg: dict,
+    error_context: str | None = None,
+) -> str:
     """
     Call the executor LLM to apply the hypothesis change to the model file.
     Returns the complete new file content as a string.
     Raises SyntaxError if the returned code is not valid Python.
+
+    error_context: if a previous attempt failed, pass the error message here so
+                   the LLM can fix the specific issue.
     """
     instruction = hypothesis.get("instruction", "")
     rationale = hypothesis.get("rationale", "")
     target = hypothesis.get("target_component", "")
 
+    error_section = ""
+    if error_context:
+        error_section = f"\n## Previous attempt failed — fix this\n{error_context}\n"
+
     user_content = f"""## Change to implement
 Target component: {target}
 Rationale: {rationale}
 Instruction: {instruction}
-
+{error_section}
 ## Current model file (modeling_rmt/huggingface_rmca_v3.py)
 ```python
 {model_file_content}
@@ -59,7 +71,7 @@ Return the complete modified file."""
         {"role": "user", "content": user_content},
     ]
 
-    raw = call_llm(provider_cfg, messages, max_tokens=8192)
+    raw = call_llm(provider_cfg, messages, max_tokens=32000)
     code = _strip_fences(raw)
     _validate_syntax(code)
     return code

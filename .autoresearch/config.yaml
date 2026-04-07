@@ -5,14 +5,25 @@ llm:
 
   planner:
     provider: local
-    model: unsloth/Qwen3.5-27B-Q6K
+    model: unsloth/Qwen3.5-122B-A10B-GGUF
     host: 127.0.0.1
     port: 8117
   executor:
     provider: local
-    model: unsloth/Qwen3.5-27B-Q6K
+    model: unsloth/Qwen3.5-122B-A10B-GGUF
     host: 127.0.0.1
     port: 8117
+
+  # planner:
+  #   provider: local
+  #   model: unsloth/Qwen3.5-27B-Q6K
+  #   host: 127.0.0.1
+  #   port: 8117
+  # executor:
+  #   provider: local
+  #   model: unsloth/Qwen3.5-27B-Q6K
+  #   host: 127.0.0.1
+  #   port: 8117
 
   # planner:
   #   provider: anthropic          # anthropic | openai | local | cursor
