@@ -1,0 +1,85 @@
+# Autoresearch configuration
+# Copy .env.template to .env and fill in API keys before running.
+
+llm:
+  planner:
+    provider: anthropic          # anthropic | openai | local | cursor
+    model: claude-opus-4-5
+    api_key_env: ANTHROPIC_API_KEY
+
+  executor:
+    provider: anthropic
+    model: claude-sonnet-4-5
+    api_key_env: ANTHROPIC_API_KEY
+
+  # ── OpenAI ───────────────────────────────────────────────────────────────────
+  # planner:
+  #   provider: openai
+  #   model: gpt-4o
+  #   api_key_env: OPENAI_API_KEY
+
+  # ── Cursor bridge (uses your Cursor subscription — all models, no extra cost)
+  # Requires cursor-openai-bridge to be running. See cursor_bridge section below.
+  # planner:
+  #   provider: cursor
+  #   model: claude-opus-4-5    # any model from: node <bridge_bin> --list-models
+  #   host: 127.0.0.1
+  #   port: 8765
+
+  # ── LMStudio (host: 127.0.0.1, port: 1234) ──────────────────────────────────
+  # Available models (from ~/.opencode/opencode.json):
+  #   qwen3.5-9b
+  #   qwen_qwen3.5-27b@q4_k_m
+  #   qwen_qwen3.5-27b@q5_k_m
+  #   lmstudio-community/Qwen3.5-27B-GGUF
+  #   openai/gpt-oss-20b
+  # executor:
+  #   provider: local
+  #   model: qwen3.5-9b
+  #   host: 127.0.0.1
+  #   port: 1234
+
+  # ── llama.cpp server (host: 127.0.0.1, port: 8117) ──────────────────────────
+  # Available models (from ~/.opencode/opencode.json):
+  #   unsloth/Qwen3.5-27B-Q6K
+  #   bartowski/Qwen_Qwen3.5-27B-GGUF
+  # executor:
+  #   provider: local
+  #   model: unsloth/Qwen3.5-27B-Q6K
+  #   host: 127.0.0.1
+  #   port: 8117
+
+experiment:
+  max_iters: 50
+  max_steps: 5000
+  eval_steps: 100
+  logging_steps: 50
+  warmup_steps: 200
+  early_stopping_patience: 20
+  n_layer: 4
+  n_head: 4
+  n_embd: 128
+  n_mem_tokens: 8
+  n_keys: 2
+  n_values: 2
+  pairs_per_segment: 2
+  base_model: llama
+  lr: 3e-4
+  batch_size: 64          # NP=1, per_device_bs=64
+  n_start: 2              # starting N-level (number of KV pairs)
+  em_threshold: 0.99      # EM required to advance to next N-level
+
+git:
+  auto_commit: true
+
+env_file: .autoresearch/.env
+
+# ── Cursor bridge (optional) ──────────────────────────────────────────────────
+# Exposes Cursor IDE models as an OpenAI-compatible API on localhost.
+# Set auto_start: true to have autoresearch.py start it automatically.
+cursor_bridge:
+  bin: /Users/bulatov/Desktop/projects/opencode/tools/cursor-opencode-auth/packages/cursor-openai-bridge/dist/cli.js
+  host: 127.0.0.1
+  port: 8765
+  auto_start: false   # set true once bridge is built and you want it auto-launched
+  workspace: /Users/bulatov/Desktop/lab/autoresearch
