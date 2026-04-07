@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_007",
-    "em": 0.2698,
+    "variant": "iter_027",
+    "em": 0.2706,
     "n_level": 2
   },
   "n_level": 2,
@@ -103,6 +103,236 @@
       "n_level": 2,
       "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_007",
       "wall_time_min": 26.7
+    },
+    {
+      "id": 8,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 9,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 10,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 11,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 221)\nRaw response:\n{\n  \"hypothesis\": \"Adding a gating mechanism to memory slot updates will selectively preserve stable memory representations and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"For associative",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 12,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 13,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 241)\nRaw response:\n{\n  \"hypothesis\": \"Adding a mask that excludes uninitialized or empty memory slots from cross-attention computation will reduce attention noise and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"Empty memory",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 14,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 15,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 16,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 17,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 506)\nRaw response:\n{\n  \"hypothesis\": \"Adding a memory slot validity mask that excludes uninitialized slots from cross-attention computation will reduce attention noise and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"Empty memory slots initialized to zeros create spurious attention signals that compete with valid stored associations. Masking out uninitialized slots ensures attention focuses only on written memory content, improving retrieval precision.\",\n  \"instruction\": \"In modeling_rmt/huggingface_rmca_v3.py, modify the RMCAMemory class to: (1) Initialize a validity mask tensor (shape: batch_size, num_memory_slots) of zeros in __init__, (2) Set mask[s,",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 18,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 19,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 20,
+      "description": "FAILED: executor error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": {
+        "hypothesis": "Adding learnable memory position embeddings to the cross-attention keys and values will help the model distinguish between different memory slots and improve associative retrieval accuracy.",
+        "target_component": "RMCAMemory",
+        "rationale": "Without explicit position information, the model may confuse which memory slot contains which association, especially when multiple similar items are stored. Adding position embeddings provides a unique identifier for each slot, enabling precise key-value matching during retrieval.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the RMCAMemory class to: (1) Add a learnable parameter self.memory_pos_embeddings = nn.Parameter(torch.randn(num_memory_slots, hidden_dim)) in __init__, (2) In the forward method, add self.memory_pos_embeddings to the memory keys and values before computing cross-attention: keys = memory_keys + self.memory_pos_embeddings, values = memory_values + self.memory_pos_embeddings"
+      },
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 21,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 22,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 23,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 24,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 25,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 26,
+      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2698,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 27,
+      "description": "Adding a learnable temperature scaling parameter to the cross-attention mechanism will sharpen attention distributions and improve retrieval precision for associative tasks.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable temperature scaling parameter to the cross-attention mechanism will sharpen attention distributions and improve retrieval precision for associative tasks.",
+        "target_component": "RMCAAttention",
+        "rationale": "The current cross-attention softmax may produce overly diffuse attention distributions that dilute signals from the correct memory slot. A learnable temperature parameter allows the model to dynamically sharpen attention, focusing more precisely on relevant memory entries during retrieval.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the RMCAAttention class: (1) Add a learnable parameter 'attention_scale' initialized to 1.0 in __init__, (2) Modify the attention computation in forward method to divide attention logits by attention_scale before softmax, (3) Ensure attention_scale is registered as a parameter so it can be optimized during training."
+      },
+      "em_score": 0.2706,
+      "prev_best": 0.2698,
+      "verdict": "kept",
+      "n_level": 2,
+      "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_027",
+      "wall_time_min": 10.8
     }
   ]
 }

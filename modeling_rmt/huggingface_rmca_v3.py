@@ -47,7 +47,7 @@ class RMCAConfig(PretrainedConfig):
 from transformers.models.llama.modeling_llama import apply_rotary_pos_emb
 
 
-class LlamaCrossAttention(nn.Module):
+class RMCAAttention(nn.Module):
     """Cross-attention with same structure as Llama (q/k/v/o, optional RoPE). Returns (attn_output, attn_weights).
 
     Differences from original Llama self-attention (LlamaAttention):
@@ -75,7 +75,7 @@ class LlamaCrossAttention(nn.Module):
         self.num_key_value_groups = num_heads // self.num_key_value_heads
         self.scaling = self.head_dim**-0.5
         self.attention_dropout = dropout
-        self.temperature = nn.Parameter(torch.tensor(1.0))
+        self.attention_scale = nn.Parameter(torch.tensor(1.0))
 
         self.q_proj = nn.Linear(hidden_size, num_heads * self.head_dim, bias=bias)
         self.k_proj = nn.Linear(hidden_size, self.num_key_value_heads * self.head_dim, bias=bias)
@@ -111,7 +111,7 @@ class LlamaCrossAttention(nn.Module):
         attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1)) * self.scaling
         if attention_mask is not None:
             attn_weights = attn_weights + attention_mask
-        attn_weights = attn_weights * self.temperature
+        attn_weights = attn_weights / self.attention_scale
         attn_weights = F.softmax(attn_weights, dim=-1, dtype=torch.float32).to(query_states.dtype)
         attn_weights = F.dropout(
             attn_weights, p=self.attention_dropout if self.training else 0.0, training=self.training
@@ -186,7 +186,7 @@ class RMCACell(torch.nn.Module):
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
         for i, layer in enumerate(self.model.model.layers):
-            memory_read = LlamaCrossAttention(
+            memory_read = RMCAAttention(
                 hidden_size=hidden_size,
                 num_heads=num_attention_heads,
                 head_dim=head_dim,
@@ -194,7 +194,7 @@ class RMCACell(torch.nn.Module):
                 dropout=attention_dropout,
                 bias=attention_bias,
             ).to(dtype=model_dtype, device=model_device)
-            memory_write = LlamaCrossAttention(
+            memory_write = RMCAAttention(
                 hidden_size=hidden_size,
                 num_heads=num_attention_heads,
                 head_dim=head_dim,
