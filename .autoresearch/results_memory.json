@@ -7,28 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 13,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 241)\nRaw response:\n{\n  \"hypothesis\": \"Adding a mask that excludes uninitialized or empty memory slots from cross-attention computation will reduce attention noise and improve exact-match retrieval accuracy.\",\n  \"target_component\": \"RMCAMemory\",\n  \"rationale\": \"Empty memory",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 14,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 15,
       "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
       "hypothesis": null,
@@ -655,6 +633,33 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_062",
       "wall_time_min": 5.8
+    },
+    {
+      "id": 63,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose ONE concrete architectural change to improve RMCA's exact-match (EM) accuracy on the associative retrieval task.\n\nLooking at the experiment history:\n- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)\n- N-level: 2\n- Many changes have been tried and reverted or failed\n\nKey successful changes:\n- iter_027: Temperature scaling (fixed) - worked\n- iter_041: Cosine Similarity Attention - worked\n- iter_055: Top-K memory slot selection - worked (CURRENT BEST)\n\nKey failed/reverted changes:\n- LayerNorm after cross-attention (iter_043)\n- Learnable attention scaling (iter_046)\n- Value gating (iter_047)\n- Learnable residual scaling (iter_049)\n- Pre-LN architecture (iter_051)\n- Query bias (iter_054)\n- Residual connection on memory readout (iter_057)\n- Memory slot content normalization (iter_060)\n- Learnable temperature on Top-K softmax (iter_062)\n\nLooking at what hasn't been properly tried:\n1. Memory write mechanism improvements\n2. Multi-head attention for memory\n3. Memory slot positional embeddings (iter_050 failed but may be retryable)\n4. Hard attention on Top-K slots\n5. Memory readout with different aggregation\n6. Query-Key normalization together (different from cosine similarity)\n7. Memory slot importance vector (independent of attention)\n\nSince Top-K selection is working well (iter_055), I should focus on improving how those selected slots are processed or integrated.\n\nOne promising direction that hasn't been tried is **Memory Slot Positional Embeddings** - adding positional information to memory slots can help the model distinguish when memories were written. This is important for associative retrieval where temporal order matters. Iter_050 failed, but it might have been due to implementation issues rather than the concept itself.\n\n\n \nAnother strong candidate: **Multi-Head Cross-Attention** for memory retrieval. Multiple heads can capture different aspects of memory associations - one head might focus on exact matches while another captures semantic similarity. This is a standard Transformer technique that hasn't been properly tested yet.\n\nGiven the current success with Top-K selection, I should focus on improving how those selected slots are processed. A **Memory Slot Importance Vector** could work - a learnable vector that scales each slot's contribution independently of attention scores. This differs from value gating (iter_047) because it's slot-level rather than value-level.\n\nActually, I think **Multi-Head Cross-Attention** is the most promising. The current single-head approach may limit the model's ability to capture diverse memory associations. Multiple heads would allow different attention patterns to emerge, potentially improving retrieval precision. This is a standard technique in Transformers that hasn't been properly tested yet.\n\nHowever, I need to be careful about parameter count. Adding heads could increase parameters significantly.\n\nLet me consider something simpler: **Memory Readout with Gated Integration** - applying a learned gate to control how much retrieved memory is integrated with the hidden state. This is different from value gating (iter_047) because it gates the entire memory readout output, not individual values.\n\nActually, looking at iter_059, it proposed \"learnable sigmoid gate on the memory readout output\" but the response was incomplete/failed. This is a good direction that wasn't properly tested.\n\nLet me propose **Gated Memory Integration** - a learnable sigmoid gate applied to the memory readout output before adding it to the hidden state. This allows the model to learn how much retrieved memory to trust versus the current hidden state for each query. This differs from previous gating attempts because it specifically gates the entire memory readout (not individual values or attention scores).\n\nWait, I should also consider **Memory Slot Positional Embeddings** more carefully. Iter_050 failed, but it might have been a bug. Adding positional information to memory slots helps the model understand memory order, which matters for associative retrieval.\n\nActually, I think **Multi-Head Cross-Attention** is the strongest candidate that hasn't been properly tested. The current single-head approach limits the model's ability to capture diverse memory associations. Multiple attention heads can learn different retrieval patterns simultaneously.\n\nLet me go with **Multi-Head Cross-Attention** - it's theoretically sound, hasn't been properly tested, and should work with Top-K selection. I need to be careful about parameter count though.\n\nActually, looking more carefully at the history, I should propose something genuinely new. Let me try **Memory Slot Positional Embeddings** again, but with a more careful implementation than iter_050",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 64,
+      "description": "Adding multi-head cross-attention for memory retrieval will allow the model to capture diverse memory association patterns simultaneously, improving retrieval precision for complex associations.",
+      "hypothesis": {
+        "hypothesis": "Adding multi-head cross-attention for memory retrieval will allow the model to capture diverse memory association patterns simultaneously, improving retrieval precision for complex associations.",
+        "target_component": "RMCA.forward (cross-attention mechanism)",
+        "rationale": "Single-head attention limits the model's ability to capture multiple aspects of memory associations. Multi-head attention is a standard Transformer technique that allows different attention heads to focus on different retrieval patterns (e.g., exact matches vs. semantic similarity). This change works synergistically with the existing Top-K selection and should improve EM without significantly increasing parameters if total hidden dimension is preserved.",
+        "instruction": "Modify the cross-attention mechanism in RMCA.forward to use multi-head attention instead of single-head. Split the query, key, and value projections into multiple heads (e.g., 4 heads), compute attention separately per head, then concatenate and project back to original dimension. Ensure the total parameter count remains similar by reducing per-head dimension proportionally (e.g., if original dim=256 and 4 heads, each head dim=64). Keep Top-K selection applied after combining all heads."
+      },
+      "em_score": 0.2686,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_064",
+      "wall_time_min": 8.0
     }
   ]
 }

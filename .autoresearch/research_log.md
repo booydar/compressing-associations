@@ -909,3 +909,74 @@ Actually, let me propose something more novel: **Memory Slot Readout Gating** - 
 **Rationale:** Top-K selection (iter_055) is working but the softmax over selected slots may be too sharp or too soft. A learnable temperature parameter allows the model to dynamically adjust attention sharpness after selection, which is distinct from global temperature scaling (iter_027) and provides targeted control over the final memory readout distribution.
 
 
+## Iter 63 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's exact-match (EM) accuracy on the associative retrieval task.
+
+Looking at the experiment history:
+- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)
+- N-level: 2
+- Many changes have been tried and reverted or failed
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked
+- iter_055: Top-K memory slot selection - worked (CURRENT BEST)
+
+Key failed/reverted changes:
+- LayerNorm after cross-attention (iter_043)
+- Learnable attention scaling (iter_046)
+- Value gating (iter_047)
+- Learnable residual scaling (iter_049)
+- Pre-LN architecture (iter_051)
+- Query bias (iter_054)
+- Residual connection on memory readout (iter_057)
+- Memory slot content normalization (iter_060)
+- Learnable temperature on Top-K softmax (iter_062)
+
+Looking at what hasn't been properly tried:
+1. Memory write mechanism improvements
+2. Multi-head attention for memory
+3. Memory slot positional embeddings (iter_050 failed but may be retryable)
+4. Hard attention on Top-K slots
+5. Memory readout with different aggregation
+6. Query-Key normalization together (different from cosine similarity)
+7. Memory slot importance vector (independent of attention)
+
+Since Top-K selection is working well (iter_055), I should focus on improving how those selected slots are processed or integrated.
+
+One promising direction that hasn't been tried is **Memory Slot Positional Embeddings** - adding positional information to memory slots can help the model distinguish when memories were written. This is important for associative retrieval where temporal order matters. Iter_050 failed, but it might have been due to implementation issues rather than the concept itself.
+
+
+ 
+Another strong candidate: **Multi-Head Cross-Attention** for memory retrieval. Multiple heads can capture different aspects of memory associations - one head might focus on exact matches while another captures semantic similarity. This is a standard Transformer technique that hasn't been properly tested yet.
+
+Given the current success with Top-K selection, I should focus on improving how those selected slots are processed. A **Memory Slot Importance Vector** could work - a learnable vector that scales each slot's contribution independently of attention scores. This differs from value gating (iter_047) because it's slot-level rather than value-level.
+
+Actually, I think **Multi-Head Cross-Attention** is the most promising. The current single-head approach may limit the model's ability to capture diverse memory associations. Multiple heads would allow different attention patterns to emerge, potentially improving retrieval precision. This is a standard technique in Transformers that hasn't been properly tested yet.
+
+However, I need to be careful about parameter count. Adding heads could increase parameters significantly.
+
+Let me consider something simpler: **Memory Readout with Gated Integration** - applying a learned gate to control how much retrieved memory is integrated with the hidden state. This is different from value gating (iter_047) because it gates the entire memory readout output, not individual values.
+
+Actually, looking at iter_059, it proposed "learnable sigmoid gate on the memory readout output" but the response was incomplete/failed. This is a good direction that wasn't properly tested.
+
+Let me propose **Gated Memory Integration** - a learnable sigmoid gate applied to the memory readout output before adding it to the hidden state. This allows the model to learn how much retrieved memory to trust versus the current hidden state for each query. This differs from previous gating attempts because it specifically gates the entire memory readout (not individual values or attention scores).
+
+Wait, I should also consider **Memory Slot Positional Embeddings** more carefully. Iter_050 failed, but it might have been a bug. Adding positional information to memory slots helps the model understand memory order, which matters for associative retrieval.
+
+Actually, I think **Multi-Head Cross-Attention** is the strongest candidate that hasn't been properly tested. The current single-head approach limits the model's ability to capture diverse memory associations. Multiple attention heads can learn different retrieval patterns simultaneously.
+
+Let me go with **Multi-Head Cross-Attention** - it's theoretically sound, hasn't been properly tested, and should work with Top-K selection. I need to be careful about parameter count though.
+
+Actually, looking more carefully at the history, I should propose something genuinely new. Let me try **Memory Slot Positional Embeddings** again, but with a more careful implementation than iter_050
+
+
+## Iter 64 — reverted — EM: 0.2686 (N=2)
+**Hypothesis:** Adding multi-head cross-attention for memory retrieval will allow the model to capture diverse memory association patterns simultaneously, improving retrieval precision for complex associations.
+**Wall time:** 8.0 min
+**Result:** EM=0.2686 vs prev best=0.2750
+**Rationale:** Single-head attention limits the model's ability to capture multiple aspects of memory associations. Multi-head attention is a standard Transformer technique that allows different attention heads to focus on different retrieval patterns (e.g., exact matches vs. semantic similarity). This change works synergistically with the existing Top-K selection and should improve EM without significantly increasing parameters if total hidden dimension is preserved.
+
+
