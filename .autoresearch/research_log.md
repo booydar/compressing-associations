@@ -1073,3 +1073,86 @@ But I need to pick one concrete change. Let me go with **Memory Query
 **Rationale:** Previous attention modifications have focused on scaling and normalization, but dropout regularization on attention scores is untested. This will encourage the model to distribute attention more broadly across relevant slots rather than collapsing to single slots, which is crucial for robust associative retrieval.
 
 
+## Iter 70 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 71 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM accuracy on the associative retrieval task.
+
+Looking at the experiment history:
+- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)
+- N-level: 2
+- Many changes have been tried and reverted or failed
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked
+- iter_055: Top-K memory slot selection - worked (CURRENT BEST)
+
+Key failed/reverted changes (recent):
+- LayerNorm after cross-attention (iter_043)
+- Learnable attention scaling (iter_046)
+- Value gating (iter_047)
+- Learnable residual scaling (iter_049)
+- Pre-LN architecture (iter_051)
+- Query bias (iter_054)
+- Residual connection on memory readout (iter_057)
+- Memory slot content normalization (iter_060)
+- Learnable temperature on Top-K softmax (iter_062)
+- Multi-head cross-attention (iter_064)
+- Memory slot importance vector (iter_065 - failed)
+- Memory write path gating (iter_066)
+- Memory readout gating (iter_068)
+- Attention dropout (iter_069)
+
+The last proposal (iter_70) was about "Replacing attention-weighted readout with mean averaging over Top-K selected memory slots" but it failed.
+
+Looking at what hasn't been properly tried:
+1. Memory positional embeddings (iter_050 failed)
+2. Memory query projection with different dimensionality
+3. Memory attention mechanism improvements
+
+Since Top-K selection is working well, I should focus on improving how those selected slots are processed or how the query is formed.
+
+One direction that hasn't been thoroughly tested is **Memory Query Projection with Different Dimensionality** - the query vector could have different dimensionality than the key/value vectors, giving more flexibility in forming discriminative queries.
+
+
+However, I think a more promising direction is to improve the **Memory Readout Aggregation** method. Instead of attention-weighted readout, we could try a combination of attention-weighted and mean-aggregated readout, or simply use mean aggregation over the Top-K slots (which iter_70 tried but failed).
+
+Actually, looking at the pattern of failures, many gating mechanisms have been tried and failed. I should focus on something structural that hasn't been tried.
+
+**Memory Slot Positional Embeddings** could help the model understand when memories were stored, which matters for associative retrieval. This failed in iter_050, but it might have been due to implementation issues.
+
+Another approach: **Memory Key Projection with Different Dimensionality** - making the key projection dimension different from the query projection dimension could give the model more flexibility in memory matching without increasing parameters significantly.
+
+Actually, I think **Memory Query-Key Normalization** (normalizing both query and key vectors before dot product) is worth trying. This differs from cosine similarity (iter_041) because it normalizes inputs rather than computing cosine similarity directly, and it could provide better gradient flow.
+
+But let me think of something more novel that hasn't been tried: **Memory Slot Attention with Learned Positional Bias** - adding a learned bias term based on memory slot position to the attention scores. This could help the model account for temporal order in memories, which is important for associative retrieval.
+
+Actually, I should go with something simpler and more directly impactful. **Memory Slot Content Gating** - applying a sigmoid gate to memory slot contents before they're used in attention computation. This is different from value gating (iter_047) because it gates the slot content itself rather than the attention output.
+
+Let me propose **Memory Slot Content Gating** as the next change. I'll add a learned sigmoid gate that scales each memory slot's content before attention computation, allowing the model to learn which slots are more important for retrieval while keeping parameter overhead minimal. I'll focus on a memory readout modification instead. Adding a residual connection from the original query to the memory readout output could help preserve information that might be lost during retrieval. This differs from previous residual attempts (iter_057) by connecting the query directly to the final readout rather than the attention mechanism itself.
+
+However, I'm noticing the EM scores are declining across recent iterations, suggesting the Top-K selection from iter_055 is the most stable improvement so far. Rather than continuing with complex modifications, I should explore a simpler approach that might stabilize performance.
+
+Memory slot positional embeddings could help the model distinguish when memories were stored, which matters for associative
+
+
+## Iter 72 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 73 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 74 — reverted — EM: 0.2696 (N=2)
+**Hypothesis:** Projecting the memory query through a lower-dimensional bottleneck before attention computation will force the model to learn more discriminative query representations for precise memory matching.
+**Wall time:** 7.6 min
+**Result:** EM=0.2696 vs prev best=0.2750
+**Rationale:** Current architecture likely projects hidden state directly to query dimension matching memory keys. A bottleneck projection (e.g., reducing by 50%) forces compression of query information, encouraging learning of more salient features for memory matching. This differs from previous dimensionality changes as it specifically reduces query dimension before attention, not key/value dimensions.
+
+

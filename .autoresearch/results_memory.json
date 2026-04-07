@@ -7,66 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 20,
-      "description": "FAILED: executor error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": {
-        "hypothesis": "Adding learnable memory position embeddings to the cross-attention keys and values will help the model distinguish between different memory slots and improve associative retrieval accuracy.",
-        "target_component": "RMCAMemory",
-        "rationale": "Without explicit position information, the model may confuse which memory slot contains which association, especially when multiple similar items are stored. Adding position embeddings provides a unique identifier for each slot, enabling precise key-value matching during retrieval.",
-        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the RMCAMemory class to: (1) Add a learnable parameter self.memory_pos_embeddings = nn.Parameter(torch.randn(num_memory_slots, hidden_dim)) in __init__, (2) In the forward method, add self.memory_pos_embeddings to the memory keys and values before computing cross-attention: keys = memory_keys + self.memory_pos_embeddings, values = memory_values + self.memory_pos_embeddings"
-      },
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 21,
-      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 22,
-      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 23,
-      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 24,
-      "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2698,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 25,
       "description": "FAILED: planner error: LLM call failed after 3 retries: Connection error.",
       "hypothesis": null,
@@ -680,6 +620,81 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_069",
       "wall_time_min": 8.0
+    },
+    {
+      "id": 70,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Replacing attention-weighted readout with mean averaging over Top-K selected memory slots will preserve retrieval signal more effectively for exact-match associative retrieval tasks.",
+        "target_component": "RMCA memory readout mechanism",
+        "rationale": "For exact-match tasks, attention-weighted combinations can dilute retrieval signal across multiple slots. Mean averaging of Top-K selected slots preserves the signal from all retrieved memories equally, which should improve precision when multiple memory slots contain relevant information. This differs from previous gating attempts (iter_047, iter_068) which modified attention or output integration rather than the aggregation method itself.",
+        "instruction": "In the RMCA forward pass where memory slots are selected via Top-K attention, replace the attention-weighted value readout with simple mean averaging. Specifically, after selecting top-k indices from attention scores, retrieve the corresponding memory values and compute their mean across the selected slots instead of computing weighted sum using attention scores. Remove the softmax and value projection weighting for the top-k subset, just average the values of selected slots."
+      },
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 71,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose ONE concrete architectural change to improve RMCA's EM accuracy on the associative retrieval task.\n\nLooking at the experiment history:\n- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)\n- N-level: 2\n- Many changes have been tried and reverted or failed\n\nKey successful changes:\n- iter_027: Temperature scaling (fixed) - worked\n- iter_041: Cosine Similarity Attention - worked\n- iter_055: Top-K memory slot selection - worked (CURRENT BEST)\n\nKey failed/reverted changes (recent):\n- LayerNorm after cross-attention (iter_043)\n- Learnable attention scaling (iter_046)\n- Value gating (iter_047)\n- Learnable residual scaling (iter_049)\n- Pre-LN architecture (iter_051)\n- Query bias (iter_054)\n- Residual connection on memory readout (iter_057)\n- Memory slot content normalization (iter_060)\n- Learnable temperature on Top-K softmax (iter_062)\n- Multi-head cross-attention (iter_064)\n- Memory slot importance vector (iter_065 - failed)\n- Memory write path gating (iter_066)\n- Memory readout gating (iter_068)\n- Attention dropout (iter_069)\n\nThe last proposal (iter_70) was about \"Replacing attention-weighted readout with mean averaging over Top-K selected memory slots\" but it failed.\n\nLooking at what hasn't been properly tried:\n1. Memory positional embeddings (iter_050 failed)\n2. Memory query projection with different dimensionality\n3. Memory attention mechanism improvements\n\nSince Top-K selection is working well, I should focus on improving how those selected slots are processed or how the query is formed.\n\nOne direction that hasn't been thoroughly tested is **Memory Query Projection with Different Dimensionality** - the query vector could have different dimensionality than the key/value vectors, giving more flexibility in forming discriminative queries.\n\n\nHowever, I think a more promising direction is to improve the **Memory Readout Aggregation** method. Instead of attention-weighted readout, we could try a combination of attention-weighted and mean-aggregated readout, or simply use mean aggregation over the Top-K slots (which iter_70 tried but failed).\n\nActually, looking at the pattern of failures, many gating mechanisms have been tried and failed. I should focus on something structural that hasn't been tried.\n\n**Memory Slot Positional Embeddings** could help the model understand when memories were stored, which matters for associative retrieval. This failed in iter_050, but it might have been due to implementation issues.\n\nAnother approach: **Memory Key Projection with Different Dimensionality** - making the key projection dimension different from the query projection dimension could give the model more flexibility in memory matching without increasing parameters significantly.\n\nActually, I think **Memory Query-Key Normalization** (normalizing both query and key vectors before dot product) is worth trying. This differs from cosine similarity (iter_041) because it normalizes inputs rather than computing cosine similarity directly, and it could provide better gradient flow.\n\nBut let me think of something more novel that hasn't been tried: **Memory Slot Attention with Learned Positional Bias** - adding a learned bias term based on memory slot position to the attention scores. This could help the model account for temporal order in memories, which is important for associative retrieval.\n\nActually, I should go with something simpler and more directly impactful. **Memory Slot Content Gating** - applying a sigmoid gate to memory slot contents before they're used in attention computation. This is different from value gating (iter_047) because it gates the slot content itself rather than the attention output.\n\nLet me propose **Memory Slot Content Gating** as the next change. I'll add a learned sigmoid gate that scales each memory slot's content before attention computation, allowing the model to learn which slots are more important for retrieval while keeping parameter overhead minimal. I'll focus on a memory readout modification instead. Adding a residual connection from the original query to the memory readout output could help preserve information that might be lost during retrieval. This differs from previous residual attempts (iter_057) by connecting the query directly to the final readout rather than the attention mechanism itself.\n\nHowever, I'm noticing the EM scores are declining across recent iterations, suggesting the Top-K selection from iter_055 is the most stable improvement so far. Rather than continuing with complex modifications, I should explore a simpler approach that might stabilize performance.\n\nMemory slot positional embeddings could help the model distinguish when memories were stored, which matters for associative",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 72,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Adding learnable positional embeddings to memory slots will help the model track temporal ordering of stored memories, improving associative retrieval precision for N-level tasks.",
+        "target_component": "Memory module (memory slot initialization and attention computation)",
+        "rationale": "Previous attempt (iter_050) failed likely due to implementation issues rather than the concept itself. Associative retrieval requires understanding when memories were stored relative to each other. Learnable positional embeddings provide a clean, parameter-efficient way to encode memory slot order without affecting query-key matching.",
+        "instruction": "In the Memory class, add a learnable positional embedding parameter `pos_emb` of shape (max_memory_slots, d_model). Initialize it with xavier_uniform. In the cross-attention computation, add this positional embedding to the memory slot values (or keys) before computing attention scores. Ensure the positional embedding is added consistently across all attention heads and does not increase parameter count by more than 20%."
+      },
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 73,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Reducing the query projection dimensionality before memory attention will force the model to learn more discriminative query representations for precise memory matching.",
+        "target_component": "memory_cross_attention method",
+        "rationale": "The current architecture likely projects the hidden state to the same dimension as memory keys, giving the model too much flexibility and potentially noisy query representations. By reducing query dimensionality (e.g., to 64 or 128 instead of full hidden size), we force the model to compress the query into a more discriminative representation that better matches the memory space. This differs from previous dimensionality attempts because it specifically targets query projection, not multi-head or other components.",
+        "instruction": "In the memory_cross_attention method of the RMTModel class, modify the query projection layer to use a smaller output dimension (e.g., 128 if hidden_size is 256). Create a separate nn.Linear layer for query projection with output_dim=128 instead of using the full hidden_size dimension. Keep key and value projections at full dimension. This reduces query complexity while maintaining memory capacity."
+      },
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 74,
+      "description": "Projecting the memory query through a lower-dimensional bottleneck before attention computation will force the model to learn more discriminative query representations for precise memory matching.",
+      "hypothesis": {
+        "hypothesis": "Projecting the memory query through a lower-dimensional bottleneck before attention computation will force the model to learn more discriminative query representations for precise memory matching.",
+        "target_component": "_get_memory_query",
+        "rationale": "Current architecture likely projects hidden state directly to query dimension matching memory keys. A bottleneck projection (e.g., reducing by 50%) forces compression of query information, encouraging learning of more salient features for memory matching. This differs from previous dimensionality changes as it specifically reduces query dimension before attention, not key/value dimensions.",
+        "instruction": "In huggingface_rmca_v3.py, modify the _get_memory_query method: add a bottleneck linear layer that projects the query from current dimension to half the dimension (e.g., hidden_size to hidden_size//2) before the final projection to memory_key_dimension. Add LayerNorm after the bottleneck projection. Keep total parameter count within 20% increase by making the bottleneck smaller than the full projection."
+      },
+      "em_score": 0.2696,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_074",
+      "wall_time_min": 7.6
     }
   ]
 }
