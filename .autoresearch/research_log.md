@@ -575,3 +575,14 @@ Let me go with **Add LayerNorm before cross-attention** (Pre-LN). This is a stan
 **Rationale:** Recent gating mechanisms have failed, but a simple learnable scaling parameter on the residual connection (distinct from iter_40's failed attempt due to planner error) provides flexibility for the model to tune memory integration strength. This builds on the successful cosine similarity foundation while giving the network control over memory influence without the complexity of full gating mechanisms.
 
 
+## Iter 50 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 51 — reverted — EM: 0.2656 (N=2)
+**Hypothesis:** Switching to Pre-LayerNorm architecture (applying LayerNorm before cross-attention instead of after) will improve gradient flow and training stability for associative retrieval.
+**Wall time:** 8.2 min
+**Result:** EM=0.2656 vs prev best=0.2722
+**Rationale:** Recent iterations show instability when modifying post-attention components. Pre-LN is a well-established Transformer improvement that normalizes inputs before attention, stabilizing the attention mechanism. Since cosine similarity already handles score normalization, Pre-LN should stabilize the hidden state inputs without disrupting the successful attention geometry.
+
+

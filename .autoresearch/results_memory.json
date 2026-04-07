@@ -7,28 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 0,
-      "description": "baseline \u2014 exact copy of v2",
-      "hypothesis": null,
-      "em_score": 0.2676,
-      "prev_best": -1.0,
-      "verdict": "baseline",
-      "n_level": 2,
-      "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_000_baseline",
-      "wall_time_min": 9.3
-    },
-    {
-      "id": 1,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2676,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 2,
       "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
       "hypothesis": null,
@@ -630,6 +608,38 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_049",
       "wall_time_min": 7.7
+    },
+    {
+      "id": 50,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Adding learnable positional embeddings to memory slots will help the model distinguish between different memory locations during retrieval, improving slot-specific associative matching.",
+        "target_component": "RMCA class - memory initialization",
+        "rationale": "Associative retrieval requires distinguishing which memory slot contains the relevant information. Current RMCA treats slots as interchangeable, which can confuse the model when multiple similar memories exist. Positional embeddings give each slot a unique identity, helping the model learn slot-specific associations.",
+        "instruction": "Add a learnable positional embedding layer in the RMCA __init__ method with shape [num_memory_slots, hidden_size]. Initialize it with Xavier uniform. In the forward method, add these positional embeddings to the memory_slots tensor before the cross-attention computation. This adds only num_memory_slots * hidden_size parameters (~200K for typical settings)."
+      },
+      "em_score": null,
+      "prev_best": 0.2722,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 51,
+      "description": "Switching to Pre-LayerNorm architecture (applying LayerNorm before cross-attention instead of after) will improve gradient flow and training stability for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Switching to Pre-LayerNorm architecture (applying LayerNorm before cross-attention instead of after) will improve gradient flow and training stability for associative retrieval.",
+        "target_component": "RMCA.forward",
+        "rationale": "Recent iterations show instability when modifying post-attention components. Pre-LN is a well-established Transformer improvement that normalizes inputs before attention, stabilizing the attention mechanism. Since cosine similarity already handles score normalization, Pre-LN should stabilize the hidden state inputs without disrupting the successful attention geometry.",
+        "instruction": "In the RMCA class, modify the cross-attention forward pass to apply LayerNorm to the query/hidden state BEFORE computing cross-attention (Pre-LN pattern), rather than after the attention output. Specifically: (1) Create a LayerNorm instance in __init__ for the cross-attention input, (2) In forward, apply this LayerNorm to the hidden state before passing it through the query/key/value projections, (3) Remove any LayerNorm that was previously applied after the cross-attention output if it exists."
+      },
+      "em_score": 0.2656,
+      "prev_best": 0.2722,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_051",
+      "wall_time_min": 8.2
     }
   ]
 }
