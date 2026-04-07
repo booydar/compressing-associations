@@ -675,3 +675,85 @@ Better idea: **Add a skip connection from hidden state to memory readout output
 **Rationale:** Cosine similarity (iter_041) normalizes attention scores but the model still attends to all memory slots, introducing noise from irrelevant memories. Top-K selection forces the model to focus on only the most relevant slots (e.g., K=10), which is a standard technique in memory networks to improve retrieval precision. The previous attempt (iter_052) failed due to planner error, not architectural issues.
 
 
+## Iter 56 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.
+
+Looking at the current state:
+- N-level: 2
+- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)
+- The model is at N=2 and needs to advance to N=4
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked (EM=0.2722)
+- iter_055: Top-K memory slot selection - worked (EM=0.2750, CURRENT BEST, KEPT)
+
+Key failed/reverted changes:
+- Various LayerNorm attempts, learnable scaling factors, value gating, Pre-LN, bias terms
+
+Now I need to propose a NEW change that hasn't been tried yet. Looking at what's been tested:
+1. Attention scaling (learnable) - failed (iter_046)
+2. Value gating - failed (iter_047)
+3. LayerNorm after cross-attention - failed (iter_043)
+4. Learnable residual scaling - reverted (iter_049)
+5. Pre-LN architecture - failed (iter_051)
+6. Query bias - reverted (iter_054)
+7. Top-K selection - KEPT (iter_055)
+8. Memory slot positional embeddings - failed (iter_050)
+
+What hasn't been tried successfully:
+1. Memory write mechanism improvements
+2. Multiple attention heads (if not already present)
+3. Skip connections on memory readout (iter_040 failed planner error)
+4. Query-Key normalization together
+5. Memory readout with different aggregation
+6. Memory slot gating (different from value gating)
+7. Dual-path memory readout
+
+A promising direction: **Add a residual connection from the original hidden state to the memory readout output**. This is a fundamental Transformer pattern that preserves the original information while adding memory information. This hasn't been properly tested - iter_040 failed due to planner error, not architectural issues.
+
+Alternatively, I could try **Memory Slot Content Normalization** - normalize memory slots before attention scoring to ensure fair comparison across slots.
+
+Or **Add a learned memory update gate** - control how much new information overwrites existing memory during the write phase.
+
+Another option: **Multi-Head Cross-Attention** - if not already present, multiple attention heads could capture different aspects of the memory.
+
+Let me think about what would be most impactful for associative retrieval:
+
+1. **Skip/Residual Connection on Memory Readout** - ensures original state is preserved
+2. **Memory Write Gating** - control how memories are stored
+3. **Positional Embeddings on Memory Slots** - failed before but worth retrying with different implementation
+
+I'll go with **Skip Connection on Memory Readout** since:
+1. It's a fundamental Transformer pattern
+2. Previous attempt (iter_040) failed due to planner error, not the architecture itself
+3. It directly addresses how retrieved memory integrates with hidden state
+4. Small parameter increase (just a scalar if needed)
+5. Strong theoretical motivation for associative retrieval
+
+Let me formulate this properly for the JSON response.
+
+Actually, looking more carefully at the history, I need to make sure this is genuinely new. Iter_040 tried "residual connection around the cross-attention output before memory readout" but failed due to planner error. So it was attempted but never properly tested.
+
+Let me propose a more specific version: **Add a learnable skip connection scaling parameter** that controls how much of the original hidden state is preserved alongside the memory readout. This is different from a simple residual connection because it has a learnable scaling factor.
+
+Wait, iter_049 tried "learnable residual scaling parameter to the memory readout path" and it was reverted with EM=0.2722 (same as best but reverted). So this is already tried.
+
+Let me think of something else. What about **Memory Slot Attention Dropout** - apply dropout to memory attention scores to prevent over-reliance on specific slots?
+
+Or **Query-Key Normalization** - normalize both query and key vectors before computing attention scores (different from cosine similarity which normalizes after dot product).
+
+Actually, a good candidate: **Add LayerNorm after the memory readout projection** (before residual connection). This stabilizes the memory information before it's combined with the hidden state. Iter_043 tried LayerNorm after cross-attention but that was different.
+
+Let me propose: **Add LayerNorm after memory readout projection** - this normalizes the retrieved memory representation before it's integrated
+
+
+## Iter 57 — reverted — EM: 0.2748 (N=2)
+**Hypothesis:** Adding a residual connection that preserves the original hidden state alongside the memory readout will improve information flow and allow the model to better integrate retrieved memory without losing prior context.
+**Wall time:** 8.0 min
+**Result:** EM=0.2748 vs prev best=0.2750
+**Rationale:** The Top-K selection (iter_055) successfully reduced noise from irrelevant memory slots, but the model still loses original hidden state information when memory readout replaces it. A residual connection is a fundamental Transformer pattern that ensures the original state is preserved while adding memory information, improving gradient flow and retrieval precision.
+
+

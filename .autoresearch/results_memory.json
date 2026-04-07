@@ -7,38 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 6,
-      "description": "FAILED: sanity check failed: Expected class 'RMCABase' not found after modification",
-      "hypothesis": {
-        "hypothesis": "Adding layer normalization to memory slot embeddings before attention computation will stabilize the attention distribution and improve exact-match retrieval accuracy.",
-        "target_component": "RMCAMemoryCell",
-        "rationale": "Associative retrieval tasks require discriminative attention over memory slots. Unnormalized memory embeddings can cause attention score instability, leading to diffuse or incorrect slot selection. Layer normalization standardizes the memory representations without adding significant parameters.",
-        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the RMCAMemoryCell class. Add a nn.LayerNorm layer with embedding dimension after memory slots are retrieved/encoded but before the cross-attention computation. Apply this normalization to the memory key/value embeddings used in attention scoring."
-      },
-      "em_score": null,
-      "prev_best": 0.2676,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 7,
-      "description": "Adding a learnable temperature parameter to the cross-attention softmax will sharpen attention distributions and improve exact-match retrieval accuracy.",
-      "hypothesis": {
-        "hypothesis": "Adding a learnable temperature parameter to the cross-attention softmax will sharpen attention distributions and improve exact-match retrieval accuracy.",
-        "target_component": "compute_attention_weights",
-        "rationale": "Softer attention distributions cause the model to distribute probability mass across multiple memory slots, reducing confidence in correct selections. Sharper attention (via temperature scaling) concentrates probability on the most relevant slot, which is critical for exact-match accuracy in associative retrieval tasks.",
-        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable temperature parameter (torch.nn.Parameter initialized to 1.0) to the CrossAttention class. In the compute_attention_weights method, multiply attention scores by this temperature before applying softmax normalization."
-      },
-      "em_score": 0.2698,
-      "prev_best": 0.2676,
-      "verdict": "kept",
-      "n_level": 2,
-      "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_007",
-      "wall_time_min": 26.7
-    },
-    {
       "id": 8,
       "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
       "hypothesis": null,
@@ -650,6 +618,33 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_055",
       "wall_time_min": 8.2
+    },
+    {
+      "id": 56,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.\n\nLooking at the current state:\n- N-level: 2\n- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)\n- The model is at N=2 and needs to advance to N=4\n\nKey successful changes:\n- iter_027: Temperature scaling (fixed) - worked\n- iter_041: Cosine Similarity Attention - worked (EM=0.2722)\n- iter_055: Top-K memory slot selection - worked (EM=0.2750, CURRENT BEST, KEPT)\n\nKey failed/reverted changes:\n- Various LayerNorm attempts, learnable scaling factors, value gating, Pre-LN, bias terms\n\nNow I need to propose a NEW change that hasn't been tried yet. Looking at what's been tested:\n1. Attention scaling (learnable) - failed (iter_046)\n2. Value gating - failed (iter_047)\n3. LayerNorm after cross-attention - failed (iter_043)\n4. Learnable residual scaling - reverted (iter_049)\n5. Pre-LN architecture - failed (iter_051)\n6. Query bias - reverted (iter_054)\n7. Top-K selection - KEPT (iter_055)\n8. Memory slot positional embeddings - failed (iter_050)\n\nWhat hasn't been tried successfully:\n1. Memory write mechanism improvements\n2. Multiple attention heads (if not already present)\n3. Skip connections on memory readout (iter_040 failed planner error)\n4. Query-Key normalization together\n5. Memory readout with different aggregation\n6. Memory slot gating (different from value gating)\n7. Dual-path memory readout\n\nA promising direction: **Add a residual connection from the original hidden state to the memory readout output**. This is a fundamental Transformer pattern that preserves the original information while adding memory information. This hasn't been properly tested - iter_040 failed due to planner error, not architectural issues.\n\nAlternatively, I could try **Memory Slot Content Normalization** - normalize memory slots before attention scoring to ensure fair comparison across slots.\n\nOr **Add a learned memory update gate** - control how much new information overwrites existing memory during the write phase.\n\nAnother option: **Multi-Head Cross-Attention** - if not already present, multiple attention heads could capture different aspects of the memory.\n\nLet me think about what would be most impactful for associative retrieval:\n\n1. **Skip/Residual Connection on Memory Readout** - ensures original state is preserved\n2. **Memory Write Gating** - control how memories are stored\n3. **Positional Embeddings on Memory Slots** - failed before but worth retrying with different implementation\n\nI'll go with **Skip Connection on Memory Readout** since:\n1. It's a fundamental Transformer pattern\n2. Previous attempt (iter_040) failed due to planner error, not the architecture itself\n3. It directly addresses how retrieved memory integrates with hidden state\n4. Small parameter increase (just a scalar if needed)\n5. Strong theoretical motivation for associative retrieval\n\nLet me formulate this properly for the JSON response.\n\nActually, looking more carefully at the history, I need to make sure this is genuinely new. Iter_040 tried \"residual connection around the cross-attention output before memory readout\" but failed due to planner error. So it was attempted but never properly tested.\n\nLet me propose a more specific version: **Add a learnable skip connection scaling parameter** that controls how much of the original hidden state is preserved alongside the memory readout. This is different from a simple residual connection because it has a learnable scaling factor.\n\nWait, iter_049 tried \"learnable residual scaling parameter to the memory readout path\" and it was reverted with EM=0.2722 (same as best but reverted). So this is already tried.\n\nLet me think of something else. What about **Memory Slot Attention Dropout** - apply dropout to memory attention scores to prevent over-reliance on specific slots?\n\nOr **Query-Key Normalization** - normalize both query and key vectors before computing attention scores (different from cosine similarity which normalizes after dot product).\n\nActually, a good candidate: **Add LayerNorm after the memory readout projection** (before residual connection). This stabilizes the memory information before it's combined with the hidden state. Iter_043 tried LayerNorm after cross-attention but that was different.\n\nLet me propose: **Add LayerNorm after memory readout projection** - this normalizes the retrieved memory representation before it's integrated",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.275,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 57,
+      "description": "Adding a residual connection that preserves the original hidden state alongside the memory readout will improve information flow and allow the model to better integrate retrieved memory without losing prior context.",
+      "hypothesis": {
+        "hypothesis": "Adding a residual connection that preserves the original hidden state alongside the memory readout will improve information flow and allow the model to better integrate retrieved memory without losing prior context.",
+        "target_component": "RMCA.forward",
+        "rationale": "The Top-K selection (iter_055) successfully reduced noise from irrelevant memory slots, but the model still loses original hidden state information when memory readout replaces it. A residual connection is a fundamental Transformer pattern that ensures the original state is preserved while adding memory information, improving gradient flow and retrieval precision.",
+        "instruction": "In the RMCA.forward method, after computing the memory_readout output from cross-attention, add it to the original hidden_state input with a residual connection: hidden_state = hidden_state + memory_readout. Ensure the hidden_state and memory_readout have matching dimensions (they should both be [batch_size, seq_len, hidden_size])."
+      },
+      "em_score": 0.2748,
+      "prev_best": 0.275,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_057",
+      "wall_time_min": 8.0
     }
   ]
 }
