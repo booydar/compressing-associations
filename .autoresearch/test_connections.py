@@ -139,7 +139,7 @@ def main() -> None:
         # Attempt a completion with whatever model the bridge defaults to
         p = {
             "provider": "cursor",
-            "model": "claude-sonnet-4-5",
+            "model": "claude-4.6-sonnet-medium-thinking",
             "host": bridge_host,
             "port": bridge_port,
         }

@@ -2,15 +2,27 @@
 # Copy .env.template to .env and fill in API keys before running.
 
 llm:
-  planner:
-    provider: anthropic          # anthropic | openai | local | cursor
-    model: claude-opus-4-5
-    api_key_env: ANTHROPIC_API_KEY
 
+  planner:
+    provider: local
+    model: unsloth/Qwen3.5-27B-Q6K
+    host: 127.0.0.1
+    port: 8117
   executor:
-    provider: anthropic
-    model: claude-sonnet-4-5
-    api_key_env: ANTHROPIC_API_KEY
+    provider: local
+    model: unsloth/Qwen3.5-27B-Q6K
+    host: 127.0.0.1
+    port: 8117
+
+  # planner:
+  #   provider: anthropic          # anthropic | openai | local | cursor
+  #   model: claude-opus-4-5
+  #   api_key_env: ANTHROPIC_API_KEY
+
+  # executor:
+  #   provider: anthropic
+  #   model: claude-sonnet-4-5
+  #   api_key_env: ANTHROPIC_API_KEY
 
   # ── OpenAI ───────────────────────────────────────────────────────────────────
   # planner:
