@@ -991,3 +991,78 @@ Actually, looking more carefully at the history, I should propose something genu
 **Rationale:** Previous gating attempts focused on readout or attention (value gating iter_047, attention scaling iter_046), but memory write gating is fundamentally different. Controlling memory overwrites during the write phase helps preserve critical associative information that might otherwise be lost, which is crucial for retrieval accuracy.
 
 
+## Iter 67 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's exact-match (EM) accuracy on the associative retrieval task.
+
+Looking at the experiment history:
+- Current best EM: 0.2750 (iter_055 - Top-K memory slot selection, KEPT)
+- N-level: 2
+- Many changes have been tried and reverted or failed
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked
+- iter_055: Top-K memory slot selection - worked (CURRENT BEST)
+
+Key failed/reverted changes:
+- LayerNorm after cross-attention (iter_043)
+- Learnable attention scaling (iter_046)
+- Value gating (iter_047)
+- Learnable residual scaling (iter_049)
+- Pre-LN architecture (iter_051)
+- Query bias (iter_054)
+- Residual connection on memory readout (iter_057)
+- Memory slot content normalization (iter_060)
+- Learnable temperature on Top-K softmax (iter_062)
+- Multi-head cross-attention (iter_064)
+- Memory slot importance vector (iter_065 - failed)
+- Memory write path gating (iter_066)
+
+Looking at what hasn't been properly tried:
+1. Memory positional embeddings (iter_050 failed)
+2. Memory readout gating (iter_059 incomplete)
+3. Memory slot aggregation methods (mean vs attention)
+4. Memory query projection with different dimensionality
+5. Memory attention dropout
+
+Since the current best is Top-K selection with Cosine Similarity, I should focus on improving how memory slots are processed after selection or how the query is formed.
+
+A promising direction that hasn't been properly tested is **Memory Query Projection with Different Dimensionality** - transforming the hidden state into a query vector with different dimensionality than the memory keys before attention scoring. This gives more flexibility in how queries are formed and can capture different types of associations.
+
+
+I could also explore **Memory Readout Aggregation** - instead of using attention-weighted readout, try mean/sum aggregation of Top-K selected slots. This is simpler and might work better for exact-match tasks where we want to combine multiple retrieved memories.
+
+However, I think the most promising untested direction is **Memory Query Projection with Different Dimensionality**. The current architecture likely projects the hidden state to the same dimension as memory keys. By using a different projection dimension, the model can learn more flexible query representations that better match the memory space for associative retrieval.
+
+Actually, looking at this more carefully, I should consider **Memory Readout with Mean Aggregation over Top-K Slots** instead of attention-weighted readout. For exact-match tasks, simple averaging of retrieved memories might be more effective than attention-weighted combinations, which could dilute the signal across multiple slots.
+
+But wait - iter_047 tried value gating which failed. Let me think of something genuinely new that hasn't been attempted.
+
+**Memory Slot Readout with Skip Connection Gating** - applying a learned gate to control how much of the original hidden state passes through alongside the memory readout, rather than just gating the memory output itself.
+
+Actually, I should go with **Memory Query Projection with Learnable Dimensionality Expansion** - expanding the query projection dimension before attention scoring to give the model more capacity to form discriminative queries for memory matching.
+
+Let me settle on **Memory Query Projection with Increased Dimensionality** - this gives the model more expressive power to form queries that can better distinguish between memory slots for associative retrieval.
+
+Actually, I think **Memory Readout with Mean Aggregation** is more promising for exact-match tasks. Instead of attention-weighted combinations, simple averaging of Top-K retrieved memories could preserve the signal better for precise matching.
+
+But I should consider what hasn't been tried yet. **Memory Slot Readout with Gated Skip Connection** - a learned gate controlling how much of the original hidden state is preserved alongside retrieved memory, distinct from previous residual attempts.
+
+Actually, **Memory Query with Projection Bottleneck** - projecting the query through a lower-dimensional space before attention scoring could force the model to learn more discriminative features for memory matching.
+
+I'll go with **Memory Query Projection with Increased Dimensionality** - expanding the query projection dimension gives the model more capacity to form discriminative queries for associative retrieval.
+
+Actually, I should focus on what's most likely to help with exact-match tasks. **Memory Readout Aggregation with Mean Pooling** over Top-K slots, replacing attention-weighted readout with simple averaging, could preserve retrieval signal better for precise matching.
+
+But I need to pick one concrete change. Let me go with **Memory Query
+
+
+## Iter 68 — reverted — EM: 0.2652 (N=2)
+**Hypothesis:** Adding a learnable sigmoid gate on the memory readout output will allow the model to dynamically control how much retrieved memory influences the hidden state for each query, improving associative retrieval precision.
+**Wall time:** 8.2 min
+**Result:** EM=0.2652 vs prev best=0.2750
+**Rationale:** Previous gating attempts (value gating iter_047, residual scaling iter_049) did not succeed, but gating specifically the memory readout output before integration with the hidden state is distinct. This allows the model to learn when to trust retrieved memory versus the current hidden state, which is crucial for associative retrieval where memory relevance varies by query.
+
+
