@@ -7,39 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 2,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2676,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 3,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2676,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 4,
-      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.2676,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 5,
       "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\n",
       "hypothesis": null,
@@ -640,6 +607,44 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_051",
       "wall_time_min": 8.2
+    },
+    {
+      "id": 52,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 578)\nRaw response:\n{\n  \"hypothesis\": \"Applying Top-K memory slot selection (K=10) will reduce noise from irrelevant memory slots and improve retrieval precision for associative tasks.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"Cosine similarity (iter_041) improved attention score normalization but the model still attends to all 64+ memory slots, introducing noise from irrelevant memories. Top-K selection forces the model to focus on only the most relevant slots during retrieval, which is a standard technique in memory networks to improve retrieval precision.\",\n  \"instruction\": \"In the RMCA.forward method, after computing attention scores but before softmax, apply top-k selection to retain only the K=10 highest attention scores per query. Set all other attention scores to a large",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2722,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 53,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.\n\nLooking at the history:\n- Current best EM: 0.2722 (iter_041 - cosine similarity attention)\n- Recent iterations (43-52) mostly reverted or failed, with EM values around 0.26-0.27\n- The most recent failed attempt (iter_52) was about Top-K memory slot selection, but it failed due to planner error (invalid JSON)\n\nKey successful changes:\n- iter_027: Temperature scaling (fixed) - worked\n- iter_041: Cosine Similarity Attention - worked (EM=0.2722, CURRENT BEST)\n\nKey failed/reverted changes:\n- iter_043: LayerNorm after cross-attention (EM=0.2658)\n- iter_046: Learnable attention scaling (EM=0.2664)\n- iter_047: Value gating (EM=0.2668)\n- iter_049: Learnable residual scaling (EM=0.2722, reverted - same as best but reverted)\n- iter_051: Pre-LN architecture (EM=0.2656)\n- iter_052: Top-K selection (failed planner error)\n\nWhat hasn't been tried successfully:\n1. Memory slot positional embeddings (iter_050 failed with experiment error)\n2. Multiple attention heads (if not already present)\n3. Skip connections on memory readout (iter_040 failed planner error)\n4. Query-Key normalization together\n5. Memory write mechanism improvements\n6. Memory readout with different aggregation (e.g., mean pooling vs attention)\n\nSince cosine similarity (iter_041) worked well by normalizing query-key interactions, and Top-K selection (iter_052) was a logical next step but failed due to planner error, I should try the Top-K approach again but this time with a more careful implementation.\n\n\nHowever, I need to propose a NEW change since iter_052 already proposed Top-K but failed. Let me think of something different.\n\nLooking at the pattern - cosine similarity improved retrieval precision. The next bottleneck might be:\n1. How memory is stored/updated (write mechanism)\n2. How retrieved memory is integrated (readout mechanism)\n3. How queries are generated for memory lookup\n\nA strong theoretical candidate that hasn't been tried is **Memory Slot Gating** - a sigmoid gate that controls how much each memory slot contributes to the final output, different from value gating (iter_047 tried value gating).\n\nActually, iter_047 tried \"value gating mechanism to modulate retrieved memory values based on attention confidence\" - that's similar to what I was thinking.\n\nLet me think of something different. How about **Memory Query Projection with Learnable Bias**? This is distinct from query LayerNorm (iter_035). Adding a bias term to the query projection allows the query to have a constant offset, which can help match keys with non-zero means.\n\nOr **Dual-Path Memory Readout** - combining both attention-based retrieval and direct slot access based on query characteristics.\n\nActually, a simpler and more proven approach: **Add a learned temperature parameter specifically for the softmax after attention** (different from iter_046's attention scaling). This gives fine-grained control over attention sharpness.\n\nWait, iter_046 tried \"learnable attention scaling factor to the cosine similarity attention\" - that's essentially this.\n\nLet me propose something genuinely new: **Memory Slot Normalization** - normalize each memory slot before attention (similar to iter_030 which failed due to execution error, but with a different implementation). This ensures all memory slots have comparable magnitudes for fair comparison.\n\nActually, I'll propose **Multi-Scale Memory Readout** - retrieve memory at different scales (e.g., different temperature values) and combine. This is more sophisticated than single-scale attention.\n\nOr simpler: **Add a bias term to the cross-attention key projection**. This allows keys to have learned offsets, improving matching flexibility.\n\nLet me go with **Add learnable bias to query projection** - it's small, theoretically motivated (queries need offset to match keys), and hasn't been properly tested (iter_035 was LayerNorm, not bias).\n\nActually, looking at the constraints - I need to propose ONE change that hasn't been tried. Let me propose **Memory Slot Content Gating** - a learnable gate per memory slot that controls whether that slot is active during retrieval. This is different from value gating (which gates values after retrieval).\n\nBetter idea: **Add a skip connection from hidden state to memory readout output",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2722,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 54,
+      "description": "Adding a learnable bias term to the cross-attention query projection will allow queries to have learned offsets, improving matching flexibility for associations with varying baseline activation levels.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable bias term to the cross-attention query projection will allow queries to have learned offsets, improving matching flexibility for associations with varying baseline activation levels.",
+        "target_component": "CrossAttention.forward",
+        "rationale": "Standard Transformer attention typically includes bias in linear projections. The current RMCA query projection lacks bias, limiting the model's ability to learn query offsets needed to match keys with non-zero means. This is a small parameter increase (~128 params for d_model=128) with strong theoretical motivation from attention literature.",
+        "instruction": "In the CrossAttention class __init__ method, add bias=True to self.query_proj = nn.Linear(hidden_dim, hidden_dim, bias=True). Ensure this bias is included in the total parameter count and does not exceed the 20% limit."
+      },
+      "em_score": 0.2706,
+      "prev_best": 0.2722,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_054",
+      "wall_time_min": 7.9
     }
   ]
 }

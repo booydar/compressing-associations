@@ -586,3 +586,85 @@ Let me go with **Add LayerNorm before cross-attention** (Pre-LN). This is a stan
 **Rationale:** Recent iterations show instability when modifying post-attention components. Pre-LN is a well-established Transformer improvement that normalizes inputs before attention, stabilizing the attention mechanism. Since cosine similarity already handles score normalization, Pre-LN should stabilize the hidden state inputs without disrupting the successful attention geometry.
 
 
+## Iter 52 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 578)
+Raw response:
+{
+  "hypothesis": "Applying Top-K memory slot selection (K=10) will reduce noise from irrelevant memory slots and improve retrieval precision for associative tasks.",
+  "target_component": "RMCA.forward",
+  "rationale": "Cosine similarity (iter_041) improved attention score normalization but the model still attends to all 64+ memory slots, introducing noise from irrelevant memories. Top-K selection forces the model to focus on only the most relevant slots during retrieval, which is a standard technique in memory networks to improve retrieval precision.",
+  "instruction": "In the RMCA.forward method, after computing attention scores but before softmax, apply top-k selection to retain only the K=10 highest attention scores per query. Set all other attention scores to a large
+
+
+## Iter 53 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose ONE concrete architectural change to improve RMCA's EM on associative retrieval.
+
+Looking at the history:
+- Current best EM: 0.2722 (iter_041 - cosine similarity attention)
+- Recent iterations (43-52) mostly reverted or failed, with EM values around 0.26-0.27
+- The most recent failed attempt (iter_52) was about Top-K memory slot selection, but it failed due to planner error (invalid JSON)
+
+Key successful changes:
+- iter_027: Temperature scaling (fixed) - worked
+- iter_041: Cosine Similarity Attention - worked (EM=0.2722, CURRENT BEST)
+
+Key failed/reverted changes:
+- iter_043: LayerNorm after cross-attention (EM=0.2658)
+- iter_046: Learnable attention scaling (EM=0.2664)
+- iter_047: Value gating (EM=0.2668)
+- iter_049: Learnable residual scaling (EM=0.2722, reverted - same as best but reverted)
+- iter_051: Pre-LN architecture (EM=0.2656)
+- iter_052: Top-K selection (failed planner error)
+
+What hasn't been tried successfully:
+1. Memory slot positional embeddings (iter_050 failed with experiment error)
+2. Multiple attention heads (if not already present)
+3. Skip connections on memory readout (iter_040 failed planner error)
+4. Query-Key normalization together
+5. Memory write mechanism improvements
+6. Memory readout with different aggregation (e.g., mean pooling vs attention)
+
+Since cosine similarity (iter_041) worked well by normalizing query-key interactions, and Top-K selection (iter_052) was a logical next step but failed due to planner error, I should try the Top-K approach again but this time with a more careful implementation.
+
+
+However, I need to propose a NEW change since iter_052 already proposed Top-K but failed. Let me think of something different.
+
+Looking at the pattern - cosine similarity improved retrieval precision. The next bottleneck might be:
+1. How memory is stored/updated (write mechanism)
+2. How retrieved memory is integrated (readout mechanism)
+3. How queries are generated for memory lookup
+
+A strong theoretical candidate that hasn't been tried is **Memory Slot Gating** - a sigmoid gate that controls how much each memory slot contributes to the final output, different from value gating (iter_047 tried value gating).
+
+Actually, iter_047 tried "value gating mechanism to modulate retrieved memory values based on attention confidence" - that's similar to what I was thinking.
+
+Let me think of something different. How about **Memory Query Projection with Learnable Bias**? This is distinct from query LayerNorm (iter_035). Adding a bias term to the query projection allows the query to have a constant offset, which can help match keys with non-zero means.
+
+Or **Dual-Path Memory Readout** - combining both attention-based retrieval and direct slot access based on query characteristics.
+
+Actually, a simpler and more proven approach: **Add a learned temperature parameter specifically for the softmax after attention** (different from iter_046's attention scaling). This gives fine-grained control over attention sharpness.
+
+Wait, iter_046 tried "learnable attention scaling factor to the cosine similarity attention" - that's essentially this.
+
+Let me propose something genuinely new: **Memory Slot Normalization** - normalize each memory slot before attention (similar to iter_030 which failed due to execution error, but with a different implementation). This ensures all memory slots have comparable magnitudes for fair comparison.
+
+Actually, I'll propose **Multi-Scale Memory Readout** - retrieve memory at different scales (e.g., different temperature values) and combine. This is more sophisticated than single-scale attention.
+
+Or simpler: **Add a bias term to the cross-attention key projection**. This allows keys to have learned offsets, improving matching flexibility.
+
+Let me go with **Add learnable bias to query projection** - it's small, theoretically motivated (queries need offset to match keys), and hasn't been properly tested (iter_035 was LayerNorm, not bias).
+
+Actually, looking at the constraints - I need to propose ONE change that hasn't been tried. Let me propose **Memory Slot Content Gating** - a learnable gate per memory slot that controls whether that slot is active during retrieval. This is different from value gating (which gates values after retrieval).
+
+Better idea: **Add a skip connection from hidden state to memory readout output
+
+
+## Iter 54 — reverted — EM: 0.2706 (N=2)
+**Hypothesis:** Adding a learnable bias term to the cross-attention query projection will allow queries to have learned offsets, improving matching flexibility for associations with varying baseline activation levels.
+**Wall time:** 7.9 min
+**Result:** EM=0.2706 vs prev best=0.2722
+**Rationale:** Standard Transformer attention typically includes bias in linear projections. The current RMCA query projection lacks bias, limiting the model's ability to learn query offsets needed to match keys with non-zero means. This is a small parameter increase (~128 params for d_model=128) with strong theoretical motivation from attention literature.
+
+
