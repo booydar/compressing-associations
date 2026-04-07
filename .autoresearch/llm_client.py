@@ -11,7 +11,11 @@ Supported providers (set in config.yaml):
                Start the bridge first: node <cursor_bridge.bin>
 """
 import os
+import time
 from typing import Any
+
+_MAX_RETRIES = 3
+_RETRY_BACKOFF_SEC = 5
 
 
 def call_llm(provider_cfg: dict, messages: list[dict], max_tokens: int = 4096) -> str:
@@ -28,31 +32,43 @@ def call_llm(provider_cfg: dict, messages: list[dict], max_tokens: int = 4096) -
     provider = provider_cfg["provider"]
     model = provider_cfg["model"]
 
-    if provider == "anthropic":
-        api_key = os.environ.get(provider_cfg["api_key_env"], "")
-        return _call_anthropic(model, api_key, messages, max_tokens)
+    last_exc: Exception | None = None
+    for attempt in range(1, _MAX_RETRIES + 1):
+        try:
+            if provider == "anthropic":
+                api_key = os.environ.get(provider_cfg["api_key_env"], "")
+                return _call_anthropic(model, api_key, messages, max_tokens)
 
-    elif provider == "openai":
-        api_key = os.environ.get(provider_cfg["api_key_env"], "")
-        return _call_openai_compat(model, api_key, messages, max_tokens, base_url=None)
+            elif provider == "openai":
+                api_key = os.environ.get(provider_cfg["api_key_env"], "")
+                return _call_openai_compat(model, api_key, messages, max_tokens, base_url=None)
 
-    elif provider == "local":
-        base_url = _build_base_url(provider_cfg)
-        # Local servers accept any non-empty string as the key
-        api_key = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
-        return _call_openai_compat(model, api_key, messages, max_tokens, base_url=base_url)
+            elif provider == "local":
+                base_url = _build_base_url(provider_cfg)
+                api_key = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
+                return _call_openai_compat(model, api_key, messages, max_tokens, base_url=base_url)
 
-    elif provider == "cursor":
-        base_url = _build_base_url(provider_cfg)
-        # cursor-openai-bridge requires no key by default (unless CURSOR_BRIDGE_API_KEY is set)
-        api_key = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
-        return _call_openai_compat(model, api_key, messages, max_tokens, base_url=base_url)
+            elif provider == "cursor":
+                base_url = _build_base_url(provider_cfg)
+                api_key = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
+                return _call_openai_compat(model, api_key, messages, max_tokens, base_url=base_url)
 
-    else:
-        raise ValueError(
-            f"Unknown LLM provider: {provider!r}. "
-            "Use 'anthropic', 'openai', 'local', or 'cursor'."
-        )
+            else:
+                raise ValueError(
+                    f"Unknown LLM provider: {provider!r}. "
+                    "Use 'anthropic', 'openai', 'local', or 'cursor'."
+                )
+        except ValueError:
+            raise  # don't retry config/programming errors
+        except Exception as exc:
+            last_exc = exc
+            if attempt < _MAX_RETRIES:
+                print(f"[llm] attempt {attempt} failed ({exc}), retrying in {_RETRY_BACKOFF_SEC}s...")
+                time.sleep(_RETRY_BACKOFF_SEC)
+            else:
+                print(f"[llm] all {_MAX_RETRIES} attempts failed.")
+
+    raise RuntimeError(f"LLM call failed after {_MAX_RETRIES} retries: {last_exc}") from last_exc
 
 
 def _call_anthropic(model: str, api_key: str, messages: list[dict], max_tokens: int) -> str:

@@ -16,6 +16,7 @@ The loop:
 """
 import json
 import os
+import signal
 import subprocess
 import sys
 import time
@@ -205,6 +206,9 @@ def git_commit(message: str) -> None:
     subprocess.run(["git", "commit", "-m", message], cwd=REPO_ROOT, capture_output=True)
 
 
+EXPERIMENT_TIMEOUT_SEC = 2 * 60 * 60  # 2 hours
+
+
 def run_experiment(exp_path: str, n_pairs: int, cfg: dict) -> None:
     exp_cfg = cfg["experiment"]
     env = os.environ.copy()
@@ -226,7 +230,12 @@ def run_experiment(exp_path: str, n_pairs: int, cfg: dict) -> None:
     })
     cmd = ["bash", str(RUN_SCRIPT), exp_path, str(n_pairs), str(exp_cfg["max_steps"])]
     print(f"[run] {' '.join(cmd)}")
-    result = subprocess.run(cmd, cwd=REPO_ROOT, env=env)
+    try:
+        result = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=EXPERIMENT_TIMEOUT_SEC)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError(
+            f"Experiment exceeded {EXPERIMENT_TIMEOUT_SEC // 3600}hr timeout and was killed."
+        )
     if result.returncode != 0:
         raise RuntimeError(f"Experiment script exited with code {result.returncode}")
 
@@ -261,6 +270,9 @@ def sanity_check(code: str) -> None:
 # ── main loop ─────────────────────────────────────────────────────────────────
 
 def main() -> None:
+    # Ctrl+C → immediate exit, no cleanup needed
+    signal.signal(signal.SIGINT, lambda *_: (print("\n[interrupted] exiting."), sys.exit(0)))
+
     cfg = load_config()
     _ensure_cursor_bridge(cfg)
     exp_cfg = cfg["experiment"]
@@ -289,158 +301,200 @@ def main() -> None:
     iter_start = len(memory["experiments"])
 
     for iter_id in range(iter_start, iter_start + max_iters):
-        is_baseline = (iter_id == 0)
-        iter_tag = f"iter_{iter_id:03d}{'_baseline' if is_baseline else ''}"
-        exp_path = str(runs_dir / f"n{n_level}" / iter_tag)
-
-        print(f"\n{'='*60}")
-        print(f"  Iteration {iter_id}  |  N={n_level}  |  best_EM={current_best_em:.4f}")
-        print(f"  exp_path: {exp_path}")
-        print(f"{'='*60}")
-
-        hypothesis = None
-        change_applied = False
-
-        if is_baseline:
-            print("[iter 0] Running baseline (no changes to model file)")
-            description = "baseline — exact copy of v2"
-        else:
-            # ── Planner ──
-            print("[planner] generating hypothesis...")
-            program_md = load_program_md()
-            recent = memory["experiments"][-10:]
-            try:
-                hypothesis = plan(program_md, recent, planner_cfg)
-            except Exception as e:
-                print(f"[planner] ERROR: {e}")
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner error: {e}")
-                save_memory(memory)
-                continue
-
-            print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
-            description = hypothesis.get("hypothesis", f"iter {iter_id}")
-
-            # ── Executor ──
-            print("[executor] applying change...")
-            current_code = MODEL_FILE.read_text()
-            try:
-                new_code = execute(hypothesis, current_code, executor_cfg)
-            except Exception as e:
-                print(f"[executor] ERROR: {e}")
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor error: {e}", hypothesis)
-                save_memory(memory)
-                continue
-
-            # ── Sanity check ──
-            print("[sanity] checking modified code...")
-            try:
-                sanity_check(new_code)
-            except Exception as e:
-                print(f"[sanity] FAILED: {e}")
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"sanity check failed: {e}", hypothesis)
-                save_memory(memory)
-                continue
-
-            MODEL_FILE.write_text(new_code)
-            change_applied = True
-            print("[sanity] OK")
-
-        # ── Run experiment ──
-        t0 = time.time()
+        # Outer safety net: catch any unhandled exception so the loop continues
         try:
-            run_experiment(exp_path, n_pairs=n_level, cfg=cfg)
-        except Exception as e:
-            print(f"[experiment] ERROR: {e}")
-            if change_applied:
-                print("[revert] reverting model file...")
-                git_revert_model()
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"experiment error: {e}", hypothesis)
+            _run_iter(
+                iter_id=iter_id,
+                cfg=cfg,
+                exp_cfg=exp_cfg,
+                planner_cfg=planner_cfg,
+                executor_cfg=executor_cfg,
+                memory=memory,
+                n_level=n_level,
+                current_best_em=current_best_em,
+                best_variant=best_variant,
+                runs_dir=runs_dir,
+                auto_commit=auto_commit,
+            )
+        except SystemExit:
+            raise  # let SIGINT exit propagate
+        except Exception as exc:
+            print(f"[FATAL] unhandled exception in iter {iter_id}: {exc}")
+            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"unhandled: {exc}")
             save_memory(memory)
             continue
 
-        wall_min = (time.time() - t0) / 60
-
-        # ── Evaluate ──
-        try:
-            em = get_em(exp_path)
-        except Exception as e:
-            print(f"[eval] ERROR reading metrics: {e}")
-            if change_applied:
-                git_revert_model()
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"eval error: {e}", hypothesis)
-            save_memory(memory)
-            continue
-
-        print(f"[eval] EM={em:.4f}  (prev best={current_best_em:.4f})")
-
-        # ── Keep or revert ──
-        if em > current_best_em:
-            verdict = "kept"
-            current_best_em = em
-            best_variant = iter_tag
-            memory["current_best"] = {"variant": iter_tag, "em": em, "n_level": n_level}
-            print(f"[result] KEPT  — new best EM={em:.4f}")
-        else:
-            verdict = "reverted" if change_applied else "baseline"
-            if change_applied:
-                print(f"[result] REVERTED — EM={em:.4f} did not beat {current_best_em:.4f}")
-                git_revert_model()
-
-        # ── Record ──
-        entry = {
-            "id": iter_id,
-            "description": description,
-            "hypothesis": hypothesis,
-            "em_score": em,
-            "prev_best": current_best_em if verdict != "kept" else em,
-            "verdict": verdict if not is_baseline else "baseline",
-            "n_level": n_level,
-            "exp_path": exp_path,
-            "wall_time_min": round(wall_min, 1),
-        }
-        memory["experiments"].append(entry)
-
-        # ── Update program.md ──
-        update_program_md(n_level, current_best_em, best_variant)
-
-        # ── Append to research log ──
-        log_entry = (
-            f"## Iter {iter_id} — {verdict} — EM: {em:.4f} (N={n_level})\n"
-            f"**Hypothesis:** {description}\n"
-            f"**Wall time:** {wall_min:.1f} min\n"
-            f"**Result:** EM={em:.4f} vs prev best={current_best_em:.4f if verdict != 'kept' else em:.4f}\n"
-        )
-        if hypothesis and hypothesis.get("rationale"):
-            log_entry += f"**Rationale:** {hypothesis['rationale']}\n"
-        append_research_log(log_entry)
-
-        # ── Advance N-level if threshold reached ──
-        if em >= exp_cfg["em_threshold"]:
-            next_n = n_level * 2
-            print(f"[advance] EM={em:.4f} >= {exp_cfg['em_threshold']} — advancing N: {n_level} → {next_n}")
-            n_level = next_n
-            memory["n_level"] = n_level
-            # Reset best EM for new N-level
-            current_best_em = -1.0
-            memory["current_best"] = {"variant": "none", "em": -1.0, "n_level": n_level}
-            update_program_md(n_level, current_best_em, best_variant)
-            append_research_log(
-                f"## >>> N-level advanced to N={n_level} <<<\n"
-                f"Previous N achieved EM={em:.4f} >= threshold {exp_cfg['em_threshold']}.\n"
-            )
-
-        save_memory(memory)
-
-        # ── Git commit ──
-        if auto_commit:
-            commit_msg = (
-                f"autoresearch iter {iter_id}: {verdict} | EM={em:.4f} | N={n_level}\n\n"
-                f"{description}"
-            )
-            git_commit(commit_msg)
+        # Read back updated state from memory after the iteration
+        n_level = memory["n_level"]
+        current_best_em = memory["current_best"]["em"]
+        best_variant = memory["current_best"]["variant"]
 
     print("\n[done] autoresearch loop completed.")
     print(f"Best EM achieved: {current_best_em:.4f} at N={n_level}")
+
+
+def _run_iter(
+    iter_id: int,
+    cfg: dict,
+    exp_cfg: dict,
+    planner_cfg: dict,
+    executor_cfg: dict,
+    memory: dict,
+    n_level: int,
+    current_best_em: float,
+    best_variant: str,
+    runs_dir: Path,
+    auto_commit: bool,
+) -> None:
+    is_baseline = (iter_id == 0)
+    iter_tag = f"iter_{iter_id:03d}{'_baseline' if is_baseline else ''}"
+    exp_path = str(runs_dir / f"n{n_level}" / iter_tag)
+
+    print(f"\n{'='*60}")
+    print(f"  Iteration {iter_id}  |  N={n_level}  |  best_EM={current_best_em:.4f}")
+    print(f"  exp_path: {exp_path}")
+    print(f"{'='*60}")
+
+    hypothesis = None
+    change_applied = False
+    prev_best_em = current_best_em  # capture before any mutation
+
+    if is_baseline:
+        print("[iter 0] Running baseline (no changes to model file)")
+        description = "baseline — exact copy of v2"
+    else:
+        # ── Planner ──
+        print("[planner] generating hypothesis...")
+        program_md = load_program_md()
+        recent = memory["experiments"][-10:]
+        try:
+            hypothesis = plan(program_md, recent, planner_cfg)
+        except Exception as e:
+            print(f"[planner] ERROR: {e}")
+            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner error: {e}")
+            save_memory(memory)
+            return
+
+        print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
+        description = hypothesis.get("hypothesis", f"iter {iter_id}")
+
+        # ── Executor ──
+        print("[executor] applying change...")
+        current_code = MODEL_FILE.read_text()
+        try:
+            new_code = execute(hypothesis, current_code, executor_cfg)
+        except Exception as e:
+            print(f"[executor] ERROR: {e}")
+            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor error: {e}", hypothesis)
+            save_memory(memory)
+            return
+
+        # ── Sanity check ──
+        print("[sanity] checking modified code...")
+        try:
+            sanity_check(new_code)
+        except Exception as e:
+            print(f"[sanity] FAILED: {e}")
+            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"sanity check failed: {e}", hypothesis)
+            save_memory(memory)
+            return
+
+        MODEL_FILE.write_text(new_code)
+        change_applied = True
+        print("[sanity] OK")
+
+    # ── Run experiment ──
+    t0 = time.time()
+    try:
+        run_experiment(exp_path, n_pairs=n_level, cfg=cfg)
+    except Exception as e:
+        print(f"[experiment] ERROR: {e}")
+        if change_applied:
+            print("[revert] reverting model file...")
+            git_revert_model()
+        _record_failed_iter(memory, iter_id, n_level, current_best_em, f"experiment error: {e}", hypothesis)
+        save_memory(memory)
+        return
+
+    wall_min = (time.time() - t0) / 60
+
+    # ── Evaluate ──
+    try:
+        em = get_em(exp_path)
+    except Exception as e:
+        print(f"[eval] ERROR reading metrics: {e}")
+        if change_applied:
+            git_revert_model()
+        _record_failed_iter(memory, iter_id, n_level, current_best_em, f"eval error: {e}", hypothesis)
+        save_memory(memory)
+        return
+
+    print(f"[eval] EM={em:.4f}  (prev best={prev_best_em:.4f})")
+
+    # ── Keep or revert ──
+    if em > current_best_em:
+        verdict = "kept"
+        current_best_em = em
+        best_variant = iter_tag
+        memory["current_best"] = {"variant": iter_tag, "em": em, "n_level": n_level}
+        print(f"[result] KEPT  — new best EM={em:.4f}")
+    else:
+        verdict = "reverted" if change_applied else "baseline"
+        if change_applied:
+            print(f"[result] REVERTED — EM={em:.4f} did not beat {current_best_em:.4f}")
+            git_revert_model()
+
+    # ── Record ──
+    entry = {
+        "id": iter_id,
+        "description": description,
+        "hypothesis": hypothesis,
+        "em_score": em,
+        "prev_best": prev_best_em,
+        "verdict": verdict if not is_baseline else "baseline",
+        "n_level": n_level,
+        "exp_path": exp_path,
+        "wall_time_min": round(wall_min, 1),
+    }
+    memory["experiments"].append(entry)
+
+    # ── Update program.md ──
+    update_program_md(n_level, current_best_em, best_variant)
+
+    # ── Append to research log ──
+    log_entry = (
+        f"## Iter {iter_id} — {verdict} — EM: {em:.4f} (N={n_level})\n"
+        f"**Hypothesis:** {description}\n"
+        f"**Wall time:** {wall_min:.1f} min\n"
+        f"**Result:** EM={em:.4f} vs prev best={prev_best_em:.4f}\n"
+    )
+    if hypothesis and hypothesis.get("rationale"):
+        log_entry += f"**Rationale:** {hypothesis['rationale']}\n"
+    append_research_log(log_entry)
+
+    # ── Advance N-level if threshold reached ──
+    if em >= exp_cfg["em_threshold"]:
+        next_n = n_level * 2
+        print(f"[advance] EM={em:.4f} >= {exp_cfg['em_threshold']} — advancing N: {n_level} → {next_n}")
+        n_level = next_n
+        memory["n_level"] = n_level
+        current_best_em = -1.0
+        memory["current_best"] = {"variant": "none", "em": -1.0, "n_level": n_level}
+        update_program_md(n_level, current_best_em, best_variant)
+        append_research_log(
+            f"## >>> N-level advanced to N={n_level} <<<\n"
+            f"Previous N achieved EM={em:.4f} >= threshold {exp_cfg['em_threshold']}.\n"
+        )
+
+    save_memory(memory)
+
+    # ── Git commit ──
+    if auto_commit:
+        commit_msg = (
+            f"autoresearch iter {iter_id}: {verdict} | EM={em:.4f} | N={n_level}\n\n"
+            f"{description}"
+        )
+        git_commit(commit_msg)
 
 
 def _record_failed_iter(
