@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_027",
-    "em": 0.2706,
+    "variant": "iter_041",
+    "em": 0.2722,
     "n_level": 2
   },
   "n_level": 2,
@@ -333,6 +333,195 @@
       "n_level": 2,
       "exp_path": "/Users/bulatov/Desktop/lab/autoresearch/runs-autoresearch/n2/iter_027",
       "wall_time_min": 10.8
+    },
+    {
+      "id": 28,
+      "description": "FAILED: experiment error: Experiment script exited with code 127",
+      "hypothesis": {
+        "hypothesis": "Adding a memory content-based gating mechanism will allow the model to selectively update only relevant memory slots, reducing interference between stored associations and improving retrieval accuracy.",
+        "target_component": "MemoryCrossAttention class or memory_update method",
+        "rationale": "Associative retrieval requires storing multiple key-value pairs without interference. A gating mechanism that computes update weights based on content similarity will prevent irrelevant memory slots from being overwritten, preserving associations for later retrieval. This adds minimal parameters (small MLP for gate computation) while addressing the core memory interference problem.",
+        "instruction": "Add a learnable gating mechanism in the memory update step that computes update weights for each memory slot based on content similarity between the current query and memory content. The gate should be a sigmoid-activated MLP that takes concatenated query and memory slot as input. Multiply memory slot updates by these gates before writing to memory. Ensure gradient flows through the gate for end-to-end training."
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 29,
+      "description": "FAILED: experiment error: Experiment script exited with code 127",
+      "hypothesis": {
+        "hypothesis": "Adding learnable memory slot bias terms to the cross-attention scores will allow the model to learn which memory positions are more likely to contain relevant information, improving retrieval accuracy.",
+        "target_component": "RMCA class cross-attention mechanism",
+        "rationale": "Memory slots in associative retrieval have varying utility depending on what was stored. Learnable biases allow the model to develop priors about which slots tend to contain retrieval-relevant information, reducing noise from irrelevant slots. This is a minimal parameter addition (num_memory_slots parameters) with clear theoretical grounding in memory selection.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, within the RMCA class __init__ method, add a learnable parameter: self.memory_slot_bias = nn.Parameter(torch.zeros(num_memory_slots)). Then, in the cross-attention forward method where attention scores are computed (before softmax), add this bias to the scores: attention_scores = attention_scores + self.memory_slot_bias"
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 30,
+      "description": "FAILED: experiment error: Experiment script exited with code 127",
+      "hypothesis": {
+        "hypothesis": "Adding layer normalization to memory slots before cross-attention will stabilize the attention computation and improve gradient flow during training.",
+        "target_component": "RMCA.forward method in the cross-attention computation path",
+        "rationale": "Memory slots often accumulate different magnitudes during recurrent updates, which can destabilize attention scores. LayerNorm normalizes memory representations before computing attention, a proven technique in transformer architectures that improves training stability and convergence. This adds minimal parameters (2*hidden_size per layer) while addressing a fundamental numerical stability issue in the memory-to-query attention mechanism.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add nn.LayerNorm layer as a class attribute in the RMCA class, and apply it to memory keys and values before computing cross-attention scores in the forward pass. Initialize with hidden_size dimension and set elementwise_affine=True."
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 31,
+      "description": "FAILED: experiment error: Experiment script exited with code 127",
+      "hypothesis": {
+        "hypothesis": "Adding residual connections to the memory update pathway will improve gradient flow during training and allow better propagation of associative information across time steps.",
+        "target_component": "MemoryUpdate",
+        "rationale": "Residual connections are a well-established technique that mitigates vanishing gradient problems in deep recurrent architectures. For associative retrieval tasks, this will help the model maintain and propagate key associations through longer sequences without degradation.",
+        "instruction": "In the MemoryUpdate class within modeling_rmt/huggingface_rmca_v3.py, add a residual connection by adding the input memory to the output: output = self.linear(memory) + memory. Ensure the linear layer output dimension matches the input memory dimension."
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 32,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 278)\nRaw response:\n{\n  \"hypothesis\": \"Adding learnable positional encodings to memory slots before cross-attention will help the model distinguish between memory entries based on their storage order, improving associative retrieval accuracy.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"Associative retrieval requires tracking when associations were stored. Positional encodings provide temporal information about memory slot age without increasing parameter count significantly. This is distinct from previous attempts at bias terms (iter 29) or gating mechanisms (iter 28), as it adds structured temporal information rather than learn",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 33,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable memory quality score per slot that modulates cross-attention weights will allow the model to prioritize more reliable memory entries and reduce retrieval noise from degraded associations.",
+        "target_component": "RMCA.forward",
+        "rationale": "Associative retrieval requires distinguishing between valid and degraded memory entries. A learnable quality score provides a lightweight mechanism (O(num_slots) parameters) to weight attention toward more trustworthy slots without changing the core architecture. This is distinct from previous gating or bias approaches as it specifically targets memory reliability rather than access patterns.",
+        "instruction": "In the RMCA class __init__ method, add a new parameter 'memory_quality' as a learnable nn.Parameter of shape (num_memory_slots, 1). In the forward method, before computing cross-attention scores, multiply the attention logits by a sigmoid-transformed memory_quality score. This should be done after computing query-key attention scores but before applying softmax."
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 34,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 719)\nRaw response:\n{\n  \"hypothesis\": \"Adding learnable memory slot index embeddings that provide explicit slot identity to each memory position will help the cross-attention mechanism distinguish between similar content stored in different slots, improving retrieval precision.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"Current RMCA may struggle to differentiate between memory slots with similar content, leading to retrieval errors. Slot index embeddings provide a unique, learnable identity to each memory position without significant parameter overhead (~128 parameters for 128 slots). This differs from iter 32's temporal positional encoding as it focuses on slot identity rather than storage order.\",\n  \"instruction\": \"In modeling_rmt/huggingface_rm",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 35,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting property name enclosed in double quotes: line 2 column 185 (char 186)\nRaw response:\n{\n  \"hypothesis\": \"Adding layer normalization to the query projection before cross-attention will stabilize query representations and improve retrieval precision for associative tasks.\",",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 36,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 723)\nRaw response:\n{\n  \"hypothesis\": \"Adding a learnable memory slot decay factor that gradually reduces the influence of older memory entries will help the model prioritize recent relevant associations and reduce interference from stale memories.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"Associative retrieval requires distinguishing between relevant and outdated memory entries. A decay factor allows the model to learn temporal importance weights for each memory slot without significant parameter overhead (~128 parameters for 128 slots). This differs from positional encoding (iter 32) and slot index embeddings (iter 34) as it focuses on temporal importance rather than slot identity or storage order.\",\n  \"instruction\": \"In modeling_rmt/huggingface_rmca_v3.py, add a learnable parameter `memory_decay` initialized to zeros in the",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 37,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Role: Research Scientist specializing in recurrent neural memory architectures.\n    *   Task: Propose ONE concrete, small architectural change to the RMCA model (`modeling_rmt/huggingface_rmca_v3.py`) to improve Exact-Match (EM) accuracy on the associative retrieval task.\n    *   Constraints:\n        *   One change per iteration.\n        *   Target file: `modeling_rmt/huggingface_rmca_v3.py`.\n        *   Parameter count increase \u2264 ~20% (unless justified).\n        *   No changes to training script/hyperparameters.\n        *   Clear theoretical motivation.\n        *   Do not repeat previous changes.\n        *   Prioritize Human Directions (none pending).\n    *   Output Format: JSON object only, no markdown fences.\n    *   Current State: N=2, Best EM=0.2706 (iter_027). Recent iterations (28-36) mostly failed due to experiment errors or planner errors (JSON formatting). The best performing config so far is iter_027 (temperature scaling).\n    *   History Analysis:\n        *   iter_027: Temperature scaling (DONE/KEPT, EM=0.2706).\n        *   iter_28-36: Various ideas (gating, bias, layer norm, residual, positional, slot index, decay, query norm) mostly failed due to execution errors or JSON parsing errors in the planner response. None seem to have successfully run and reported EM except the baseline and iter_027.\n        *   Since most recent attempts failed to execute, I should propose a change that is robust, simple, and theoretically sound, avoiding complex JSON formatting issues in the instruction string (though the instruction itself is for the code editor, the planner needs to output valid JSON).\n        *   The core problem is associative retrieval at N=2 with low EM (0.27). The model is struggling to retrieve the correct association.\n        *   Iter 027 used temperature scaling on cross-attention.\n        *   Previous failed ideas involved memory slot biases, gating, decay, positional encodings, etc.\n        *   A common issue in associative retrieval is the \"key-value\" matching precision. If the query doesn't align well with the stored key, retrieval fails.\n        *   Since temperature scaling was the last successful change, I need something different but complementary.\n        *   Idea: Softmax attention can be unstable or too diffuse. Replacing standard attention with something that emphasizes the top match (like TopK attention or sparse attention) might help, but that changes the structure significantly.\n        *   Idea: Memory Retrieval often fails because the memory content is overwritten or interfered with. However, RMCA usually uses explicit memory slots.\n        *   Idea: Improve the *query* generation. If the query representation is noisy, attention fails.\n        *   Idea: Add a *skip connection* from the input directly to the attention output before the projection? (Iter 31 tried residual connections to memory update pathway).\n        *   Idea: Normalize the *keys* before computing dot product. This is a known technique (LayerNorm on keys) to stabilize attention magnitude.\n        *   Idea: Use *Gated Attention* or *SwiGLU* style activation within the attention block.\n        *   Idea: The task is associative retrieval. This implies `query -> memory -> value`. If the memory is static or slowly updated, the retrieval mechanism is key.\n        *   Looking at iter_027, it modified cross-attention temperature.\n        *   Looking at iter_30, it tried LayerNorm on memory slots before cross-attention (failed execution).\n        *   Looking at iter_35, it tried LayerNorm on query projection (failed execution).\n        *   A solid, theoretically grounded change that hasn't been explicitly tried successfully is **Layer Normalization on the Keys** before the dot product. This stabilizes the attention scores, preventing saturation or explosion, which is crucial for precise retrieval. It's distinct from iter_30 (memory slots before attention) and iter_35 (query projection).\n        *   Alternatively, **Add a residual connection around the Cross-Attention block**. This is standard in Transformers but sometimes omitted in specific memory modules. However, iter_31 tried residual connections to the memory update pathway.\n        *   Another strong candidate for associative retrieval is **Hard Attention / TopK Sampling** on the memory slots. But that might be too complex for a small change.\n        *   Let's go with **Layer Normalization on the Keys**. Why? Attention scores are dot products of queries and keys. If key magnitudes vary wildly, the",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 38,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   Role: Research Scientist specializing in recurrent neural memory architectures.\n    *   Task: Propose ONE concrete, small architectural change to the RMCA model (`modeling_rmt/huggingface_rmca_v3.py`) to improve Exact-Match (EM) accuracy on the associative retrieval task.\n    *   Constraints:\n        *   One change per iteration.\n        *   Target file: `modeling_rmt/huggingface_rmca_v3.py`.\n        *   Parameter count increase \u2264 ~20% (unless justified).\n        *   No changes to training script/hyperparameters.\n        *   Clear theoretical motivation.\n        *   Do not repeat previous changes.\n        *   Prioritize Human Directions (none pending).\n    *   Output Format: JSON object only, no markdown fences.\n    *   Current State: N=2, Best EM=0.2706 (iter_027). Recent iterations (28-36) mostly failed due to experiment errors or planner errors (JSON formatting). The best performing config so far is iter_027 (temperature scaling).\n    *   History Analysis:\n        *   iter_027: Temperature scaling on cross-attention (DONE/KEPT, EM=0.2706).\n        *   iter_28-36: Various ideas (gating, bias, layer norm, residual, positional, slot index, decay, query norm) mostly failed due to execution errors or JSON parsing errors in the planner response. None seem to have successfully run and reported EM except the baseline and iter_027.\n        *   Since most recent attempts failed to execute, I should propose a change that is robust, simple, and theoretically sound, avoiding complex JSON formatting issues in the instruction string (though the instruction itself is for the code editor, the planner needs to output valid JSON).\n        *   The core problem is associative retrieval at N=2 with low EM (0.27). The model is struggling to retrieve the correct association.\n        *   Iter 027 used temperature scaling on cross-attention.\n        *   Previous failed ideas involved memory slot biases, gating, decay, positional encodings, etc.\n        *   A common issue in associative retrieval is the \"key-value\" matching precision. If the query doesn't align well with the stored key, retrieval fails.\n        *   Since temperature scaling was the last successful change, I need something different but complementary.\n        *   Idea: Softmax attention can be unstable or too diffuse. Replacing standard attention with something that emphasizes the top match (like TopK attention or sparse attention) might help, but that changes the structure significantly.\n        *   Idea: Memory Retrieval often fails because the memory content is overwritten or interfered with. However, RMCA usually uses explicit memory slots.\n        *   Idea: Improve the *query* generation. If the query representation is noisy, attention fails.\n        *   Idea: Add a *skip connection* from the input directly to the attention output before the projection? (Iter 31 tried residual connections to memory update pathway).\n        *   Idea: Normalize the *keys* before computing dot product. This is a known technique (LayerNorm on keys) to stabilize attention magnitude.\n        *   Idea: Use *Gated Attention* or *SwiGLU* style activation within the attention block.\n        *   Idea: The task is associative retrieval. This implies `query -> memory -> value`. If the memory is static or slowly updated, the retrieval mechanism is key.\n        *   Looking at iter_027, it modified cross-attention temperature.\n        *   Looking at iter_30, it tried LayerNorm on memory slots before cross-attention (failed execution).\n        *   Looking at iter_35, it tried LayerNorm on query projection (failed execution).\n        *   A solid, theoretically grounded change that hasn't been explicitly tried successfully is **Layer Normalization on the Keys** before the dot product. This stabilizes the attention scores, preventing saturation or explosion, which is crucial for precise retrieval. It's distinct from iter_30 (memory slots before attention) and iter_35 (query projection).\n        *   Alternatively, **Add a residual connection around the Cross-Attention block**. This is standard in Transformers but sometimes omitted in specific memory modules. However, iter_31 tried residual connections to the memory update pathway.\n        *   Another strong candidate for associative retrieval is **Hard Attention / TopK Sampling** on the memory slots. But that might be too complex for a small change.\n        *   Let's go with **Layer Normalization on the Keys**. Why? Attention scores are dot products of queries and keys. If key magnitudes",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 39,
+      "description": "FAILED: experiment error: Experiment script exited with code 1",
+      "hypothesis": {
+        "hypothesis": "Adding Layer Normalization to the key projections before computing cross-attention scores will stabilize attention magnitude and improve retrieval precision by preventing score saturation.",
+        "target_component": "RMCA.forward",
+        "rationale": "Attention scores are dot products of queries and keys. If key magnitudes vary significantly across memory slots, attention can saturate or become diffuse, hurting retrieval accuracy. Key normalization ensures consistent attention score magnitudes, complementing the temperature scaling from iter_027 while being distinct from previous LayerNorm attempts on memory slots (iter_30) or query projections (iter_35).",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the cross-attention computation where keys are derived from memory slots. Add torch.nn.LayerNorm applied to the key projections before the dot product with queries. Initialize with no learnable parameters (use affine=False) to minimize parameter overhead. Ensure the normalization is applied per-key-vector before the attention score calculation."
+      },
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 40,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 316)\nRaw response:\n{\n  \"hypothesis\": \"Adding a residual connection around the cross-attention output before memory readout will improve gradient flow and stabilize the retrieval signal, allowing better propagation of associative information from memory slots to the output layer.\",\n  \"target_component\": \"RMCA.forward\",\n  \"rationale\": \"The current RMCA architecture may suffer from gradient degradation when retrieving from memory, especially at deeper N-levels. A residual connection around the cross-attention block (distinct from iter_31's memory update residual) will preserve",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.2706,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 41,
+      "description": "Replacing dot-product attention with cosine similarity attention will normalize query-key interactions and make retrieval more robust to magnitude variations in memory representations.",
+      "hypothesis": {
+        "hypothesis": "Replacing dot-product attention with cosine similarity attention will normalize query-key interactions and make retrieval more robust to magnitude variations in memory representations.",
+        "target_component": "RMCA.forward",
+        "rationale": "Associative retrieval requires precise matching between queries and stored memory keys. Dot-product attention can be sensitive to the magnitude of representations, potentially causing irrelevant slots with larger norms to dominate attention. Cosine similarity normalizes vectors before computing attention scores, focusing purely on directional alignment which is more appropriate for content-based retrieval.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the cross-attention computation in RMCA.forward to use cosine similarity instead of dot product. Specifically, after computing query and key projections, normalize both along the feature dimension using torch.nn.functional.normalize with p=2, dim=-1, then compute attention scores using the normalized dot product instead of the raw dot product."
+      },
+      "em_score": 0.2722,
+      "prev_best": 0.2706,
+      "verdict": "kept",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_041",
+      "wall_time_min": 7.7
     }
   ]
 }

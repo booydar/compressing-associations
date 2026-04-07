@@ -108,7 +108,12 @@ class RMCAAttention(nn.Module):
             key_states = key_states.repeat_interleave(self.num_key_value_groups, dim=1)
             value_states = value_states.repeat_interleave(self.num_key_value_groups, dim=1)
 
-        attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1)) * self.scaling
+        # Normalize query and key states for cosine similarity
+        query_states = F.normalize(query_states, p=2, dim=-1)
+        key_states = F.normalize(key_states, p=2, dim=-1)
+
+        # Compute cosine similarity (normalized dot product)
+        attn_weights = torch.matmul(query_states, key_states.transpose(-2, -1))
         if attention_mask is not None:
             attn_weights = attn_weights + attention_mask
         attn_weights = attn_weights / self.attention_scale
