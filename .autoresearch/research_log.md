@@ -6633,3 +6633,10 @@ Thinking Process:
 **Rationale:** Following human directions priority and hyperparameter-first policy, suggestion #4 (n_head increase) is the next untried hyperparameter change. Suggestions #1 (n_mem_tokens), #2 (n_layer), #3 (lr), #9 (weight decay), and #10 (warmup) have already been attempted per implementation history (iter 234-244).
 
 
+## Iter 246 — reverted — EM: 0.2724 (N=2)
+**Hypothesis:** Increasing n_embd from 128 to 256 will provide greater representational capacity for the memory tokens to encode complex associative patterns across N-level dependencies.
+**Wall time:** 5.6 min
+**Result:** EM=0.2724 vs prev best=0.9468
+**Rationale:** Following the human directions priority, suggestion #5 (n_embd increase) is the next untried hyperparameter after #1-#4, #9-#10 have been exhausted. Per hyperparameter-first policy, architectural changes are premature until all hyperparameter ranges are explored.
+
+
