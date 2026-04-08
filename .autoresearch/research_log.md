@@ -5792,3 +5792,10 @@ Suggestions #1-5 regarding memory capacity, depth, learning rate, heads, and emb
 **Rationale:** Suggestions #1-7 (n_mem_tokens, n_layer, lr, n_head, n_embd, optimizer, batch_size) have been attempted per experiment history (iter 183-204). Suggestion #8 (training steps) is the next pending human direction that hasn't been successfully completed, and must be prioritized per Critical Rules before architectural changes.
 
 
+## Iter 206 — reverted — EM: 0.2664 (N=2)
+**Hypothesis:** Adding weight decay regularization of 0.01 will prevent overfitting and improve generalization on the associative retrieval task, potentially recovering EM accuracy from the current degradation.
+**Wall time:** 7.7 min
+**Result:** EM=0.2664 vs prev best=0.9468
+**Rationale:** Suggestions #1-8 (memory tokens, layers, learning rate, heads, embedding size, optimizer, batch size, training steps) have all been attempted per experiment history. Suggestion #9 (weight decay) is the next pending untried human direction. Weight decay is a critical regularization hyperparameter that has not yet been explored.
+
+
