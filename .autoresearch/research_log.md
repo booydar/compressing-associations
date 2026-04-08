@@ -5799,3 +5799,78 @@ Suggestions #1-5 regarding memory capacity, depth, learning rate, heads, and emb
 **Rationale:** Suggestions #1-8 (memory tokens, layers, learning rate, heads, embedding size, optimizer, batch size, training steps) have all been attempted per experiment history. Suggestion #9 (weight decay) is the next pending untried human direction. Weight decay is a critical regularization hyperparameter that has not yet been explored.
 
 
+## Iter 207 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 208 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose the next change for the RMCA model. I need to follow the priority rules strictly.
+
+**Current State Analysis:**
+1.  **Current Best EM:** 0.9468 (iter_108). Recent EM is around 0.26-0.27 (significant degradation from baseline).
+2.  **Human Directions Status:** The prompt lists 10 suggestions. Based on the experiment history:
+    *   #1 (n_mem_tokens): Attempted iter 183, 186 (Failed)
+    *   #2 (n_layer): Attempted iter 188 (Failed)
+    *   #3 (LR sweep): Attempted iter 190 (Failed)
+    *   #4 (n_head): Attempted iter 196 (Failed)
+    *   #5 (n_embd): Attempted iter 201 (Failed)
+    *   #6 (Optimizers): Attempted iter 202, 203 (Failed)
+    *   #7 (Batch size): Attempted iter 204 (Reverted/Failed)
+    *   #8 (Training steps): Attempted iter 205 (Reverted/Failed)
+    *   #9 (Weight decay): Attempted iter 206 (Reverted/Failed)
+    *   #10 (Warmup ratios): **NEXT PENDING SUGGESTION**
+
+3.  **Critical Rules:**
+    *   **Human Directions Priority:** MUST implement the most recent untried suggestion from the list.
+    *   **Hyperparameter-First:** Exhaust hyperparameters before architecture.
+    *   **One Change Only:** Propose exactly one change.
+
+4.  **Decision:**
+    *   Suggestions #1-9 have been attempted (even if failed/reverted).
+    *   Suggestion #10 ("Try different warmup ratios: 0.05, 0.1, 0.2") is the **next pending human direction**.
+    *   `warmup_steps` or `warmup_ratio` is a hyperparameter in `.autoresearch/experiment_config.yaml`.
+    *   This satisfies "Human Directions Priority" and "Hyperparameter-First Policy".
+    *   I **cannot** propose an architectural change yet because #10 is still a pending hyperparameter suggestion. I must exhaust all human directions first.
+
+5.  **Proposed Change:**
+    *   Target: `.autoresearch/experiment_config.yaml`
+    *   Change: Adjust `warmup_steps` or `warmup_ratio`.
+    *   Specific Value: Try `warmup_ratio: 0.1` or `warmup_steps: 5000` (depending on config structure).
+    *   Hypothesis: Proper warmup scheduling may stabilize training dynamics and prevent the EM degradation observed in recent iterations.
+
+6.  **Wait, check the prompt ending instruction:** "Based on the above, propose the next architectural change to try."
+    *   This conflicts with the Critical Rules ("Human Directions TAKE ABSOLUTE PRIORITY").
+    *   Rule Interpretation: Critical Rules in the system prompt override generic instructions. I must follow the workflow (exhaust hyperparameters first).
+    *   So I will propose the warmup ratio change (hyperparameter), not an architecture change.
+
+7.  **Final Plan:**
+    *   Propose changing warmup_ratio to 0.1.
+    *   Target file: .autoresearch/experiment_config.yaml.
+    *   Rationale: #1-9 exhausted, #10 is next pending human direction.
+
+Wait, looking closer at the history:
+iter 207 hypothesis mentions "Adding a learnable gating mechanism..." which is an architectural change. This suggests the planner *thought* about architecture, but I need to check if #10 was actually tried. The history shows:
+- iter 206: weight decay (suggestion #9)
+- iter 207: Failed experiment, hypothesis about gating (architecture)
+
+The list says #10 (Warmup ratios) is still PENDING.
+So I MUST try #10 before proposing architecture.
+
+I will propose warmup_ratio change.
+
+**Hypothesis:** Adjusting the warmup ratio to 0.1 will stabilize the initial training phase, preventing gradient instability that may have contributed to the EM degradation observed in recent experiments.
+
+**Target:** .autoresearch/experiment_config.yaml
+
+**Rationale:** Hyperparameter suggestions #1-9 have been exhausted per experiment history (memory, layers, lr, heads, embd, optimizers, batch, steps, weight decay). Suggestion #10 (warmup ratios) is the final pending human direction
+
+
+## Iter 209 — reverted — EM: 0.2628 (N=2)
+**Hypothesis:** Increasing warmup_ratio to 0.1 will stabilize early training dynamics and prevent the gradient instability causing EM degradation in recent iterations.
+**Wall time:** 11.7 min
+**Result:** EM=0.2628 vs prev best=0.9468
+**Rationale:** All hyperparameter suggestions #1-9 (memory, layers, LR, heads, embd, optimizers, batch, steps, weight decay) have been exhausted per experiment history. Warmup ratio (#10) is the final pending human direction that must be completed before architectural changes.
+
+
