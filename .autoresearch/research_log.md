@@ -4631,3 +4631,10 @@ Raw response:
 **Rationale:** Human Direction #1 is the highest priority pending suggestion and follows the hyperparameter-first policy. All 10 pending hyperparameter suggestions remain untried (implementation history shows none yet), so architectural changes are not permitted until these are exhausted. n_mem_tokens is a model hyperparameter that directly affects memory capacity without exceeding parameter count limits.
 
 
+## Iter 160 — reverted — EM: 0.2666 (N=2)
+**Hypothesis:** Increasing the warmup ratio from the default to 0.1 or 0.2 will provide more stable gradient initialization for the recurrent memory pathway, improving convergence on associative retrieval patterns.
+**Wall time:** 14.0 min
+**Result:** EM=0.2666 vs prev best=0.9468
+**Rationale:** All pending human suggestions are hyperparameter changes, and warmup_ratio is the most recent untried suggestion (#10). Recent architecture changes (iter_154-158) were reverted due to poor EM results, so hyperparameter tuning takes priority per the HYPERPARAMETER-FIRST POLICY. No architectural hyperparameters have been exhausted yet.
+
+
