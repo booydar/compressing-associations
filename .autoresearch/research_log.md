@@ -4394,3 +4394,114 @@ Actually wait - looking at the implementation history more carefully:
 **Rationale:** Per CRITICAL RULES, human directions take absolute priority - Suggestion 5 (n_embd 128→256) is the next untried pending hyperparameter suggestion after suggestions 1-4 have been attempted. Architecture cannot be proposed until all pending HP suggestions are marked [DONE] or [SKIPPED].
 
 
+## Iter 147 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** Research scientist specializing in recurrent neural memory architectures.
+    *   **Task:** Propose ONE concrete change to improve RMCA model's EM accuracy on associative retrieval task.
+    *   **Constraints:**
+        *   Target files: `modeling_rmt/huggingface_rmca_v3.py` or `.autoresearch/experiment_config.yaml`.
+        *   Max 50% parameter count increase.
+        *   Max 50000 steps.
+        *   **CRITICAL RULES:**
+            *   **HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY:** If `human_directions.md` contains pending suggestions, MUST implement the most recent untried suggestion from that list before proposing anything else.
+            *   **HYPERPARAMETER-FIRST POLICY:** Exhaust hyperparameter tuning before architectural changes.
+            *   **ONLY propose architecture if:** (a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED], AND (b) Explicitly list exhausted hyperparameters.
+        *   **Current State:**
+            *   N-level: 2.
+            *   Current best EM: 0.9468 (iter_108).
+            *   Recent iterations (140-146) have been failing or reverting with low EM (0.26-0.27 range).
+            *   **Pending Human Suggestions:** The prompt explicitly lists 10 suggestions as `[PENDING]`.
+            *   **Implementation History:** Shows attempts on Suggestion 1 (n_mem_tokens), Suggestion 2 (n_layer), Suggestion 3 (learning rate), Suggestion 4 (n_head), Suggestion 5 (n_embd).
+            *   **Current Iteration:** 146 just finished (reverted).
+            *   **User Instruction:** "Based on the above, propose the next architectural change to try. If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+
+2.  **Evaluate CRITICAL RULES vs. User Instruction:**
+    *   **Rule:** "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+    *   **Rule:** "ONLY propose architectural changes if: (a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED]..."
+    *   **Current Pending List:** The prompt text shows 10 suggestions marked `[PENDING]`.
+    *   **Implementation History Analysis:**
+        *   Suggestion 1 (n_mem_tokens): Attempted (iter 133-134).
+        *   Suggestion 2 (n_layer): Attempted (iter 135-137).
+        *   Suggestion 3 (learning rate): Attempted (iter 141).
+        *   Suggestion 4 (n_head): Attempted (iter 144).
+        *   Suggestion 5 (n_embd): Attempted (iter 146).
+        *   Suggestion 6 (different optimizers): **NOT attempted yet.**
+        *   Suggestion 7 (batch size): **NOT attempted yet.**
+        *   Suggestion 8 (longer training): **NOT attempted yet.**
+        *   Suggestion 9 (weight decay): **NOT attempted yet.**
+        *   Suggestion 10 (warmup ratios): Attempted (iter 130-139 range had warmup errors, but suggestion 10 is specifically about ratios 0.05, 0.1, 0.2).
+    *   **Conflict:** The user asks for an "architectural change" in the final sentence, *but* immediately qualifies it with "If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+    *   **Resolution:** Since human_directions contains pending suggestions (specifically Suggestion 6 onwards are still untried), I **MUST** implement the next pending hyperparameter suggestion before proposing an architectural change. This aligns with the "HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY" and "HYPERPARAMETER-FIRST POLICY" critical rules. The user's instruction acknowledges this condition ("If human_directions contains pending suggestions...").
+    *   **Next Untried Suggestion:** Suggestion 6 ("Try different optimizers: AdamW, SGD with momentum").
+    *   **Wait, check Suggestion 10:** Suggestion 10 was attempted in earlier iterations (130-139) with technical errors (`warmup_steps`). Suggestion 6 is
+
+
+## Iter 148 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user is asking me to propose the next architectural change to try. However, I need to carefully follow the CRITICAL RULES which state:
+
+1. HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY - If human_directions.md contains pending suggestions, I MUST implement the most recent untried suggestion before proposing anything else.
+2. HYPERPARAMETER-FIRST POLICY - Exhaust hyperparameter tuning before architectural changes.
+3. ONLY propose architectural changes if: (a) All pending human suggestions have been marked [DONE] or [SKIPPED], AND (b) I explicitly list which hyperparameter ranges have been exhausted.
+
+Looking at the current state:
+- There are 10 pending human suggestions marked [PENDING] in the prompt
+- Suggestion 1 (n_mem_tokens): Attempted in iterations 133-134
+- Suggestion 2 (n_layer): Attempted in iterations 135-137
+- Suggestion 3 (learning rate): Attempted in iteration 141
+- Suggestion 4 (n_head): Attempted in iteration 144
+- Suggestion 5 (n_embd): Attempted in iteration 146
+- Suggestion 6 (different optimizers): **NOT attempted yet**
+- Suggestion 7 (batch size): **NOT attempted yet**
+- Suggestion 8 (longer training): **NOT attempted yet**
+- Suggestion 9 (weight decay): **NOT attempted yet**
+- Suggestion 10 (warmup ratios): Attempted in iterations 130-139 range
+
+Since there are still pending hyperparameter suggestions (6-9) that haven't been attempted, I CANNOT propose an architectural change according to the CRITICAL RULES. I must continue with hyperparameter tuning first.
+
+The next untried pending suggestion is Suggestion 6: "Try different optimizers: AdamW, SGD with momentum"
+
+However, looking at the user's final instruction: "Based on the above, propose the next architectural change to try. If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+
+
+The user acknowledges the conditional - if there are pending suggestions, I should prioritize those. Since there ARE pending suggestions (6-9), I should implement the next one (Suggestion 6: different optimizers) rather than proposing architecture.
+
+But wait - the user explicitly says "propose the next architectural change to try" at the beginning. This is a direct request for architecture.
+
+Given the CRITICAL RULES take ABSOLUTE PRIORITY according to my system instructions, I must follow the HP-first policy. However, I should note that many HP suggestions have been attempted with poor results (reverted with EM ~0.27).
+
+Looking at the pattern, suggestions 1-5 have been attempted with varying success, and suggestions 6-9 remain untested. Since the CRITICAL RULES require all pending HP suggestions to be marked [DONE] or [SKIPPED] before architecture can be proposed, I cannot yet propose architecture. I should continue with the next pending hyperparameter suggestion, which is Suggestion 6 about trying different optimizers like AdamW and SGD with momentum.
+
+However, I'm noticing a pattern of repeated failures and reverts in recent iterations (140-146), with EM dropping to 0.26-0.27 range. The best EM remains 0.9468 from iter_108. This suggests the current hyperparameter tuning approach may not be effective.
+
+Given the repeated failures and the fact that this is iteration 146, I could argue that the HP tuning has been effectively exhausted even though not formally marked [DONE]. However, the CRITICAL RULES are explicit - I need them marked [DONE] or [SKIPPED].
+
+I have two choices:
+1. Follow CRITICAL RULES strictly and propose Suggestion 6 (different optimizers)
+2. Note that HP tuning has been effectively exhausted and propose architecture
+
+Given the CRITICAL RULES take absolute priority, I should follow them. However, I notice that Suggestion 6 (optimizers) has never been attempted, so it's a valid next step.
+
+But wait - looking at the user instruction more carefully: "propose the next architectural change to try. If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+
+This is saying: First check if there are pending suggestions. If yes, implement the next one. If no, propose architecture.
+
+Since there ARE pending suggestions (6-9), I should implement Suggestion 6 (different optimizers).
+
+However, I also notice that the user instruction says "propose the next architectural change to try" as the primary request, with the conditional clause about pending suggestions.
+
+Given my CRITICAL RULES take
+
+
+## Iter 149 — reverted — EM: 0.2670 (N=2)
+**Hypothesis:** Switching from AdamW to SGD with momentum will improve memory token gradient stability for associative retrieval by reducing oscillatory updates in the recurrent memory pathway.
+**Wall time:** 11.5 min
+**Result:** EM=0.2670 vs prev best=0.9468
+**Rationale:** Per CRITICAL RULES, I must implement pending human suggestions before proposing architecture. Suggestions 1-5 and 10 have been attempted; Suggestion 6 (different optimizers) remains untried. This follows the HYPERPARAMETER-FIRST POLICY as optimizer choice has not been exhaustively explored.
+
+
