@@ -4710,3 +4710,10 @@ Raw response:
 **Rationale:** Per human_directions priority rules, suggestion #4 (n_head increase) is the next untried hyperparameter after suggestions #1, #2, #3, and #10 were already attempted. Following the hyperparameter-first policy, I must exhaust all pending hyperparameter suggestions before proposing architectural changes.
 
 
+## Iter 165 — reverted — EM: 0.2696 (N=2)
+**Hypothesis:** Increasing n_embd from 128 to 256 will provide richer token representations that improve the model's ability to encode and retrieve associative patterns.
+**Wall time:** 9.0 min
+**Result:** EM=0.2696 vs prev best=0.9468
+**Rationale:** Human suggestions #1-4 and #10 have been tried and reverted per implementation history. Per hyperparameter-first policy and priority rules, I must exhaust remaining pending hyperparameter suggestions before architecture changes. Suggestion #5 (n_embd increase) is the next untried hyperparameter in the priority list.
+
+

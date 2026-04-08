@@ -7,17 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 120,
-      "description": "FAILED: unhandled: 'em_threshold'",
-      "hypothesis": null,
-      "em_score": null,
-      "prev_best": 0.9468,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 121,
       "description": "Adding a learnable memory update gate that controls information flow into memory tokens will improve retention of associative pairs by filtering irrelevant updates.",
       "hypothesis": {
@@ -660,6 +649,22 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_164",
       "wall_time_min": 7.8
+    },
+    {
+      "id": 165,
+      "description": "Increasing n_embd from 128 to 256 will provide richer token representations that improve the model's ability to encode and retrieve associative patterns.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_embd from 128 to 256 will provide richer token representations that improve the model's ability to encode and retrieve associative patterns.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human suggestions #1-4 and #10 have been tried and reverted per implementation history. Per hyperparameter-first policy and priority rules, I must exhaust remaining pending hyperparameter suggestions before architecture changes. Suggestion #5 (n_embd increase) is the next untried hyperparameter in the priority list.",
+        "instruction": "In experiment_config.yaml, change n_embd from 128 to 256 while keeping n_layer=4, n_head=4, n_mem_tokens=8, and all other hyperparameters at their iter_108 best values. Maintain max_steps=50000 and use the same optimizer configuration."
+      },
+      "em_score": 0.2696,
+      "prev_best": 0.9468,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_165",
+      "wall_time_min": 9.0
     }
   ]
 }
