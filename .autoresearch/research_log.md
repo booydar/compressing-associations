@@ -6619,3 +6619,10 @@ Thinking Process:
 **Rationale:** Per human directions priority, suggestion #2 (n_layer increase) is the next untried hyperparameter after #1 (n_mem_tokens), #9 (weight decay), and #10 (warmup ratio) were completed in recent history. This follows the hyperparameter-first policy before any architectural changes.
 
 
+## Iter 244 — reverted — EM: 0.2738 (N=2)
+**Hypothesis:** A learning rate sweep will identify the optimal training dynamics for the RMCA model on associative retrieval tasks.
+**Wall time:** 10.6 min
+**Result:** EM=0.2738 vs prev best=0.9468
+**Rationale:** Following the hyperparameter-first policy, human suggestions #1, #2, #9, #10 have been tried (n_mem_tokens, n_layer, weight decay, warmup). Next untried hyperparameter is #3 (learning rate sweep). All remaining suggestions (#3-#8) are hyperparameters that must be exhausted before architectural changes.
+
+
