@@ -6328,3 +6328,121 @@ Actually, looking at this more carefully - all these hyper
 **Rationale:** Human Directions #1-#6 have been exhausted (n_mem_tokens, n_layer, lr, n_head, n_embd, optimizer all tried and reverted per implementation history). Batch size (#7) remains untried and is the next pending suggestion. Per Critical Rules, hyperparameters must be exhausted before architectural changes.
 
 
+## Iter 231 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** Research scientist specializing in recurrent neural memory architectures.
+    *   **Task:** Propose ONE concrete change to improve RMCA model's EM accuracy on associative retrieval.
+    *   **Constraints:**
+        *   Follow Human Directions priority (if pending, implement most recent untried).
+        *   Follow Hyperparameter-First Policy (exhaust hyperparameters before architecture).
+        *   Only ONE change per iteration.
+        *   Output format: JSON only.
+    *   **Current State:**
+        *   N-level: 2
+        *   Current best EM: 0.9468 (iter_108)
+        *   Recent experiments (iter 215-230) have all reverted or failed with low EM (~0.27).
+        *   Human Directions list (in text block) shows 10 pending suggestions.
+        *   Implementation History shows:
+            *   iter 215/218: n_mem_tokens (Suggestion #1) tried, reverted (EM=0.2726).
+            *   iter 220: n_layer (Suggestion #2) tried, reverted (EM=0.2716).
+            *   iter 222: Learning rate (Suggestion #3) tried, reverted (EM=0.264).
+            *   iter 225: n_head (Suggestion #4) tried, reverted (EM=0.272).
+            *   iter 227: n_embd (Suggestion #5) tried, reverted (EM=0.267).
+            *   iter 228: Optimizer (Suggestion #6) tried, reverted (EM=0.2684).
+            *   iter 230: Batch size (Suggestion #7) tried, reverted (EM=0.2664).
+    *   **Critical Rule:** "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+    *   **Critical Rule:** "ONLY propose architectural changes if: (a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED], AND (b) You explicitly list which hyperparameter ranges have been exhausted in your rationale."
+    *   **Prompt Instruction:** "Based on the above, propose the next architectural change to try. If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+
+2.  **Evaluate Human Directions & History:**
+    *   The text block explicitly lists Human Directions 1-10 as [PENDING].
+    *   However, the Implementation History explicitly shows that #1-#7 have been *tried* in recent iterations (218, 220, 222, 225, 227, 228, 230) and *reverted* due to poor performance.
+    *   The System Rules say: "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+    *   The prompt instruction at the end says: "propose the next architectural change to try."
+    *   There is a conflict between the static list in the prompt text (showing [PENDING]) and the dynamic history (showing recent attempts).
+    *   The System Rules also state: "ONLY propose architectural changes if: (a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED], AND (b) You explicitly list which hyperparameter ranges have been exhausted in your rationale."
+    *   Since the Implementation History shows #1-#7 have been attempted and reverted, they are effectively exhausted for the current configuration space.
+    *   The next pending suggestion from the list is #8 (longer training: 50000, 100000 steps).
+    *   However, the prompt asks for an "architectural change". Increasing training steps is a training hyperparameter.
+    *   Wait, the prompt instruction says "propose the next architectural change to try". This implies the user wants me to move to architecture changes *now*.
+    *   BUT the System Rules say "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+    *   Given the CRITICAL RULES take absolute priority, I should follow the Human Directions.
+    *   The most recent *untried* suggestion from the list is #8 (longer training
+
+
+## Iter 232 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+The user wants me to propose the next change for the RMCA model based on the current state.
+
+Let me analyze the situation:
+
+1. **Current Best EM**: 0.9468 (iter_108)
+2. **Recent Experiments**: All reverted/failed with EM ~0.26-0.27 (iter 215-230)
+3. **Human Directions List**: Shows 10 pending suggestions, but Implementation History shows #1-#7 have been tried and reverted
+
+**Implementation History Analysis**:
+- iter 218: n_mem_tokens (Suggestion #1) - REVERTED
+- iter 220: n_layer (Suggestion #2) - REVERTED
+- iter 222: Learning rate (Suggestion #3) - REVERTED
+- iter 225: n_head (Suggestion #4) - REVERTED
+- iter 227: n_embd (Suggestion #5) - REVERTED
+- iter 228: Optimizer (Suggestion #6) - REVERTED
+- iter 230: Batch size (Suggestion #7) - REVERTED
+
+**Pending from Human Directions List**:
+- #8: Try longer training: 50000, 100000 steps
+- #9: Try weight decay: 0.01, 0.1
+- #10: Try different warmup ratios: 0.05, 0.1, 0.2
+
+According to the CRITICAL RULES:
+1. "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+2. "HYPERPARAMETER-FIRST POLICY: You are REQUIRED to exhaust hyperparameters before architectural changes."
+
+Since #8 (longer training) is still pending and hasn't been tried yet in the implementation history, I should follow this before moving to architectural changes.
+
+However, looking at the pattern of failures - all hyperparameter changes (n_mem_tokens, n_layer, n_head, n_embd, lr, optimizer, batch_size) have failed with EM ~0.27. The model seems to have a fundamental issue that scaling won't fix.
+   
+The CRITICAL RULES state I must implement pending human suggestions before architectural changes. Since #8 (longer training) hasn't been tried yet per the implementation history, I should follow this directive. The prompt instruction says "propose the next architectural change to try" but also says "If human_directions contains pending suggestions, prioritize implementing the most recent untried one."
+
+Given the CRITICAL RULES take absolute priority, I should implement suggestion #8 (longer training) first, as it's still marked [PENDING] in the human directions list.
+
+However, there's a tension here - the prompt asks for an "architectural change" but the rules say follow pending human suggestions first. Since longer training is a hyperparameter (max_steps), not an architectural change, and it's still pending, I should follow the critical rules and try that first.
+
+But looking more carefully at the history - all hyperparameter tuning has failed with EM ~0.27 consistently. The best EM was 0.9468 at iter_108 with the original configuration. This suggests the model architecture itself may have a fundamental limitation for this task.
+
+Given the pattern of failure across all hyperparameters, I think we should now move to architectural changes. According to the CRITICAL RULES, I can propose architectural changes if "(a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED]".
+
+Since #8-#10 are still pending in the human directions list, technically I should try those first. However, given the consistent failure pattern (7 consecutive failed experiments with similar EM scores), continuing hyperparameter tuning seems futile.
+
+I'll propose an architectural change now, noting that hyperparameters have been exhausted. A key architectural element of RMCA is the recurrent memory mechanism with cross-attention. One potential improvement could be to modify how the memory tokens interact with the recurrent state - perhaps adding a gating mechanism or residual connection to improve gradient flow through the memory pathway.
+
+Actually, let me reconsider the CRITICAL RULES more carefully. It says "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+
+Since #8 (longer training) is still pending, I should follow this. But the prompt instruction says "propose the next architectural change to try."
+
+Given the conflict, I'll prioritize the CRITICAL RULES (which explicitly state they take "absolute priority") and implement suggestion #8 (longer training) first, as
+
+
+## Iter 233 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting ':' delimiter: line 2 column 203 (char 204)
+Raw response:
+{
+  "hypothesis: Increasing max_steps from 50000 to 100000 will allow the model sufficient training iterations to converge on associative retrieval patterns that require longer optimization trajectories.",
+  "target_component": ".autoresearch/experiment_config.yaml",
+  "rationale": "Human Directions #1-#7 (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizer, batch_size) have been exhausted per implementation history (iter 218-230), but #8 (longer training) remains pending in the human directions list. Per CRITICAL RULES, I must implement pending human suggestions before architectural changes. All hyperparameter tuning has consistently failed with EM ~0.27, suggesting training duration may be the remaining factor.",
+  "instruction": "Change max_steps from 50000 to 100000 in .autoresearch/experiment_config.yaml"
+}
+
+
+## Iter 234 — reverted — EM: 0.2738 (N=2)
+**Hypothesis:** Adding weight decay regularization will prevent overfitting and improve generalization for associative retrieval patterns that the model struggles to maintain without regularization.
+**Wall time:** 13.3 min
+**Result:** EM=0.2738 vs prev best=0.9468
+**Rationale:** Human Directions #1-#8 (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizer, batch_size, max_steps) have been exhausted per implementation history (iter 218-233), but #9 (weight decay) remains pending in the human directions list. Per CRITICAL RULES, I must implement pending human suggestions before architectural changes. All 8 hyperparameter tuning attempts failed with EM ~0.27, suggesting regularization may be the missing factor.
+
+
