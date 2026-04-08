@@ -7,22 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 159,
-      "description": "Increasing n_mem_tokens from 8 to 16 will provide more memory capacity for storing associative retrieval patterns, potentially improving EM accuracy.",
-      "hypothesis": {
-        "hypothesis": "Increasing n_mem_tokens from 8 to 16 will provide more memory capacity for storing associative retrieval patterns, potentially improving EM accuracy.",
-        "target_component": ".autoresearch/experiment_config.yaml",
-        "rationale": "Human Direction #1 is the highest priority pending suggestion and follows the hyperparameter-first policy. All 10 pending hyperparameter suggestions remain untried (implementation history shows none yet), so architectural changes are not permitted until these are exhausted. n_mem_tokens is a model hyperparameter that directly affects memory capacity without exceeding parameter count limits.",
-        "instruction": "Change n_mem_tokens value from 8 to 16 in .autoresearch/experiment_config.yaml"
-      },
-      "em_score": 0.2718,
-      "prev_best": 0.9468,
-      "verdict": "reverted",
-      "n_level": 2,
-      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_159",
-      "wall_time_min": 11.0
-    },
-    {
       "id": 160,
       "description": "Increasing the warmup ratio from the default to 0.1 or 0.2 will provide more stable gradient initialization for the recurrent memory pathway, improving convergence on associative retrieval patterns.",
       "hypothesis": {
@@ -659,6 +643,22 @@
       "verdict": "reverted",
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_204",
+      "wall_time_min": 11.8
+    },
+    {
+      "id": 205,
+      "description": "Increasing max_steps to 100000 will provide sufficient training iterations for the model to converge on the associative retrieval task, potentially recovering from the EM degradation seen in recent experiments.",
+      "hypothesis": {
+        "hypothesis": "Increasing max_steps to 100000 will provide sufficient training iterations for the model to converge on the associative retrieval task, potentially recovering from the EM degradation seen in recent experiments.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Suggestions #1-7 (n_mem_tokens, n_layer, lr, n_head, n_embd, optimizer, batch_size) have been attempted per experiment history (iter 183-204). Suggestion #8 (training steps) is the next pending human direction that hasn't been successfully completed, and must be prioritized per Critical Rules before architectural changes.",
+        "instruction": "Change max_steps value in experiment_config.yaml from 50000 to 100000 to allow longer training convergence for the associative retrieval task."
+      },
+      "em_score": 0.2674,
+      "prev_best": 0.9468,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_205",
       "wall_time_min": 11.8
     }
   ]

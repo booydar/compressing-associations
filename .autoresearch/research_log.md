@@ -5785,3 +5785,10 @@ Suggestions #1-5 regarding memory capacity, depth, learning rate, heads, and emb
 **Rationale:** Human suggestions #1-6 (n_mem_tokens, n_layer, lr, n_head, n_embd, optimizer) have been exhausted based on experiment history (iter 183-203). Suggestion #7 (batch size) is the next pending human direction and is a hyperparameter, so I must prioritize it over architectural changes per the Critical Rules.
 
 
+## Iter 205 — reverted — EM: 0.2674 (N=2)
+**Hypothesis:** Increasing max_steps to 100000 will provide sufficient training iterations for the model to converge on the associative retrieval task, potentially recovering from the EM degradation seen in recent experiments.
+**Wall time:** 11.8 min
+**Result:** EM=0.2674 vs prev best=0.9468
+**Rationale:** Suggestions #1-7 (n_mem_tokens, n_layer, lr, n_head, n_embd, optimizer, batch_size) have been attempted per experiment history (iter 183-204). Suggestion #8 (training steps) is the next pending human direction that hasn't been successfully completed, and must be prioritized per Critical Rules before architectural changes.
+
+
