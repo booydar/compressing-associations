@@ -4950,3 +4950,17 @@ Let me construct the JSON properly with no markdown fences.
 **Rationale:** Following the hyperparameter-first policy and human directions priority, weight decay (#9) is the most recent untried suggestion in the pending list after learning rate (#3), n_layer (#2), n_mem_tokens (#1), n_head (#4), n_embd (#5), and warmup ratios (#10) have all been attempted. Weight decay has not been systematically explored and may stabilize training on the associative retrieval task.
 
 
+## Iter 171 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 2 column 17 (char 18)
+Raw response:
+{
+  "hypothesis": "Increasing max_steps from 5000
+
+
+## Iter 172 — reverted — EM: 0.2624 (N=2)
+**Hypothesis:** Testing different optimizers (AdamW vs SGD with momentum) will identify which optimization algorithm better converges the recurrent memory pathway for associative retrieval patterns.
+**Wall time:** 5.0 min
+**Result:** EM=0.2624 vs prev best=0.9468
+**Rationale:** Human suggestions #1, #2, #3, #4, #5, #9, and #10 have been tried and reverted per implementation history. Per the Hyperparameter-First Policy, I must exhaust pending hyperparameter suggestions before architecture changes. Suggestion #6 (optimizers) is the next untried item in the priority list.
+
+
