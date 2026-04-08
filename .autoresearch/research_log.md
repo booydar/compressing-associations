@@ -6245,3 +6245,10 @@ Thinking Process:
 **Rationale:** Per CRITICAL RULES, I must follow Human Directions priority. Hyperparameters #1-4 (n_mem_tokens, n_layer, learning_rate, n_head) have been exhausted per implementation history (iter 218, 220, 222, 225) with poor EM (~0.27). Suggestion #5 (n_embd 128→256) is the next untried pending hyperparameter before architecture changes are permitted.
 
 
+## Iter 228 — reverted — EM: 0.2684 (N=2)
+**Hypothesis:** Changing to AdamW optimizer with appropriate momentum will provide more stable training dynamics and better gradient updates for the associative retrieval task compared to the current optimizer configuration.
+**Wall time:** 12.2 min
+**Result:** EM=0.2684 vs prev best=0.9468
+**Rationale:** Human Directions suggestions #1-#5 (n_mem_tokens, n_layer, learning_rate, n_head, n_embd) have been exhausted per implementation history (iter 218, 220, 222, 225, 227) with all reverted due to poor EM. Suggestion #6 (optimizer variation) is the next untried pending hyperparameter direction before architectural changes can be considered per CRITICAL RULES.
+
+

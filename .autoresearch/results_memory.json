@@ -8,22 +8,6 @@
   "experiments": [
     {
       "id": 181,
-      "description": "Adding layer normalization to the cross-attention memory key/value projections will stabilize attention score computation and improve associative retrieval accuracy.",
-      "hypothesis": {
-        "hypothesis": "Adding layer normalization to the cross-attention memory key/value projections will stabilize attention score computation and improve associative retrieval accuracy.",
-        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
-        "rationale": "All 10 human hyperparameter suggestions have been exhausted: n_mem_tokens (iter 159), n_layer (iter 162), learning rate (iter 163), n_head (iter 164), n_embd (iter 165), optimizers (iter 172), batch size (iter 173), max_steps (iter 174), weight decay (iter 170), warmup ratios (iter 160). LayerNorm was previously attempted (iter 176) but may not have been placed optimally in the memory pathway. Replacing with normalization on key/value projections specifically targets attention stability.",
-        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the cross-attention memory mechanism (likely in forward() method where memory attention is computed). Add nn.LayerNorm layers to normalize the key and value projections before the attention operation. Specifically, after computing memory_k = self.memory_proj_k(memory_tokens) and memory_v = self.memory_proj_v(memory_tokens), wrap each with LayerNorm: memory_k = self.norm_k(self.memory_proj_k(memory_tokens)), memory_v = self.norm_v(self.memory_proj_v(memory_tokens)). Ensure the new norm layers are initialized and registered as module parameters."
-      },
-      "em_score": 0.2674,
-      "prev_best": 0.9468,
-      "verdict": "reverted",
-      "n_level": 2,
-      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_181",
-      "wall_time_min": 9.3
-    },
-    {
-      "id": 181,
       "description": "FAILED: unhandled: 'em_threshold'",
       "hypothesis": null,
       "em_score": null,
@@ -660,6 +644,22 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_227",
       "wall_time_min": 16.3
+    },
+    {
+      "id": 228,
+      "description": "Changing to AdamW optimizer with appropriate momentum will provide more stable training dynamics and better gradient updates for the associative retrieval task compared to the current optimizer configuration.",
+      "hypothesis": {
+        "hypothesis": "Changing to AdamW optimizer with appropriate momentum will provide more stable training dynamics and better gradient updates for the associative retrieval task compared to the current optimizer configuration.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Directions suggestions #1-#5 (n_mem_tokens, n_layer, learning_rate, n_head, n_embd) have been exhausted per implementation history (iter 218, 220, 222, 225, 227) with all reverted due to poor EM. Suggestion #6 (optimizer variation) is the next untried pending hyperparameter direction before architectural changes can be considered per CRITICAL RULES.",
+        "instruction": "Change optimizer from current setting to AdamW with momentum=0.9 in experiment_config.yaml"
+      },
+      "em_score": 0.2684,
+      "prev_best": 0.9468,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_228",
+      "wall_time_min": 12.2
     }
   ]
 }
