@@ -7,22 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 186,
-      "description": "FAILED: experiment error: Experiment script exited with code 1",
-      "hypothesis": {
-        "hypothesis": "Increasing n_mem_tokens from 8 to 16 will provide more memory capacity for storing associative pairs, improving retrieval accuracy on N=2 associative retrieval task.",
-        "target_component": ".autoresearch/experiment_config.yaml",
-        "rationale": "Human suggestion #1 (n_mem_tokens: 8 \u2192 16 or 32) is explicitly marked [PENDING] in the Human Directions section and must be prioritized per the HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY rule. This is a hyperparameter change which takes precedence over architectural modifications.",
-        "instruction": "Modify the n_mem_tokens parameter value from 8 to 16 in the .autoresearch/experiment_config.yaml file."
-      },
-      "em_score": null,
-      "prev_best": 0.9468,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 187,
       "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThe user wants me to propose the next change for the RMCA model to improve EM accuracy on the associative retrieval task.\n\n**Critical Rules Analysis:**\n1. **Human Directions Priority:** If `human_directions.md` (represented by the `## Pending Human Suggestions` section in the prompt) contains pending suggestions, I MUST implement the most recent untried suggestion first.\n2. **Hyperparameter-First:** Exhaust hyperparameters before architecture.\n3. **One Change Only:** Propose exactly one change.\n4. **JSON Output:** Only a JSON object, no markdown fences.\n\n**Current State Analysis:**\n- **Current Best EM:** 0.9468 (iter_108)\n- **Recent Performance:** ~0.26 (iter 186) - Significant degradation.\n- **Human Directions:** The prompt lists 10 suggestions marked `[PENDING]`.\n    1. n_mem_tokens 8 -> 16/32\n    2. n_layer 4 -> 6/8\n    3. LR sweep\n    4. n_head 4 -> 8/16\n    5. n_embd 128 -> 256\n    6. Optimizers\n    7. Batch size\n    8. Training steps\n    9. Weight decay\n    10. Warmup ratios\n\n- **Implementation History:** The prompt text shows a contradiction. The \"Recent Experiment History\" section shows that iterations 183 and 186 attempted `n_mem_tokens` changes (Suggestion #1). Specifically, iter 183 tried 8->32 (failed), iter 186 tried 8->16 (failed).\n- **Pending List:** Despite the history, the `## Pending Human Suggestions` section *in the current prompt input* still lists them as `[PENDING]`.\n- **Rule Interpretation:** The rule says \"If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list\".\n- **Conflict:** The prompt input says they are pending, but the history log says they were tried.\n- **Decision:** Usually, in these research loops, if a suggestion is marked `[PENDING]` in the active configuration, I should follow it. However, if the history shows it was *just* tried and failed (iter 186), proposing it again is redundant and violates the spirit of \"untried\".\n- **BUT**, looking closely at the history provided in the prompt:\n    - iter 186: \"Increasing n_mem_tokens from 8 to 16... failed\".\n    - The prompt *ends* with \"Based on the above, propose the next architectural change to try. If human_directions contains pending suggestions, prioritize implementing the most recent untried one.\"\n    - Since iter 186 *just* tried Suggestion #1 (n_mem_tokens) and failed, and Suggestion #2 (n_layer) is the next one in the list, I should move to Suggestion #2.\n    - Wait, the prompt says \"propose the next architectural change to try\". This implies I should consider architecture *if* hyperparameters are exhausted.\n    - The rule says: \"ONLY propose architectural changes if: (a) All pending human suggestions (hyperparameters) have been marked [DONE] or [SKIPPED]\".\n    - The `## Pending Human Suggestions` list in the input *explicitly* marks all 10 as `[PENDING]`.\n    - If I strictly follow the input text's \"Pending Human Suggestions\" list, I am required to propose a hyperparameter change first.\n    - However, the history shows Suggestion #1 was tried in iter 186.\n    - Suggestion #2 is \"Try increasing n_layer from 4 to 6 or 8\".\n    - I should prioritize the next untried human suggestion. Since #1 was tried (and failed), #2 is the next logical step in the priority list.\n    - The prompt instruction at the end says: \"Based on the above, propose the next architectural change to try.\" This is slightly confusing because the priority rules say hyperparameters first. But the history shows hyperparameters #1 was tried.\n    - Let's look at the \"Implementation History\" section in the prompt again. It says \"(none yet - all hyperparameter suggestions pending)\". This contradicts the \"Recent Experiment History\" which shows iter 186 tried n_mem_tokens.\n    - Given the explicit instruction \"If human_directions contains pending suggestions, prioritize implementing the most recent untried one\", and the list says #1 is pending, but history says it was tried...\n    - I need to make a judgment call. If I propose n",
       "hypothesis": null,
@@ -660,6 +644,22 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_234",
       "wall_time_min": 13.3
+    },
+    {
+      "id": 235,
+      "description": "Adjusting warmup ratio to 0.1 will provide more stable gradient initialization for the recurrent memory pathway, preventing early training divergence that causes the consistent ~0.27 EM plateau.",
+      "hypothesis": {
+        "hypothesis": "Adjusting warmup ratio to 0.1 will provide more stable gradient initialization for the recurrent memory pathway, preventing early training divergence that causes the consistent ~0.27 EM plateau.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Directions #1-#9 (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizer, batch_size, max_steps, weight_decay) have all been exhausted per implementation history (iter 218-234), with #10 (warmup ratios) remaining as the final pending hyperparameter suggestion. Per CRITICAL RULES, I must implement this last pending human suggestion before architectural changes. Warmup adjustment is the only remaining hyperparameter to explore.",
+        "instruction": "Add warmup_ratio: 0.1 to the training configuration section in .autoresearch/experiment_config.yaml"
+      },
+      "em_score": 0.2672,
+      "prev_best": 0.9468,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_235",
+      "wall_time_min": 12.0
     }
   ]
 }

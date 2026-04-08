@@ -6446,3 +6446,10 @@ Raw response:
 **Rationale:** Human Directions #1-#8 (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizer, batch_size, max_steps) have been exhausted per implementation history (iter 218-233), but #9 (weight decay) remains pending in the human directions list. Per CRITICAL RULES, I must implement pending human suggestions before architectural changes. All 8 hyperparameter tuning attempts failed with EM ~0.27, suggesting regularization may be the missing factor.
 
 
+## Iter 235 — reverted — EM: 0.2672 (N=2)
+**Hypothesis:** Adjusting warmup ratio to 0.1 will provide more stable gradient initialization for the recurrent memory pathway, preventing early training divergence that causes the consistent ~0.27 EM plateau.
+**Wall time:** 12.0 min
+**Result:** EM=0.2672 vs prev best=0.9468
+**Rationale:** Human Directions #1-#9 (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizer, batch_size, max_steps, weight_decay) have all been exhausted per implementation history (iter 218-234), with #10 (warmup ratios) remaining as the final pending hyperparameter suggestion. Per CRITICAL RULES, I must implement this last pending human suggestion before architectural changes. Warmup adjustment is the only remaining hyperparameter to explore.
+
+
