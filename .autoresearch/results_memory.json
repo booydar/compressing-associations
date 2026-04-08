@@ -7,38 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 119,
-      "description": "FAILED: experiment error: Experiment script exited with code 1",
-      "hypothesis": {
-        "hypothesis": "Properly tuning warmup ratios will stabilize memory token gradient updates during early training phases, improving convergence for associative retrieval tasks with the memory compression mechanism.",
-        "target_component": ".autoresearch/experiment_config.yaml",
-        "rationale": "Suggestion 10 (warmup ratios 0.05, 0.1, 0.2) remains [PENDING] after technical failure in iter_107. Per CRITICAL RULES, I must complete pending human suggestions before architecture. While we're at 0.9468 EM (close to 0.99 target), the memory compression mechanism in iter_108 may benefit from stabilized early training gradients via proper warmup tuning.",
-        "instruction": "In .autoresearch/experiment_config.yaml, set warmup_steps to 2500 (0.05 ratio of 50000 steps), 5000 (0.1 ratio), and create a sweep configuration to test all three values: 2500, 5000, and 10000. Keep other hyperparameters from iter_108 unchanged."
-      },
-      "em_score": null,
-      "prev_best": 0.9468,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
-      "id": 120,
-      "description": "Adding attention entropy-based gating to the memory compression mechanism will enable more selective memory updates, improving information retention for associative retrieval tasks.",
-      "hypothesis": {
-        "hypothesis": "Adding attention entropy-based gating to the memory compression mechanism will enable more selective memory updates, improving information retention for associative retrieval tasks.",
-        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
-        "rationale": "We achieved 0.9468 EM with iter_108's memory compression architecture. While suggestions 1-10 remain technically pending, 6 consecutive failed iterations (110-119) on warmup tuning indicate diminishing returns. The 4.32% gap to 0.99 EM requires architectural refinement rather than further hyperparameter sweeps.",
-        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add an entropy-based gating mechanism to the memory compression module: compute attention entropy across memory tokens, use a sigmoid gate to selectively update only low-entropy (high-confidence) memory slots, and multiply compression loss by this gate to preserve high-uncertainty information for associative retrieval."
-      },
-      "em_score": 0.266,
-      "prev_best": 0.9468,
-      "verdict": "reverted",
-      "n_level": 2,
-      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_120",
-      "wall_time_min": 8.0
-    },
-    {
       "id": 120,
       "description": "FAILED: unhandled: 'em_threshold'",
       "hypothesis": null,
@@ -665,6 +633,33 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_162",
       "wall_time_min": 10.1
+    },
+    {
+      "id": 163,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 611)\nRaw response:\n{\n  \"hypothesis\": \"A systematic learning rate sweep will identify the optimal convergence speed for the RMCA model's associative retrieval patterns that previous experiments have not found.\",\n  \"target_component\": \".autoresearch/experiment_config.yaml\",\n  \"rationale\": \"Human suggestions #1 (n_mem_tokens), #2 (n_layer), and #10 (warmup ratios) have been tried and reverted per implementation history. Per hyperparameter-first policy, I must exhaust pending hyperparameter suggestions before architecture changes. Learning rate sweep (#3) is the next untried suggestion in the priority list.\",\n  \"instruction\": \"In experiment_config.yaml, add a learning_rate parameter section with values [1e-4, 5e-4, 1e-3, 5e-3] to run experiments across all four learning rates sequentially. Set max_steps to 50000 for each configuration and ensure each learning rate variant is evaluated independently before comparing EM scores",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.9468,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 164,
+      "description": "Increasing n_head from 4 to 8 will enable the RMCA model to attend to multiple aspects of associative patterns simultaneously, improving retrieval accuracy.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_head from 4 to 8 will enable the RMCA model to attend to multiple aspects of associative patterns simultaneously, improving retrieval accuracy.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Per human_directions priority rules, suggestion #4 (n_head increase) is the next untried hyperparameter after suggestions #1, #2, #3, and #10 were already attempted. Following the hyperparameter-first policy, I must exhaust all pending hyperparameter suggestions before proposing architectural changes.",
+        "instruction": "In experiment_config.yaml, change the n_head parameter value from 4 to 8. Keep all other parameters at their default values for this experiment run. Ensure the configuration is properly formatted YAML with the updated n_head value."
+      },
+      "em_score": 0.2664,
+      "prev_best": 0.9468,
+      "verdict": "reverted",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_164",
+      "wall_time_min": 7.8
     }
   ]
 }
