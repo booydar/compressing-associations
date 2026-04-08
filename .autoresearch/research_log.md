@@ -6626,3 +6626,10 @@ Thinking Process:
 **Rationale:** Following the hyperparameter-first policy, human suggestions #1, #2, #9, #10 have been tried (n_mem_tokens, n_layer, weight decay, warmup). Next untried hyperparameter is #3 (learning rate sweep). All remaining suggestions (#3-#8) are hyperparameters that must be exhausted before architectural changes.
 
 
+## Iter 245 — reverted — EM: 0.2778 (N=2)
+**Hypothesis:** Increasing n_head from 4 to 8 will provide more attention heads to capture multi-aspect associative relationships across N-level dependencies, improving exact-match retrieval accuracy.
+**Wall time:** 12.2 min
+**Result:** EM=0.2778 vs prev best=0.9468
+**Rationale:** Following human directions priority and hyperparameter-first policy, suggestion #4 (n_head increase) is the next untried hyperparameter change. Suggestions #1 (n_mem_tokens), #2 (n_layer), #3 (lr), #9 (weight decay), and #10 (warmup) have already been attempted per implementation history (iter 234-244).
+
+
