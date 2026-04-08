@@ -4505,3 +4505,10 @@ Given my CRITICAL RULES take
 **Rationale:** Per CRITICAL RULES, I must implement pending human suggestions before proposing architecture. Suggestions 1-5 and 10 have been attempted; Suggestion 6 (different optimizers) remains untried. This follows the HYPERPARAMETER-FIRST POLICY as optimizer choice has not been exhaustively explored.
 
 
+## Iter 150 — reverted — EM: 0.2674 (N=2)
+**Hypothesis:** Increasing batch size to 128 will provide more stable gradient estimates for memory token updates, reducing the variance that has caused repeated training failures in recent iterations.
+**Wall time:** 7.3 min
+**Result:** EM=0.2674 vs prev best=0.9468
+**Rationale:** Following CRITICAL RULES, human directions take absolute priority over architectural changes. Suggestions 1-6 have been attempted (n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizers), leaving Suggestion 7 (batch size) as the next untried pending hyperparameter. Recent iterations show EM degradation to 0.26-0.27 range, suggesting training instability that larger batch sizes may address through more stable gradient estimates.
+
+
