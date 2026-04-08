@@ -6647,3 +6647,10 @@ Thinking Process:
 **Rationale:** Following the human directions priority, suggestion #6 (optimizer variations) is the next untried hyperparameter after completing n_mem_tokens, n_layer, lr sweep, n_head, and n_embd changes. All prior hyperparameter suggestions (#1-5, #9-10) have been exhausted with EM remaining around 0.26-0.28, indicating optimizer selection may be a critical bottleneck.
 
 
+## Iter 248 — reverted — EM: 0.2702 (N=2)
+**Hypothesis:** Varying batch size will reveal optimal gradient stability for memory token learning, as batch size directly impacts gradient variance and memory consolidation in recurrent architectures.
+**Wall time:** 8.0 min
+**Result:** EM=0.2702 vs prev best=0.9468
+**Rationale:** Human directions #7 (batch size variations) remains untried per implementation history. All other hyperparameter suggestions (#1-6, #10) have been exhausted through experiments 235-247. Following hyperparameter-first policy, batch size must be explored before architectural changes.
+
+
