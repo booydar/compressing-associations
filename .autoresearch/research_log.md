@@ -5874,3 +5874,80 @@ I will propose warmup_ratio change.
 **Rationale:** All hyperparameter suggestions #1-9 (memory, layers, LR, heads, embd, optimizers, batch, steps, weight decay) have been exhausted per experiment history. Warmup ratio (#10) is the final pending human direction that must be completed before architectural changes.
 
 
+## Iter 210 — FAILED — N=2
+**Error:** experiment error: Experiment script exited with code 1
+
+
+## Iter 211 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 718)
+Raw response:
+{
+  "hypothesis": "Adding learnable position embeddings to memory tokens will improve slot discrimination during cross-attention, enabling more precise associative retrieval.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "All 10 hyperparameter suggestions have been exhausted per experiment history (iter 183-209 covering n_mem_tokens, n_layer, LR, n_head, n_embd, optimizers, batch_size, max_steps, weight_decay, warmup_ratio). Previous architectural attempts (gating mechanisms in iter 207, 210) failed. Memory token position embeddings are a fundamental architectural enhancement that improves slot discrimination without significantly increasing parameter count.",
+  "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable nn.Embedding layer for memory token positions with size n_mem_tokens (e.g., 8), initialized
+
+
+## Iter 212 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 267)
+Raw response:
+{
+  "hypothesis": "Adding layer normalization before the cross-attention mechanism will stabilize memory token interactions and improve gradient flow during associative retrieval training.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "All 10 hyperparameter suggestions have been exhausted per experiment history (iter 183-209): n_mem_tokens, n_layer, learning rate, n_head, n_embd, optimizers, batch_size, max_steps, weight_decay
+
+
+## Iter 213 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 755)
+Raw response:
+{
+  "hypothesis": "Adding residual connections around the cross-attention mechanism will improve gradient flow and memory retention, addressing the EM degradation observed since iter_108.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "All 10 hyperparameter suggestions have been exhausted (iter 183-209: n_mem_tokens, n_layer, LR, n_head, n_embd, optimizers, batch_size, max_steps, weight_decay, warmup_ratio). Previous architectural attempts (gating mechanisms iter 207/210, position embeddings iter 211, layer norm iter 212) failed due to implementation errors. Residual connections are a fundamental architectural enhancement not yet tried that stabilizes training without increasing parameter count.",
+  "instruction": "In modeling_rmt/huggingface
+
+
+## Iter 214 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 313)
+Raw response:
+{
+  "hypothesis": "Adding a memory token relevance gating mechanism will allow the model to selectively attend to relevant memory tokens based on query similarity, filtering out corrupted memory associations and improving EM accuracy.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "All 10 hyperparameter suggestions have been exhausted per experiment history (iter 183-209
+
+
+## Iter 215 — reverted — EM: 0.2730 (N=2)
+**Hypothesis:** Adding a memory token attention mask based on query similarity will enable the model to selectively attend to relevant memory tokens, filtering out corrupted associations and improving EM accuracy.
+**Wall time:** 15.0 min
+**Result:** EM=0.2730 vs prev best=0.9468
+**Rationale:** All 10 hyperparameter suggestions have been exhausted per experiment history (iter 183-209: n_mem_tokens, n_layer, LR, n_head, n_embd, optimizers, batch_size, max_steps, weight_decay, warmup_ratio). Previous architectural attempts failed due to planner JSON errors rather than experimental validation. This masking mechanism is architecturally distinct from prior gating approaches and directly targets associative retrieval accuracy.
+
+
+## Iter 215 — FAILED — N=2
+**Error:** unhandled: 'em_threshold'
+
+
+## Iter 216 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 306)
+Raw response:
+{
+  "hypothesis": "Adding cross-token attention between memory tokens before query attention will enable memory tokens to share contextual information and form coherent associative representations, improving retrieval accuracy.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "All 10 hyperparameter suggestions have been exhausted per experiment
+
+
+## Iter 217 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 3 column 23 (char 211)
+Raw response:
+{
+  "hypothesis": "Adding a learnable memory update gate that controls how much new information updates existing memory tokens will improve memory retention during associative retrieval.",
+  "target_component": "modeling_rmt/huggingface_rmca
+
+
+## Iter 218 — reverted — EM: 0.2726 (N=2)
+**Hypothesis:** Increasing n_mem_tokens from 8 to 16 will provide more memory capacity for storing associative relationships, enabling the model to maintain more associations simultaneously and improve EM accuracy on the retrieval task.
+**Wall time:** 14.4 min
+**Result:** EM=0.2726 vs prev best=0.9468
+**Rationale:** Human Direction #1 (increasing n_mem_tokens) is the most recent untried pending suggestion and must be prioritized per the HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY rule. This is a hyperparameter change that should be exhausted before any architectural modifications, following the HYPERPARAMETER-FIRST POLICY.
+
+
