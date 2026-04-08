@@ -6640,3 +6640,10 @@ Thinking Process:
 **Rationale:** Following the human directions priority, suggestion #5 (n_embd increase) is the next untried hyperparameter after #1-#4, #9-#10 have been exhausted. Per hyperparameter-first policy, architectural changes are premature until all hyperparameter ranges are explored.
 
 
+## Iter 247 — reverted — EM: 0.2728 (N=2)
+**Hypothesis:** Testing different optimizers (AdamW vs SGD with momentum) may reveal training dynamics better suited for associative memory retrieval, as optimizer choice can significantly impact gradient flow through recurrent memory layers.
+**Wall time:** 7.2 min
+**Result:** EM=0.2728 vs prev best=0.9468
+**Rationale:** Following the human directions priority, suggestion #6 (optimizer variations) is the next untried hyperparameter after completing n_mem_tokens, n_layer, lr sweep, n_head, and n_embd changes. All prior hyperparameter suggestions (#1-5, #9-10) have been exhausted with EM remaining around 0.26-0.28, indicating optimizer selection may be a critical bottleneck.
+
+
