@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_013",
-    "em": 0.074,
+    "variant": "iter_020",
+    "em": 0.4634,
     "n_level": 8
   },
   "n_level": 8,
@@ -265,6 +265,22 @@
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_019",
       "wall_time_min": 44.1
+    },
+    {
+      "id": 20,
+      "description": "Increasing n_mem_tokens will provide sufficient memory capacity to store and retrieve associations across longer N=8 sequences that the current memory token count cannot adequately represent.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_mem_tokens will provide sufficient memory capacity to store and retrieve associations across longer N=8 sequences that the current memory token count cannot adequately represent.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Direction #2 [PENDING] explicitly covers model hyperparameters (layers, heads, memory tokens, embedding size). We exhausted training hyperparameters in Direction #1 (LR, batch, optimizer, warmup, training length). The N=4 to N=8 performance drop (0.9208 to 0.074) suggests memory capacity bottleneck rather than optimization issue.",
+        "instruction": "In .autoresearch/experiment_config.yaml, increase n_mem_tokens from current value (likely 8) to 32 to provide 4x memory capacity for N=8 associative retrieval task, keeping total parameter count within ~50% limit."
+      },
+      "em_score": 0.4634,
+      "prev_best": 0.074,
+      "verdict": "kept",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_020",
+      "wall_time_min": 79.6
     }
   ],
   "reference": {

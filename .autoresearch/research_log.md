@@ -419,3 +419,10 @@ Raw response:
 **Rationale:** All hyperparameter categories in Human Direction #1 have been systematically exhausted: LR (Iter 1-2), batch size (Iter 3), weight decay (Iter 5, 8), warmup steps (Iter 9-10), optimizer (Iter 11-13), and training length (Iter 14). Despite achieving 0.9208 EM at N=4, performance drops to 0.074 at N=8, indicating architectural scaling limitations in memory retrieval mechanisms rather than optimization issues.
 
 
+## Iter 20 — kept — EM: 0.4634 (N=8)
+**Hypothesis:** Increasing n_mem_tokens will provide sufficient memory capacity to store and retrieve associations across longer N=8 sequences that the current memory token count cannot adequately represent.
+**Wall time:** 79.6 min
+**Result:** EM=0.4634 vs prev best=0.0740
+**Rationale:** Human Direction #2 [PENDING] explicitly covers model hyperparameters (layers, heads, memory tokens, embedding size). We exhausted training hyperparameters in Direction #1 (LR, batch, optimizer, warmup, training length). The N=4 to N=8 performance drop (0.9208 to 0.074) suggests memory capacity bottleneck rather than optimization issue.
+
+
