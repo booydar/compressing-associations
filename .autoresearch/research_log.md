@@ -26,3 +26,10 @@ Started: Apr 9, 2026 (N=4)
 **Rationale:** Human direction #1 (training hyperparameter exploration) is still PENDING and takes absolute priority. Previous LR exploration (iter 1) was reverted; we need systematic exploration across 5e-5 to 3e-4 with cosine decay and adequate warmup. No architectural changes proposed as hyperparameter tuning must be exhausted first per rules.
 
 
+## Iter 3 — reverted — EM: 0.0048 (N=4)
+**Hypothesis:** Systematic batch size exploration will reveal the optimal gradient stability regime for associative retrieval, as prior LR changes failed to address capacity constraints.
+**Wall time:** 11.3 min
+**Result:** EM=0.0048 vs prev best=0.2528
+**Rationale:** Following human direction #1 priority (training hyperparameters), I am exploring batch size since learning rate has already been tested in iterations 1-2 with poor EM results (0.0064, 0.0058). Larger batch sizes may improve gradient stability for the memory attention mechanism required in associative retrieval tasks.
+
+

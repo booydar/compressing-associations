@@ -48,6 +48,22 @@
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_002",
       "wall_time_min": 6.3
+    },
+    {
+      "id": 3,
+      "description": "Systematic batch size exploration will reveal the optimal gradient stability regime for associative retrieval, as prior LR changes failed to address capacity constraints.",
+      "hypothesis": {
+        "hypothesis": "Systematic batch size exploration will reveal the optimal gradient stability regime for associative retrieval, as prior LR changes failed to address capacity constraints.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Following human direction #1 priority (training hyperparameters), I am exploring batch size since learning rate has already been tested in iterations 1-2 with poor EM results (0.0064, 0.0058). Larger batch sizes may improve gradient stability for the memory attention mechanism required in associative retrieval tasks.",
+        "instruction": "In experiment_config.yaml, set batch_size to 64 (from current default), add batch_size_search: [16, 32, 64, 128] to enable systematic batch size exploration, keep learning_rate at 1e-4, warmup_steps at 1000, and max_steps at 50000."
+      },
+      "em_score": 0.0048,
+      "prev_best": 0.2528,
+      "verdict": "reverted",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_003",
+      "wall_time_min": 11.3
     }
   ],
   "reference": {
