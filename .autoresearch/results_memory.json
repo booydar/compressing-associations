@@ -16,6 +16,22 @@
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_000_baseline",
       "wall_time_min": 48.4
+    },
+    {
+      "id": 1,
+      "description": "The baseline learning rate may be suboptimal for the associative retrieval task, and systematic LR exploration will reveal a more effective training regime.",
+      "hypothesis": {
+        "hypothesis": "The baseline learning rate may be suboptimal for the associative retrieval task, and systematic LR exploration will reveal a more effective training regime.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human direction #1 explicitly prioritizes systematic training hyperparameter exploration, and no hyperparameters have been tested yet (only baseline with EM=0.2528). Per HYPERPARAMETER-FIRST POLICY, I must exhaust hyperparameter tuning before architectural changes.",
+        "instruction": "In .autoresearch/experiment_config.yaml, add a learning rate sweep configuration to test values [1e-5, 3e-5, 5e-5, 1e-4, 3e-4] in sequential experiments. Set default lr to 3e-4 for the next run while maintaining other hyperparameters at baseline values."
+      },
+      "em_score": 0.0064,
+      "prev_best": 0.2528,
+      "verdict": "reverted",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_001",
+      "wall_time_min": 6.8
     }
   ],
   "reference": {

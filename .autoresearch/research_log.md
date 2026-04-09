@@ -12,3 +12,10 @@ Started: Apr 9, 2026 (N=4)
 **Result:** EM=0.2528 vs prev best=-1.0000
 
 
+## Iter 1 — reverted — EM: 0.0064 (N=4)
+**Hypothesis:** The baseline learning rate may be suboptimal for the associative retrieval task, and systematic LR exploration will reveal a more effective training regime.
+**Wall time:** 6.8 min
+**Result:** EM=0.0064 vs prev best=0.2528
+**Rationale:** Human direction #1 explicitly prioritizes systematic training hyperparameter exploration, and no hyperparameters have been tested yet (only baseline with EM=0.2528). Per HYPERPARAMETER-FIRST POLICY, I must exhaust hyperparameter tuning before architectural changes.
+
+
