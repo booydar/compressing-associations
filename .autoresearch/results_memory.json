@@ -695,6 +695,33 @@
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_054",
       "wall_time_min": 33.1
+    },
+    {
+      "id": 55,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 4 column 15 (char 300)\nRaw response:\n{\n  \"hypothesis\": \"Adding a learnable skip connection from input embeddings to memory read output will preserve associative information across N=8 recurrent steps by bypassing recurrent degradation in the memory read path.\",\n  \"target_component\": \"modeling_rmt/huggingface_rmca_v3.py\",\n  \"rationale\":",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.4634,
+      "verdict": "failed",
+      "n_level": 8,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 56,
+      "description": "Adding a learnable temperature scaling parameter to the cross-attention between query and memory tokens will allow the model to control attention sharpness for better associative retrieval at N=8.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable temperature scaling parameter to the cross-attention between query and memory tokens will allow the model to control attention sharpness for better associative retrieval at N=8.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Training hyperparameters exhausted (Iter 1-14, plus Iter 54 LR adjustment failed). Model hyperparameters exhausted (n_mem_tokens success at Iter 20, n_layer/n_head/n_embd all failed). All prior architectural changes (gating, residuals, LayerNorm, write gates, memory decay, memory self-attention, skip connections) have failed. Temperature scaling targets the cross-attention mechanism itself, a component not yet modified.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable temperature parameter (initialized to 1.0) to the cross-attention computation between query and memory tokens. Scale the attention logits by dividing by this temperature parameter before softmax: attention_scores = (query @ memory.T) / temperature. Ensure temperature has a positive constraint via softplus or clipping to prevent instability."
+      },
+      "em_score": 0.0,
+      "prev_best": 0.4634,
+      "verdict": "reverted",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_056",
+      "wall_time_min": 33.6
     }
   ],
   "reference": {
