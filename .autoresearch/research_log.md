@@ -215,3 +215,10 @@ Raw response:
 **Rationale:** Human Direction #1 [PENDING] requires systematic training hyperparameter exploration before architectural changes. Weight decay achieved EM=0.9208 at N=4 (Iter 8), warmup steps failed at N=8 (Iter 10), and LR/batch size were reverted (Iter 1-3). Optimizer configuration is the next unexplored hyperparameter category per Direction #1, and previous attempts failed due to planner errors not experimental results.
 
 
+## Iter 14 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Increasing training length will allow the model sufficient optimization steps to fully converge on complex N=8 associative retrieval patterns.
+**Wall time:** 34.7 min
+**Result:** EM=0.0002 vs prev best=0.0740
+**Rationale:** Human Direction #1 [PENDING] requires systematic hyperparameter exploration before architectural changes. While LR, batch size, weight decay, warmup steps, and optimizer have been tested, training length (max_steps) has not been systematically explored. Weight decay achieved EM=0.9208 at N=4 (Iter 8) but performance dropped at N=8, suggesting convergence issues.
+
+

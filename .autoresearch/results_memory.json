@@ -189,6 +189,22 @@
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_013",
       "wall_time_min": 78.8
+    },
+    {
+      "id": 14,
+      "description": "Increasing training length will allow the model sufficient optimization steps to fully converge on complex N=8 associative retrieval patterns.",
+      "hypothesis": {
+        "hypothesis": "Increasing training length will allow the model sufficient optimization steps to fully converge on complex N=8 associative retrieval patterns.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Direction #1 [PENDING] requires systematic hyperparameter exploration before architectural changes. While LR, batch size, weight decay, warmup steps, and optimizer have been tested, training length (max_steps) has not been systematically explored. Weight decay achieved EM=0.9208 at N=4 (Iter 8) but performance dropped at N=8, suggesting convergence issues.",
+        "instruction": "Increase max_steps from 50000 to 100000 in experiment_config.yaml to provide more training iterations for N=8 associative retrieval convergence"
+      },
+      "em_score": 0.0002,
+      "prev_best": 0.074,
+      "verdict": "reverted",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_014",
+      "wall_time_min": 34.7
     }
   ],
   "reference": {
