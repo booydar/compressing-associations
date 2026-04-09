@@ -2,28 +2,23 @@
 
 ## Objective
 Maximize exact-match (EM) on associative retrieval task using RMCA.
-Advance N-level: N=4 → N=8 as EM ≥ 0.99 at each level.
+Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 
 ## Constraints
-- Model file: modeling_rmt/huggingface_rmca_v3.py
-- No parameter count explosion (justify any increase)
+- Target files: modeling_rmt/huggingface_rmca_v3.py (architecture) or .autoresearch/experiment_config.yaml (hyperparameters)
+- No parameter count explosion (~50% max increase without strong justification)
 - Max experiment length: 50000 steps
+
+## Allowed Changes
+- **Architecture**: Any modification to huggingface_rmca_v3.py (layers, attention, memory mechanisms, etc.)
+- **Model hyperparameters**: n_layer, n_head, n_embd, n_mem_tokens (in experiment_config.yaml)
+- **Training hyperparameters**: lr, batch_size, warmup_steps, eval_steps, logging_steps, early_stopping_patience (in experiment_config.yaml)
 
 ## Current State
 - N-level: 4
-- Current best EM: -1.0 (starting fresh)
-- Best variant: none
-- Last updated: 2026-04-09
-
-## Reference: Previous Work (N=2)
-- **iter_108** achieved EM=0.9468 at N=2
-- Used memory compression mechanism that selectively updates high-salience memory tokens
-- All 10 human hyperparameter suggestions exhausted before architectural change
-- Full results available in: `runs-autoresearch/n2/iter_108/`
+- Current best EM: 0.2528
+- Best variant: iter_000_baseline
+- Last updated: 2026-04-09 10:39
 
 ## Current Understanding
-Starting fresh at N=4. Previous N=2 results show that architectural changes (memory compression) can achieve near-perfect performance (0.9468 EM) after hyperparameter tuning is exhausted. The challenge is now scaling this to N=4, which requires the model to learn 4 associative pairs instead of 2.
-
-Key question: Will the same memory compression mechanism scale to N=4, or will new architectural changes be needed?
-
----
+(updated each iteration by autoresearch loop)

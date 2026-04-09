@@ -1,7 +1,23 @@
 {
-  "current_best": {"variant": "none", "em": -1.0, "n_level": 4},
+  "current_best": {
+    "variant": "iter_000_baseline",
+    "em": 0.2528,
+    "n_level": 4
+  },
   "n_level": 4,
-  "experiments": [],
+  "experiments": [
+    {
+      "id": 0,
+      "description": "baseline \u2014 exact copy of v2",
+      "hypothesis": null,
+      "em_score": 0.2528,
+      "prev_best": -1.0,
+      "verdict": "baseline",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_000_baseline",
+      "wall_time_min": 48.4
+    }
+  ],
   "reference": {
     "note": "Previous successful run: iter_108 achieved EM=0.9468 at N=2 (Apr 8, 2026)",
     "variant": "iter_108",
