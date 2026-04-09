@@ -1,5 +1,21 @@
 {
-  "current_best": {"variant": "none", "em": -1.0, "n_level": 0},
-  "n_level": null,
-  "experiments": []
+  "current_best": {"variant": "iter_108", "em": 0.9468, "n_level": 2},
+  "n_level": 2,
+  "experiments": [
+    {
+      "id": 108,
+      "description": "Implementing a memory compression mechanism that selectively updates high-salience memory tokens will improve information retention for associative retrieval by preventing information dilution across memory slots.",
+      "hypothesis": {
+        "hypothesis": "Implementing a memory compression mechanism that selectively updates high-salience memory tokens will improve information retention for associative retrieval by preventing information dilution across memory slots.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "All 10 human-directed hyperparameter suggestions have been attempted with values tried, reverted, or failed, yet best EM remains at 0.2816 from iter_083. With hyperparameter space exhausted and no architectural changes attempted yet, architectural intervention is now justified per the hyperparameter-first policy."
+      },
+      "em_score": 0.9468,
+      "prev_best": 0.2816,
+      "verdict": "kept",
+      "n_level": 2,
+      "exp_path": "runs-autoresearch/n2/iter_108",
+      "wall_time_min": 34.3
+    }
+  ]
 }
