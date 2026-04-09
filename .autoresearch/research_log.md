@@ -426,3 +426,10 @@ Raw response:
 **Rationale:** Human Direction #2 [PENDING] explicitly covers model hyperparameters (layers, heads, memory tokens, embedding size). We exhausted training hyperparameters in Direction #1 (LR, batch, optimizer, warmup, training length). The N=4 to N=8 performance drop (0.9208 to 0.074) suggests memory capacity bottleneck rather than optimization issue.
 
 
+## Iter 21 — reverted — EM: 0.0010 (N=8)
+**Hypothesis:** Adding a residual connection around the memory cross-attention layer will preserve memory signal integrity during long sequence processing, improving associative retrieval accuracy at N=8.
+**Wall time:** 38.4 min
+**Result:** EM=0.0010 vs prev best=0.4634
+**Rationale:** All hyperparameter categories from Human Direction #1 have been systematically exhausted: LR (Iter 1-2), batch size (Iter 3), weight decay (Iter 5,8), warmup steps (Iter 9-10), optimizer (Iter 11-13), and training length (Iter 14). The memory gating architecture change (Iter 18-19) failed with EM=0.0, while increasing n_mem_tokens (Iter 20) improved EM from 0.074 to 0.4634, indicating memory capacity is important but signal preservation during cross-attention is the remaining bottleneck.
+
+

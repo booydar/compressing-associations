@@ -281,6 +281,22 @@
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_020",
       "wall_time_min": 79.6
+    },
+    {
+      "id": 21,
+      "description": "Adding a residual connection around the memory cross-attention layer will preserve memory signal integrity during long sequence processing, improving associative retrieval accuracy at N=8.",
+      "hypothesis": {
+        "hypothesis": "Adding a residual connection around the memory cross-attention layer will preserve memory signal integrity during long sequence processing, improving associative retrieval accuracy at N=8.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "All hyperparameter categories from Human Direction #1 have been systematically exhausted: LR (Iter 1-2), batch size (Iter 3), weight decay (Iter 5,8), warmup steps (Iter 9-10), optimizer (Iter 11-13), and training length (Iter 14). The memory gating architecture change (Iter 18-19) failed with EM=0.0, while increasing n_mem_tokens (Iter 20) improved EM from 0.074 to 0.4634, indicating memory capacity is important but signal preservation during cross-attention is the remaining bottleneck.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the memory cross-attention forward pass to add a residual connection: compute cross_attention_output = cross_attention(memory_tokens, query_tokens), then return query_tokens + cross_attention_output (scaled by a learnable parameter if needed). Ensure proper dropout is applied to the cross-attention output before the residual addition."
+      },
+      "em_score": 0.001,
+      "prev_best": 0.4634,
+      "verdict": "reverted",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_021",
+      "wall_time_min": 38.4
     }
   ],
   "reference": {
