@@ -12,15 +12,15 @@ warmup_steps: 500         # explicit warmup steps configuration (fixes iter_131,
 early_stopping_patience: 20  # epochs without improvement before early stopping
 
 # Model architecture parameters
-n_layer: 6                # number of layers (changed from 4 to 6 - iter_187)
-n_head: 8                 # number of attention heads (changed from 4 to 8 - iter_188)
-n_embd: 256               # embedding dimension
+n_layer: 4                # number of layers (changed from 4 to 6 - iter_187)
+n_head: 4                 # number of attention heads (changed from 4 to 8 - iter_188)
+n_embd: 128               # embedding dimension
 n_mem_tokens: 16          # number of memory tokens
 
 # Task parameters
-n_keys: 2                 # number of keys
-n_values: 2               # number of values
-pairs_per_segment: 2      # pairs per segment
+n_keys: 4                 # number of keys
+n_values: 4               # number of values
+pairs_per_segment: 4      # pairs per segment
 
 # Training parameters
 base_model: llama         # base model to use
