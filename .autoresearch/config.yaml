@@ -72,25 +72,11 @@ llm:
   #   host: 127.0.0.1
   #   port: 8117
 
-experiment:
-  max_iters: 50
-  max_steps: 5000
-  eval_steps: 100
-  logging_steps: 50
-  warmup_steps: 200
-  early_stopping_patience: 20
-  n_layer: 4
-  n_head: 4
-  n_embd: 128
-  n_mem_tokens: 8
-  n_keys: 2
-  n_values: 2
-  pairs_per_segment: 2
-  base_model: llama
-  lr: 3e-4
-  batch_size: 64          # NP=1, per_device_bs=64
-  n_start: 2              # starting N-level (number of KV pairs)
-  em_threshold: 0.99      # EM required to advance to next N-level
+# Experiment config is in experiment_config.yaml (can be modified by autoresearch)
+# N-level progression parameters (cannot be modified by autoresearch)
+max_iters: 200            # number of autoresearch iterations
+n_start: 2                # starting N-level (number of KV pairs)
+em_threshold: 0.99        # EM required to advance to next N-level
 
 git:
   auto_commit: true

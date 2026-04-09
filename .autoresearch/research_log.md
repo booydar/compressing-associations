@@ -6654,3 +6654,53 @@ Thinking Process:
 **Rationale:** Human directions #7 (batch size variations) remains untried per implementation history. All other hyperparameter suggestions (#1-6, #10) have been exhausted through experiments 235-247. Following hyperparameter-first policy, batch size must be explored before architectural changes.
 
 
+## Iter 249 — FAILED — N=2
+**Error:** planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)
+Raw response:
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** Research scientist specializing in recurrent neural memory architectures.
+    *   **Task:** Propose ONE concrete change to improve RMCA model's exact-match (EM) accuracy on associative retrieval task.
+    *   **Constraints:**
+        *   Human directions take absolute priority.
+        *   Hyperparameter-first policy (exhaust hyperparameters before architecture).
+        *   Propose only ONE change.
+        *   Respond with ONLY a JSON object (no markdown fences, no extra text).
+    *   **Current State:** N=2, Best EM=0.9468 (iter_108). Recent experiments (iter 240-248) show EM around 0.26-0.28 (reverted). This indicates a significant regression or issue with recent changes compared to the baseline (iter_108).
+    *   **Human Directions:** There is a list of 10 pending suggestions.
+    *   **Implementation History:**
+        *   iter 235: warmup ratio (Suggestion #10) - Tried.
+        *   iter 240: n_mem_tokens 8->16 (Suggestion #1) - Tried.
+        *   iter 243: n_layer 4->6 (Suggestion #2) - Tried.
+        *   iter 244: lr sweep (Suggestion #3) - Tried.
+        *   iter 245: n_head 4->8 (Suggestion #4) - Tried.
+        *   iter 246: n_embd 128->256 (Suggestion #5) - Tried.
+        *   iter 247: optimizers (Suggestion #6) - Tried.
+        *   iter 248: batch size (Suggestion #7) - Tried.
+    *   **Remaining Human Suggestions:**
+        *   #8: Try longer training: 50000, 100000 steps.
+        *   #9: Try weight decay: 0.01, 0.1 (Mentioned in analysis as iter 234 tried, but list says Pending. Let's assume Pending means not successfully completed or fully explored).
+        *   #10: Try different warmup ratios: 0.05, 0.1, 0.2 (iter 235 tried 0.1).
+    *   **Current Situation:** The "Recent Experiment History" shows iterations 240-248 have all been "reverted" with low EM (~0.27). The "Current State" says "Best variant: iter_108" with EM 0.9468. This suggests the recent changes broke the model or the evaluation metric changed. However, my task is to propose the *next* change based on the rules.
+    *   **Priority Rule:** "If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else."
+    *   **Hyperparameter-First Policy:** Exhaust hyperparameters before architecture.
+
+2.  **Evaluate Pending Suggestions:**
+    *   The list has 10 items.
+    *   Based on the "Implementation History" provided in the prompt context (iter 240-248):
+        *   #1 (n_mem_tokens): Iter 240.
+        *   #2 (n_layer): Iter 243.
+        *   #3 (lr): Iter 244.
+        *   #4 (n_head): Iter 245.
+        *   #5 (n_embd): Iter 246.
+        *   #6 (optimizers): Iter 247.
+        *   #7 (batch size): Iter 248.
+    *   Untried/Remaining in the list:
+        *   #8: Try longer training: 50000, 100000 steps.
+        *   #9: Try weight decay: 0.01, 0.1.
+        *   #10: Try different warmup ratios: 0.05, 0.1, 0.2.
+    *   The prompt text says "Human Directions (PRIORITY - implement if available)" and lists them 1-10.
+    *   The instruction says "implement the most recent untried suggestion". Usually, in a numbered list like this, "most recent" might imply the highest number (added last) or the first untried
+
+

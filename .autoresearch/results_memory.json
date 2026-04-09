@@ -7,22 +7,6 @@
   "n_level": 2,
   "experiments": [
     {
-      "id": 203,
-      "description": "FAILED: experiment error: Experiment script exited with code 1",
-      "hypothesis": {
-        "hypothesis": "Switching from AdamW to SGD with momentum may improve generalization on associative retrieval tasks by encouraging convergence to flatter minima.",
-        "target_component": ".autoresearch/experiment_config.yaml",
-        "rationale": "Suggestions #1-5 (n_mem_tokens, n_layer, learning rate, n_head, n_embd) have been exhausted per experiment history (iter 183-201). Suggestion #6 (optimizers) is the next pending human direction and must be prioritized per Critical Rules before any architectural changes.",
-        "instruction": "Change optimizer from 'adamw' to 'sgd' in experiment_config.yaml and add momentum: 0.9 to the configuration."
-      },
-      "em_score": null,
-      "prev_best": 0.9468,
-      "verdict": "failed",
-      "n_level": 2,
-      "exp_path": null,
-      "wall_time_min": 0
-    },
-    {
       "id": 204,
       "description": "Increasing batch size to 128 will provide more stable gradient estimates for the associative retrieval task, potentially improving convergence and EM accuracy.",
       "hypothesis": {
@@ -695,6 +679,17 @@
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n2/iter_248",
       "wall_time_min": 8.0
+    },
+    {
+      "id": 249,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Expecting value: line 1 column 1 (char 0)\nRaw response:\nThinking Process:\n\n1.  **Analyze the Request:**\n    *   **Role:** Research scientist specializing in recurrent neural memory architectures.\n    *   **Task:** Propose ONE concrete change to improve RMCA model's exact-match (EM) accuracy on associative retrieval task.\n    *   **Constraints:**\n        *   Human directions take absolute priority.\n        *   Hyperparameter-first policy (exhaust hyperparameters before architecture).\n        *   Propose only ONE change.\n        *   Respond with ONLY a JSON object (no markdown fences, no extra text).\n    *   **Current State:** N=2, Best EM=0.9468 (iter_108). Recent experiments (iter 240-248) show EM around 0.26-0.28 (reverted). This indicates a significant regression or issue with recent changes compared to the baseline (iter_108).\n    *   **Human Directions:** There is a list of 10 pending suggestions.\n    *   **Implementation History:**\n        *   iter 235: warmup ratio (Suggestion #10) - Tried.\n        *   iter 240: n_mem_tokens 8->16 (Suggestion #1) - Tried.\n        *   iter 243: n_layer 4->6 (Suggestion #2) - Tried.\n        *   iter 244: lr sweep (Suggestion #3) - Tried.\n        *   iter 245: n_head 4->8 (Suggestion #4) - Tried.\n        *   iter 246: n_embd 128->256 (Suggestion #5) - Tried.\n        *   iter 247: optimizers (Suggestion #6) - Tried.\n        *   iter 248: batch size (Suggestion #7) - Tried.\n    *   **Remaining Human Suggestions:**\n        *   #8: Try longer training: 50000, 100000 steps.\n        *   #9: Try weight decay: 0.01, 0.1 (Mentioned in analysis as iter 234 tried, but list says Pending. Let's assume Pending means not successfully completed or fully explored).\n        *   #10: Try different warmup ratios: 0.05, 0.1, 0.2 (iter 235 tried 0.1).\n    *   **Current Situation:** The \"Recent Experiment History\" shows iterations 240-248 have all been \"reverted\" with low EM (~0.27). The \"Current State\" says \"Best variant: iter_108\" with EM 0.9468. This suggests the recent changes broke the model or the evaluation metric changed. However, my task is to propose the *next* change based on the rules.\n    *   **Priority Rule:** \"If human_directions.md contains pending suggestions, you MUST implement the most recent untried suggestion from that list before proposing anything else.\"\n    *   **Hyperparameter-First Policy:** Exhaust hyperparameters before architecture.\n\n2.  **Evaluate Pending Suggestions:**\n    *   The list has 10 items.\n    *   Based on the \"Implementation History\" provided in the prompt context (iter 240-248):\n        *   #1 (n_mem_tokens): Iter 240.\n        *   #2 (n_layer): Iter 243.\n        *   #3 (lr): Iter 244.\n        *   #4 (n_head): Iter 245.\n        *   #5 (n_embd): Iter 246.\n        *   #6 (optimizers): Iter 247.\n        *   #7 (batch size): Iter 248.\n    *   Untried/Remaining in the list:\n        *   #8: Try longer training: 50000, 100000 steps.\n        *   #9: Try weight decay: 0.01, 0.1.\n        *   #10: Try different warmup ratios: 0.05, 0.1, 0.2.\n    *   The prompt text says \"Human Directions (PRIORITY - implement if available)\" and lists them 1-10.\n    *   The instruction says \"implement the most recent untried suggestion\". Usually, in a numbered list like this, \"most recent\" might imply the highest number (added last) or the first untried",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.9468,
+      "verdict": "failed",
+      "n_level": 2,
+      "exp_path": null,
+      "wall_time_min": 0
     }
   ]
 }
