@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "none",
-    "em": -1.0,
+    "variant": "iter_010",
+    "em": 0.0,
     "n_level": 8
   },
   "n_level": 8,
@@ -124,6 +124,33 @@
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_008",
       "wall_time_min": 54.1
+    },
+    {
+      "id": 9,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 259)\nRaw response:\n{\n  \"hypothesis\": \"Increasing warmup steps will allow memory token representations to stabilize gradually, preventing early gradient instability in the associative retrieval task.\",\n  \"target_component\": \".autoresearch/experiment_config.yaml\",\n  \"rationale\": \"Human Direction #1 [PENDING] requires systematic hyperparameter exploration. While LR, batch size, and weight decay have been tested (with weight_decay=0.01 achieving EM=",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": -1.0,
+      "verdict": "failed",
+      "n_level": 8,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 10,
+      "description": "Increasing warmup_steps to 2000 will allow memory token representations to stabilize gradually, preventing early gradient instability in the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Increasing warmup_steps to 2000 will allow memory token representations to stabilize gradually, preventing early gradient instability in the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Direction #1 [PENDING] requires systematic training hyperparameter exploration. Weight decay (iter 8) achieved EM=0.9208, but warmup_steps was attempted in iter 9 and failed due to planner error. This exploration must complete before architectural changes per Critical Rules.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change warmup_steps from 500 to 2000 to allow gradual stabilization of memory token representations during training."
+      },
+      "em_score": 0.0,
+      "prev_best": -1.0,
+      "verdict": "kept",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_010",
+      "wall_time_min": 41.5
     }
   ],
   "reference": {

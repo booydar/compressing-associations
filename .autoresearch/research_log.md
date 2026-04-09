@@ -173,3 +173,19 @@ Thinking Process:
 Previous N achieved EM=0.9208 >= threshold 0.5.
 
 
+## Iter 9 — FAILED — N=8
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 259)
+Raw response:
+{
+  "hypothesis": "Increasing warmup steps will allow memory token representations to stabilize gradually, preventing early gradient instability in the associative retrieval task.",
+  "target_component": ".autoresearch/experiment_config.yaml",
+  "rationale": "Human Direction #1 [PENDING] requires systematic hyperparameter exploration. While LR, batch size, and weight decay have been tested (with weight_decay=0.01 achieving EM=
+
+
+## Iter 10 — kept — EM: 0.0000 (N=8)
+**Hypothesis:** Increasing warmup_steps to 2000 will allow memory token representations to stabilize gradually, preventing early gradient instability in the associative retrieval task.
+**Wall time:** 41.5 min
+**Result:** EM=0.0000 vs prev best=-1.0000
+**Rationale:** Human Direction #1 [PENDING] requires systematic training hyperparameter exploration. Weight decay (iter 8) achieved EM=0.9208, but warmup_steps was attempted in iter 9 and failed due to planner error. This exploration must complete before architectural changes per Critical Rules.
+
+
