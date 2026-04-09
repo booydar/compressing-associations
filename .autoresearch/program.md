@@ -15,10 +15,10 @@ Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 - **Training hyperparameters**: lr, batch_size, warmup_steps, eval_steps, logging_steps, early_stopping_patience (in experiment_config.yaml)
 
 ## Current State
-- N-level: 8
-- Current best EM: 0.4634
-- Best variant: iter_020
-- Last updated: 2026-04-09 21:22
+- N-level: 16
+- Current best EM: -1.0000
+- Best variant: iter_064
+- Last updated: 2026-04-10 00:45
 
 ## Current Understanding
 (updated each iteration by autoresearch loop)

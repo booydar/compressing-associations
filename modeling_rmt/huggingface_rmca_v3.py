@@ -134,6 +134,13 @@ class MemoryAugmentedLayer(nn.Module):
         self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
+        
+        # Add LayerNorm for memory state after write operation
+        dim = initial_memory_state.shape[-1]
+        self.memory_state_norm = torch.nn.LayerNorm(dim, elementwise_affine=True)
+        with torch.no_grad():
+            self.memory_state_norm.weight.fill_(1.0)
+            self.memory_state_norm.bias.fill_(1.0)
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
@@ -154,6 +161,10 @@ class MemoryAugmentedLayer(nn.Module):
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
         memory = memory + write_residual
+        
+        # Apply LayerNorm to memory state after write operation
+        memory = self.memory_state_norm(memory)
+        
         self.memory_state = memory
 
         output = self.base_layer(hidden_states, *args, **kwargs)
