@@ -35,13 +35,14 @@ sys.path.insert(0, str(AUTORESEARCH_DIR))
 
 from eval_harness import get_em
 from planner import plan
-from executor import execute
+from executor import execute, _validate_yaml
 
 MODEL_FILE = REPO_ROOT / "modeling_rmt" / "huggingface_rmca_v3.py"
 PROGRAM_MD = AUTORESEARCH_DIR / "program.md"
 RESEARCH_LOG = AUTORESEARCH_DIR / "research_log.md"
 MEMORY_FILE = AUTORESEARCH_DIR / "results_memory.json"
 CONFIG_FILE = AUTORESEARCH_DIR / "config.yaml"
+EXPERIMENT_CONFIG_FILE = AUTORESEARCH_DIR / "experiment_config.yaml"
 RUN_SCRIPT = REPO_ROOT / "scripts" / "run_autoresearch_exp.sh"
 
 
@@ -127,6 +128,16 @@ def load_config() -> dict:
     return cfg
 
 
+def load_experiment_config() -> dict:
+    with open(EXPERIMENT_CONFIG_FILE) as f:
+        return yaml.safe_load(f)
+
+
+def save_experiment_config(exp_cfg: dict) -> None:
+    with open(EXPERIMENT_CONFIG_FILE, "w") as f:
+        yaml.dump(exp_cfg, f, default_flow_style=False, sort_keys=False)
+
+
 def _load_dotenv(path: Path) -> None:
     for line in path.read_text().splitlines():
         line = line.strip()
@@ -147,9 +158,6 @@ def load_memory() -> dict:
 
 
 def save_memory(memory: dict) -> None:
-    # Keep at most 50 experiments to avoid unbounded growth
-    if len(memory["experiments"]) > 50:
-        memory["experiments"] = memory["experiments"][-50:]
     MEMORY_FILE.write_text(json.dumps(memory, indent=2))
 
 
@@ -158,6 +166,7 @@ def load_program_md() -> str:
 
 
 def update_program_md(n_level: int, current_best_em: float, best_variant: str, understanding: str = "") -> None:
+    exp_cfg = load_experiment_config()
     content = f"""# Research Program
 
 ## Objective
@@ -165,9 +174,14 @@ Maximize exact-match (EM) on associative retrieval task using RMCA.
 Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 
 ## Constraints
-- Model file: modeling_rmt/huggingface_rmca_v3.py
-- No parameter count explosion (justify any increase)
-- Max experiment length: {load_config()['experiment']['max_steps']} steps
+- Target files: modeling_rmt/huggingface_rmca_v3.py (architecture) or .autoresearch/experiment_config.yaml (hyperparameters)
+- No parameter count explosion (~50% max increase without strong justification)
+- Max experiment length: {exp_cfg['max_steps']} steps
+
+## Allowed Changes
+- **Architecture**: Any modification to huggingface_rmca_v3.py (layers, attention, memory mechanisms, etc.)
+- **Model hyperparameters**: n_layer, n_head, n_embd, n_mem_tokens (in experiment_config.yaml)
+- **Training hyperparameters**: lr, batch_size, warmup_steps, eval_steps, logging_steps, early_stopping_patience (in experiment_config.yaml)
 
 ## Current State
 - N-level: {n_level}
@@ -192,12 +206,28 @@ def git_revert_model() -> None:
         cwd=REPO_ROOT, capture_output=True, text=True
     )
     if result.returncode != 0:
-        print(f"[WARN] git revert failed: {result.stderr.strip()}")
+        print(f"[WARN] git revert model failed: {result.stderr.strip()}")
+
+
+def git_revert_config() -> None:
+    result = subprocess.run(
+        ["git", "checkout", "--", str(EXPERIMENT_CONFIG_FILE.relative_to(REPO_ROOT))],
+        cwd=REPO_ROOT, capture_output=True, text=True
+    )
+    if result.returncode != 0:
+        print(f"[WARN] git revert config failed: {result.stderr.strip()}")
+
+
+def git_revert_changes() -> None:
+    """Revert both model and config files to HEAD."""
+    git_revert_model()
+    git_revert_config()
 
 
 def git_commit(message: str) -> None:
     files = [
         str(MODEL_FILE.relative_to(REPO_ROOT)),
+        str(EXPERIMENT_CONFIG_FILE.relative_to(REPO_ROOT)),
         str(PROGRAM_MD.relative_to(REPO_ROOT)),
         str(RESEARCH_LOG.relative_to(REPO_ROOT)),
         str(MEMORY_FILE.relative_to(REPO_ROOT)),
@@ -209,8 +239,7 @@ def git_commit(message: str) -> None:
 EXPERIMENT_TIMEOUT_SEC = 2 * 60 * 60  # 2 hours
 
 
-def run_experiment(exp_path: str, n_pairs: int, cfg: dict) -> None:
-    exp_cfg = cfg["experiment"]
+def run_experiment(exp_path: str, n_pairs: int, exp_cfg: dict) -> None:
     env = os.environ.copy()
     env.update({
         "L": str(exp_cfg["n_layer"]),
@@ -275,16 +304,18 @@ def main() -> None:
 
     cfg = load_config()
     _ensure_cursor_bridge(cfg)
-    exp_cfg = cfg["experiment"]
+    exp_cfg = load_experiment_config()
     planner_cfg = cfg["llm"]["planner"]
     executor_cfg = cfg["llm"]["executor"]
     auto_commit = cfg.get("git", {}).get("auto_commit", True)
+    n_start = cfg.get("n_start", 2)
+    em_threshold = cfg.get("em_threshold", 0.99)
 
     memory = load_memory()
 
     # Initialise n_level from memory or config
     if memory["n_level"] is None:
-        memory["n_level"] = exp_cfg["n_start"]
+        memory["n_level"] = n_start
 
     n_level = memory["n_level"]
     current_best_em = memory["current_best"]["em"]
@@ -297,7 +328,7 @@ def main() -> None:
     if not RESEARCH_LOG.exists():
         RESEARCH_LOG.write_text(f"# Research Log\nStarted: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
 
-    max_iters = exp_cfg["max_iters"]
+    max_iters = cfg.get("max_iters", 100)
     iter_start = len(memory["experiments"])
 
     for iter_id in range(iter_start, iter_start + max_iters):
@@ -357,6 +388,7 @@ def _run_iter(
 
     hypothesis = None
     change_applied = False
+    config_changed = False
     prev_best_em = current_best_em  # capture before any mutation
 
     if is_baseline:
@@ -380,48 +412,91 @@ def _run_iter(
 
         # ── Executor + sanity (with retries) ──
         N_EXECUTOR_RETRIES = 4
-        current_code = MODEL_FILE.read_text()
-        new_code = None
-        last_error: str | None = None
+        target = hypothesis.get("target_component", "")
+        is_config_change = target == ".autoresearch/experiment_config.yaml" or "experiment_config.yaml" in target
+        
+        if is_config_change:
+            current_content = EXPERIMENT_CONFIG_FILE.read_text()
+            new_content = None
+            last_error: str | None = None
 
-        for attempt in range(1, N_EXECUTOR_RETRIES + 1):
-            print(f"[executor] applying change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
-            try:
-                new_code = execute(hypothesis, current_code, executor_cfg, error_context=last_error)
-            except Exception as e:
-                last_error = f"Executor error: {e}"
-                print(f"[executor] ERROR: {e}")
-                continue
+            for attempt in range(1, N_EXECUTOR_RETRIES + 1):
+                print(f"[executor] applying config change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
+                try:
+                    new_content = execute(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=True)
+                except Exception as e:
+                    last_error = f"Executor error: {e}"
+                    print(f"[executor] ERROR: {e}")
+                    continue
 
-            print("[sanity] checking modified code...")
-            try:
-                sanity_check(new_code)
-                print("[sanity] OK")
-                break  # success
-            except Exception as e:
-                last_error = f"Sanity check failed: {e}"
-                print(f"[sanity] FAILED (attempt {attempt}): {e}")
-                new_code = None
-                continue
+                print("[validate] checking modified YAML...")
+                try:
+                    _validate_yaml(new_content)
+                    print("[validate] OK")
+                    break  # success
+                except Exception as e:
+                    last_error = f"YAML validation failed: {e}"
+                    print(f"[validate] FAILED (attempt {attempt}): {e}")
+                    new_content = None
+                    continue
+            else:
+                print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/validate failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
+                save_memory(memory)
+                return
+
+            EXPERIMENT_CONFIG_FILE.write_text(new_content)
+            exp_cfg = yaml.safe_load(new_content)
+            change_applied = True
+            config_changed = True
+            print(f"[config] updated experiment config")
         else:
-            # All attempts exhausted
-            print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/sanity failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
-            save_memory(memory)
-            return
+            current_code = MODEL_FILE.read_text()
+            new_code = None
+            last_error: str | None = None
 
-        MODEL_FILE.write_text(new_code)
-        change_applied = True
+            for attempt in range(1, N_EXECUTOR_RETRIES + 1):
+                print(f"[executor] applying change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
+                try:
+                    new_code = execute(hypothesis, current_code, executor_cfg, error_context=last_error)
+                except Exception as e:
+                    last_error = f"Executor error: {e}"
+                    print(f"[executor] ERROR: {e}")
+                    continue
+
+                print("[sanity] checking modified code...")
+                try:
+                    sanity_check(new_code)
+                    print("[sanity] OK")
+                    break  # success
+                except Exception as e:
+                    last_error = f"Sanity check failed: {e}"
+                    print(f"[sanity] FAILED (attempt {attempt}): {e}")
+                    new_code = None
+                    continue
+            else:
+                print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/sanity failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
+                save_memory(memory)
+                return
+
+            MODEL_FILE.write_text(new_code)
+            change_applied = True
+            config_changed = False  # Model change, not config
 
     # ── Run experiment ──
     t0 = time.time()
     try:
-        run_experiment(exp_path, n_pairs=n_level, cfg=cfg)
+        run_experiment(exp_path, n_pairs=n_level, exp_cfg=exp_cfg)
     except Exception as e:
         print(f"[experiment] ERROR: {e}")
         if change_applied:
-            print("[revert] reverting model file...")
-            git_revert_model()
+            if config_changed:
+                print("[revert] reverting config file...")
+                git_revert_config()
+            else:
+                print("[revert] reverting model file...")
+                git_revert_model()
         _record_failed_iter(memory, iter_id, n_level, current_best_em, f"experiment error: {e}", hypothesis)
         save_memory(memory)
         return
@@ -434,7 +509,10 @@ def _run_iter(
     except Exception as e:
         print(f"[eval] ERROR reading metrics: {e}")
         if change_applied:
-            git_revert_model()
+            if config_changed:
+                git_revert_config()
+            else:
+                git_revert_model()
         _record_failed_iter(memory, iter_id, n_level, current_best_em, f"eval error: {e}", hypothesis)
         save_memory(memory)
         return
@@ -452,7 +530,10 @@ def _run_iter(
         verdict = "reverted" if change_applied else "baseline"
         if change_applied:
             print(f"[result] REVERTED — EM={em:.4f} did not beat {current_best_em:.4f}")
-            git_revert_model()
+            if config_changed:
+                git_revert_config()
+            else:
+                git_revert_model()
 
     # ── Record ──
     entry = {
@@ -500,8 +581,9 @@ def _run_iter(
 
     # ── Git commit ──
     if auto_commit:
+        change_type = "config" if config_changed else "model"
         commit_msg = (
-            f"autoresearch iter {iter_id}: {verdict} | EM={em:.4f} | N={n_level}\n\n"
+            f"autoresearch iter {iter_id}: {verdict} | EM={em:.4f} | N={n_level} | {change_type}\n\n"
             f"{description}"
         )
         git_commit(commit_msg)

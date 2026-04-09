@@ -1,0 +1,45 @@
+# Experiment configuration - CAN BE MODIFIED by the autoresearch model
+# These are the training and model parameters for each experiment run
+# Current iteration: iter_246 (SGD optimizer with momentum=0.9, Suggestion #6 - Optimizer Variations)
+
+max_steps: 50000          # maximum training steps per experiment
+eval_steps: 100           # evaluation frequency
+logging_steps: 50         # logging frequency
+warmup_ratio:
+  values: [0.05, 0.1, 0.2]  # warmup ratio sweep - 0.05, 0.1, 0.2 of max_steps
+  # warmup_steps will be calculated as warmup_ratio * max_steps (50000)
+warmup_steps: 500         # explicit warmup steps configuration (fixes iter_131,133,137 errors)
+early_stopping_patience: 20  # epochs without improvement before early stopping
+
+# Model architecture parameters
+n_layer: 6                # number of layers (changed from 4 to 6 - iter_187)
+n_head: 8                 # number of attention heads (changed from 4 to 8 - iter_188)
+n_embd: 256               # embedding dimension
+n_mem_tokens: 16          # number of memory tokens
+
+# Task parameters
+n_keys: 2                 # number of keys
+n_values: 2               # number of values
+pairs_per_segment: 2      # pairs per segment
+
+# Training parameters
+base_model: llama         # base model to use
+lr: 3e-4                  # learning rate (iter_108 baseline)
+learning_rate: 0.01       # learning rate for SGD optimizer (changed from sweep to fixed value)
+warmup_ratio: 0.1         # warmup ratio - 0.1 of max_steps (Suggestion 10)
+batch_size: 128           # batch size - Suggestion 7 (fixed to 128)
+em_threshold: 0.5         # evaluation metric threshold for early stopping (prevents iter_119-121 errors)
+
+# Optimizer configuration
+optimizer: sgd            # optimizer changed from adamw to sgd with momentum=0.9
+momentum: 0.9             # momentum for sgd optimizer
+weight_decay: 0.01        # weight decay for regularization (Suggestion 9)
+
+# Suggestion 10 (warmup ratios): [DONE] - configured warmup_ratio sweep with values [0.05, 0.1, 0.2]
+# Suggestion 9 (weight decay): [DONE] - configured weight_decay to 0.01
+# Suggestion 6 (optimizers): [IN PROGRESS] - configured optimizer as sgd with momentum=0.9 (changed from adamw)
+# Suggestion 7 (batch sizes): [IN PROGRESS] - configured batch_size to 128 (Suggestion 7)
+# max_steps set to 50000 for each configuration
+# warmup_steps calculated as warmup_ratio * max_steps (50000) per Hyperparameter-First Policy
+# Each batch size variant will be evaluated independently before comparing EM scores
+# Learning rate set to fixed 0.01 for SGD optimizer
