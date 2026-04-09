@@ -19,3 +19,10 @@ Started: Apr 9, 2026 (N=4)
 **Rationale:** Human direction #1 explicitly prioritizes systematic training hyperparameter exploration, and no hyperparameters have been tested yet (only baseline with EM=0.2528). Per HYPERPARAMETER-FIRST POLICY, I must exhaust hyperparameter tuning before architectural changes.
 
 
+## Iter 2 — reverted — EM: 0.0058 (N=4)
+**Hypothesis:** A systematic learning rate search with proper warmup and cosine decay will stabilize training for the associative retrieval task.
+**Wall time:** 6.3 min
+**Result:** EM=0.0058 vs prev best=0.2528
+**Rationale:** Human direction #1 (training hyperparameter exploration) is still PENDING and takes absolute priority. Previous LR exploration (iter 1) was reverted; we need systematic exploration across 5e-5 to 3e-4 with cosine decay and adequate warmup. No architectural changes proposed as hyperparameter tuning must be exhausted first per rules.
+
+

@@ -32,6 +32,22 @@
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_001",
       "wall_time_min": 6.8
+    },
+    {
+      "id": 2,
+      "description": "A systematic learning rate search with proper warmup and cosine decay will stabilize training for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "A systematic learning rate search with proper warmup and cosine decay will stabilize training for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human direction #1 (training hyperparameter exploration) is still PENDING and takes absolute priority. Previous LR exploration (iter 1) was reverted; we need systematic exploration across 5e-5 to 3e-4 with cosine decay and adequate warmup. No architectural changes proposed as hyperparameter tuning must be exhausted first per rules.",
+        "instruction": "In experiment_config.yaml, set learning_rate to 1e-4, warmup_steps to 1000, max_steps to 50000, optimizer to 'adamw', weight_decay to 0.01, and add a learning_rate_schedule to 'cosine' for systematic LR exploration across multiple runs"
+      },
+      "em_score": 0.0058,
+      "prev_best": 0.2528,
+      "verdict": "reverted",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n4/iter_002",
+      "wall_time_min": 6.3
     }
   ],
   "reference": {
