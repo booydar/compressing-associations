@@ -1,6 +1,6 @@
 # Experiment configuration - CAN BE MODIFIED by the autoresearch model
 # These are the training and model parameters for each experiment run
-# Current iteration: iter_247 (Lion optimizer, Human direction #1 - Systematic Training Hyperparameter Exploration)
+# Current iteration: iter_247 (Adam optimizer, Human direction #1 - Systematic Training Hyperparameter Exploration)
 
 max_steps: 50000          # maximum training steps per experiment
 eval_steps: 500           # evaluation frequency
@@ -8,7 +8,7 @@ logging_steps: 500        # logging frequency
 warmup_ratio:
   values: [0.05, 0.1, 0.2]  # warmup ratio sweep - 0.05, 0.1, 0.2 of max_steps
   # warmup_steps will be calculated as warmup_ratio * max_steps (50000)
-warmup_steps: 2000        # explicit warmup steps configuration (fixed for lion optimizer)
+warmup_steps: 2000        # explicit warmup steps configuration (fixed for adam optimizer)
 early_stopping_patience: 20  # epochs without improvement before early stopping
 
 # Model architecture parameters
@@ -31,15 +31,16 @@ batch_size: 256           # batch size - Suggestion 7 (fixed to 128)
 em_threshold: 0.5         # evaluation metric threshold for early stopping (prevents iter_119-121 errors)
 
 # Optimizer configuration
-optimizer: lion           # optimizer changed from sgd to lion (Human direction #1 - Systematic Training Hyperparameter Exploration)
+optimizer: adam           # optimizer changed from lion to adam (Human direction #1 - Systematic Training Hyperparameter Exploration)
+betas: [0.9, 0.95]        # betas for Adam optimizer
 weight_decay: 0.01        # weight decay for regularization (Suggestion 9)
 
 # Suggestion 10 (warmup ratios): [DONE] - configured warmup_ratio sweep with values [0.05, 0.1, 0.2]
 # Suggestion 9 (weight decay): [DONE] - configured weight_decay to 0.01
-# Suggestion 6 (optimizers): [DONE] - configured optimizer as lion (changed from sgd)
+# Suggestion 6 (optimizers): [DONE] - configured optimizer as adam (changed from lion)
 # Suggestion 7 (batch sizes): [IN PROGRESS] - configured batch_size to 128 (Suggestion 7)
 # max_steps set to 50000 for each configuration
 # warmup_steps set to 2000 for proper tracking
 # Each batch size variant will be evaluated independently before comparing EM scores
-# Learning rate set to 1e-4 for lion optimizer
+# Learning rate set to 1e-4 for adam optimizer
 # eval_steps and logging_steps set to 500 for proper tracking

@@ -189,3 +189,29 @@ Raw response:
 **Rationale:** Human Direction #1 [PENDING] requires systematic training hyperparameter exploration. Weight decay (iter 8) achieved EM=0.9208, but warmup_steps was attempted in iter 9 and failed due to planner error. This exploration must complete before architectural changes per Critical Rules.
 
 
+## Iter 11 — FAILED — N=8
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 560)
+Raw response:
+{
+  "hypothesis": "Switching to Adam with different beta values will improve gradient flow for memory token updates while maintaining the regularization benefits of weight_decay=0.01.",
+  "target_component": ".autoresearch/experiment_config.yaml",
+  "rationale": "Human Direction #1 [PENDING] requires systematic training hyperparameter exploration. Weight decay achieved EM=0.9208 (Iter 8), warmup steps failed (Iter 10). Optimizer configuration is the next unexplored hyperparameter category per Direction #1 before architectural changes.",
+  "instruction": "Change optimizer from 'adamw' to 'adam' in experiment_config.yaml and set betas to (0.9, 0.999
+
+
+## Iter 12 — FAILED — N=8
+**Error:** planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 274)
+Raw response:
+{
+  "hypothesis": "Switching to Adam optimizer with adjusted beta values will improve gradient flow for memory token updates while maintaining the regularization benefits from weight_decay=0.01.",
+  "target_component": ".autoresearch/experiment_config.yaml",
+  "rationale": "Human Direction #1 [PENDING] requires systematic training hyperparameter exploration before architectural changes. Weight decay achieved EM=0.9208 at N=4 (Iter 8), but optimizer exploration was interrupted by JSON errors in Iter 11. LR, batch size, weight decay, and warmup steps have been tested; optimizer is the next unexplored hyperparameter category per Direction #1
+
+
+## Iter 13 — kept — EM: 0.0740 (N=8)
+**Hypothesis:** Switching to Adam optimizer with adjusted beta values will improve gradient flow for memory token updates while maintaining the regularization benefits from weight_decay=0.01.
+**Wall time:** 78.8 min
+**Result:** EM=0.0740 vs prev best=0.0000
+**Rationale:** Human Direction #1 [PENDING] requires systematic training hyperparameter exploration before architectural changes. Weight decay achieved EM=0.9208 at N=4 (Iter 8), warmup steps failed at N=8 (Iter 10), and LR/batch size were reverted (Iter 1-3). Optimizer configuration is the next unexplored hyperparameter category per Direction #1, and previous attempts failed due to planner errors not experimental results.
+
+

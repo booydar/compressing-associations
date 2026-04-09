@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_010",
-    "em": 0.0,
+    "variant": "iter_013",
+    "em": 0.074,
     "n_level": 8
   },
   "n_level": 8,
@@ -151,6 +151,44 @@
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_010",
       "wall_time_min": 41.5
+    },
+    {
+      "id": 11,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 5 column 18 (char 560)\nRaw response:\n{\n  \"hypothesis\": \"Switching to Adam with different beta values will improve gradient flow for memory token updates while maintaining the regularization benefits of weight_decay=0.01.\",\n  \"target_component\": \".autoresearch/experiment_config.yaml\",\n  \"rationale\": \"Human Direction #1 [PENDING] requires systematic training hyperparameter exploration. Weight decay achieved EM=0.9208 (Iter 8), warmup steps failed (Iter 10). Optimizer configuration is the next unexplored hyperparameter category per Direction #1 before architectural changes.\",\n  \"instruction\": \"Change optimizer from 'adamw' to 'adam' in experiment_config.yaml and set betas to (0.9, 0.999",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.0,
+      "verdict": "failed",
+      "n_level": 8,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 12,
+      "description": "FAILED: planner error: Planner returned invalid JSON: Unterminated string starting at: line 4 column 16 (char 274)\nRaw response:\n{\n  \"hypothesis\": \"Switching to Adam optimizer with adjusted beta values will improve gradient flow for memory token updates while maintaining the regularization benefits from weight_decay=0.01.\",\n  \"target_component\": \".autoresearch/experiment_config.yaml\",\n  \"rationale\": \"Human Direction #1 [PENDING] requires systematic training hyperparameter exploration before architectural changes. Weight decay achieved EM=0.9208 at N=4 (Iter 8), but optimizer exploration was interrupted by JSON errors in Iter 11. LR, batch size, weight decay, and warmup steps have been tested; optimizer is the next unexplored hyperparameter category per Direction #1",
+      "hypothesis": null,
+      "em_score": null,
+      "prev_best": 0.0,
+      "verdict": "failed",
+      "n_level": 8,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 13,
+      "description": "Switching to Adam optimizer with adjusted beta values will improve gradient flow for memory token updates while maintaining the regularization benefits from weight_decay=0.01.",
+      "hypothesis": {
+        "hypothesis": "Switching to Adam optimizer with adjusted beta values will improve gradient flow for memory token updates while maintaining the regularization benefits from weight_decay=0.01.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human Direction #1 [PENDING] requires systematic training hyperparameter exploration before architectural changes. Weight decay achieved EM=0.9208 at N=4 (Iter 8), warmup steps failed at N=8 (Iter 10), and LR/batch size were reverted (Iter 1-3). Optimizer configuration is the next unexplored hyperparameter category per Direction #1, and previous attempts failed due to planner errors not experimental results.",
+        "instruction": "In experiment_config.yaml, change optimizer from 'adamw' to 'adam', add betas parameter set to [0.9, 0.95], and set weight_decay to 0.01 to maintain regularization from Iter 8."
+      },
+      "em_score": 0.074,
+      "prev_best": 0.0,
+      "verdict": "kept",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_013",
+      "wall_time_min": 78.8
     }
   ],
   "reference": {
