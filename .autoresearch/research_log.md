@@ -2753,3 +2753,16 @@ Raw response:
 **Rationale:** Human directions show no pending items. Hyperparameters exhausted (lr: 3e-4→1e-4, batch_size: 64→32→16, weight_decay: 0.01, n_mem_tokens: 8→4, warmup_steps: 1000→2500) with all reverted or failed. Architecture changes (gating, projection, scaling) also failed due to timeouts. LayerNorm normalization is a fundamental stability mechanism not yet tried that addresses the root cause of memory drift without adding computational overhead.
 
 
+## Iter 100 — RUNNING — N=16
+**Hypothesis:** Adding a skip connection around the memory state update will improve gradient flow during N=16 recurrent steps by allowing identity information to pass through, addressing the persistent EM=0.0 across all recent configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_100
+
+
+## Iter 100 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a skip connection around the memory state update will improve gradient flow during N=16 recurrent steps by allowing identity information to pass through, addressing the persistent EM=0.0 across all recent configurations.
+**Wall time:** 69.9 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** After 99 iterations with EM=0.0, core hyperparameters (lr, batch_size, weight_decay, warmup_steps, n_mem_tokens) have been exhausted with no improvement. Multiple architectural attempts (scalar gates, LayerNorm, memory scaling) also failed. A skip connection around memory updates provides a fundamental gradient pathway that previous changes didn't address, enabling stable learning at N=16 without parameter count increase.
+
+

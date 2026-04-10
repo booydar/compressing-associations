@@ -1318,6 +1318,34 @@
       "run_error": null,
       "started_at": 1775852296.4610367,
       "token_accuracy": 0.04545
+    },
+    {
+      "id": 100,
+      "iter_tag": "iter_100",
+      "description": "Adding a skip connection around the memory state update will improve gradient flow during N=16 recurrent steps by allowing identity information to pass through, addressing the persistent EM=0.0 across all recent configurations.",
+      "hypothesis": {
+        "hypothesis": "Adding a skip connection around the memory state update will improve gradient flow during N=16 recurrent steps by allowing identity information to pass through, addressing the persistent EM=0.0 across all recent configurations.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "After 99 iterations with EM=0.0, core hyperparameters (lr, batch_size, weight_decay, warmup_steps, n_mem_tokens) have been exhausted with no improvement. Multiple architectural attempts (scalar gates, LayerNorm, memory scaling) also failed. A skip connection around memory updates provides a fundamental gradient pathway that previous changes didn't address, enabling stable learning at N=16 without parameter count increase.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the memory state update function. Add a skip connection that adds the original memory state to the updated memory state (memory_out = memory_update + memory_in). Ensure the addition is applied element-wise before any activation function. Keep total parameter count within 50% increase limit.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_100",
+      "wall_time_min": 69.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775856507.0765598,
+      "token_accuracy": 0.04475
     }
   ],
   "reference": {
