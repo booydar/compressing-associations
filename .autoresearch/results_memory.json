@@ -1346,6 +1346,34 @@
       "run_error": null,
       "started_at": 1775856507.0765598,
       "token_accuracy": 0.04475
+    },
+    {
+      "id": 101,
+      "iter_tag": "iter_101",
+      "description": "Increasing n_layer from 4 to 6 will provide sufficient model capacity to learn N=16 associative retrieval patterns that current configurations fail to capture.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from 4 to 6 will provide sufficient model capacity to learn N=16 associative retrieval patterns that current configurations fail to capture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Per HYPERPARAMETER-FIRST POLICY, we have exhausted learning rate, batch size, warmup_steps, weight_decay, and n_mem_tokens tuning (all yielded EM=0.0). The persistent EM=0.0 across 10+ iterations suggests insufficient model capacity rather than training instability. n_layer has not been systematically explored for N=16 configuration.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the n_layer value from 4 to 6. Keep all other hyperparameters unchanged. This increases model capacity by ~33% (within 50% limit) to enable learning complex N=16 associative patterns.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_101",
+      "wall_time_min": 69.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775860724.0115705,
+      "token_accuracy": 0.04255
     }
   ],
   "reference": {

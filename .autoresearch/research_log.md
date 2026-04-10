@@ -2766,3 +2766,16 @@ Raw response:
 **Rationale:** After 99 iterations with EM=0.0, core hyperparameters (lr, batch_size, weight_decay, warmup_steps, n_mem_tokens) have been exhausted with no improvement. Multiple architectural attempts (scalar gates, LayerNorm, memory scaling) also failed. A skip connection around memory updates provides a fundamental gradient pathway that previous changes didn't address, enabling stable learning at N=16 without parameter count increase.
 
 
+## Iter 101 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from 4 to 6 will provide sufficient model capacity to learn N=16 associative retrieval patterns that current configurations fail to capture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_101
+
+
+## Iter 101 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_layer from 4 to 6 will provide sufficient model capacity to learn N=16 associative retrieval patterns that current configurations fail to capture.
+**Wall time:** 69.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Per HYPERPARAMETER-FIRST POLICY, we have exhausted learning rate, batch size, warmup_steps, weight_decay, and n_mem_tokens tuning (all yielded EM=0.0). The persistent EM=0.0 across 10+ iterations suggests insufficient model capacity rather than training instability. n_layer has not been systematically explored for N=16 configuration.
+
+
