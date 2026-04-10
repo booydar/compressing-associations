@@ -22,24 +22,18 @@ N_CTRL_TOKENS=0
 USE_MEM_PROJ=false
 MEM_PROJ_MODE="proj"
 
+PAIRS_PER_SEGMENT=4
 N_SEGMENTS=1
 
-PAIRS_PER_SEGMENT=8
-
-for N_MEM_TOKENS in 8 32; do
-  for LR in 3e-04 1e-04; do
-    for N_MEM_LAYERS in 1 2 4; do
-      for MEMORY_FEEDFORWARD in true false; do
-        for N in 1; do
-
+ITERS=200000
+for PAIRS_PER_SEGMENT in 2 4 8 16; do
+  for N in 1 2; do
+    for N_MEM_TOKENS in 4 8 32 64; do
+      for LR in 1e-03 3e-04 5e-05; do
           N_PAIRS=$((N_SEGMENTS * PAIRS_PER_SEGMENT))
           DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
 
-          RUN_NAME=rmca-v2.0-mem-layers-${N_MEM_LAYERS}R-${N_MEM_LAYERS}W
-          if [ "$MEMORY_FEEDFORWARD" = true ]; then
-            RUN_NAME=${RUN_NAME}+ff
-          fi
-          RUN_NAME=${RUN_NAME}_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${N_SEGMENTS}x${PAIRS_PER_SEGMENT}
+          RUN_NAME=rmt_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${N_SEGMENTS}x${PAIRS_PER_SEGMENT}
 
           if [ "$N_CTRL_TOKENS" -gt 0 ]; then
             RUN_NAME=${RUN_NAME}_c${N_CTRL_TOKENS}
@@ -51,7 +45,7 @@ for N_MEM_TOKENS in 8 32; do
           RUN_NAME=${RUN_NAME}_bs_${TBS}_lr_${LR}-gen
 
           # Path to save experiment results
-          EXP_PATH="./runs-rmca-versions/${DATA_PATH}/${RUN_NAME}/run_$N"
+          EXP_PATH="./runs-rmt/${DATA_PATH}/${RUN_NAME}/run_$N"
           # if path exists, skip
           if [ -d "$EXP_PATH" ]; then
             echo "Path $EXP_PATH already exists, skipping"
@@ -65,7 +59,7 @@ for N_MEM_TOKENS in 8 32; do
             --num_processes $NP \
             --mixed_precision bf16 \
             --config_file accelerate.yaml \
-            run_rmca_on_kv_retrieval-v2-layers.py \
+            run_original_rmt_on_kv_retrieval-v3-gen.py \
             --exp_path $EXP_PATH \
             --per_device_batch_size $PER_DEVICE_BATCH_SIZE \
             --gradient_accumulation_steps $GRAD_ACC_STEPS \
@@ -82,22 +76,17 @@ for N_MEM_TOKENS in 8 32; do
             --base_model $BASE_MODEL \
             --n_mem_tokens $N_MEM_TOKENS \
             --n_ctrl_tokens $N_CTRL_TOKENS \
-            --n_mem_read_layers $N_MEM_LAYERS \
-            --n_mem_write_layers $N_MEM_LAYERS \
-            $( [ "$MEMORY_FEEDFORWARD" = true ] && echo "--memory_feedforward" ) \
             $( [ "$USE_MEM_PROJ" = true ] && echo "--use_mem_proj" ) \
             $( [ "$USE_MEM_PROJ" = true ] && echo "--mem_proj_mode $MEM_PROJ_MODE" ) \
             --pairs_per_segment $PAIRS_PER_SEGMENT \
-            --max_steps 100000 \
+            --max_steps $ITERS \
             --eval_steps 500 \
             --logging_steps 500 \
             --warmup_steps 10000 \
             --early_stopping_patience 500 \
             --seed $((142 + N))
-        done
       done
     done
   done
 done
-
 echo "Done"

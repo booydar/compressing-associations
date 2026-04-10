@@ -26,14 +26,14 @@ N_SEGMENTS=1
 
 N_MEM_TOKENS=1
 
-for LR in 3e-04 1e-04 1e-03 5e-05; do
-  for PAIRS_PER_SEGMENT in 4 8 1 2; do
-    for N in 1; do
+for N in 1 2; do
+  for LR in 1e-03 3e-04 1e-04 5e-05; do
+    for PAIRS_PER_SEGMENT in 1 2 4 8 16; do
 
       N_PAIRS=$((N_SEGMENTS * PAIRS_PER_SEGMENT))
       DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
 
-      RUN_NAME=rmca-gating_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${N_SEGMENTS}x${PAIRS_PER_SEGMENT}
+      RUN_NAME=rmca-gating-v2_${BASE_MODEL}_L${L}H${H}D${D}_mem${N_MEM_TOKENS}_lr${LR}-${N_SEGMENTS}x${PAIRS_PER_SEGMENT}
 
       if [ "$N_CTRL_TOKENS" -gt 0 ]; then
         RUN_NAME=${RUN_NAME}_c${N_CTRL_TOKENS}

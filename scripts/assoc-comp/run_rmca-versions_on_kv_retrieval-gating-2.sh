@@ -27,8 +27,8 @@ N_SEGMENTS=1
 N_MEM_TOKENS=1
 
 for LR in 3e-04 1e-04 1e-03 5e-05; do
-  for PAIRS_PER_SEGMENT in 4 8 1 2; do
-    for N in 1; do
+  for PAIRS_PER_SEGMENT in 4 8 1 2 16; do
+    for N in 2 3; do
 
       N_PAIRS=$((N_SEGMENTS * PAIRS_PER_SEGMENT))
       DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
