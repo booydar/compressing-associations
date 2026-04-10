@@ -1262,6 +1262,34 @@
       "run_error": null,
       "started_at": 1775843780.4610062,
       "token_accuracy": 0.0543
+    },
+    {
+      "id": 98,
+      "iter_tag": "iter_098",
+      "description": "Reducing n_mem_tokens from 8 to 4 will decrease computational complexity in cross-attention layers, preventing 2hr timeouts while improving signal-to-noise ratio in memory retrieval at N=16.",
+      "hypothesis": {
+        "hypothesis": "Reducing n_mem_tokens from 8 to 4 will decrease computational complexity in cross-attention layers, preventing 2hr timeouts while improving signal-to-noise ratio in memory retrieval at N=16.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Recent hyperparameter tuning (lr, batch_size, weight_decay, warmup_steps) has been exhausted with all changes reverted or failed (EM=0.0). Multiple architectural changes timed out due to computational overhead. Reducing n_mem_tokens addresses both timeout issues and may improve EM by reducing memory retrieval noise.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the n_mem_tokens value from 8 to 4. Keep all other hyperparameters unchanged.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_098",
+      "wall_time_min": 71.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775847980.8117952,
+      "token_accuracy": 0.0435
     }
   ],
   "reference": {

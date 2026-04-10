@@ -2727,3 +2727,16 @@ Raw response:
 **Rationale:** Human directions show no pending suggestions, allowing hyperparameter exploration per the Hyperparameter-First Policy. Learning rate (Iter 94) and batch_size (Iter 96) have been reduced without success. weight_decay has not been explicitly tested despite repeated timeout issues suggesting gradient instability. This single HP change targets training stability without computational overhead.
 
 
+## Iter 98 — RUNNING — N=16
+**Hypothesis:** Reducing n_mem_tokens from 8 to 4 will decrease computational complexity in cross-attention layers, preventing 2hr timeouts while improving signal-to-noise ratio in memory retrieval at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_098
+
+
+## Iter 98 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Reducing n_mem_tokens from 8 to 4 will decrease computational complexity in cross-attention layers, preventing 2hr timeouts while improving signal-to-noise ratio in memory retrieval at N=16.
+**Wall time:** 71.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Recent hyperparameter tuning (lr, batch_size, weight_decay, warmup_steps) has been exhausted with all changes reverted or failed (EM=0.0). Multiple architectural changes timed out due to computational overhead. Reducing n_mem_tokens addresses both timeout issues and may improve EM by reducing memory retrieval noise.
+
+
