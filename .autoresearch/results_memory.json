@@ -1234,6 +1234,34 @@
       "run_error": null,
       "started_at": 1775839572.8068738,
       "token_accuracy": 0.04505
+    },
+    {
+      "id": 97,
+      "iter_tag": "iter_097",
+      "description": "Adding weight_decay regularization (0.01) will improve training stability at N=16 by preventing weight explosion during recurrent memory updates, addressing the persistent timeouts and EM=0.0 performance.",
+      "hypothesis": {
+        "hypothesis": "Adding weight_decay regularization (0.01) will improve training stability at N=16 by preventing weight explosion during recurrent memory updates, addressing the persistent timeouts and EM=0.0 performance.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human directions show no pending suggestions, allowing hyperparameter exploration per the Hyperparameter-First Policy. Learning rate (Iter 94) and batch_size (Iter 96) have been reduced without success. weight_decay has not been explicitly tested despite repeated timeout issues suggesting gradient instability. This single HP change targets training stability without computational overhead.",
+        "instruction": "In .autoresearch/experiment_config.yaml, add or modify the weight_decay parameter to 0.01. Ensure it is placed alongside other training hyperparameters (learning_rate, batch_size, etc.). Keep all other hyperparameters unchanged.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_097",
+      "wall_time_min": 69.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775843780.4610062,
+      "token_accuracy": 0.0543
     }
   ],
   "reference": {

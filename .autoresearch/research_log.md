@@ -2714,3 +2714,16 @@ Raw response:
 **Rationale:** Per CRITICAL RULES, pending human suggestions must be prioritized before architectural changes. While learning rate was reduced in Iter 94, batch_size has not been further optimized despite repeated 2hr timeouts (Iter 87, 88, 93, 95). Given the N=16 configuration shows persistent training instability with EM=0.0, batch_size reduction addresses both timeout risk and gradient stability without architectural complexity.
 
 
+## Iter 97 — RUNNING — N=16
+**Hypothesis:** Adding weight_decay regularization (0.01) will improve training stability at N=16 by preventing weight explosion during recurrent memory updates, addressing the persistent timeouts and EM=0.0 performance.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_097
+
+
+## Iter 97 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding weight_decay regularization (0.01) will improve training stability at N=16 by preventing weight explosion during recurrent memory updates, addressing the persistent timeouts and EM=0.0 performance.
+**Wall time:** 69.6 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human directions show no pending suggestions, allowing hyperparameter exploration per the Hyperparameter-First Policy. Learning rate (Iter 94) and batch_size (Iter 96) have been reduced without success. weight_decay has not been explicitly tested despite repeated timeout issues suggesting gradient instability. This single HP change targets training stability without computational overhead.
+
+
