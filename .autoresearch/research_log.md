@@ -2697,3 +2697,20 @@ Raw response:
 **Rationale:** Per CRITICAL RULES, pending human suggestions (training hyperparameters) must be prioritized before architectural changes. Iter 87-88-93 architecture changes all timed out due to training instability, while warmup_steps adjustment in Iter 91-92 failed with planner errors rather than experimental results. Learning rate directly affects gradient stability in recurrent architectures and has not been tested for the current N=16 configuration.
 
 
+## Iter 95 — FAILED — N=16
+**Error:** experiment error: Experiment exceeded 2hr timeout and was killed.
+
+
+## Iter 96 — RUNNING — N=16
+**Hypothesis:** Reducing batch_size from 32 to 16 will improve training stability at N=16 by reducing gradient variance during recurrent memory updates, addressing the persistent 2hr timeouts and EM=0.0 performance.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_096
+
+
+## Iter 96 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Reducing batch_size from 32 to 16 will improve training stability at N=16 by reducing gradient variance during recurrent memory updates, addressing the persistent 2hr timeouts and EM=0.0 performance.
+**Wall time:** 69.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Per CRITICAL RULES, pending human suggestions must be prioritized before architectural changes. While learning rate was reduced in Iter 94, batch_size has not been further optimized despite repeated 2hr timeouts (Iter 87, 88, 93, 95). Given the N=16 configuration shows persistent training instability with EM=0.0, batch_size reduction addresses both timeout risk and gradient stability without architectural complexity.
+
+

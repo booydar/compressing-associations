@@ -1190,6 +1190,50 @@
       "n_level": 16,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_094",
       "wall_time_min": 72.4
+    },
+    {
+      "id": 95,
+      "description": "FAILED: experiment error: Experiment exceeded 2hr timeout and was killed.",
+      "hypothesis": {
+        "hypothesis": "Adding a simple multiplicative memory scaling factor (\u03b3) applied after each recurrent memory update will stabilize information retention across N=16 steps by preventing memory state magnitude drift without adding computational overhead that caused previous timeouts.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Training hyperparameters have been exhausted across Iter 1-14, 54-57, 66-67, 71, 91-94 (learning rate, batch_size, warmup, max_steps). The persistent N=16 EM=0.0 vs N=8 EM=0.5052 gap indicates architectural scalability issues. Previous architectural changes (Iter 87-88, 93) caused timeouts due to added complexity; this change adds only one scalar parameter with minimal computation.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, after the recurrent memory state update in the forward pass (after memory_new is computed), multiply the memory state by a learnable scalar parameter gamma initialized to 1.0. Add gamma as a nn.Parameter in __init__ and apply it as: memory_state = memory_state * self.gamma. Ensure gamma has requires_grad=True but no gradient clipping overhead."
+      },
+      "em_score": null,
+      "prev_best": 0.0,
+      "verdict": "failed",
+      "n_level": 16,
+      "exp_path": null,
+      "wall_time_min": 0
+    },
+    {
+      "id": 96,
+      "iter_tag": "iter_096",
+      "description": "Reducing batch_size from 32 to 16 will improve training stability at N=16 by reducing gradient variance during recurrent memory updates, addressing the persistent 2hr timeouts and EM=0.0 performance.",
+      "hypothesis": {
+        "hypothesis": "Reducing batch_size from 32 to 16 will improve training stability at N=16 by reducing gradient variance during recurrent memory updates, addressing the persistent 2hr timeouts and EM=0.0 performance.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Per CRITICAL RULES, pending human suggestions must be prioritized before architectural changes. While learning rate was reduced in Iter 94, batch_size has not been further optimized despite repeated 2hr timeouts (Iter 87, 88, 93, 95). Given the N=16 configuration shows persistent training instability with EM=0.0, batch_size reduction addresses both timeout risk and gradient stability without architectural complexity.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the batch_size value from 32 to 16. Keep all other hyperparameters including learning_rate at 1e-4 unchanged.",
+        "human_directions_item": "1"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_096",
+      "wall_time_min": 69.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775839572.8068738,
+      "token_accuracy": 0.04505
     }
   ],
   "reference": {

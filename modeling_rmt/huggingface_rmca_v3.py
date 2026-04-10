@@ -162,7 +162,7 @@ class MemoryAugmentedLayer(nn.Module):
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
         memory = memory + write_residual
         
-        # Apply LayerNorm to memory state after write operation
+        # Apply LayerNorm to memory state after write operation (before next cross-attention scoring)
         memory = self.memory_state_norm(memory)
         
         self.memory_state = memory
