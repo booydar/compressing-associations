@@ -2,13 +2,13 @@
 # These are the training and model parameters for each experiment run
 # Current iteration: iter_247 (Adam optimizer, Human direction #1 - Systematic Training Hyperparameter Exploration)
 
-max_steps: 50000          # maximum training steps per experiment
+max_steps: 25000          # maximum training steps per experiment
 eval_steps: 500           # evaluation frequency
 logging_steps: 500        # logging frequency
 warmup_ratio:
   values: [0.05, 0.1, 0.2]  # warmup ratio sweep - 0.05, 0.1, 0.2 of max_steps
   # warmup_steps will be calculated as warmup_ratio * max_steps (50000)
-warmup_steps: 2000        # explicit warmup steps configuration (fixed for adam optimizer)
+warmup_steps: 2500        # explicit warmup steps configuration (fixed for adam optimizer)
 early_stopping_patience: 20  # epochs without improvement before early stopping
 
 # Model architecture parameters
@@ -27,7 +27,7 @@ base_model: llama         # base model to use
 lr: 1e-4                  # learning rate (changed to 1e-4 for lion optimizer)
 learning_rate: 0.01       # learning rate for SGD optimizer (changed from sweep to fixed value)
 warmup_ratio: 0.1         # warmup ratio - 0.1 of max_steps (Suggestion 10)
-batch_size: 256           # batch size - Suggestion 7 (fixed to 128)
+batch_size: 32           # batch size - Suggestion 7 (fixed to 128)
 em_threshold: 0.5         # evaluation metric threshold for early stopping (prevents iter_119-121 errors)
 
 # Optimizer configuration
