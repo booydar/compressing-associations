@@ -2740,3 +2740,16 @@ Raw response:
 **Rationale:** Recent hyperparameter tuning (lr, batch_size, weight_decay, warmup_steps) has been exhausted with all changes reverted or failed (EM=0.0). Multiple architectural changes timed out due to computational overhead. Reducing n_mem_tokens addresses both timeout issues and may improve EM by reducing memory retrieval noise.
 
 
+## Iter 99 — RUNNING — N=16
+**Hypothesis:** Adding LayerNorm before the memory state update will stabilize recurrent memory gradients at N=16 by normalizing activations and preventing magnitude drift that causes EM=0.0 across all configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_099
+
+
+## Iter 99 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding LayerNorm before the memory state update will stabilize recurrent memory gradients at N=16 by normalizing activations and preventing magnitude drift that causes EM=0.0 across all configurations.
+**Wall time:** 69.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human directions show no pending items. Hyperparameters exhausted (lr: 3e-4→1e-4, batch_size: 64→32→16, weight_decay: 0.01, n_mem_tokens: 8→4, warmup_steps: 1000→2500) with all reverted or failed. Architecture changes (gating, projection, scaling) also failed due to timeouts. LayerNorm normalization is a fundamental stability mechanism not yet tried that addresses the root cause of memory drift without adding computational overhead.
+
+

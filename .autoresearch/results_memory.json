@@ -1290,6 +1290,34 @@
       "run_error": null,
       "started_at": 1775847980.8117952,
       "token_accuracy": 0.0435
+    },
+    {
+      "id": 99,
+      "iter_tag": "iter_099",
+      "description": "Adding LayerNorm before the memory state update will stabilize recurrent memory gradients at N=16 by normalizing activations and preventing magnitude drift that causes EM=0.0 across all configurations.",
+      "hypothesis": {
+        "hypothesis": "Adding LayerNorm before the memory state update will stabilize recurrent memory gradients at N=16 by normalizing activations and preventing magnitude drift that causes EM=0.0 across all configurations.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human directions show no pending items. Hyperparameters exhausted (lr: 3e-4\u21921e-4, batch_size: 64\u219232\u219216, weight_decay: 0.01, n_mem_tokens: 8\u21924, warmup_steps: 1000\u21922500) with all reverted or failed. Architecture changes (gating, projection, scaling) also failed due to timeouts. LayerNorm normalization is a fundamental stability mechanism not yet tried that addresses the root cause of memory drift without adding computational overhead.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a LayerNorm layer before the memory state update operation. Specifically, wrap the memory state 'h' with LayerNorm(h, dim) before it is used in the cross-attention calculation or recurrent update. Do not change any other parameters.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_099",
+      "wall_time_min": 69.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775852296.4610367,
+      "token_accuracy": 0.04545
     }
   ],
   "reference": {
