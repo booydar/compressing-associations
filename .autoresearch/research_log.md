@@ -2792,3 +2792,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively explored (lr, batch_size, warmup_steps, weight_decay, n_mem_tokens, n_layer) with no EM improvement. Architecture changes have also failed (gating, scaling, LayerNorm, skip connections). n_head has not been systematically tuned and increasing attention capacity directly addresses the attention bottleneck in cross-attention layers for N=16 sequence lengths.
 
 
+## Iter 103 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from default to 5000 will provide more stable gradient dynamics during early training at N=16, preventing the persistent EM=0.0 failure across all recent configurations by allowing the recurrent memory mechanism to gradually initialize.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_103
+
+
+## Iter 103 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing warmup_steps from default to 5000 will provide more stable gradient dynamics during early training at N=16, preventing the persistent EM=0.0 failure across all recent configurations by allowing the recurrent memory mechanism to gradually initialize.
+**Wall time:** 69.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively explored (lr, batch_size, weight_decay, n_mem_tokens, n_layer, n_head) but warmup_steps has not been systematically tuned. Given consistent EM=0.0 across 10+ configurations, extended warmup may stabilize recurrent memory initialization before full gradient updates begin.
+
+
