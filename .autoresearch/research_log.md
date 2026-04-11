@@ -2857,3 +2857,16 @@ Raw response:
 **Rationale:** Recent iterations have exhausted tuning of learning dynamics (lr, warmup, weight_decay, gradient clipping) and model capacity (n_layer, n_head, n_mem_tokens). The persistent timeouts and EM=0.0 suggest a computational bottleneck during recurrent steps rather than a learning capacity issue, which batch size reduction directly addresses.
 
 
+## Iter 108 — RUNNING — N=16
+**Hypothesis:** Adding weight_decay regularization will improve gradient stability during recurrent memory updates at N=16 by preventing weight explosion that causes EM=0.0 across all configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_108
+
+
+## Iter 108 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding weight_decay regularization will improve gradient stability during recurrent memory updates at N=16 by preventing weight explosion that causes EM=0.0 across all configurations.
+**Wall time:** 71.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_mem_tokens, n_layer, n_head, warmup_steps, learning rate, and batch_size have been exhausted through iterations 98-107 without achieving non-zero EM. Weight_decay has not been tried and can stabilize recurrent memory weights during long dependency chains. This follows the hyperparameter-first policy before architectural changes.
+
+

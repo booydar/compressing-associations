@@ -1542,6 +1542,34 @@
       "run_error": null,
       "started_at": 1775885448.0120256,
       "token_accuracy": 0.0467
+    },
+    {
+      "id": 108,
+      "iter_tag": "iter_108",
+      "description": "Adding weight_decay regularization will improve gradient stability during recurrent memory updates at N=16 by preventing weight explosion that causes EM=0.0 across all configurations.",
+      "hypothesis": {
+        "hypothesis": "Adding weight_decay regularization will improve gradient stability during recurrent memory updates at N=16 by preventing weight explosion that causes EM=0.0 across all configurations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters n_mem_tokens, n_layer, n_head, warmup_steps, learning rate, and batch_size have been exhausted through iterations 98-107 without achieving non-zero EM. Weight_decay has not been tried and can stabilize recurrent memory weights during long dependency chains. This follows the hyperparameter-first policy before architectural changes.",
+        "instruction": "Add weight_decay parameter with value 0.01 to the optimizer configuration section in .autoresearch/experiment_config.yaml, ensuring it is placed alongside lr, optimizer type, and other training hyperparameters",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_108",
+      "wall_time_min": 71.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775889746.0193472,
+      "token_accuracy": 0.0541
     }
   ],
   "reference": {
