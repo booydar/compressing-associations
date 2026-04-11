@@ -1906,6 +1906,34 @@
       "run_error": null,
       "started_at": 1775940833.379891,
       "token_accuracy": 0.04725
+    },
+    {
+      "id": 121,
+      "iter_tag": "iter_121",
+      "description": "Adding a residual connection from the input embedding to the memory state update will stabilize gradient flow at N=16, preventing the information collapse observed in iterations 111-120.",
+      "hypothesis": {
+        "hypothesis": "Adding a residual connection from the input embedding to the memory state update will stabilize gradient flow at N=16, preventing the information collapse observed in iterations 111-120.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer, temperature) and architectural stabilizers (LayerNorm, update gates) have been exhausted in iterations 111-120 with EM=0.0, indicating a fundamental architectural bottleneck in long-term dependency retention that tuning alone cannot resolve.",
+        "instruction": "In `modeling_rmt/huggingface_rmca_v3.py`, locate the recurrent memory state update logic within the `forward` method and modify it to include a residual connection from the current input hidden state projection to the updated memory state (e.g., `new_memory = gate * attn_out + (1 - gate) * old_memory + residual_skip`).",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_121",
+      "wall_time_min": 69.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775945009.1718357,
+      "token_accuracy": 0.0454
     }
   ],
   "reference": {

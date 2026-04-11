@@ -3026,3 +3026,16 @@ Raw response:
 **Rationale:** Hyperparameters n_layer, n_head, n_embd, lr, batch_size, warmup_steps, optimizer, and n_mem_tokens have been exhaustively tuned (iterations 111-118) without improving EM from 0.0, indicating the failure is due to unstable memory update dynamics rather than capacity or training configuration. Further hyperparameter tuning is unlikely to resolve the fundamental instability in how new information overwrites the recurrent state.
 
 
+## Iter 121 — RUNNING — N=16
+**Hypothesis:** Adding a residual connection from the input embedding to the memory state update will stabilize gradient flow at N=16, preventing the information collapse observed in iterations 111-120.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_121
+
+
+## Iter 121 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a residual connection from the input embedding to the memory state update will stabilize gradient flow at N=16, preventing the information collapse observed in iterations 111-120.
+**Wall time:** 69.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer, temperature) and architectural stabilizers (LayerNorm, update gates) have been exhausted in iterations 111-120 with EM=0.0, indicating a fundamental architectural bottleneck in long-term dependency retention that tuning alone cannot resolve.
+
+
