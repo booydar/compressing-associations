@@ -2909,3 +2909,16 @@ Raw response:
 **Rationale:** Hyperparameters exhausted include: n_layer, n_head, warmup_steps, learning_rate, batch_size, n_mem_tokens, weight_decay (iter 108). However, optimizer type (Adam vs AdamW) and dropout rates have not been explicitly explored. AdamW's decoupled weight decay may provide better regularization for recurrent memory mechanisms compared to standard Adam.
 
 
+## Iter 112 — RUNNING — N=16
+**Hypothesis:** Adding a learnable temperature scaling parameter to the cross-attention softmax will improve memory retrieval precision at N=16 by allowing the model to dynamically adjust attention sharpness based on retrieval difficulty.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_112
+
+
+## Iter 112 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a learnable temperature scaling parameter to the cross-attention softmax will improve memory retrieval precision at N=16 by allowing the model to dynamically adjust attention sharpness based on retrieval difficulty.
+**Wall time:** 71.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameter tuning has been exhausted (lr, warmup_steps, n_head, n_mem_tokens, batch_size, optimizer, weight_decay, gradient clipping) with persistent EM=0.0 across all configurations, indicating the cross-attention mechanism lacks adaptive precision for N=16 associative retrieval. A learnable temperature parameter will enable the model to control attention sharpness dynamically, addressing the fundamental retrieval precision issue that fixed hyperparameters cannot solve.
+
+

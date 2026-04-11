@@ -1654,6 +1654,34 @@
       "run_error": null,
       "started_at": 1775902654.3908517,
       "token_accuracy": 0.04675
+    },
+    {
+      "id": 112,
+      "iter_tag": "iter_112",
+      "description": "Adding a learnable temperature scaling parameter to the cross-attention softmax will improve memory retrieval precision at N=16 by allowing the model to dynamically adjust attention sharpness based on retrieval difficulty.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable temperature scaling parameter to the cross-attention softmax will improve memory retrieval precision at N=16 by allowing the model to dynamically adjust attention sharpness based on retrieval difficulty.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameter tuning has been exhausted (lr, warmup_steps, n_head, n_mem_tokens, batch_size, optimizer, weight_decay, gradient clipping) with persistent EM=0.0 across all configurations, indicating the cross-attention mechanism lacks adaptive precision for N=16 associative retrieval. A learnable temperature parameter will enable the model to control attention sharpness dynamically, addressing the fundamental retrieval precision issue that fixed hyperparameters cannot solve.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable parameter self.attention_temperature = nn.Parameter(torch.tensor(1.0)) in the RMCA module init, then modify the cross-attention computation to divide the attention scores by this temperature before applying softmax: attention_scores = attention_scores / self.attention_temperature",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_112",
+      "wall_time_min": 71.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775906808.7754738,
+      "token_accuracy": 0.0445
     }
   ],
   "reference": {
