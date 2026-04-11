@@ -2987,3 +2987,16 @@ Raw response:
 **Rationale:** Hyperparameters exhausted include: n_layer(12), n_head(8), n_mem_tokens(32), batch_size(16), warmup_steps(5000), lr(3e-4), optimizer(AdamW), weight_decay, learnable residual scaling, learnable temperature scaling. n_embd has NOT been systematically tuned despite being critical for memory capacity. Further tuning of already-exhausted hyperparameters is unlikely to help as EM remains 0.0 across all configurations.
 
 
+## Iter 118 — RUNNING — N=16
+**Hypothesis:** Increasing batch_size from default to 128 will provide more stable gradient estimates for the recurrent memory mechanism at N=16 by reducing gradient variance across mini-batches, which has not been systematically explored despite extensive other hyperparameter tuning.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_118
+
+
+## Iter 118 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing batch_size from default to 128 will provide more stable gradient estimates for the recurrent memory mechanism at N=16 by reducing gradient variance across mini-batches, which has not been systematically explored despite extensive other hyperparameter tuning.
+**Wall time:** 71.6 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** All major hyperparameters have been exhausted (n_layer, n_head, n_embd, n_mem_tokens, lr, warmup_steps, optimizer, weight_decay) without any EM improvement (108 experiments with EM=0.0). batch_size remains unexplored and is critical for recurrent training stability as small batch sizes can cause noisy gradients that prevent learning in long recurrent sequences.
+
+

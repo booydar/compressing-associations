@@ -1822,6 +1822,34 @@
       "run_error": null,
       "started_at": 1775927918.6628442,
       "token_accuracy": 0.04485
+    },
+    {
+      "id": 118,
+      "iter_tag": "iter_118",
+      "description": "Increasing batch_size from default to 128 will provide more stable gradient estimates for the recurrent memory mechanism at N=16 by reducing gradient variance across mini-batches, which has not been systematically explored despite extensive other hyperparameter tuning.",
+      "hypothesis": {
+        "hypothesis": "Increasing batch_size from default to 128 will provide more stable gradient estimates for the recurrent memory mechanism at N=16 by reducing gradient variance across mini-batches, which has not been systematically explored despite extensive other hyperparameter tuning.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All major hyperparameters have been exhausted (n_layer, n_head, n_embd, n_mem_tokens, lr, warmup_steps, optimizer, weight_decay) without any EM improvement (108 experiments with EM=0.0). batch_size remains unexplored and is critical for recurrent training stability as small batch sizes can cause noisy gradients that prevent learning in long recurrent sequences.",
+        "instruction": "In .autoresearch/experiment_config.yaml, locate the training hyperparameters section and set batch_size to 128 (increase from default which is likely 32 or 64). Keep all other hyperparameters at their current best settings.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_118",
+      "wall_time_min": 71.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775932168.627815,
+      "token_accuracy": 0.05525
     }
   ],
   "reference": {
