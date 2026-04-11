@@ -1514,6 +1514,34 @@
       "run_error": null,
       "started_at": 1775881138.0809307,
       "token_accuracy": 0.04415
+    },
+    {
+      "id": 107,
+      "iter_tag": "iter_107",
+      "description": "Reducing batch_size to 16 will mitigate per-step computational load and prevent timeout-induced training failures at N=16, allowing the recurrent memory mechanism to complete training and achieve non-zero EM accuracy.",
+      "hypothesis": {
+        "hypothesis": "Reducing batch_size to 16 will mitigate per-step computational load and prevent timeout-induced training failures at N=16, allowing the recurrent memory mechanism to complete training and achieve non-zero EM accuracy.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Recent iterations have exhausted tuning of learning dynamics (lr, warmup, weight_decay, gradient clipping) and model capacity (n_layer, n_head, n_mem_tokens). The persistent timeouts and EM=0.0 suggest a computational bottleneck during recurrent steps rather than a learning capacity issue, which batch size reduction directly addresses.",
+        "instruction": "Set the batch_size parameter to 16 in .autoresearch/experiment_config.yaml.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_107",
+      "wall_time_min": 71.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775885448.0120256,
+      "token_accuracy": 0.0467
     }
   ],
   "reference": {

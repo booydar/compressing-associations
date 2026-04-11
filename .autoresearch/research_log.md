@@ -2844,3 +2844,16 @@ Raw response:
 **Rationale:** Hyperparameters including learning rate, batch size, warmup_steps, weight_decay, gradient clipping, n_layer, n_head, and n_mem_tokens have been exhaustively tuned across iterations 96-105 with consistent EM=0.0 results. The persistent failure across optimization and capacity adjustments indicates a structural gradient vanishing issue in the recurrent loop that requires a gated memory update mechanism to stabilize information retention over N=16 steps.
 
 
+## Iter 107 — RUNNING — N=16
+**Hypothesis:** Reducing batch_size to 16 will mitigate per-step computational load and prevent timeout-induced training failures at N=16, allowing the recurrent memory mechanism to complete training and achieve non-zero EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_107
+
+
+## Iter 107 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Reducing batch_size to 16 will mitigate per-step computational load and prevent timeout-induced training failures at N=16, allowing the recurrent memory mechanism to complete training and achieve non-zero EM accuracy.
+**Wall time:** 71.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Recent iterations have exhausted tuning of learning dynamics (lr, warmup, weight_decay, gradient clipping) and model capacity (n_layer, n_head, n_mem_tokens). The persistent timeouts and EM=0.0 suggest a computational bottleneck during recurrent steps rather than a learning capacity issue, which batch size reduction directly addresses.
+
+
