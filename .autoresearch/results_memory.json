@@ -1850,6 +1850,34 @@
       "run_error": null,
       "started_at": 1775932168.627815,
       "token_accuracy": 0.05525
+    },
+    {
+      "id": 119,
+      "iter_tag": "iter_119",
+      "description": "Adding LayerNorm before the memory cross-attention projections will stabilize the recurrent state distribution and prevent attention collapse during associative retrieval at N=16.",
+      "hypothesis": {
+        "hypothesis": "Adding LayerNorm before the memory cross-attention projections will stabilize the recurrent state distribution and prevent attention collapse during associative retrieval at N=16.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer) have been exhausted over 10 iterations without improving EM from 0.0, indicating fundamental optimization instability rather than capacity issues. Regularization hyperparameters like dropout are unlikely to resolve the recurrent memory collapse observed at N=16.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, insert a nn.LayerNorm layer immediately before the Q, K, and V linear projections applied to memory tokens within the cross-attention block.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_119",
+      "wall_time_min": 69.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775936594.6561413,
+      "token_accuracy": 0.0451
     }
   ],
   "reference": {

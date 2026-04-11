@@ -3000,3 +3000,16 @@ Raw response:
 **Rationale:** All major hyperparameters have been exhausted (n_layer, n_head, n_embd, n_mem_tokens, lr, warmup_steps, optimizer, weight_decay) without any EM improvement (108 experiments with EM=0.0). batch_size remains unexplored and is critical for recurrent training stability as small batch sizes can cause noisy gradients that prevent learning in long recurrent sequences.
 
 
+## Iter 119 — RUNNING — N=16
+**Hypothesis:** Adding LayerNorm before the memory cross-attention projections will stabilize the recurrent state distribution and prevent attention collapse during associative retrieval at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_119
+
+
+## Iter 119 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding LayerNorm before the memory cross-attention projections will stabilize the recurrent state distribution and prevent attention collapse during associative retrieval at N=16.
+**Wall time:** 69.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer) have been exhausted over 10 iterations without improving EM from 0.0, indicating fundamental optimization instability rather than capacity issues. Regularization hyperparameters like dropout are unlikely to resolve the recurrent memory collapse observed at N=16.
+
+
