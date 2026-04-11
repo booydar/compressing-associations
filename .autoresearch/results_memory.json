@@ -1570,6 +1570,34 @@
       "run_error": null,
       "started_at": 1775889746.0193472,
       "token_accuracy": 0.0541
+    },
+    {
+      "id": 109,
+      "iter_tag": "iter_109",
+      "description": "Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store N=16 associative pairs without catastrophic forgetting during recurrent steps.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store N=16 associative pairs without catastrophic forgetting during recurrent steps.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters n_layer, n_head, warmup_steps, learning rate, batch_size, weight_decay, and gradient clipping have been exhausted but EM remains 0.0. n_mem_tokens has not been explicitly tuned despite being critical for memory capacity at N=16. Architectural changes cannot help if memory capacity is insufficient.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change n_mem_tokens from current value (likely 8-16) to 32 to increase memory token capacity for storing N=16 associative retrieval patterns.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_109",
+      "wall_time_min": 69.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775894039.7394478,
+      "token_accuracy": 0.0578
     }
   ],
   "reference": {

@@ -2870,3 +2870,16 @@ Raw response:
 **Rationale:** Hyperparameters n_mem_tokens, n_layer, n_head, warmup_steps, learning rate, and batch_size have been exhausted through iterations 98-107 without achieving non-zero EM. Weight_decay has not been tried and can stabilize recurrent memory weights during long dependency chains. This follows the hyperparameter-first policy before architectural changes.
 
 
+## Iter 109 — RUNNING — N=16
+**Hypothesis:** Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store N=16 associative pairs without catastrophic forgetting during recurrent steps.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_109
+
+
+## Iter 109 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store N=16 associative pairs without catastrophic forgetting during recurrent steps.
+**Wall time:** 69.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_layer, n_head, warmup_steps, learning rate, batch_size, weight_decay, and gradient clipping have been exhausted but EM remains 0.0. n_mem_tokens has not been explicitly tuned despite being critical for memory capacity at N=16. Architectural changes cannot help if memory capacity is insufficient.
+
+
