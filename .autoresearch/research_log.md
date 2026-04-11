@@ -2805,3 +2805,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively explored (lr, batch_size, weight_decay, n_mem_tokens, n_layer, n_head) but warmup_steps has not been systematically tuned. Given consistent EM=0.0 across 10+ configurations, extended warmup may stabilize recurrent memory initialization before full gradient updates begin.
 
 
+## Iter 104 — RUNNING — N=16
+**Hypothesis:** Adding gradient clipping (max_norm=1.0) will stabilize training at N=16 by preventing exploding gradients during recurrent memory updates, which has been the root cause of timeouts and EM=0.0 across recent configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_104
+
+
+## Iter 104 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding gradient clipping (max_norm=1.0) will stabilize training at N=16 by preventing exploding gradients during recurrent memory updates, which has been the root cause of timeouts and EM=0.0 across recent configurations.
+**Wall time:** 70.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Recent experiments show persistent instability despite LR, batch size, and architectural tweaks. Gradient clipping (max_norm=1.0) is a critical training hyperparameter for recurrent stability that has not yet been tested. This adheres to the Hyperparameter-First policy by targeting remaining training stability knobs before further architectural changes.
+
+

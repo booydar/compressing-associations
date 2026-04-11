@@ -1430,6 +1430,34 @@
       "run_error": null,
       "started_at": 1775869136.057636,
       "token_accuracy": 0.0539
+    },
+    {
+      "id": 104,
+      "iter_tag": "iter_104",
+      "description": "Adding gradient clipping (max_norm=1.0) will stabilize training at N=16 by preventing exploding gradients during recurrent memory updates, which has been the root cause of timeouts and EM=0.0 across recent configurations.",
+      "hypothesis": {
+        "hypothesis": "Adding gradient clipping (max_norm=1.0) will stabilize training at N=16 by preventing exploding gradients during recurrent memory updates, which has been the root cause of timeouts and EM=0.0 across recent configurations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Recent experiments show persistent instability despite LR, batch size, and architectural tweaks. Gradient clipping (max_norm=1.0) is a critical training hyperparameter for recurrent stability that has not yet been tested. This adheres to the Hyperparameter-First policy by targeting remaining training stability knobs before further architectural changes.",
+        "instruction": "In .autoresearch/experiment_config.yaml, under the training configuration section, add 'max_grad_norm: 1.0' to control gradient explosion during recurrent updates.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_104",
+      "wall_time_min": 70.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775873372.0147705,
+      "token_accuracy": 0.0446
     }
   ],
   "reference": {
