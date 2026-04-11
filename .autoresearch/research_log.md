@@ -2974,3 +2974,16 @@ Raw response:
 **Rationale:** Learning rate is the most critical training hyperparameter that has not been explicitly tuned in the recent experiment history (106-115). All other major hyperparameters have been explored (batch_size, n_mem_tokens, optimizer, n_layer, warmup_steps, n_head, weight_decay), but EM remains 0.0 suggesting the learning rate may be suboptimal for recurrent memory gradient dynamics.
 
 
+## Iter 117 — RUNNING — N=16
+**Hypothesis:** Increasing n_embd from default to 256 will provide sufficient representational capacity for the recurrent memory to encode N=16 associative pairs, which previous hyperparameter adjustments (n_layer, n_head, n_mem_tokens) have failed to enable due to fundamental embedding dimension limitations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_117
+
+
+## Iter 117 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_embd from default to 256 will provide sufficient representational capacity for the recurrent memory to encode N=16 associative pairs, which previous hyperparameter adjustments (n_layer, n_head, n_mem_tokens) have failed to enable due to fundamental embedding dimension limitations.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters exhausted include: n_layer(12), n_head(8), n_mem_tokens(32), batch_size(16), warmup_steps(5000), lr(3e-4), optimizer(AdamW), weight_decay, learnable residual scaling, learnable temperature scaling. n_embd has NOT been systematically tuned despite being critical for memory capacity. Further tuning of already-exhausted hyperparameters is unlikely to help as EM remains 0.0 across all configurations.
+
+

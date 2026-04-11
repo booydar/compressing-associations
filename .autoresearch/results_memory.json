@@ -1794,6 +1794,34 @@
       "run_error": null,
       "started_at": 1775923734.9988306,
       "token_accuracy": 0.05605
+    },
+    {
+      "id": 117,
+      "iter_tag": "iter_117",
+      "description": "Increasing n_embd from default to 256 will provide sufficient representational capacity for the recurrent memory to encode N=16 associative pairs, which previous hyperparameter adjustments (n_layer, n_head, n_mem_tokens) have failed to enable due to fundamental embedding dimension limitations.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_embd from default to 256 will provide sufficient representational capacity for the recurrent memory to encode N=16 associative pairs, which previous hyperparameter adjustments (n_layer, n_head, n_mem_tokens) have failed to enable due to fundamental embedding dimension limitations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters exhausted include: n_layer(12), n_head(8), n_mem_tokens(32), batch_size(16), warmup_steps(5000), lr(3e-4), optimizer(AdamW), weight_decay, learnable residual scaling, learnable temperature scaling. n_embd has NOT been systematically tuned despite being critical for memory capacity. Further tuning of already-exhausted hyperparameters is unlikely to help as EM remains 0.0 across all configurations.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the n_embd parameter from its current default value to 256. Ensure this change is within the ~50% parameter count budget constraint.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_117",
+      "wall_time_min": 70.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775927918.6628442,
+      "token_accuracy": 0.04485
     }
   ],
   "reference": {
