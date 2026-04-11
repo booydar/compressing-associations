@@ -2883,3 +2883,16 @@ Raw response:
 **Rationale:** Hyperparameters n_layer, n_head, warmup_steps, learning rate, batch_size, weight_decay, and gradient clipping have been exhausted but EM remains 0.0. n_mem_tokens has not been explicitly tuned despite being critical for memory capacity at N=16. Architectural changes cannot help if memory capacity is insufficient.
 
 
+## Iter 110 — RUNNING — N=16
+**Hypothesis:** Adding a learnable residual scaling parameter will stabilize the recurrent memory updates at N=16 by allowing the model to dynamically attenuate gradient signals, addressing the persistent EM=0.0 collapse where fixed skip connections failed.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_110
+
+
+## Iter 110 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a learnable residual scaling parameter will stabilize the recurrent memory updates at N=16 by allowing the model to dynamically attenuate gradient signals, addressing the persistent EM=0.0 collapse where fixed skip connections failed.
+**Wall time:** 72.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters including learning_rate, n_layer, n_head, n_mem_tokens, warmup_steps, batch_size, and weight_decay have been exhausted over 10 consecutive iterations (100-109) with no EM improvement (0.0), indicating optimization instability rather than capacity issues. Further tuning is unlikely to resolve the gradient collapse in deep recurrent steps without adaptive signal scaling.
+
+

@@ -1598,6 +1598,34 @@
       "run_error": null,
       "started_at": 1775894039.7394478,
       "token_accuracy": 0.0578
+    },
+    {
+      "id": 110,
+      "iter_tag": "iter_110",
+      "description": "Adding a learnable residual scaling parameter will stabilize the recurrent memory updates at N=16 by allowing the model to dynamically attenuate gradient signals, addressing the persistent EM=0.0 collapse where fixed skip connections failed.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable residual scaling parameter will stabilize the recurrent memory updates at N=16 by allowing the model to dynamically attenuate gradient signals, addressing the persistent EM=0.0 collapse where fixed skip connections failed.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters including learning_rate, n_layer, n_head, n_mem_tokens, warmup_steps, batch_size, and weight_decay have been exhausted over 10 consecutive iterations (100-109) with no EM improvement (0.0), indicating optimization instability rather than capacity issues. Further tuning is unlikely to resolve the gradient collapse in deep recurrent steps without adaptive signal scaling.",
+        "instruction": "In huggingface_rmca_v3.py, locate the recurrent memory state update method (e.g., within the forward or recurrent_step function), initialize a new learnable parameter self.residual_alpha (shape [], init=0.05), and modify the update equation to new_state = old_state + self.residual_alpha * update_output to dampen initial signal propagation.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_110",
+      "wall_time_min": 72.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775898301.3565407,
+      "token_accuracy": 0.04285
     }
   ],
   "reference": {
