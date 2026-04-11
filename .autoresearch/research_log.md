@@ -2935,3 +2935,16 @@ Raw response:
 **Rationale:** Per HYPERPARAMETER-FIRST POLICY, I propose tuning n_layer as it has not been explicitly explored in the recent 10 iterations (103-112). Other hyperparameters (lr, warmup_steps, batch_size, n_mem_tokens, optimizer, weight_decay) have been exhausted with EM=0.0, but increasing model capacity through n_layer may enable the recurrent memory mechanism to properly encode N=16 associative pairs.
 
 
+## Iter 114 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from default to 5000 will provide sufficient training stability for recurrent memory learning at N=16 by allowing gradual learning rate ramp-up during the critical initial phase where recurrent gradients are most unstable.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_114
+
+
+## Iter 114 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing warmup_steps from default to 5000 will provide sufficient training stability for recurrent memory learning at N=16 by allowing gradual learning rate ramp-up during the critical initial phase where recurrent gradients are most unstable.
+**Wall time:** 68.9 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Following the hyperparameter-first policy, we have exhausted: learning_rate, batch_size, weight_decay, n_mem_tokens, n_layer, optimizer type, and gradient clipping. We have NOT yet tried warmup_steps which is critical for recurrent training stability. This is a hyperparameter change, not architectural, per the required priority order.
+
+
