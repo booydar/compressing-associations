@@ -3013,3 +3013,16 @@ Raw response:
 **Rationale:** Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer) have been exhausted over 10 iterations without improving EM from 0.0, indicating fundamental optimization instability rather than capacity issues. Regularization hyperparameters like dropout are unlikely to resolve the recurrent memory collapse observed at N=16.
 
 
+## Iter 120 — RUNNING — N=16
+**Hypothesis:** Introducing a learnable update gate for the recurrent memory state will stabilize information flow and prevent catastrophic forgetting at N=16, addressing the persistent EM=0.0 collapse.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_120
+
+
+## Iter 120 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Introducing a learnable update gate for the recurrent memory state will stabilize information flow and prevent catastrophic forgetting at N=16, addressing the persistent EM=0.0 collapse.
+**Wall time:** 67.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_layer, n_head, n_embd, lr, batch_size, warmup_steps, optimizer, and n_mem_tokens have been exhaustively tuned (iterations 111-118) without improving EM from 0.0, indicating the failure is due to unstable memory update dynamics rather than capacity or training configuration. Further hyperparameter tuning is unlikely to resolve the fundamental instability in how new information overwrites the recurrent state.
+
+

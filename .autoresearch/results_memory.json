@@ -1878,6 +1878,34 @@
       "run_error": null,
       "started_at": 1775936594.6561413,
       "token_accuracy": 0.0451
+    },
+    {
+      "id": 120,
+      "iter_tag": "iter_120",
+      "description": "Introducing a learnable update gate for the recurrent memory state will stabilize information flow and prevent catastrophic forgetting at N=16, addressing the persistent EM=0.0 collapse.",
+      "hypothesis": {
+        "hypothesis": "Introducing a learnable update gate for the recurrent memory state will stabilize information flow and prevent catastrophic forgetting at N=16, addressing the persistent EM=0.0 collapse.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters n_layer, n_head, n_embd, lr, batch_size, warmup_steps, optimizer, and n_mem_tokens have been exhaustively tuned (iterations 111-118) without improving EM from 0.0, indicating the failure is due to unstable memory update dynamics rather than capacity or training configuration. Further hyperparameter tuning is unlikely to resolve the fundamental instability in how new information overwrites the recurrent state.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, locate the recurrent memory update step and implement a GRU-style update gate: add a linear projection followed by sigmoid activation to compute a gate value based on the current hidden state, then update the memory state as new_memory = gate * candidate_memory + (1 - gate) * old_memory.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_120",
+      "wall_time_min": 67.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775940833.379891,
+      "token_accuracy": 0.04725
     }
   ],
   "reference": {
