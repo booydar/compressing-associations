@@ -2896,3 +2896,16 @@ Raw response:
 **Rationale:** Hyperparameters including learning_rate, n_layer, n_head, n_mem_tokens, warmup_steps, batch_size, and weight_decay have been exhausted over 10 consecutive iterations (100-109) with no EM improvement (0.0), indicating optimization instability rather than capacity issues. Further tuning is unlikely to resolve the gradient collapse in deep recurrent steps without adaptive signal scaling.
 
 
+## Iter 111 — RUNNING — N=16
+**Hypothesis:** Switching optimizer from Adam to AdamW with decoupled weight decay will improve gradient stability during recurrent memory updates by preventing weight decay from interfering with the adaptive learning rate.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_111
+
+
+## Iter 111 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Switching optimizer from Adam to AdamW with decoupled weight decay will improve gradient stability during recurrent memory updates by preventing weight decay from interfering with the adaptive learning rate.
+**Wall time:** 69.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters exhausted include: n_layer, n_head, warmup_steps, learning_rate, batch_size, n_mem_tokens, weight_decay (iter 108). However, optimizer type (Adam vs AdamW) and dropout rates have not been explicitly explored. AdamW's decoupled weight decay may provide better regularization for recurrent memory mechanisms compared to standard Adam.
+
+

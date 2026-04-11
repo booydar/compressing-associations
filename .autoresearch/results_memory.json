@@ -1626,6 +1626,34 @@
       "run_error": null,
       "started_at": 1775898301.3565407,
       "token_accuracy": 0.04285
+    },
+    {
+      "id": 111,
+      "iter_tag": "iter_111",
+      "description": "Switching optimizer from Adam to AdamW with decoupled weight decay will improve gradient stability during recurrent memory updates by preventing weight decay from interfering with the adaptive learning rate.",
+      "hypothesis": {
+        "hypothesis": "Switching optimizer from Adam to AdamW with decoupled weight decay will improve gradient stability during recurrent memory updates by preventing weight decay from interfering with the adaptive learning rate.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters exhausted include: n_layer, n_head, warmup_steps, learning_rate, batch_size, n_mem_tokens, weight_decay (iter 108). However, optimizer type (Adam vs AdamW) and dropout rates have not been explicitly explored. AdamW's decoupled weight decay may provide better regularization for recurrent memory mechanisms compared to standard Adam.",
+        "instruction": "In experiment_config.yaml, change optimizer from 'adam' to 'adamw'. Add 'weight_decay': 0.01 to the training hyperparameters section if not already present. Ensure learning_rate remains at 1e-4 (from iter 105).",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_111",
+      "wall_time_min": 69.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775902654.3908517,
+      "token_accuracy": 0.04675
     }
   ],
   "reference": {
