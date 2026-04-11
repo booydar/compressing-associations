@@ -2831,3 +2831,16 @@ Raw response:
 **Rationale:** Hyperparameter tuning has been partially exhausted (batch_size, weight_decay, n_mem_tokens, warmup_steps, gradient clipping) but learning rate has not been systematically explored. With EM=0.0 persisting even after gradient clipping was added in iter_104, the model likely needs more conservative optimization dynamics for stable recurrent memory training at N=16.
 
 
+## Iter 106 — RUNNING — N=16
+**Hypothesis:** Adding a learnable forget gate to the memory state update will prevent gradient vanishing and improve EM accuracy at N=16 by controlling information retention over recurrent steps.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_106
+
+
+## Iter 106 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a learnable forget gate to the memory state update will prevent gradient vanishing and improve EM accuracy at N=16 by controlling information retention over recurrent steps.
+**Wall time:** 70.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters including learning rate, batch size, warmup_steps, weight_decay, gradient clipping, n_layer, n_head, and n_mem_tokens have been exhaustively tuned across iterations 96-105 with consistent EM=0.0 results. The persistent failure across optimization and capacity adjustments indicates a structural gradient vanishing issue in the recurrent loop that requires a gated memory update mechanism to stabilize information retention over N=16 steps.
+
+

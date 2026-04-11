@@ -1486,6 +1486,34 @@
       "run_error": null,
       "started_at": 1775877593.5852792,
       "token_accuracy": 0.04355
+    },
+    {
+      "id": 106,
+      "iter_tag": "iter_106",
+      "description": "Adding a learnable forget gate to the memory state update will prevent gradient vanishing and improve EM accuracy at N=16 by controlling information retention over recurrent steps.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable forget gate to the memory state update will prevent gradient vanishing and improve EM accuracy at N=16 by controlling information retention over recurrent steps.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters including learning rate, batch size, warmup_steps, weight_decay, gradient clipping, n_layer, n_head, and n_mem_tokens have been exhaustively tuned across iterations 96-105 with consistent EM=0.0 results. The persistent failure across optimization and capacity adjustments indicates a structural gradient vanishing issue in the recurrent loop that requires a gated memory update mechanism to stabilize information retention over N=16 steps.",
+        "instruction": "Modify the memory update function in modeling_rmt/huggingface_rmca_v3.py to introduce a sigmoid-activated forget gate that modulates the previous memory state before blending it with the new candidate state.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_106",
+      "wall_time_min": 70.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775881138.0809307,
+      "token_accuracy": 0.04415
     }
   ],
   "reference": {
