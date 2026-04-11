@@ -1682,6 +1682,34 @@
       "run_error": null,
       "started_at": 1775906808.7754738,
       "token_accuracy": 0.0445
+    },
+    {
+      "id": 113,
+      "iter_tag": "iter_113",
+      "description": "Increasing n_layer from 6 to 12 will provide sufficient transformer depth for the model to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from 6 to 12 will provide sufficient transformer depth for the model to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Per HYPERPARAMETER-FIRST POLICY, I propose tuning n_layer as it has not been explicitly explored in the recent 10 iterations (103-112). Other hyperparameters (lr, warmup_steps, batch_size, n_mem_tokens, optimizer, weight_decay) have been exhausted with EM=0.0, but increasing model capacity through n_layer may enable the recurrent memory mechanism to properly encode N=16 associative pairs.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the n_layer parameter value from 6 to 12 while keeping all other hyperparameters at their current values.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_113",
+      "wall_time_min": 70.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775911098.1656353,
+      "token_accuracy": 0.05125
     }
   ],
   "reference": {

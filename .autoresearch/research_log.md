@@ -2922,3 +2922,16 @@ Raw response:
 **Rationale:** Hyperparameter tuning has been exhausted (lr, warmup_steps, n_head, n_mem_tokens, batch_size, optimizer, weight_decay, gradient clipping) with persistent EM=0.0 across all configurations, indicating the cross-attention mechanism lacks adaptive precision for N=16 associative retrieval. A learnable temperature parameter will enable the model to control attention sharpness dynamically, addressing the fundamental retrieval precision issue that fixed hyperparameters cannot solve.
 
 
+## Iter 113 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient transformer depth for the model to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_113
+
+
+## Iter 113 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient transformer depth for the model to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Per HYPERPARAMETER-FIRST POLICY, I propose tuning n_layer as it has not been explicitly explored in the recent 10 iterations (103-112). Other hyperparameters (lr, warmup_steps, batch_size, n_mem_tokens, optimizer, weight_decay) have been exhausted with EM=0.0, but increasing model capacity through n_layer may enable the recurrent memory mechanism to properly encode N=16 associative pairs.
+
+
