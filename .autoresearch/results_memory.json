@@ -1458,6 +1458,34 @@
       "run_error": null,
       "started_at": 1775873372.0147705,
       "token_accuracy": 0.0446
+    },
+    {
+      "id": 105,
+      "iter_tag": "iter_105",
+      "description": "Reducing learning rate from default to 1e-4 will enable stable convergence at N=16 by preventing oscillation during recurrent memory updates that has caused persistent EM=0.0 across all recent configurations.",
+      "hypothesis": {
+        "hypothesis": "Reducing learning rate from default to 1e-4 will enable stable convergence at N=16 by preventing oscillation during recurrent memory updates that has caused persistent EM=0.0 across all recent configurations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter tuning has been partially exhausted (batch_size, weight_decay, n_mem_tokens, warmup_steps, gradient clipping) but learning rate has not been systematically explored. With EM=0.0 persisting even after gradient clipping was added in iter_104, the model likely needs more conservative optimization dynamics for stable recurrent memory training at N=16.",
+        "instruction": "In .autoresearch/experiment_config.yaml, add or modify the learning_rate parameter to 1e-4 (0.0001) under the training hyperparameters section",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_105",
+      "wall_time_min": 57.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775877593.5852792,
+      "token_accuracy": 0.04355
     }
   ],
   "reference": {

@@ -2818,3 +2818,16 @@ Raw response:
 **Rationale:** Recent experiments show persistent instability despite LR, batch size, and architectural tweaks. Gradient clipping (max_norm=1.0) is a critical training hyperparameter for recurrent stability that has not yet been tested. This adheres to the Hyperparameter-First policy by targeting remaining training stability knobs before further architectural changes.
 
 
+## Iter 105 — RUNNING — N=16
+**Hypothesis:** Reducing learning rate from default to 1e-4 will enable stable convergence at N=16 by preventing oscillation during recurrent memory updates that has caused persistent EM=0.0 across all recent configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_105
+
+
+## Iter 105 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Reducing learning rate from default to 1e-4 will enable stable convergence at N=16 by preventing oscillation during recurrent memory updates that has caused persistent EM=0.0 across all recent configurations.
+**Wall time:** 57.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameter tuning has been partially exhausted (batch_size, weight_decay, n_mem_tokens, warmup_steps, gradient clipping) but learning rate has not been systematically explored. With EM=0.0 persisting even after gradient clipping was added in iter_104, the model likely needs more conservative optimization dynamics for stable recurrent memory training at N=16.
+
+
