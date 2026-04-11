@@ -2779,3 +2779,16 @@ Raw response:
 **Rationale:** Per HYPERPARAMETER-FIRST POLICY, we have exhausted learning rate, batch size, warmup_steps, weight_decay, and n_mem_tokens tuning (all yielded EM=0.0). The persistent EM=0.0 across 10+ iterations suggests insufficient model capacity rather than training instability. n_layer has not been systematically explored for N=16 configuration.
 
 
+## Iter 102 — RUNNING — N=16
+**Hypothesis:** Increasing n_head from 4 to 8 will improve the model's ability to learn N=16 associative retrieval patterns by providing more attention heads to capture diverse memory-query relationships across recurrent steps.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_102
+
+
+## Iter 102 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_head from 4 to 8 will improve the model's ability to learn N=16 associative retrieval patterns by providing more attention heads to capture diverse memory-query relationships across recurrent steps.
+**Wall time:** 69.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively explored (lr, batch_size, warmup_steps, weight_decay, n_mem_tokens, n_layer) with no EM improvement. Architecture changes have also failed (gating, scaling, LayerNorm, skip connections). n_head has not been systematically tuned and increasing attention capacity directly addresses the attention bottleneck in cross-attention layers for N=16 sequence lengths.
+
+

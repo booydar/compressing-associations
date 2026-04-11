@@ -1374,6 +1374,34 @@
       "run_error": null,
       "started_at": 1775860724.0115705,
       "token_accuracy": 0.04255
+    },
+    {
+      "id": 102,
+      "iter_tag": "iter_102",
+      "description": "Increasing n_head from 4 to 8 will improve the model's ability to learn N=16 associative retrieval patterns by providing more attention heads to capture diverse memory-query relationships across recurrent steps.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_head from 4 to 8 will improve the model's ability to learn N=16 associative retrieval patterns by providing more attention heads to capture diverse memory-query relationships across recurrent steps.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively explored (lr, batch_size, warmup_steps, weight_decay, n_mem_tokens, n_layer) with no EM improvement. Architecture changes have also failed (gating, scaling, LayerNorm, skip connections). n_head has not been systematically tuned and increasing attention capacity directly addresses the attention bottleneck in cross-attention layers for N=16 sequence lengths.",
+        "instruction": "Change n_head from 4 to 8 in .autoresearch/experiment_config.yaml under model configuration section. Ensure n_embd is divisible by new n_head (48/8=6, so keep n_embd=48).",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_102",
+      "wall_time_min": 69.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775864924.7606034,
+      "token_accuracy": 0.0446
     }
   ],
   "reference": {
