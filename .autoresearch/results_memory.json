@@ -1738,6 +1738,34 @@
       "run_error": null,
       "started_at": 1775915338.5273633,
       "token_accuracy": 0.0574
+    },
+    {
+      "id": 115,
+      "iter_tag": "iter_115",
+      "description": "Increasing n_head from default to 8 will provide more parallel attention pathways to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_head from default to 8 will provide more parallel attention pathways to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "While learning rate, batch_size, weight_decay, warmup_steps, n_mem_tokens, n_layer, and optimizer have been exhausted through experiments 105-114, n_head has not been explicitly tested. With EM=0.0 persisting across all configurations, increasing attention heads may provide the capacity needed for multi-hop associative retrieval without architectural changes.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change n_head from its default value to 8. Keep all other hyperparameters at their current best settings from iter_071.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_115",
+      "wall_time_min": 70.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775919494.6108615,
+      "token_accuracy": 0.0454
     }
   ],
   "reference": {

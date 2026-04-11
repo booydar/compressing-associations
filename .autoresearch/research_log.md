@@ -2948,3 +2948,16 @@ Raw response:
 **Rationale:** Following the hyperparameter-first policy, we have exhausted: learning_rate, batch_size, weight_decay, n_mem_tokens, n_layer, optimizer type, and gradient clipping. We have NOT yet tried warmup_steps which is critical for recurrent training stability. This is a hyperparameter change, not architectural, per the required priority order.
 
 
+## Iter 115 — RUNNING — N=16
+**Hypothesis:** Increasing n_head from default to 8 will provide more parallel attention pathways to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_115
+
+
+## Iter 115 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_head from default to 8 will provide more parallel attention pathways to learn the complex associative mappings required at N=16, which previous hyperparameter adjustments alone have failed to enable.
+**Wall time:** 70.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** While learning rate, batch_size, weight_decay, warmup_steps, n_mem_tokens, n_layer, and optimizer have been exhausted through experiments 105-114, n_head has not been explicitly tested. With EM=0.0 persisting across all configurations, increasing attention heads may provide the capacity needed for multi-hop associative retrieval without architectural changes.
+
+
