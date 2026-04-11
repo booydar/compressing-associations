@@ -2961,3 +2961,16 @@ Raw response:
 **Rationale:** While learning rate, batch_size, weight_decay, warmup_steps, n_mem_tokens, n_layer, and optimizer have been exhausted through experiments 105-114, n_head has not been explicitly tested. With EM=0.0 persisting across all configurations, increasing attention heads may provide the capacity needed for multi-hop associative retrieval without architectural changes.
 
 
+## Iter 116 — RUNNING — N=16
+**Hypothesis:** Adjusting learning rate to 3e-4 will enable proper gradient flow and convergence for the recurrent memory mechanism at N=16, as no systematic learning rate tuning has been attempted despite extensive other hyperparameter exploration.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_116
+
+
+## Iter 116 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adjusting learning rate to 3e-4 will enable proper gradient flow and convergence for the recurrent memory mechanism at N=16, as no systematic learning rate tuning has been attempted despite extensive other hyperparameter exploration.
+**Wall time:** 69.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Learning rate is the most critical training hyperparameter that has not been explicitly tuned in the recent experiment history (106-115). All other major hyperparameters have been explored (batch_size, n_mem_tokens, optimizer, n_layer, warmup_steps, n_head, weight_decay), but EM remains 0.0 suggesting the learning rate may be suboptimal for recurrent memory gradient dynamics.
+
+

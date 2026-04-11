@@ -1766,6 +1766,34 @@
       "run_error": null,
       "started_at": 1775919494.6108615,
       "token_accuracy": 0.0454
+    },
+    {
+      "id": 116,
+      "iter_tag": "iter_116",
+      "description": "Adjusting learning rate to 3e-4 will enable proper gradient flow and convergence for the recurrent memory mechanism at N=16, as no systematic learning rate tuning has been attempted despite extensive other hyperparameter exploration.",
+      "hypothesis": {
+        "hypothesis": "Adjusting learning rate to 3e-4 will enable proper gradient flow and convergence for the recurrent memory mechanism at N=16, as no systematic learning rate tuning has been attempted despite extensive other hyperparameter exploration.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Learning rate is the most critical training hyperparameter that has not been explicitly tuned in the recent experiment history (106-115). All other major hyperparameters have been explored (batch_size, n_mem_tokens, optimizer, n_layer, warmup_steps, n_head, weight_decay), but EM remains 0.0 suggesting the learning rate may be suboptimal for recurrent memory gradient dynamics.",
+        "instruction": "In .autoresearch/experiment_config.yaml, set learning_rate to 3e-4 (from current default value) for the next experiment run at N=16",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_116",
+      "wall_time_min": 69.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775923734.9988306,
+      "token_accuracy": 0.05605
     }
   ],
   "reference": {
