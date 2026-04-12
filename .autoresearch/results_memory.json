@@ -2466,6 +2466,34 @@
       "run_error": null,
       "started_at": 1776024374.6900268,
       "token_accuracy": 0.04945
+    },
+    {
+      "id": 141,
+      "iter_tag": "iter_141",
+      "description": "A more conservative learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, as previous LR exploration was insufficient and the persistent EM=0.0 collapse suggests training instability.",
+      "hypothesis": {
+        "hypothesis": "A more conservative learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, as previous LR exploration was insufficient and the persistent EM=0.0 collapse suggests training instability.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters are not yet exhausted: batch_size, max_steps, and specific learning rate values have not been systematically explored despite 10 failed iterations. Learning rate is the most critical training hyperparameter and a conservative value may enable gradient flow through the memory mechanism that has failed across all previous attempts.",
+        "instruction": "In .autoresearch/experiment_config.yaml, set learning_rate to 5e-5 (from current value) to enable more stable training gradient propagation through the recurrent memory mechanism for N=16 associative retrieval task.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_141",
+      "wall_time_min": 70.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776028639.2500565,
+      "token_accuracy": 0.04575
     }
   ],
   "reference": {

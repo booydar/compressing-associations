@@ -3286,3 +3286,16 @@ Raw response:
 **Rationale:** Previous hyperparameter tuning (lr, batch_size, n_layer, n_mem_tokens, optimizer, warmup, dropout) has failed to resolve the EM=0.0 collapse, leaving model hyperparameters n_head and n_embd unexplored. I am exploring increasing n_head to 8 to enhance cross-attention capacity for disentangling 16 associations without increasing parameter count significantly.
 
 
+## Iter 141 — RUNNING — N=16
+**Hypothesis:** A more conservative learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, as previous LR exploration was insufficient and the persistent EM=0.0 collapse suggests training instability.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_141
+
+
+## Iter 141 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** A more conservative learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, as previous LR exploration was insufficient and the persistent EM=0.0 collapse suggests training instability.
+**Wall time:** 70.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters are not yet exhausted: batch_size, max_steps, and specific learning rate values have not been systematically explored despite 10 failed iterations. Learning rate is the most critical training hyperparameter and a conservative value may enable gradient flow through the memory mechanism that has failed across all previous attempts.
+
+
