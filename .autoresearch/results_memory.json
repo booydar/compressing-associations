@@ -1990,6 +1990,34 @@
       "run_error": null,
       "started_at": 1775953378.6645303,
       "token_accuracy": 0.0504
+    },
+    {
+      "id": 124,
+      "iter_tag": "iter_124",
+      "description": "Increasing n_layer from default to 12 will provide additional transformer depth for the recurrent memory mechanism to learn the complex associative retrieval patterns at N=16 that shallower architectures have failed to capture.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from default to 12 will provide additional transformer depth for the recurrent memory mechanism to learn the complex associative retrieval patterns at N=16 that shallower architectures have failed to capture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters for warmup_steps, n_head, lr, n_embd, batch_size, and n_mem_tokens have been systematically explored (iterations 114-118, 122) with EM=0.0 collapse. n_layer remains untuned and increasing depth may enable better gradient propagation through the recurrent memory states. Architectural changes have already been attempted (iterations 119-121, 123) but depth scaling is a more fundamental capacity adjustment.",
+        "instruction": "Change n_layer value from 6 to 12 in .autoresearch/experiment_config.yaml to increase transformer depth for better recurrent memory learning capacity at N=16",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_124",
+      "wall_time_min": 70.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775957646.4769156,
+      "token_accuracy": 0.049
     }
   ],
   "reference": {

@@ -3065,3 +3065,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively tuned (lr, warmup_steps, batch_size, n_head, n_embd, n_mem_tokens, weight_decay not explored) and multiple architectural fixes attempted (LayerNorm, update gate, residual connections, n_layer increase), all failing with EM=0.0. The core issue is likely that memory tokens lack position information to distinguish between stored associations, preventing the model from learning which memory slot contains which key-value pair.
 
 
+## Iter 124 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from default to 12 will provide additional transformer depth for the recurrent memory mechanism to learn the complex associative retrieval patterns at N=16 that shallower architectures have failed to capture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_124
+
+
+## Iter 124 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_layer from default to 12 will provide additional transformer depth for the recurrent memory mechanism to learn the complex associative retrieval patterns at N=16 that shallower architectures have failed to capture.
+**Wall time:** 70.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters for warmup_steps, n_head, lr, n_embd, batch_size, and n_mem_tokens have been systematically explored (iterations 114-118, 122) with EM=0.0 collapse. n_layer remains untuned and increasing depth may enable better gradient propagation through the recurrent memory states. Architectural changes have already been attempted (iterations 119-121, 123) but depth scaling is a more fundamental capacity adjustment.
+
+
