@@ -2186,6 +2186,34 @@
       "run_error": null,
       "started_at": 1775982233.8641133,
       "token_accuracy": 0.04875
+    },
+    {
+      "id": 131,
+      "iter_tag": "iter_131",
+      "description": "The RMCA model's memory retrieval is failing because there is no explicit gating mechanism to control information flow into and out of the recurrent memory, causing information to be overwritten or lost during the N=16 associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "The RMCA model's memory retrieval is failing because there is no explicit gating mechanism to control information flow into and out of the recurrent memory, causing information to be overwritten or lost during the N=16 associative retrieval task.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted: learning rate (5e-5 tested), warmup_steps (2000 tested), batch_size (tested), n_head (8 tested), n_layer (12 tested), n_mem_tokens (32 tested). All 19+ iterations (111-130) at N=16 have failed with EM=0.0, indicating an architectural limitation rather than optimization issues. Adding a memory gating mechanism will provide explicit control over memory information flow.",
+        "instruction": "Add a learned gate (sigmoid activation) to the memory update mechanism in huggingface_rmca_v3.py that controls how much new information is written to the memory state and how much of the old memory state is retained. The gate should be applied element-wise to the cross-attention output before updating the memory state, with trainable parameters initialized to allow gradual learning of memory retention patterns.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_131",
+      "wall_time_min": 70.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775986353.9201775,
+      "token_accuracy": 0.04505
     }
   ],
   "reference": {

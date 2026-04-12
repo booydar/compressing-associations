@@ -3156,3 +3156,16 @@ Raw response:
 **Rationale:** Hyperparameters n_mem_tokens (iter 122), n_layer (iter 124), warmup_steps (iter 126), learning rate (iter 127-128), and n_head (iter 129) have been exhausted with no improvement. Batch_size has not been explicitly tested yet and larger batches can stabilize recurrent memory gradients by reducing variance in gradient estimates during training.
 
 
+## Iter 131 — RUNNING — N=16
+**Hypothesis:** The RMCA model's memory retrieval is failing because there is no explicit gating mechanism to control information flow into and out of the recurrent memory, causing information to be overwritten or lost during the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_131
+
+
+## Iter 131 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** The RMCA model's memory retrieval is failing because there is no explicit gating mechanism to control information flow into and out of the recurrent memory, causing information to be overwritten or lost during the N=16 associative retrieval task.
+**Wall time:** 70.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted: learning rate (5e-5 tested), warmup_steps (2000 tested), batch_size (tested), n_head (8 tested), n_layer (12 tested), n_mem_tokens (32 tested). All 19+ iterations (111-130) at N=16 have failed with EM=0.0, indicating an architectural limitation rather than optimization issues. Adding a memory gating mechanism will provide explicit control over memory information flow.
+
+
