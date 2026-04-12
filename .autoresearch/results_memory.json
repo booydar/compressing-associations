@@ -2158,6 +2158,34 @@
       "run_error": null,
       "started_at": 1775977993.0320077,
       "token_accuracy": 0.05375
+    },
+    {
+      "id": 130,
+      "iter_tag": "iter_130",
+      "description": "Increasing batch_size will provide more stable gradient estimates for the recurrent memory update mechanism, preventing the EM=0.0 collapse observed across 19+ iterations.",
+      "hypothesis": {
+        "hypothesis": "Increasing batch_size will provide more stable gradient estimates for the recurrent memory update mechanism, preventing the EM=0.0 collapse observed across 19+ iterations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters n_mem_tokens (iter 122), n_layer (iter 124), warmup_steps (iter 126), learning rate (iter 127-128), and n_head (iter 129) have been exhausted with no improvement. Batch_size has not been explicitly tested yet and larger batches can stabilize recurrent memory gradients by reducing variance in gradient estimates during training.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change batch_size from current value to 128 (increase by 2x from typical default). Ensure this change is compatible with available GPU memory. Do not change any other hyperparameters in this experiment.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_130",
+      "wall_time_min": 68.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775982233.8641133,
+      "token_accuracy": 0.04875
     }
   ],
   "reference": {

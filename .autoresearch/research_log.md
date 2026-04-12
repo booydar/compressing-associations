@@ -3143,3 +3143,16 @@ Raw response:
 **Rationale:** Hyperparameters n_mem_tokens, n_layer, warmup_steps, and learning rate have been exhausted (iter 122-128) with no EM improvement. The n_head parameter, which directly controls parallel attention capacity for associative retrieval, has not been systematically explored and represents a logical next hyperparameter to tune before architectural changes.
 
 
+## Iter 130 — RUNNING — N=16
+**Hypothesis:** Increasing batch_size will provide more stable gradient estimates for the recurrent memory update mechanism, preventing the EM=0.0 collapse observed across 19+ iterations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_130
+
+
+## Iter 130 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing batch_size will provide more stable gradient estimates for the recurrent memory update mechanism, preventing the EM=0.0 collapse observed across 19+ iterations.
+**Wall time:** 68.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_mem_tokens (iter 122), n_layer (iter 124), warmup_steps (iter 126), learning rate (iter 127-128), and n_head (iter 129) have been exhausted with no improvement. Batch_size has not been explicitly tested yet and larger batches can stabilize recurrent memory gradients by reducing variance in gradient estimates during training.
+
+
