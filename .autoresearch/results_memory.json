@@ -2242,6 +2242,34 @@
       "run_error": null,
       "started_at": 1775990588.6347373,
       "token_accuracy": 0.04565
+    },
+    {
+      "id": 133,
+      "iter_tag": "iter_133",
+      "description": "Increasing n_mem_tokens from the default to 32 will provide sufficient memory capacity to store all 16 associative pairs at N=16, as the current EM=0.0 collapse may stem from memory slot exhaustion rather than training instability.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_mem_tokens from the default to 32 will provide sufficient memory capacity to store all 16 associative pairs at N=16, as the current EM=0.0 collapse may stem from memory slot exhaustion rather than training instability.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All major hyperparameters have been exhausted (learning rate iter 127-128, n_layer iter 124, n_head iter 129, warmup_steps iter 126, batch_size iter 130, dropout iter 132). n_mem_tokens has not been systematically explored and directly controls memory capacity for storing N=16 associative pairs.",
+        "instruction": "In .autoresearch/experiment_config.yaml, find the n_mem_tokens parameter and change its value from the current setting to 32 to increase memory capacity for the N=16 associative retrieval task.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_133",
+      "wall_time_min": 69.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775994750.2500935,
+      "token_accuracy": 0.04545
     }
   ],
   "reference": {

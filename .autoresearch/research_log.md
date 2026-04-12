@@ -3182,3 +3182,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively explored including n_mem_tokens, n_layer, n_head, warmup_steps, learning_rate (multiple values), and batch_size across 19+ iterations with no improvement. Dropout rate remains untested and is a critical regularization parameter that can stabilize training when recurrent memory mechanisms fail to generalize. Since no pending human directions exist and we've exhausted the main hyperparameter space, dropout is the next logical hyperparameter to explore before further architectural changes.
 
 
+## Iter 133 — RUNNING — N=16
+**Hypothesis:** Increasing n_mem_tokens from the default to 32 will provide sufficient memory capacity to store all 16 associative pairs at N=16, as the current EM=0.0 collapse may stem from memory slot exhaustion rather than training instability.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_133
+
+
+## Iter 133 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_mem_tokens from the default to 32 will provide sufficient memory capacity to store all 16 associative pairs at N=16, as the current EM=0.0 collapse may stem from memory slot exhaustion rather than training instability.
+**Wall time:** 69.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** All major hyperparameters have been exhausted (learning rate iter 127-128, n_layer iter 124, n_head iter 129, warmup_steps iter 126, batch_size iter 130, dropout iter 132). n_mem_tokens has not been systematically explored and directly controls memory capacity for storing N=16 associative pairs.
+
+
