@@ -3195,3 +3195,16 @@ Raw response:
 **Rationale:** All major hyperparameters have been exhausted (learning rate iter 127-128, n_layer iter 124, n_head iter 129, warmup_steps iter 126, batch_size iter 130, dropout iter 132). n_mem_tokens has not been systematically explored and directly controls memory capacity for storing N=16 associative pairs.
 
 
+## Iter 134 — RUNNING — N=16
+**Hypothesis:** The RMCA memory mechanism is failing to learn because memory states are initialized to zero or random values without proper scaling, causing gradient vanishing before any associative patterns can be stored at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_134
+
+
+## Iter 134 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** The RMCA memory mechanism is failing to learn because memory states are initialized to zero or random values without proper scaling, causing gradient vanishing before any associative patterns can be stored at N=16.
+**Wall time:** 70.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** We have exhausted key hyperparameters (n_layer, n_head, n_mem_tokens, lr, warmup_steps, batch_size) and tried architectural changes (normalization, gating, dropout) with no EM improvement. The persistent EM=0.0 suggests a fundamental initialization problem in the recurrent memory states rather than capacity or training regime issues. Memory initialization is the critical path before learning can occur.
+
+

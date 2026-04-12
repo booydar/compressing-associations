@@ -2270,6 +2270,34 @@
       "run_error": null,
       "started_at": 1775994750.2500935,
       "token_accuracy": 0.04545
+    },
+    {
+      "id": 134,
+      "iter_tag": "iter_134",
+      "description": "The RMCA memory mechanism is failing to learn because memory states are initialized to zero or random values without proper scaling, causing gradient vanishing before any associative patterns can be stored at N=16.",
+      "hypothesis": {
+        "hypothesis": "The RMCA memory mechanism is failing to learn because memory states are initialized to zero or random values without proper scaling, causing gradient vanishing before any associative patterns can be stored at N=16.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "We have exhausted key hyperparameters (n_layer, n_head, n_mem_tokens, lr, warmup_steps, batch_size) and tried architectural changes (normalization, gating, dropout) with no EM improvement. The persistent EM=0.0 suggests a fundamental initialization problem in the recurrent memory states rather than capacity or training regime issues. Memory initialization is the critical path before learning can occur.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, modify the memory state initialization in the forward pass or memory_update function to use Xavier/Glorot uniform initialization scaled by 0.02 instead of zeros or random initialization. Specifically, change the memory_tokens or memory_state initialization to: nn.init.xavier_uniform_(memory_states, gain=0.02) or equivalent scaling factor to prevent gradient saturation at initialization.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_134",
+      "wall_time_min": 70.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775998934.4729712,
+      "token_accuracy": 0.0454
     }
   ],
   "reference": {
