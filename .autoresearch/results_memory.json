@@ -2326,6 +2326,34 @@
       "run_error": null,
       "started_at": 1776003156.1860628,
       "token_accuracy": 0.04555
+    },
+    {
+      "id": 136,
+      "iter_tag": "iter_136",
+      "description": "Switching to AdamW optimizer with weight decay of 0.01 will provide better regularization and gradient stability for the recurrent memory mechanism, addressing the persistent EM=0.0 collapse across 19+ hyperparameter and architectural attempts.",
+      "hypothesis": {
+        "hypothesis": "Switching to AdamW optimizer with weight decay of 0.01 will provide better regularization and gradient stability for the recurrent memory mechanism, addressing the persistent EM=0.0 collapse across 19+ hyperparameter and architectural attempts.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively explored: learning rate (iter 127, 128), warmup_steps (iter 126), n_head (iter 129), batch_size (iter 130), dropout (iter 132), n_mem_tokens (iter 133), n_layer (iter 135). The optimizer type itself has not been explicitly changed from default. AdamW with weight decay provides better regularization for recurrent architectures and may prevent the optimization collapse causing EM=0.0.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change 'optimizer' from 'adam' to 'adamw' and add 'weight_decay': 0.01 to the training hyperparameters section.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_136",
+      "wall_time_min": 69.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776007348.728684,
+      "token_accuracy": 0.04705
     }
   ],
   "reference": {

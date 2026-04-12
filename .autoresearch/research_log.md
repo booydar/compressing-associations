@@ -3221,3 +3221,16 @@ Raw response:
 **Rationale:** Hyperparameter tuning has explored warmup_steps, learning_rate, n_head, batch_size, dropout, and n_mem_tokens, but n_layer remains unexplored. Given the persistent EM=0.0 across 19+ iterations, additional model depth may be necessary to learn the N=16 associative retrieval task without exceeding the 50% parameter budget.
 
 
+## Iter 136 — RUNNING — N=16
+**Hypothesis:** Switching to AdamW optimizer with weight decay of 0.01 will provide better regularization and gradient stability for the recurrent memory mechanism, addressing the persistent EM=0.0 collapse across 19+ hyperparameter and architectural attempts.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_136
+
+
+## Iter 136 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Switching to AdamW optimizer with weight decay of 0.01 will provide better regularization and gradient stability for the recurrent memory mechanism, addressing the persistent EM=0.0 collapse across 19+ hyperparameter and architectural attempts.
+**Wall time:** 69.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively explored: learning rate (iter 127, 128), warmup_steps (iter 126), n_head (iter 129), batch_size (iter 130), dropout (iter 132), n_mem_tokens (iter 133), n_layer (iter 135). The optimizer type itself has not been explicitly changed from default. AdamW with weight decay provides better regularization for recurrent architectures and may prevent the optimization collapse causing EM=0.0.
+
+
