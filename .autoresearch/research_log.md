@@ -3091,3 +3091,16 @@ Raw response:
 **Rationale:** All major hyperparameters (n_head, n_embd, n_layer, n_mem_tokens, lr, batch_size) and several architectural changes (LayerNorm before projections, update gates, residual connections, positional embeddings) have been exhausted with EM=0.0 remaining. This indicates the memory state itself becomes unstable during training, requiring post-attention normalization to prevent saturation.
 
 
+## Iter 126 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from default to 2000 will provide more stable gradient flow for the recurrent memory mechanism during the critical early training phase, allowing memory states to properly initialize before full training begins at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_126
+
+
+## Iter 126 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing warmup_steps from default to 2000 will provide more stable gradient flow for the recurrent memory mechanism during the critical early training phase, allowing memory states to properly initialize before full training begins at N=16.
+**Wall time:** 71.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_layer (iter 124), n_embd (iter 117), n_mem_tokens (iter 122), lr (iter 116), and batch_size (iter 118) have been explored. However, warmup_steps has not been systematically tuned despite being critical for recurrent memory gradient stability. This follows the hyperparameter-first policy before additional architectural modifications.
+
+
