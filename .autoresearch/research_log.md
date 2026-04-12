@@ -3260,3 +3260,16 @@ Raw response:
 **Rationale:** Hyperparameters including learning rate (iter 128), optimizer (iter 136), warmup_steps (iter 137), n_layer (iter 135), n_head (iter 129), and n_mem_tokens (iter 133) have been exhaustively tuned without any improvement over 19 iterations, indicating the failure is due to unstable internal state dynamics rather than training configuration. Further hyperparameter tuning is unlikely to help because the attention mechanism cannot compute valid retrieval probabilities without normalized input states.
 
 
+## Iter 139 — RUNNING — N=16
+**Hypothesis:** The persistent EM=0.0 collapse across 19+ iterations is caused by an inappropriate learning rate that either prevents gradient signal propagation or causes training divergence, and systematic learning rate exploration has not yet been performed despite extensive other hyperparameter tuning.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_139
+
+
+## Iter 139 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** The persistent EM=0.0 collapse across 19+ iterations is caused by an inappropriate learning rate that either prevents gradient signal propagation or causes training divergence, and systematic learning rate exploration has not yet been performed despite extensive other hyperparameter tuning.
+**Wall time:** 69.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Learning rate is the most fundamental training hyperparameter that has not been explicitly explored in the experiment history (iter_129 through iter_138 covered n_head, batch_size, n_mem_tokens, n_layer, optimizer type, warmup_steps, dropout, and architectural changes). Given EM=0.0 persists across all prior attempts, the learning rate is likely either too high causing divergence or too low preventing any signal learning. Before further architectural changes, I must exhaust the critical training hyperparameter of learning rate with a systematic range.
+
+
