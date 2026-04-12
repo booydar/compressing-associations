@@ -2382,6 +2382,34 @@
       "run_error": null,
       "started_at": 1776011676.627093,
       "token_accuracy": 0.0458
+    },
+    {
+      "id": 138,
+      "iter_tag": "iter_138",
+      "description": "Applying Layer Normalization to the recurrent memory states before the cross-attention projection will stabilize the hidden state magnitudes and prevent the attention mechanism from collapsing, which is the root cause of the persistent 0.0 EM failure.",
+      "hypothesis": {
+        "hypothesis": "Applying Layer Normalization to the recurrent memory states before the cross-attention projection will stabilize the hidden state magnitudes and prevent the attention mechanism from collapsing, which is the root cause of the persistent 0.0 EM failure.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters including learning rate (iter 128), optimizer (iter 136), warmup_steps (iter 137), n_layer (iter 135), n_head (iter 129), and n_mem_tokens (iter 133) have been exhaustively tuned without any improvement over 19 iterations, indicating the failure is due to unstable internal state dynamics rather than training configuration. Further hyperparameter tuning is unlikely to help because the attention mechanism cannot compute valid retrieval probabilities without normalized input states.",
+        "instruction": "In the memory block's forward method within modeling_rmt/huggingface_rmca_v3.py, instantiate and apply a LayerNorm layer to the memory hidden states immediately before projecting them into queries and keys for the cross-attention mechanism.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_138",
+      "wall_time_min": 70.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776015889.4900584,
+      "token_accuracy": 0.0462
     }
   ],
   "reference": {

@@ -3247,3 +3247,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively explored (lr, n_head, batch_size, n_mem_tokens, n_layer, optimizer, weight_decay, dropout) but warmup_steps has not been systematically tuned. Extended warmup is critical for recurrent memory models to prevent early gradient collapse during the critical initialization phase.
 
 
+## Iter 138 — RUNNING — N=16
+**Hypothesis:** Applying Layer Normalization to the recurrent memory states before the cross-attention projection will stabilize the hidden state magnitudes and prevent the attention mechanism from collapsing, which is the root cause of the persistent 0.0 EM failure.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_138
+
+
+## Iter 138 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Applying Layer Normalization to the recurrent memory states before the cross-attention projection will stabilize the hidden state magnitudes and prevent the attention mechanism from collapsing, which is the root cause of the persistent 0.0 EM failure.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters including learning rate (iter 128), optimizer (iter 136), warmup_steps (iter 137), n_layer (iter 135), n_head (iter 129), and n_mem_tokens (iter 133) have been exhaustively tuned without any improvement over 19 iterations, indicating the failure is due to unstable internal state dynamics rather than training configuration. Further hyperparameter tuning is unlikely to help because the attention mechanism cannot compute valid retrieval probabilities without normalized input states.
+
+
