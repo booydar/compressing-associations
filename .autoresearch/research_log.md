@@ -3273,3 +3273,16 @@ Raw response:
 **Rationale:** Learning rate is the most fundamental training hyperparameter that has not been explicitly explored in the experiment history (iter_129 through iter_138 covered n_head, batch_size, n_mem_tokens, n_layer, optimizer type, warmup_steps, dropout, and architectural changes). Given EM=0.0 persists across all prior attempts, the learning rate is likely either too high causing divergence or too low preventing any signal learning. Before further architectural changes, I must exhaust the critical training hyperparameter of learning rate with a systematic range.
 
 
+## Iter 140 — RUNNING — N=16
+**Hypothesis:** Increasing the number of attention heads (n_head) to 8 will enable the cross-attention mechanism to better disentangle and retrieve 16 distinct associative pairs from the recurrent memory buffer.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_140
+
+
+## Iter 140 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing the number of attention heads (n_head) to 8 will enable the cross-attention mechanism to better disentangle and retrieve 16 distinct associative pairs from the recurrent memory buffer.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Previous hyperparameter tuning (lr, batch_size, n_layer, n_mem_tokens, optimizer, warmup, dropout) has failed to resolve the EM=0.0 collapse, leaving model hyperparameters n_head and n_embd unexplored. I am exploring increasing n_head to 8 to enhance cross-attention capacity for disentangling 16 associations without increasing parameter count significantly.
+
+

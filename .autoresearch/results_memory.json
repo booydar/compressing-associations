@@ -2438,6 +2438,34 @@
       "run_error": null,
       "started_at": 1776020137.172222,
       "token_accuracy": 0.04435
+    },
+    {
+      "id": 140,
+      "iter_tag": "iter_140",
+      "description": "Increasing the number of attention heads (n_head) to 8 will enable the cross-attention mechanism to better disentangle and retrieve 16 distinct associative pairs from the recurrent memory buffer.",
+      "hypothesis": {
+        "hypothesis": "Increasing the number of attention heads (n_head) to 8 will enable the cross-attention mechanism to better disentangle and retrieve 16 distinct associative pairs from the recurrent memory buffer.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Previous hyperparameter tuning (lr, batch_size, n_layer, n_mem_tokens, optimizer, warmup, dropout) has failed to resolve the EM=0.0 collapse, leaving model hyperparameters n_head and n_embd unexplored. I am exploring increasing n_head to 8 to enhance cross-attention capacity for disentangling 16 associations without increasing parameter count significantly.",
+        "instruction": "In .autoresearch/experiment_config.yaml, update the 'n_head' parameter value to 8.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_140",
+      "wall_time_min": 70.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776024374.6900268,
+      "token_accuracy": 0.04945
     }
   ],
   "reference": {
