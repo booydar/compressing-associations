@@ -2074,6 +2074,34 @@
       "run_error": null,
       "started_at": 1775965318.801054,
       "token_accuracy": 0.04525
+    },
+    {
+      "id": 127,
+      "iter_tag": "iter_127",
+      "description": "Systematic learning rate exploration will identify the optimal training regime for the recurrent memory mechanism, as the current EM=0.0 collapse may stem from suboptimal gradient scaling rather than architectural limitations.",
+      "hypothesis": {
+        "hypothesis": "Systematic learning rate exploration will identify the optimal training regime for the recurrent memory mechanism, as the current EM=0.0 collapse may stem from suboptimal gradient scaling rather than architectural limitations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All major hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, batch_size, warmup_steps) have been exhaustively tested per experiment history 117-126 with no improvement. Learning rate has not been systematically explored despite being the most critical training hyperparameter for recurrent memory stability and convergence.",
+        "instruction": "Set learning_rate to 0.0001 (1e-4) and add learning_rate_schedule with type='cosine' with min_lr_ratio=0.1 to enable systematic learning rate exploration across the training process.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_127",
+      "wall_time_min": 69.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775969614.376424,
+      "token_accuracy": 0.0442
     }
   ],
   "reference": {

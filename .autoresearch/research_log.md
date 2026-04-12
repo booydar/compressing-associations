@@ -3104,3 +3104,16 @@ Raw response:
 **Rationale:** Hyperparameters n_layer (iter 124), n_embd (iter 117), n_mem_tokens (iter 122), lr (iter 116), and batch_size (iter 118) have been explored. However, warmup_steps has not been systematically tuned despite being critical for recurrent memory gradient stability. This follows the hyperparameter-first policy before additional architectural modifications.
 
 
+## Iter 127 — RUNNING — N=16
+**Hypothesis:** Systematic learning rate exploration will identify the optimal training regime for the recurrent memory mechanism, as the current EM=0.0 collapse may stem from suboptimal gradient scaling rather than architectural limitations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_127
+
+
+## Iter 127 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Systematic learning rate exploration will identify the optimal training regime for the recurrent memory mechanism, as the current EM=0.0 collapse may stem from suboptimal gradient scaling rather than architectural limitations.
+**Wall time:** 69.9 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** All major hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, batch_size, warmup_steps) have been exhaustively tested per experiment history 117-126 with no improvement. Learning rate has not been systematically explored despite being the most critical training hyperparameter for recurrent memory stability and convergence.
+
+
