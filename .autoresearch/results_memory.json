@@ -1934,6 +1934,34 @@
       "run_error": null,
       "started_at": 1775945009.1718357,
       "token_accuracy": 0.0454
+    },
+    {
+      "id": 122,
+      "iter_tag": "iter_122",
+      "description": "Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store 16 associative pairs at N=16, addressing the fundamental memory bottleneck that hyperparameter tuning alone has failed to resolve.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store 16 associative pairs at N=16, addressing the fundamental memory bottleneck that hyperparameter tuning alone has failed to resolve.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters exhausted so far: n_layer (6\u219212), n_head (default\u21928), n_embd (default\u2192256), lr (3e-4), batch_size (128), warmup_steps (5000). However, n_mem_tokens has not been systematically tuned despite being critical for memory capacity at N=16. Since EM=0.0 across all iterations suggests fundamental capacity limitations rather than optimization issues, increasing memory tokens is the next logical hyperparameter to explore before returning to architecture.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change n_mem_tokens from its current value to 32. Keep all other hyperparameters at their current best values from iter_071.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_122",
+      "wall_time_min": 69.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775949212.0597584,
+      "token_accuracy": 0.04835
     }
   ],
   "reference": {

@@ -3039,3 +3039,16 @@ Raw response:
 **Rationale:** Hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps, optimizer, temperature) and architectural stabilizers (LayerNorm, update gates) have been exhausted in iterations 111-120 with EM=0.0, indicating a fundamental architectural bottleneck in long-term dependency retention that tuning alone cannot resolve.
 
 
+## Iter 122 — RUNNING — N=16
+**Hypothesis:** Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store 16 associative pairs at N=16, addressing the fundamental memory bottleneck that hyperparameter tuning alone has failed to resolve.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_122
+
+
+## Iter 122 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_mem_tokens from default to 32 will provide sufficient memory capacity to store 16 associative pairs at N=16, addressing the fundamental memory bottleneck that hyperparameter tuning alone has failed to resolve.
+**Wall time:** 69.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters exhausted so far: n_layer (6→12), n_head (default→8), n_embd (default→256), lr (3e-4), batch_size (128), warmup_steps (5000). However, n_mem_tokens has not been systematically tuned despite being critical for memory capacity at N=16. Since EM=0.0 across all iterations suggests fundamental capacity limitations rather than optimization issues, increasing memory tokens is the next logical hyperparameter to explore before returning to architecture.
+
+
