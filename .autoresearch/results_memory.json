@@ -1962,6 +1962,34 @@
       "run_error": null,
       "started_at": 1775949212.0597584,
       "token_accuracy": 0.04835
+    },
+    {
+      "id": 123,
+      "iter_tag": "iter_123",
+      "description": "Adding positional embeddings to memory tokens will enable the model to distinguish between different memory slots, allowing it to learn which slot stores which associative pair at N=16.",
+      "hypothesis": {
+        "hypothesis": "Adding positional embeddings to memory tokens will enable the model to distinguish between different memory slots, allowing it to learn which slot stores which associative pair at N=16.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been extensively tuned (lr, warmup_steps, batch_size, n_head, n_embd, n_mem_tokens, weight_decay not explored) and multiple architectural fixes attempted (LayerNorm, update gate, residual connections, n_layer increase), all failing with EM=0.0. The core issue is likely that memory tokens lack position information to distinguish between stored associations, preventing the model from learning which memory slot contains which key-value pair.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add learnable positional embeddings for memory tokens in the MemoryAttention class: (1) Define a new nn.Parameter memory_pos_embed of shape [n_mem_tokens, n_embd], (2) Add this embedding to the memory hidden states before cross-attention computation in the forward method, (3) Initialize with small random values (std=0.02) to avoid gradient instability",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_123",
+      "wall_time_min": 70.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775953378.6645303,
+      "token_accuracy": 0.0504
     }
   ],
   "reference": {

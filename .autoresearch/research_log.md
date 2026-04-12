@@ -3052,3 +3052,16 @@ Raw response:
 **Rationale:** Hyperparameters exhausted so far: n_layer (6→12), n_head (default→8), n_embd (default→256), lr (3e-4), batch_size (128), warmup_steps (5000). However, n_mem_tokens has not been systematically tuned despite being critical for memory capacity at N=16. Since EM=0.0 across all iterations suggests fundamental capacity limitations rather than optimization issues, increasing memory tokens is the next logical hyperparameter to explore before returning to architecture.
 
 
+## Iter 123 — RUNNING — N=16
+**Hypothesis:** Adding positional embeddings to memory tokens will enable the model to distinguish between different memory slots, allowing it to learn which slot stores which associative pair at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_123
+
+
+## Iter 123 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding positional embeddings to memory tokens will enable the model to distinguish between different memory slots, allowing it to learn which slot stores which associative pair at N=16.
+**Wall time:** 70.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively tuned (lr, warmup_steps, batch_size, n_head, n_embd, n_mem_tokens, weight_decay not explored) and multiple architectural fixes attempted (LayerNorm, update gate, residual connections, n_layer increase), all failing with EM=0.0. The core issue is likely that memory tokens lack position information to distinguish between stored associations, preventing the model from learning which memory slot contains which key-value pair.
+
+
