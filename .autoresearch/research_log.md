@@ -3208,3 +3208,16 @@ Raw response:
 **Rationale:** We have exhausted key hyperparameters (n_layer, n_head, n_mem_tokens, lr, warmup_steps, batch_size) and tried architectural changes (normalization, gating, dropout) with no EM improvement. The persistent EM=0.0 suggests a fundamental initialization problem in the recurrent memory states rather than capacity or training regime issues. Memory initialization is the critical path before learning can occur.
 
 
+## Iter 135 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from the default will provide additional depth for the recurrent memory mechanism to learn the complex associative mappings required at N=16, as depth has not been systematically explored despite extensive hyperparameter tuning.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_135
+
+
+## Iter 135 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_layer from the default will provide additional depth for the recurrent memory mechanism to learn the complex associative mappings required at N=16, as depth has not been systematically explored despite extensive hyperparameter tuning.
+**Wall time:** 69.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameter tuning has explored warmup_steps, learning_rate, n_head, batch_size, dropout, and n_mem_tokens, but n_layer remains unexplored. Given the persistent EM=0.0 across 19+ iterations, additional model depth may be necessary to learn the N=16 associative retrieval task without exceeding the 50% parameter budget.
+
+

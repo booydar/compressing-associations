@@ -2298,6 +2298,34 @@
       "run_error": null,
       "started_at": 1775998934.4729712,
       "token_accuracy": 0.0454
+    },
+    {
+      "id": 135,
+      "iter_tag": "iter_135",
+      "description": "Increasing n_layer from the default will provide additional depth for the recurrent memory mechanism to learn the complex associative mappings required at N=16, as depth has not been systematically explored despite extensive hyperparameter tuning.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from the default will provide additional depth for the recurrent memory mechanism to learn the complex associative mappings required at N=16, as depth has not been systematically explored despite extensive hyperparameter tuning.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter tuning has explored warmup_steps, learning_rate, n_head, batch_size, dropout, and n_mem_tokens, but n_layer remains unexplored. Given the persistent EM=0.0 across 19+ iterations, additional model depth may be necessary to learn the N=16 associative retrieval task without exceeding the 50% parameter budget.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change n_layer from default (likely 6 or 12) to 16 to increase model depth for better associative memory capacity at N=16",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_135",
+      "wall_time_min": 69.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776003156.1860628,
+      "token_accuracy": 0.04555
     }
   ],
   "reference": {
