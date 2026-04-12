@@ -2494,6 +2494,34 @@
       "run_error": null,
       "started_at": 1776028639.2500565,
       "token_accuracy": 0.04575
+    },
+    {
+      "id": 142,
+      "iter_tag": "iter_142",
+      "description": "Reducing batch_size will improve gradient stability and allow the recurrent memory mechanism to properly learn associative patterns at N=16, as batch_size has not been systematically explored despite 15+ failed iterations.",
+      "hypothesis": {
+        "hypothesis": "Reducing batch_size will improve gradient stability and allow the recurrent memory mechanism to properly learn associative patterns at N=16, as batch_size has not been systematically explored despite 15+ failed iterations.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Batch_size is a critical training hyperparameter that has not been explicitly tested in the recent experiment history (iter 132-141). Previous attempts focused on learning rate, optimizer, memory tokens, and architectural changes, but batch_size effects on recurrent memory gradient flow remain unexplored. Smaller batches may provide more stable gradients for the memory mechanism.",
+        "instruction": "Change batch_size in experiment_config.yaml from the default to 8. Ensure the change is documented in the experiment config with a comment explaining this targets gradient stability for recurrent memory learning at N=16.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_142",
+      "wall_time_min": 69.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776032906.8178406,
+      "token_accuracy": 0.0464
     }
   ],
   "reference": {

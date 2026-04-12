@@ -3299,3 +3299,16 @@ Raw response:
 **Rationale:** Hyperparameters are not yet exhausted: batch_size, max_steps, and specific learning rate values have not been systematically explored despite 10 failed iterations. Learning rate is the most critical training hyperparameter and a conservative value may enable gradient flow through the memory mechanism that has failed across all previous attempts.
 
 
+## Iter 142 — RUNNING — N=16
+**Hypothesis:** Reducing batch_size will improve gradient stability and allow the recurrent memory mechanism to properly learn associative patterns at N=16, as batch_size has not been systematically explored despite 15+ failed iterations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_142
+
+
+## Iter 142 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Reducing batch_size will improve gradient stability and allow the recurrent memory mechanism to properly learn associative patterns at N=16, as batch_size has not been systematically explored despite 15+ failed iterations.
+**Wall time:** 69.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Batch_size is a critical training hyperparameter that has not been explicitly tested in the recent experiment history (iter 132-141). Previous attempts focused on learning rate, optimizer, memory tokens, and architectural changes, but batch_size effects on recurrent memory gradient flow remain unexplored. Smaller batches may provide more stable gradients for the memory mechanism.
+
+
