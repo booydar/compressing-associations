@@ -2102,6 +2102,34 @@
       "run_error": null,
       "started_at": 1775969614.376424,
       "token_accuracy": 0.0442
+    },
+    {
+      "id": 128,
+      "iter_tag": "iter_128",
+      "description": "A lower learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, preventing the catastrophic gradient collapse that has produced EM=0.0 across all previous experiments.",
+      "hypothesis": {
+        "hypothesis": "A lower learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, preventing the catastrophic gradient collapse that has produced EM=0.0 across all previous experiments.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively tuned including batch_size, warmup_steps, n_layer, and n_mem_tokens, but learning rate was only vaguely 'explored' in iter_127 without testing specific values. A concrete lower learning rate is needed for recurrent memory training stability, as standard rates may cause gradient explosion through the recurrent states.",
+        "instruction": "Set learning_rate to 5e-5 in the training section of experiment_config.yaml, keeping all other hyperparameters at their current best values from iter_071",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_128",
+      "wall_time_min": 69.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775973828.8389108,
+      "token_accuracy": 0.04935
     }
   ],
   "reference": {

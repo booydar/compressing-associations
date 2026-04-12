@@ -3117,3 +3117,16 @@ Raw response:
 **Rationale:** All major hyperparameters (n_layer, n_head, n_embd, n_mem_tokens, batch_size, warmup_steps) have been exhaustively tested per experiment history 117-126 with no improvement. Learning rate has not been systematically explored despite being the most critical training hyperparameter for recurrent memory stability and convergence.
 
 
+## Iter 128 — RUNNING — N=16
+**Hypothesis:** A lower learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, preventing the catastrophic gradient collapse that has produced EM=0.0 across all previous experiments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_128
+
+
+## Iter 128 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** A lower learning rate of 5e-5 will enable stable gradient propagation through the recurrent memory mechanism at N=16, preventing the catastrophic gradient collapse that has produced EM=0.0 across all previous experiments.
+**Wall time:** 69.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively tuned including batch_size, warmup_steps, n_layer, and n_mem_tokens, but learning rate was only vaguely 'explored' in iter_127 without testing specific values. A concrete lower learning rate is needed for recurrent memory training stability, as standard rates may cause gradient explosion through the recurrent states.
+
+
