@@ -2214,6 +2214,34 @@
       "run_error": null,
       "started_at": 1775986353.9201775,
       "token_accuracy": 0.04505
+    },
+    {
+      "id": 132,
+      "iter_tag": "iter_132",
+      "description": "Adding dropout regularization will prevent overfitting and improve generalization of the recurrent memory mechanism at N=16, addressing the persistent EM=0.0 collapse across all previous hyperparameter and architectural attempts.",
+      "hypothesis": {
+        "hypothesis": "Adding dropout regularization will prevent overfitting and improve generalization of the recurrent memory mechanism at N=16, addressing the persistent EM=0.0 collapse across all previous hyperparameter and architectural attempts.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively explored including n_mem_tokens, n_layer, n_head, warmup_steps, learning_rate (multiple values), and batch_size across 19+ iterations with no improvement. Dropout rate remains untested and is a critical regularization parameter that can stabilize training when recurrent memory mechanisms fail to generalize. Since no pending human directions exist and we've exhausted the main hyperparameter space, dropout is the next logical hyperparameter to explore before further architectural changes.",
+        "instruction": "Add a dropout parameter with value 0.1 to the .autoresearch/experiment_config.yaml file under the model hyperparameters section. If a dropout section doesn't exist, create one with the following structure: dropout: 0.1",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_132",
+      "wall_time_min": 69.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775990588.6347373,
+      "token_accuracy": 0.04565
     }
   ],
   "reference": {

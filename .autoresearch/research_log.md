@@ -3169,3 +3169,16 @@ Raw response:
 **Rationale:** Hyperparameters have been exhausted: learning rate (5e-5 tested), warmup_steps (2000 tested), batch_size (tested), n_head (8 tested), n_layer (12 tested), n_mem_tokens (32 tested). All 19+ iterations (111-130) at N=16 have failed with EM=0.0, indicating an architectural limitation rather than optimization issues. Adding a memory gating mechanism will provide explicit control over memory information flow.
 
 
+## Iter 132 — RUNNING — N=16
+**Hypothesis:** Adding dropout regularization will prevent overfitting and improve generalization of the recurrent memory mechanism at N=16, addressing the persistent EM=0.0 collapse across all previous hyperparameter and architectural attempts.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_132
+
+
+## Iter 132 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding dropout regularization will prevent overfitting and improve generalization of the recurrent memory mechanism at N=16, addressing the persistent EM=0.0 collapse across all previous hyperparameter and architectural attempts.
+**Wall time:** 69.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively explored including n_mem_tokens, n_layer, n_head, warmup_steps, learning_rate (multiple values), and batch_size across 19+ iterations with no improvement. Dropout rate remains untested and is a critical regularization parameter that can stabilize training when recurrent memory mechanisms fail to generalize. Since no pending human directions exist and we've exhausted the main hyperparameter space, dropout is the next logical hyperparameter to explore before further architectural changes.
+
+
