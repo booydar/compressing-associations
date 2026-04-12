@@ -2130,6 +2130,34 @@
       "run_error": null,
       "started_at": 1775973828.8389108,
       "token_accuracy": 0.04935
+    },
+    {
+      "id": 129,
+      "iter_tag": "iter_129",
+      "description": "Increasing n_head from default to 8 will provide more parallel attention heads to learn distinct associative mappings, addressing the persistent EM=0.0 collapse that hyperparameter tuning has failed to resolve.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_head from default to 8 will provide more parallel attention heads to learn distinct associative mappings, addressing the persistent EM=0.0 collapse that hyperparameter tuning has failed to resolve.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters n_mem_tokens, n_layer, warmup_steps, and learning rate have been exhausted (iter 122-128) with no EM improvement. The n_head parameter, which directly controls parallel attention capacity for associative retrieval, has not been systematically explored and represents a logical next hyperparameter to tune before architectural changes.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change n_head from its current default value to 8 while keeping other hyperparameters at their current best values.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_129",
+      "wall_time_min": 70.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775977993.0320077,
+      "token_accuracy": 0.05375
     }
   ],
   "reference": {

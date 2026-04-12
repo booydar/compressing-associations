@@ -3130,3 +3130,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively tuned including batch_size, warmup_steps, n_layer, and n_mem_tokens, but learning rate was only vaguely 'explored' in iter_127 without testing specific values. A concrete lower learning rate is needed for recurrent memory training stability, as standard rates may cause gradient explosion through the recurrent states.
 
 
+## Iter 129 — RUNNING — N=16
+**Hypothesis:** Increasing n_head from default to 8 will provide more parallel attention heads to learn distinct associative mappings, addressing the persistent EM=0.0 collapse that hyperparameter tuning has failed to resolve.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_129
+
+
+## Iter 129 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_head from default to 8 will provide more parallel attention heads to learn distinct associative mappings, addressing the persistent EM=0.0 collapse that hyperparameter tuning has failed to resolve.
+**Wall time:** 70.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters n_mem_tokens, n_layer, warmup_steps, and learning rate have been exhausted (iter 122-128) with no EM improvement. The n_head parameter, which directly controls parallel attention capacity for associative retrieval, has not been systematically explored and represents a logical next hyperparameter to tune before architectural changes.
+
+
