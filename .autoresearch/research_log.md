@@ -3078,3 +3078,16 @@ Raw response:
 **Rationale:** Hyperparameters for warmup_steps, n_head, lr, n_embd, batch_size, and n_mem_tokens have been systematically explored (iterations 114-118, 122) with EM=0.0 collapse. n_layer remains untuned and increasing depth may enable better gradient propagation through the recurrent memory states. Architectural changes have already been attempted (iterations 119-121, 123) but depth scaling is a more fundamental capacity adjustment.
 
 
+## Iter 125 — RUNNING — N=16
+**Hypothesis:** Adding a memory normalization layer after the cross-attention output will prevent memory state saturation and enable stable gradient propagation for the recurrent memory at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_125
+
+
+## Iter 125 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a memory normalization layer after the cross-attention output will prevent memory state saturation and enable stable gradient propagation for the recurrent memory at N=16.
+**Wall time:** 56.6 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** All major hyperparameters (n_head, n_embd, n_layer, n_mem_tokens, lr, batch_size) and several architectural changes (LayerNorm before projections, update gates, residual connections, positional embeddings) have been exhausted with EM=0.0 remaining. This indicates the memory state itself becomes unstable during training, requiring post-attention normalization to prevent saturation.
+
+

@@ -2018,6 +2018,34 @@
       "run_error": null,
       "started_at": 1775957646.4769156,
       "token_accuracy": 0.049
+    },
+    {
+      "id": 125,
+      "iter_tag": "iter_125",
+      "description": "Adding a memory normalization layer after the cross-attention output will prevent memory state saturation and enable stable gradient propagation for the recurrent memory at N=16.",
+      "hypothesis": {
+        "hypothesis": "Adding a memory normalization layer after the cross-attention output will prevent memory state saturation and enable stable gradient propagation for the recurrent memory at N=16.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "All major hyperparameters (n_head, n_embd, n_layer, n_mem_tokens, lr, batch_size) and several architectural changes (LayerNorm before projections, update gates, residual connections, positional embeddings) have been exhausted with EM=0.0 remaining. This indicates the memory state itself becomes unstable during training, requiring post-attention normalization to prevent saturation.",
+        "instruction": "Add nn.LayerNorm after the cross-attention output in the memory update mechanism (in huggingface_rmca_v3.py), specifically normalize the memory state before it is stored in the recurrent buffer. Apply normalization with eps=1e-5 to the memory token outputs after the attention computation but before the recurrent state update.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_125",
+      "wall_time_min": 56.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1775961900.8943808,
+      "token_accuracy": 0.0422
     }
   ],
   "reference": {
