@@ -2354,6 +2354,34 @@
       "run_error": null,
       "started_at": 1776007348.728684,
       "token_accuracy": 0.04705
+    },
+    {
+      "id": 137,
+      "iter_tag": "iter_137",
+      "description": "Increasing warmup_steps from default to 2000 will provide more gradual learning rate scheduling, allowing the recurrent memory gradients to stabilize before full training intensity at N=16.",
+      "hypothesis": {
+        "hypothesis": "Increasing warmup_steps from default to 2000 will provide more gradual learning rate scheduling, allowing the recurrent memory gradients to stabilize before full training intensity at N=16.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively explored (lr, n_head, batch_size, n_mem_tokens, n_layer, optimizer, weight_decay, dropout) but warmup_steps has not been systematically tuned. Extended warmup is critical for recurrent memory models to prevent early gradient collapse during the critical initialization phase.",
+        "instruction": "In .autoresearch/experiment_config.yaml, set warmup_steps to 2000 (increase from current default). Keep all other hyperparameters at their last configured values.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_137",
+      "wall_time_min": 69.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776011676.627093,
+      "token_accuracy": 0.0458
     }
   ],
   "reference": {

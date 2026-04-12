@@ -3234,3 +3234,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively explored: learning rate (iter 127, 128), warmup_steps (iter 126), n_head (iter 129), batch_size (iter 130), dropout (iter 132), n_mem_tokens (iter 133), n_layer (iter 135). The optimizer type itself has not been explicitly changed from default. AdamW with weight decay provides better regularization for recurrent architectures and may prevent the optimization collapse causing EM=0.0.
 
 
+## Iter 137 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from default to 2000 will provide more gradual learning rate scheduling, allowing the recurrent memory gradients to stabilize before full training intensity at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_137
+
+
+## Iter 137 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing warmup_steps from default to 2000 will provide more gradual learning rate scheduling, allowing the recurrent memory gradients to stabilize before full training intensity at N=16.
+**Wall time:** 69.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively explored (lr, n_head, batch_size, n_mem_tokens, n_layer, optimizer, weight_decay, dropout) but warmup_steps has not been systematically tuned. Extended warmup is critical for recurrent memory models to prevent early gradient collapse during the critical initialization phase.
+
+
