@@ -2634,6 +2634,34 @@
       "run_error": null,
       "started_at": 1776049865.4286592,
       "token_accuracy": 0.04455
+    },
+    {
+      "id": 147,
+      "iter_tag": "iter_147",
+      "description": "Increasing n_embd will provide sufficient representational capacity for the recurrent memory mechanism to encode and retrieve associative patterns at N=16 without architectural modifications.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_embd will provide sufficient representational capacity for the recurrent memory mechanism to encode and retrieve associative patterns at N=16 without architectural modifications.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been partially explored (warmup_steps, lr, batch_size, n_mem_tokens, n_layer, n_head) but n_embd has not been systematically tested despite 19+ failed iterations. The EM=0.0 collapse suggests insufficient embedding capacity rather than architectural failure, and increasing n_embd is a lower-risk hyperparameter adjustment before further architecture changes.",
+        "instruction": "In .autoresearch/experiment_config.yaml, increase the n_embd value from the current default (likely 512 or 768) to 1024. Ensure this change does not increase total parameter count by more than 50%.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_147",
+      "wall_time_min": 65.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776054054.825153,
+      "token_accuracy": 0.04285
     }
   ],
   "reference": {

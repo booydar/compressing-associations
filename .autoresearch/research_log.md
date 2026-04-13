@@ -3364,3 +3364,16 @@ Raw response:
 **Rationale:** Hyperparameter tuning has been extensively explored across 15+ iterations including learning rate, optimizer, batch_size, warmup_steps, n_head, and n_mem_tokens, but n_layer (model depth) has not been systematically tested. Since all recent attempts have resulted in EM=0.0 and n_layer directly affects the model's capacity to learn hierarchical associations, exploring this parameter is necessary before concluding hyperparameter tuning is exhausted.
 
 
+## Iter 147 — RUNNING — N=16
+**Hypothesis:** Increasing n_embd will provide sufficient representational capacity for the recurrent memory mechanism to encode and retrieve associative patterns at N=16 without architectural modifications.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_147
+
+
+## Iter 147 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_embd will provide sufficient representational capacity for the recurrent memory mechanism to encode and retrieve associative patterns at N=16 without architectural modifications.
+**Wall time:** 65.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been partially explored (warmup_steps, lr, batch_size, n_mem_tokens, n_layer, n_head) but n_embd has not been systematically tested despite 19+ failed iterations. The EM=0.0 collapse suggests insufficient embedding capacity rather than architectural failure, and increasing n_embd is a lower-risk hyperparameter adjustment before further architecture changes.
+
+
