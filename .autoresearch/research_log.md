@@ -4596,3 +4596,16 @@ Raw response:
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid). Previous attempts (iter 353-362) failed likely due to incomplete implementation in v3 model - the current MemoryAugmentedLayer uses simple additive memory updates without gating or delta mechanisms. This implementation will add proper gating and delta rule components to the memory write operation.
 
 
+## Iter 364 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_364
+
+
+## Iter 364 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**Wall time:** 71.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) which takes absolute priority over other proposals. This is an architectural change but required by the human directions policy. The hybrid approach will combine gating to control write magnitude with delta-based updates for more stable memory retention.
+
+
