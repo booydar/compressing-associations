@@ -4583,3 +4583,16 @@ Raw response:
 **Rationale:** RMCA-Hybrid (item 19) has been attempted 10 times in iterations 352-361 with EM=0.0 failures, so it is no longer untried. Hyperparameters have been explored (warmup_ratio, weight_decay, optimizer, batch_size). RMCA-Gated (item 18) is the next most recent untried architectural change in human_directions.
 
 
+## Iter 363 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_363
+
+
+## Iter 363 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #19 (RMCA-Hybrid). Previous attempts (iter 353-362) failed likely due to incomplete implementation in v3 model - the current MemoryAugmentedLayer uses simple additive memory updates without gating or delta mechanisms. This implementation will add proper gating and delta rule components to the memory write operation.
+
+
