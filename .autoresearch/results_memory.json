@@ -2662,6 +2662,34 @@
       "run_error": null,
       "started_at": 1776054054.825153,
       "token_accuracy": 0.04285
+    },
+    {
+      "id": 148,
+      "iter_tag": "iter_148",
+      "description": "Adding explicit positional encodings to recurrent memory tokens will enable the model to distinguish between different associative pairs in memory, which is critical for retrieving N=16 distinct associations.",
+      "hypothesis": {
+        "hypothesis": "Adding explicit positional encodings to recurrent memory tokens will enable the model to distinguish between different associative pairs in memory, which is critical for retrieving N=16 distinct associations.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted: learning rate (5e-5, 1e-4, etc.), batch_size (reduced), n_head (increased to 8), n_layer (increased to 12), n_embd (increased), n_mem_tokens (increased to 32) all tried without success. Architectural attempts (LayerNorm, residual connections, gating) also failed. The persistent EM=0.0 suggests memory tokens lack distinguishing signals - positional encodings provide a theoretical basis for separating N=16 associations in memory.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add learnable positional embeddings to the recurrent memory tokens before they are used in cross-attention. Create a new parameter 'memory_pos_emb' of shape (n_mem_tokens, n_embd) and add it to the memory hidden states after the recurrent update and before the cross-attention projection. Initialize with small random values (std=0.02).",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_148",
+      "wall_time_min": 71.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776058015.7285514,
+      "token_accuracy": 0.05785
     }
   ],
   "reference": {

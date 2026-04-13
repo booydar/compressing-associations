@@ -3377,3 +3377,16 @@ Raw response:
 **Rationale:** Hyperparameters have been partially explored (warmup_steps, lr, batch_size, n_mem_tokens, n_layer, n_head) but n_embd has not been systematically tested despite 19+ failed iterations. The EM=0.0 collapse suggests insufficient embedding capacity rather than architectural failure, and increasing n_embd is a lower-risk hyperparameter adjustment before further architecture changes.
 
 
+## Iter 148 — RUNNING — N=16
+**Hypothesis:** Adding explicit positional encodings to recurrent memory tokens will enable the model to distinguish between different associative pairs in memory, which is critical for retrieving N=16 distinct associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_148
+
+
+## Iter 148 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding explicit positional encodings to recurrent memory tokens will enable the model to distinguish between different associative pairs in memory, which is critical for retrieving N=16 distinct associations.
+**Wall time:** 71.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted: learning rate (5e-5, 1e-4, etc.), batch_size (reduced), n_head (increased to 8), n_layer (increased to 12), n_embd (increased), n_mem_tokens (increased to 32) all tried without success. Architectural attempts (LayerNorm, residual connections, gating) also failed. The persistent EM=0.0 suggests memory tokens lack distinguishing signals - positional encodings provide a theoretical basis for separating N=16 associations in memory.
+
+
