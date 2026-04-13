@@ -4609,3 +4609,16 @@ Raw response:
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) which takes absolute priority over other proposals. This is an architectural change but required by the human directions policy. The hybrid approach will combine gating to control write magnitude with delta-based updates for more stable memory retention.
 
 
+## Iter 365 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid architecture with a learnable write gate will improve EM accuracy by stabilizing memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_365
+
+
+## Iter 365 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid architecture with a learnable write gate will improve EM accuracy by stabilizing memory retention during associative retrieval.
+**Wall time:** 70.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing Human Direction Item 19 (RMCA-Hybrid) is required as it takes absolute priority over hyperparameter tuning. Previous attempts (Iter 355-364) failed likely due to implementation bugs, so I will re-implement the Hybrid update mechanism with proper initialization (scale=1.0) to ensure stable gradient flow.
+
+
