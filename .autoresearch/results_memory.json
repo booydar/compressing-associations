@@ -7623,6 +7623,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_359",
       "summary_logged": false,
       "token_accuracy": 0.04385
+    },
+    {
+      "id": 360,
+      "iter_tag": "iter_360",
+      "description": "RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human direction item #19 (RMCA-Hybrid). Previous iterations 350-359 attempted this but likely had implementation bugs given consistent EM=0.0 failures. Hyperparameters have been partially explored (optimizer=adam, lr=1e-4, batch_size=32, warmup_ratio=0.1) but architectural improvements are now warranted given the persistent failure pattern.",
+        "instruction": "Modify MemoryAugmentedLayer.forward() to implement RMCA-Hybrid: add a gating mechanism (sigmoid gate) that interpolates between delta rule updates and standard additive memory updates. Specifically: 1) Add learnable gate parameter gate_weight initialized to 0.5, 2) Compute gate = sigmoid(gate_weight * memory_normed), 3) Apply memory = memory + gate * write_residual + (1-gate) * write_residual, 4) Ensure gate is trainable and gradients flow through it.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_360",
+      "wall_time_min": 71.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776097409.6432424,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_360",
+      "summary_logged": false,
+      "token_accuracy": 0.0448
     }
   ],
   "reference": {

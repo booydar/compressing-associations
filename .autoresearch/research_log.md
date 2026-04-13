@@ -4544,3 +4544,16 @@ Raw response:
 **Rationale:** Implementing human direction item #19 (RMCA-Hybrid) takes absolute priority per the rules. Previous attempts (iter 349-358) failed due to planner infrastructure errors, not model issues. As a human direction item, this architectural change must be implemented before hyperparameter tuning can proceed further.
 
 
+## Iter 360 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_360
+
+
+## Iter 360 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**Wall time:** 71.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human direction item #19 (RMCA-Hybrid). Previous iterations 350-359 attempted this but likely had implementation bugs given consistent EM=0.0 failures. Hyperparameters have been partially explored (optimizer=adam, lr=1e-4, batch_size=32, warmup_ratio=0.1) but architectural improvements are now warranted given the persistent failure pattern.
+
+
