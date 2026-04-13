@@ -2606,6 +2606,34 @@
       "run_error": null,
       "started_at": 1776045625.7316499,
       "token_accuracy": 0.0464
+    },
+    {
+      "id": 146,
+      "iter_tag": "iter_146",
+      "description": "Increasing n_layer from default to 12 will provide sufficient depth for the recurrent memory mechanism to learn complex associative patterns at N=16, as model depth has not been systematically explored despite 15+ failed hyperparameter attempts.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from default to 12 will provide sufficient depth for the recurrent memory mechanism to learn complex associative patterns at N=16, as model depth has not been systematically explored despite 15+ failed hyperparameter attempts.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter tuning has been extensively explored across 15+ iterations including learning rate, optimizer, batch_size, warmup_steps, n_head, and n_mem_tokens, but n_layer (model depth) has not been systematically tested. Since all recent attempts have resulted in EM=0.0 and n_layer directly affects the model's capacity to learn hierarchical associations, exploring this parameter is necessary before concluding hyperparameter tuning is exhausted.",
+        "instruction": "In .autoresearch/experiment_config.yaml, set n_layer to 12 (or increase from current value by approximately 50%) while keeping other model hyperparameters (n_head, n_embd, n_mem_tokens) unchanged to isolate the effect of depth on associative retrieval performance.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_146",
+      "wall_time_min": 69.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776049865.4286592,
+      "token_accuracy": 0.04455
     }
   ],
   "reference": {

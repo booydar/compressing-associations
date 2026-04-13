@@ -3351,3 +3351,16 @@ Raw response:
 **Rationale:** Adhering to the Hyperparameter-First Policy, n_mem_tokens is a critical capacity parameter that has not been systematically tuned in the recent 10 iterations (135-144), unlike LR, batch, heads, and layers. We are exploring n_mem_tokens = 32 to ensure capacity matches N=16 retrieval requirements.
 
 
+## Iter 146 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from default to 12 will provide sufficient depth for the recurrent memory mechanism to learn complex associative patterns at N=16, as model depth has not been systematically explored despite 15+ failed hyperparameter attempts.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_146
+
+
+## Iter 146 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_layer from default to 12 will provide sufficient depth for the recurrent memory mechanism to learn complex associative patterns at N=16, as model depth has not been systematically explored despite 15+ failed hyperparameter attempts.
+**Wall time:** 69.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameter tuning has been extensively explored across 15+ iterations including learning rate, optimizer, batch_size, warmup_steps, n_head, and n_mem_tokens, but n_layer (model depth) has not been systematically tested. Since all recent attempts have resulted in EM=0.0 and n_layer directly affects the model's capacity to learn hierarchical associations, exploring this parameter is necessary before concluding hyperparameter tuning is exhausted.
+
+
