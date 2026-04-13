@@ -3390,3 +3390,1144 @@ Raw response:
 **Rationale:** Hyperparameters have been exhausted: learning rate (5e-5, 1e-4, etc.), batch_size (reduced), n_head (increased to 8), n_layer (increased to 12), n_embd (increased), n_mem_tokens (increased to 32) all tried without success. Architectural attempts (LayerNorm, residual connections, gating) also failed. The persistent EM=0.0 suggests memory tokens lack distinguishing signals - positional encodings provide a theoretical basis for separating N=16 associations in memory.
 
 
+## Iter 149 — RUNNING — N=16
+**Hypothesis:** The persistent EM=0.0 collapse is caused by insufficient regularization during training, where AdamW optimizer with appropriate weight_decay will stabilize gradient updates and prevent memorization of spurious patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_149
+
+
+## Iter 149 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** The persistent EM=0.0 collapse is caused by insufficient regularization during training, where AdamW optimizer with appropriate weight_decay will stabilize gradient updates and prevent memorization of spurious patterns.
+**Wall time:** 438.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+
+
+## Iter 150 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 151 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 152 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 153 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 154 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 155 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 156 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 157 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 158 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 159 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 160 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 161 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 162 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 163 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 164 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 165 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 166 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 167 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 168 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 169 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 170 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 171 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 172 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 173 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 174 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 175 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 176 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 177 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 178 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 179 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 180 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 181 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 182 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 183 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 184 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 185 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 186 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 187 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 188 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 189 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 190 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 191 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 192 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 193 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 194 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 195 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 196 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 197 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 198 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 199 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 200 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 201 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 202 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 203 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 204 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 205 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 206 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 207 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 208 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 209 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 210 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 211 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 212 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 213 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 214 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 215 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 216 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 217 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 218 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 219 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 220 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 221 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 222 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 223 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 224 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 225 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 226 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 227 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 228 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 229 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 230 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 231 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 232 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 233 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 234 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 235 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 236 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 237 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 238 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 239 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 240 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 241 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 242 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 243 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 244 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 245 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 246 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 247 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 248 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 249 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 250 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 251 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 252 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 253 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 254 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 255 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 256 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 257 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 258 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 259 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 260 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 261 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 262 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 263 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 264 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 265 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 266 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 267 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 268 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 269 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 270 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 271 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 272 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 273 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 274 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 275 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 276 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 277 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 278 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 279 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 280 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 281 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 282 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 283 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 284 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 285 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 286 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 287 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 288 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 289 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 290 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 291 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 292 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 293 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 294 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 295 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 296 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 297 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 298 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 299 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 300 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 301 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 302 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 303 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 304 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 305 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 306 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 307 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 308 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 309 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 310 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 311 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 312 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 313 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 314 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 315 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 316 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 317 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 318 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 319 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 320 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 321 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 322 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 323 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 324 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 325 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 326 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 327 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 328 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 329 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 330 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 331 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 332 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 333 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 334 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 335 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 336 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 337 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 338 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 339 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 340 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 341 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 342 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 343 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 344 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 345 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 346 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 347 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 348 — FAILED — N=16
+**Error:** planner failed after 3 attempts: name 'plan' is not defined
+**Recovery status:** not_attempted
+
+
+## Iter 348 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_348
+
+
+## Iter 348 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_348
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 349 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_348_retry1
+
+
+## Iter 349 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_348_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 350 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_349_retry1
+
+
+## Iter 350 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_349_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 351 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_350_retry1
+
+
+## Iter 351 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_350_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 352 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_351_retry1
+
+
+## Iter 352 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_351_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 353 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_352_retry1
+
+
+## Iter 353 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_352_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 354 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_353_retry1
+
+
+## Iter 354 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_353_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 355 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_354_retry1
+
+
+## Iter 355 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_354_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 356 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_355_retry1
+
+
+## Iter 356 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_355_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 357 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_356_retry1
+
+
+## Iter 357 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 127
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_356_retry1
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 358 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_357_retry1
+
+
+## Iter 358 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**Wall time:** 70.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction item #19 (RMCA-Hybrid) is the latest pending suggestion and takes absolute priority per the rules. This architectural change combines multiple memory update strategies to address stability issues in long-sequence associative tasks. Hyperparameter tuning is on hold until human suggestions are exhausted.
+
+
