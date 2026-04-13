@@ -3325,3 +3325,16 @@ Raw response:
 **Rationale:** Hyperparameters have been extensively exhausted: n_mem_tokens, n_layer, n_head, optimizer, warmup_steps, learning rate, and batch_size all tested with EM=0.0. The consistent collapse suggests an architectural bottleneck where memory states cannot maintain gradient signal through recurrent cross-attention layers without residual connections.
 
 
+## Iter 144 — RUNNING — N=16
+**Hypothesis:** Adding a gating mechanism (sigmoid gate) to control information flow into the memory buffer will prevent gradient vanishing and enable stable associative pattern storage at N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_144
+
+
+## Iter 144 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Adding a gating mechanism (sigmoid gate) to control information flow into the memory buffer will prevent gradient vanishing and enable stable associative pattern storage at N=16.
+**Wall time:** 71.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted across 19+ iterations (lr, batch_size, warmup_steps, n_layer, n_head, optimizer, weight_decay) with no EM improvement. The persistent EM=0.0 collapse indicates the memory write/update mechanism lacks controlled information flow, requiring architectural intervention beyond hyperparameter tuning.
+
+

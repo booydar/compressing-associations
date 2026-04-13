@@ -2550,6 +2550,34 @@
       "run_error": null,
       "started_at": 1776037082.7766452,
       "token_accuracy": 0.05685
+    },
+    {
+      "id": 144,
+      "iter_tag": "iter_144",
+      "description": "Adding a gating mechanism (sigmoid gate) to control information flow into the memory buffer will prevent gradient vanishing and enable stable associative pattern storage at N=16.",
+      "hypothesis": {
+        "hypothesis": "Adding a gating mechanism (sigmoid gate) to control information flow into the memory buffer will prevent gradient vanishing and enable stable associative pattern storage at N=16.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted across 19+ iterations (lr, batch_size, warmup_steps, n_layer, n_head, optimizer, weight_decay) with no EM improvement. The persistent EM=0.0 collapse indicates the memory write/update mechanism lacks controlled information flow, requiring architectural intervention beyond hyperparameter tuning.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, add a learnable sigmoid gate (nn.Linear + sigmoid) to the memory write/update pathway. The gate should multiply the new memory candidate before adding to existing memory states: new_memory = gate(input) * candidate_memory + (1 - gate(input)) * old_memory. This implements a GRU-like gating mechanism for recurrent memory.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_144",
+      "wall_time_min": 71.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776041249.7745833,
+      "token_accuracy": 0.04445
     }
   ],
   "reference": {
