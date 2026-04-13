@@ -3312,3 +3312,16 @@ Raw response:
 **Rationale:** Batch_size is a critical training hyperparameter that has not been explicitly tested in the recent experiment history (iter 132-141). Previous attempts focused on learning rate, optimizer, memory tokens, and architectural changes, but batch_size effects on recurrent memory gradient flow remain unexplored. Smaller batches may provide more stable gradients for the memory mechanism.
 
 
+## Iter 143 — RUNNING — N=16
+**Hypothesis:** The persistent EM=0.0 failure across 19+ iterations indicates hyperparameter tuning has been exhausted, and the root cause is architectural: memory cross-attention lacks residual connections to preserve gradient flow through the recurrent memory pathway.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_143
+
+
+## Iter 143 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** The persistent EM=0.0 failure across 19+ iterations indicates hyperparameter tuning has been exhausted, and the root cause is architectural: memory cross-attention lacks residual connections to preserve gradient flow through the recurrent memory pathway.
+**Wall time:** 69.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been extensively exhausted: n_mem_tokens, n_layer, n_head, optimizer, warmup_steps, learning rate, and batch_size all tested with EM=0.0. The consistent collapse suggests an architectural bottleneck where memory states cannot maintain gradient signal through recurrent cross-attention layers without residual connections.
+
+

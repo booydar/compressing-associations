@@ -2522,6 +2522,34 @@
       "run_error": null,
       "started_at": 1776032906.8178406,
       "token_accuracy": 0.0464
+    },
+    {
+      "id": 143,
+      "iter_tag": "iter_143",
+      "description": "The persistent EM=0.0 failure across 19+ iterations indicates hyperparameter tuning has been exhausted, and the root cause is architectural: memory cross-attention lacks residual connections to preserve gradient flow through the recurrent memory pathway.",
+      "hypothesis": {
+        "hypothesis": "The persistent EM=0.0 failure across 19+ iterations indicates hyperparameter tuning has been exhausted, and the root cause is architectural: memory cross-attention lacks residual connections to preserve gradient flow through the recurrent memory pathway.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been extensively exhausted: n_mem_tokens, n_layer, n_head, optimizer, warmup_steps, learning rate, and batch_size all tested with EM=0.0. The consistent collapse suggests an architectural bottleneck where memory states cannot maintain gradient signal through recurrent cross-attention layers without residual connections.",
+        "instruction": "In modeling_rmt/huggingface_rmca_v3.py, within the forward method of the RMCA model class, add residual connections around the memory cross-attention block by computing: memory_output = memory_cross_attention(memory_states) + memory_states before passing to the next layer. This preserves gradient flow through the recurrent memory pathway.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_143",
+      "wall_time_min": 69.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776037082.7766452,
+      "token_accuracy": 0.05685
     }
   ],
   "reference": {
