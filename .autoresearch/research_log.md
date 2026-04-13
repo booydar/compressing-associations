@@ -3338,3 +3338,16 @@ Raw response:
 **Rationale:** Hyperparameters have been exhausted across 19+ iterations (lr, batch_size, warmup_steps, n_layer, n_head, optimizer, weight_decay) with no EM improvement. The persistent EM=0.0 collapse indicates the memory write/update mechanism lacks controlled information flow, requiring architectural intervention beyond hyperparameter tuning.
 
 
+## Iter 145 — RUNNING — N=16
+**Hypothesis:** Increasing n_mem_tokens to 32 will provide sufficient memory capacity to store N=16 associative pairs without destructive interference.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_145
+
+
+## Iter 145 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Increasing n_mem_tokens to 32 will provide sufficient memory capacity to store N=16 associative pairs without destructive interference.
+**Wall time:** 70.1 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Adhering to the Hyperparameter-First Policy, n_mem_tokens is a critical capacity parameter that has not been systematically tuned in the recent 10 iterations (135-144), unlike LR, batch, heads, and layers. We are exploring n_mem_tokens = 32 to ensure capacity matches N=16 retrieval requirements.
+
+

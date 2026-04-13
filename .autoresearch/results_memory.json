@@ -2578,6 +2578,34 @@
       "run_error": null,
       "started_at": 1776041249.7745833,
       "token_accuracy": 0.04445
+    },
+    {
+      "id": 145,
+      "iter_tag": "iter_145",
+      "description": "Increasing n_mem_tokens to 32 will provide sufficient memory capacity to store N=16 associative pairs without destructive interference.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_mem_tokens to 32 will provide sufficient memory capacity to store N=16 associative pairs without destructive interference.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Adhering to the Hyperparameter-First Policy, n_mem_tokens is a critical capacity parameter that has not been systematically tuned in the recent 10 iterations (135-144), unlike LR, batch, heads, and layers. We are exploring n_mem_tokens = 32 to ensure capacity matches N=16 retrieval requirements.",
+        "instruction": "Update the `n_mem_tokens` parameter to 32 in `.autoresearch/experiment_config.yaml`.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_145",
+      "wall_time_min": 70.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776045625.7316499,
+      "token_accuracy": 0.0464
     }
   ],
   "reference": {
