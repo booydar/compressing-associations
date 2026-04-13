@@ -4570,3 +4570,16 @@ Raw response:
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) as required by priority rules. Previous iterations 351-360 failed due to planner infrastructure errors ('name 'plan' is not defined'), not actual training failures, so this architectural change hasn't been properly evaluated yet. Hyperparameters have not been exhaustively tuned but must wait per human_directions priority.
 
 
+## Iter 362 — RUNNING — N=16
+**Hypothesis:** RMCA-Gated architecture will improve EM accuracy by adding learnable gates to control memory read/write operations for more selective memory updates.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_362
+
+
+## Iter 362 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Gated architecture will improve EM accuracy by adding learnable gates to control memory read/write operations for more selective memory updates.
+**Wall time:** 70.6 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** RMCA-Hybrid (item 19) has been attempted 10 times in iterations 352-361 with EM=0.0 failures, so it is no longer untried. Hyperparameters have been explored (warmup_ratio, weight_decay, optimizer, batch_size). RMCA-Gated (item 18) is the next most recent untried architectural change in human_directions.
+
+

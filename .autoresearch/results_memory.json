@@ -7683,6 +7683,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_361",
       "summary_logged": false,
       "token_accuracy": 0.04475
+    },
+    {
+      "id": 362,
+      "iter_tag": "iter_362",
+      "description": "RMCA-Gated architecture will improve EM accuracy by adding learnable gates to control memory read/write operations for more selective memory updates.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Gated architecture will improve EM accuracy by adding learnable gates to control memory read/write operations for more selective memory updates.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "RMCA-Hybrid (item 19) has been attempted 10 times in iterations 352-361 with EM=0.0 failures, so it is no longer untried. Hyperparameters have been explored (warmup_ratio, weight_decay, optimizer, batch_size). RMCA-Gated (item 18) is the next most recent untried architectural change in human_directions.",
+        "instruction": "Add learnable gating mechanisms to MemoryAugmentedLayer class. In __init__, add two parameters: self.read_gate = nn.Parameter(torch.ones(1)) and self.write_gate = nn.Parameter(torch.ones(1)). In forward, multiply read_residual by torch.sigmoid(self.read_gate) and write_residual by torch.sigmoid(self.write_gate) before applying to hidden_states and memory respectively.",
+        "human_directions_item": "18"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_362",
+      "wall_time_min": 70.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776105857.5433826,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_362",
+      "summary_logged": false,
+      "token_accuracy": 0.0446
     }
   ],
   "reference": {
