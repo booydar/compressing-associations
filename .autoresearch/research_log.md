@@ -4531,3 +4531,16 @@ Raw response:
 **Rationale:** Human direction item #19 (RMCA-Hybrid) is the latest pending suggestion and takes absolute priority per the rules. This architectural change combines multiple memory update strategies to address stability issues in long-sequence associative tasks. Hyperparameter tuning is on hold until human suggestions are exhausted.
 
 
+## Iter 359 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_359
+
+
+## Iter 359 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining gated and delta memory update mechanisms for more stable memory retention during associative retrieval.
+**Wall time:** 70.7 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human direction item #19 (RMCA-Hybrid) takes absolute priority per the rules. Previous attempts (iter 349-358) failed due to planner infrastructure errors, not model issues. As a human direction item, this architectural change must be implemented before hyperparameter tuning can proceed further.
+
+
