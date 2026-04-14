@@ -4635,3 +4635,16 @@ Raw response:
 **Rationale:** Human directions item #17 (RMCA-Delta) is the next untried pending suggestion after #19 (RMCA-Hybrid) and #18 (RMCA-Gated) were already attempted in iterations 356-365 with 0.0 EM results. Hyperparameter sweeps (warmup_ratio) remain configured but recent failures are infrastructure issues, not hyperparameter tuning failures.
 
 
+## Iter 367 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid with proper learnable write gates and delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_367
+
+
+## Iter 367 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid with proper learnable write gates and delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 70.9 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human Direction #19 (RMCA-Hybrid) is marked as pending despite previous failed attempts - those likely had implementation bugs. Previous iterations 357-366 showed EM=0.0, suggesting the architecture wasn't properly integrated. Hyperparameter tuning is insufficient here as the core memory update mechanism lacks proper gating/delta control. This implementation will add learnable write gates and delta rules directly to MemoryAugmentedLayer.
+
+
