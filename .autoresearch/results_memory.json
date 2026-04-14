@@ -8193,6 +8193,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_378",
       "summary_logged": false,
       "token_accuracy": 0.04645
+    },
+    {
+      "id": 379,
+      "iter_tag": "iter_379",
+      "description": "RMCA-Hybrid with properly implemented learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Hybrid with properly implemented learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human directions item #19 (RMCA-Hybrid) is marked as pending and takes absolute priority per CRITICAL RULES. Previous attempts (iter 369-378) all failed with EM=0.0 likely due to improper gate implementation. Hyperparameters have not been exhaustively tuned yet (warmup_ratio sweep, batch_size sweep ongoing), but human directions take priority over hyperparameter tuning. This implementation will add proper learnable write gates with sigmoid activation to control delta rule memory updates.",
+        "instruction": "Add a learnable gate mechanism to MemoryAugmentedLayer that controls delta rule memory updates: 1) Add self.write_gate = nn.Linear(hidden_size, 1) initialized to bias -5 (sigmoid ~0.007) 2) In forward(), compute gate_input = self.input_layer_norm(hidden_states) 3) gate = torch.sigmoid(self.write_gate(gate_input.mean(dim=1, keepdim=True))) 4) memory = memory + gate * write_residual instead of direct residual 5) Ensure gate values are in [0,1] range to smoothly control memory updates between 0 (no update) and 1 (full delta update)",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_379",
+      "wall_time_min": 71.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776178389.9815192,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_379",
+      "summary_logged": false,
+      "token_accuracy": 0.0544
     }
   ],
   "reference": {

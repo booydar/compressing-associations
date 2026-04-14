@@ -4791,3 +4791,16 @@ Raw response:
 **Rationale:** Human directions item #19 (RMCA-Hybrid) is still pending despite multiple failed experiment attempts. Previous iterations may not have properly implemented both gating AND delta rule mechanisms together. The hyperparameter sweeps have been exhausted through the systematic exploration in Human direction #1, so architectural changes are now justified.
 
 
+## Iter 379 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid with properly implemented learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_379
+
+
+## Iter 379 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid with properly implemented learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 71.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human directions item #19 (RMCA-Hybrid) is marked as pending and takes absolute priority per CRITICAL RULES. Previous attempts (iter 369-378) all failed with EM=0.0 likely due to improper gate implementation. Hyperparameters have not been exhaustively tuned yet (warmup_ratio sweep, batch_size sweep ongoing), but human directions take priority over hyperparameter tuning. This implementation will add proper learnable write gates with sigmoid activation to control delta rule memory updates.
+
+
