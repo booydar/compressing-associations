@@ -7803,6 +7803,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_365",
       "summary_logged": false,
       "token_accuracy": 0.04725
+    },
+    {
+      "id": 366,
+      "iter_tag": "iter_366",
+      "description": "RMCA-Delta architecture will improve EM accuracy by implementing a delta rule for memory updates that stabilizes memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Delta architecture will improve EM accuracy by implementing a delta rule for memory updates that stabilizes memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human directions item #17 (RMCA-Delta) is the next untried pending suggestion after #19 (RMCA-Hybrid) and #18 (RMCA-Gated) were already attempted in iterations 356-365 with 0.0 EM results. Hyperparameter sweeps (warmup_ratio) remain configured but recent failures are infrastructure issues, not hyperparameter tuning failures.",
+        "instruction": "In MemoryAugmentedLayer.forward(), modify the memory update mechanism to use a delta rule instead of additive residual: replace 'memory = memory + write_residual' with 'delta = torch.tanh(write_residual) * write_gate' where write_gate is a learnable scalar parameter initialized to 0.5, then 'memory = memory + delta'. Add the write_gate parameter as a buffer in __init__ with torch.nn.Parameter(torch.tensor(0.5), requires_grad=True).",
+        "human_directions_item": "17"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_366",
+      "wall_time_min": 70.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776123084.1620183,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_366",
+      "summary_logged": false,
+      "token_accuracy": 0.05905
     }
   ],
   "reference": {

@@ -4622,3 +4622,16 @@ Raw response:
 **Rationale:** Implementing Human Direction Item 19 (RMCA-Hybrid) is required as it takes absolute priority over hyperparameter tuning. Previous attempts (Iter 355-364) failed likely due to implementation bugs, so I will re-implement the Hybrid update mechanism with proper initialization (scale=1.0) to ensure stable gradient flow.
 
 
+## Iter 366 — RUNNING — N=16
+**Hypothesis:** RMCA-Delta architecture will improve EM accuracy by implementing a delta rule for memory updates that stabilizes memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_366
+
+
+## Iter 366 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Delta architecture will improve EM accuracy by implementing a delta rule for memory updates that stabilizes memory retention during associative retrieval.
+**Wall time:** 70.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human directions item #17 (RMCA-Delta) is the next untried pending suggestion after #19 (RMCA-Hybrid) and #18 (RMCA-Gated) were already attempted in iterations 356-365 with 0.0 EM results. Hyperparameter sweeps (warmup_ratio) remain configured but recent failures are infrastructure issues, not hyperparameter tuning failures.
+
+
