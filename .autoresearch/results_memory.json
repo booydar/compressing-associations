@@ -8073,6 +8073,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_374",
       "summary_logged": false,
       "token_accuracy": 0.04525
+    },
+    {
+      "id": 375,
+      "iter_tag": "iter_375",
+      "description": "Implementing RMCA-Hybrid architecture with both learnable write gates and delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Implementing RMCA-Hybrid architecture with both learnable write gates and delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human Direction #19 (RMCA-Hybrid) is the highest priority pending item per the rules. Previous iterations 365-374 attempted RMCA-Hybrid but were reverted (EM=0.0), suggesting implementation issues rather than fundamental design problems. Hyperparameters have been swept (optimizer, learning rate, warmup, weight_decay) per Human Direction #1, and since human_directions items take absolute priority, I must implement this before further hyperparameter tuning.",
+        "instruction": "In MemoryAugmentedLayer.__init__, add: (1) a learnable write gate parameter self.write_gate = nn.Parameter(torch.tensor(0.5)), initialized to 0.5; (2) a delta rule mechanism by computing delta = target_memory - current_memory where target_memory is the write_residual output; (3) modify the memory update in forward() from 'memory = memory + write_residual' to 'memory = memory + self.write_gate.sigmoid() * delta + (1 - self.write_gate.sigmoid()) * write_residual'. Ensure gate is initialized to allow both components to contribute equally at start. Add gate parameter to config if needed.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_375",
+      "wall_time_min": 70.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776161529.2009358,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_375",
+      "summary_logged": false,
+      "token_accuracy": 0.04605
     }
   ],
   "reference": {
