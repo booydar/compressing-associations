@@ -8133,6 +8133,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_376",
       "summary_logged": false,
       "token_accuracy": 0.05545
+    },
+    {
+      "id": 377,
+      "iter_tag": "iter_377",
+      "description": "Implementing RMCA-Hybrid with learnable write gates that control delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Implementing RMCA-Hybrid with learnable write gates that control delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human direction #19 (RMCA-Hybrid) takes absolute priority per the rules. While iterations 367-376 attempted this, all failed with EM=0.0 and were reverted, suggesting incomplete or buggy implementation. Previous hyperparameter tuning (warmup_ratio, weight_decay, optimizer, batch_size) has been exhausted per human directions 6-10. The architecture change targets MemoryAugmentedLayer to add proper gating mechanisms for memory write operations.",
+        "instruction": "Add a learnable write gate mechanism to MemoryAugmentedLayer: 1) Add self.write_gate = nn.Parameter(torch.zeros(1)) initialized to near-zero in __init__, 2) In forward(), multiply write_residual by sigmoid(write_gate) before adding to memory: memory = memory + sigmoid(self.write_gate) * write_residual, 3) This allows the model to learn optimal memory update strength. Ensure gate is trainable and gradients flow properly.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_377",
+      "wall_time_min": 68.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776169964.793461,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_377",
+      "summary_logged": false,
+      "token_accuracy": 0.0481
     }
   ],
   "reference": {
