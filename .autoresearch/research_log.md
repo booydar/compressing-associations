@@ -4856,3 +4856,16 @@ Raw response:
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid). Previous RMCA-Hybrid attempts (iter 373-382) were reverted with 0.0 EM, suggesting implementation issues rather than fundamental flaws. This iteration will implement a cleaner gated delta rule mechanism in the MemoryAugmentedLayer.
 
 
+## Iter 384 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_384
+
+
+## Iter 384 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 71.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Per human_directions.md priority rule, item #19 (RMCA-Hybrid) must be implemented before any other changes. Previous attempts (iter 374-383) failed with reverted status, suggesting implementation issues rather than fundamental architecture problems. This change addresses memory stability through learnable write gates controlling delta rule updates.
+
+
