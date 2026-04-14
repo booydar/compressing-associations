@@ -4661,3 +4661,16 @@ Raw response:
 **Rationale:** Human direction #19 (RMCA-Hybrid) is the latest pending item and must be prioritized per the rules. Previous attempts were reverted before completion, suggesting implementation issues rather than conceptual problems. The hybrid approach combines learnable write gates with delta rule updates for better memory control.
 
 
+## Iter 369 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining learnable write gates with delta rule memory updates for more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_369
+
+
+## Iter 369 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture will improve EM accuracy by combining learnable write gates with delta rule memory updates for more stable and controlled memory retention during associative retrieval.
+**Wall time:** 70.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human Direction #19 (RMCA-Hybrid) is pending and takes priority. Previous attempts (iterations 359-368) failed with EM=0.0, suggesting implementation issues that need fixing. Since this is a human direction item, I must implement it before proposing other changes.
+
+
