@@ -4700,3 +4700,16 @@ Raw response:
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) as required by priority rules. Previous RMCA-Hybrid attempts (iter 361-370) failed, likely due to implementation issues rather than architectural concept - this iteration will focus on cleaner gate implementation with proper gradient flow and stable delta update mechanics.
 
 
+## Iter 372 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture combining gated memory updates with delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_372
+
+
+## Iter 372 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture combining gated memory updates with delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 71.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing Human Direction #19 (RMCA-Hybrid). While previous RMCA-Hybrid attempts (iter 362-371) failed, this implementation will combine learnable write gates with delta rule memory updates more carefully to provide stable and controlled memory retention. All hyperparameter tuning remains pending (items 2-16), but Human Directions take absolute priority per the critical rules.
+
+
