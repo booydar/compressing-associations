@@ -4752,3 +4752,16 @@ Raw response:
 **Rationale:** Human Direction #19 (RMCA-Hybrid) is the highest priority pending item per the rules. Previous iterations 365-374 attempted RMCA-Hybrid but were reverted (EM=0.0), suggesting implementation issues rather than fundamental design problems. Hyperparameters have been swept (optimizer, learning rate, warmup, weight_decay) per Human Direction #1, and since human_directions items take absolute priority, I must implement this before further hyperparameter tuning.
 
 
+## Iter 376 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates and delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_376
+
+
+## Iter 376 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates and delta rule mechanisms will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 69.0 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human Direction #19 (RMCA-Hybrid) is the highest priority pending item per the priority rules. Previous attempts (iter 367-375) were reverted, suggesting implementation issues rather than concept invalidity. This iteration will implement proper learnable write gates with sigmoid activation and delta rule for memory updates.
+
+
