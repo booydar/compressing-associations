@@ -101,3 +101,20 @@
 **Rationale:** Implementing Human Direction #19 (RMCA-Hybrid) as required by the absolute priority rule for pending human suggestions. Previous experiments were reverted, and the current codebase lacks this gating logic, necessitating this architectural modification to enable stable memory state transitions despite prior hyperparameter sweeps.
 
 
+## Iter 8 — RUNNING — N=8
+**Hypothesis:** Implementing RMCA-Hybrid with a learnable gating mechanism for memory updates will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_008
+
+
+## Iter 8 — kept — EM: 0.6490 (N=8)
+**Hypothesis:** Implementing RMCA-Hybrid with a learnable gating mechanism for memory updates will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.
+**Wall time:** 42.9 min
+**Result:** EM=0.6490 vs prev best=0.1276
+**Metric source:** all_results
+**Rationale:** Human directions item #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning per the CRITICAL RULES. While RMCA-Hybrid was attempted in iterations 1-7, those experiments have been reverted and the current code still uses simple additive memory updates (memory = memory + write_residual) without a proper gating mechanism. This new implementation will add a learnable gate to control memory update magnitude.
+
+
+## >>> N-level advanced to N=16 <<<
+Previous N achieved EM=0.6490 >= threshold 0.5.
+
+

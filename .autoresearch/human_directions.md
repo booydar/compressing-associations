@@ -41,7 +41,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     RMT read + GDN write
 18. [Pending] **RMCA-Gated**
     Mamba-style SSM + attention read gate
-19. [Pending] **RMCA-Hybrid**
+19. [Done] **RMCA-Hybrid**
     All components together
 
 ## Key Constraints

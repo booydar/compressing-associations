@@ -1,10 +1,10 @@
 {
   "current_best": {
-    "variant": "iter_000_baseline",
-    "em": 0.1276,
-    "n_level": 8
+    "variant": "none",
+    "em": -1.0,
+    "n_level": 16
   },
-  "n_level": 8,
+  "n_level": 16,
   "experiments": [
     {
       "id": 0,
@@ -239,6 +239,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_007",
       "summary_logged": false,
       "token_accuracy": 0.2653
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "Implementing RMCA-Hybrid with a learnable gating mechanism for memory updates will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.",
+      "hypothesis": {
+        "hypothesis": "Implementing RMCA-Hybrid with a learnable gating mechanism for memory updates will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human directions item #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning per the CRITICAL RULES. While RMCA-Hybrid was attempted in iterations 1-7, those experiments have been reverted and the current code still uses simple additive memory updates (memory = memory + write_residual) without a proper gating mechanism. This new implementation will add a learnable gate to control memory update magnitude.",
+        "instruction": "In MemoryAugmentedLayer.forward(), replace the simple additive memory update (memory = memory + write_residual) with a gated delta rule: add a learnable gate parameter (initialized to 0.5) that scales the write_residual before adding to memory state. Specifically: (1) Add self.memory_gate = nn.Parameter(torch.tensor(0.5)) after self.register_buffer in __init__, (2) In forward, compute memory = memory + self.memory_gate.sigmoid() * write_residual instead of memory = memory + write_residual. This allows the model to learn how much new information to incorporate into memory.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.649,
+      "prev_best": 0.1276,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_008",
+      "wall_time_min": 42.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776289588.861045,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_008",
+      "summary_logged": false,
+      "token_accuracy": 0.8032
     }
   ],
   "reference": {
