@@ -4934,3 +4934,16 @@ Raw response:
 **Rationale:** Implementing human direction item #19 (RMCA-Hybrid). Previous attempts (iter 379-387) failed due to implementation issues (planner errors, reverted results). Hyperparameters have been explored (warmup_ratio sweep, weight_decay, optimizer, batch_size). Memory token count sweep (item 2) was attempted in iter 388 but needs validation. RMCA-Hybrid architecture requires learnable write gates to control delta rule memory updates for stable retention.
 
 
+## Iter 390 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_390
+
+
+## Iter 390 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 70.5 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction #19 (RMCA-Hybrid) takes absolute priority per critical rules. While previous attempts (iter 380-389) failed, they were marked 'reverted' suggesting implementation bugs rather than invalid concept. This retry focuses on cleaner gate-delta integration in MemoryAugmentedLayer.
+
+

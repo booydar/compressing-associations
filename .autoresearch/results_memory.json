@@ -8523,6 +8523,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_389",
       "summary_logged": false,
       "token_accuracy": 0.0589
+    },
+    {
+      "id": 390,
+      "iter_tag": "iter_390",
+      "description": "RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Hybrid architecture combining learnable write gates with delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human direction #19 (RMCA-Hybrid) takes absolute priority per critical rules. While previous attempts (iter 380-389) failed, they were marked 'reverted' suggesting implementation bugs rather than invalid concept. This retry focuses on cleaner gate-delta integration in MemoryAugmentedLayer.",
+        "instruction": "In MemoryAugmentedLayer.forward(), implement RMCA-Hybrid architecture by: (1) Add learnable write gate parameter self.write_gate = nn.Parameter(torch.ones(1)) before write operation, (2) Compute gate = sigmoid(self.write_gate) to control write magnitude, (3) Modify memory update to: memory = memory + gate * write_residual (scaling by learned gate), (4) Initialize gate to 0.5 (sigmoid(0)=0.5) for balanced start, (5) Keep delta rule unchanged but apply gate control to it. This combines items #17 (delta) and #18 (gate) into single hybrid mechanism.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_390",
+      "wall_time_min": 70.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776225194.1773531,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_390",
+      "summary_logged": false,
+      "token_accuracy": 0.05325
     }
   ],
   "reference": {
