@@ -8733,6 +8733,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_396",
       "summary_logged": false,
       "token_accuracy": 0.0566
+    },
+    {
+      "id": 397,
+      "iter_tag": "iter_397",
+      "description": "Implementing a learnable sigmoid write gate in the RMCA-Hybrid architecture will stabilize memory updates and improve EM accuracy by preventing gradient explosion/vanishing during the delta rule update.",
+      "hypothesis": {
+        "hypothesis": "Implementing a learnable sigmoid write gate in the RMCA-Hybrid architecture will stabilize memory updates and improve EM accuracy by preventing gradient explosion/vanishing during the delta rule update.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human Direction #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning. Previous attempts (Iter 395-396) resulted in EM=0.0, indicating an architectural instability in the memory update mechanism rather than a hyperparameter issue; adding a learnable gate will regulate the delta rule magnitude.",
+        "instruction": "In class MemoryAugmentedLayer.__init__, add self.write_gate = nn.Parameter(torch.zeros(1)). In class MemoryAugmentedLayer.forward, after computing write_residual, compute gate = torch.sigmoid(self.write_gate) and update memory = memory + gate * write_residual instead of direct addition.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_397",
+      "wall_time_min": 64.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776253231.895839,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_397",
+      "summary_logged": false,
+      "token_accuracy": 0.05705
     }
   ],
   "reference": {

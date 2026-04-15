@@ -5025,3 +5025,16 @@ Raw response:
 **Rationale:** Implementing human direction #19 (RMCA-Hybrid). Previous attempts (Iter 386-395) reverted due to training instability; this change implements the Hybrid update with stable gating initialization to satisfy the pending human suggestion and allow successful model convergence.
 
 
+## Iter 397 — RUNNING — N=16
+**Hypothesis:** Implementing a learnable sigmoid write gate in the RMCA-Hybrid architecture will stabilize memory updates and improve EM accuracy by preventing gradient explosion/vanishing during the delta rule update.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_397
+
+
+## Iter 397 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing a learnable sigmoid write gate in the RMCA-Hybrid architecture will stabilize memory updates and improve EM accuracy by preventing gradient explosion/vanishing during the delta rule update.
+**Wall time:** 64.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human Direction #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning. Previous attempts (Iter 395-396) resulted in EM=0.0, indicating an architectural instability in the memory update mechanism rather than a hyperparameter issue; adding a learnable gate will regulate the delta rule magnitude.
+
+
