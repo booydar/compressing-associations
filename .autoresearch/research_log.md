@@ -36,3 +36,16 @@
 **Rationale:** Implementing human direction item #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning. This combines delta rule memory updates with gating mechanisms to enable more stable and selective memory writing, which should improve associative retrieval accuracy on the KV task.
 
 
+## Iter 3 — RUNNING — N=8
+**Hypothesis:** RMCA-Delta will improve EM accuracy by implementing a learnable delta update mechanism for memory states instead of simple additive residual connections.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_003
+
+
+## Iter 3 — reverted — EM: 0.0112 (N=8)
+**Hypothesis:** RMCA-Delta will improve EM accuracy by implementing a learnable delta update mechanism for memory states instead of simple additive residual connections.
+**Wall time:** 41.9 min
+**Result:** EM=0.0112 vs prev best=0.1276
+**Metric source:** all_results
+**Rationale:** Human directions #19 (RMCA-Hybrid) was already tried in iterations 1-2 and reverted. Following the 'Do not repeat a change that has already been tried' rule, I implement the next untried pending item #17 (RMCA-Delta). No hyperparameters have been exhausted yet per the HYPERPARAMETER-FIRST POLICY, but human_directions take absolute priority per the CRITICAL RULES.
+
+

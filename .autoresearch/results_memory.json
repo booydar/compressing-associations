@@ -89,6 +89,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_002",
       "summary_logged": false,
       "token_accuracy": 0.5024
+    },
+    {
+      "id": 3,
+      "iter_tag": "iter_003",
+      "description": "RMCA-Delta will improve EM accuracy by implementing a learnable delta update mechanism for memory states instead of simple additive residual connections.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Delta will improve EM accuracy by implementing a learnable delta update mechanism for memory states instead of simple additive residual connections.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human directions #19 (RMCA-Hybrid) was already tried in iterations 1-2 and reverted. Following the 'Do not repeat a change that has already been tried' rule, I implement the next untried pending item #17 (RMCA-Delta). No hyperparameters have been exhausted yet per the HYPERPARAMETER-FIRST POLICY, but human_directions take absolute priority per the CRITICAL RULES.",
+        "instruction": "In MemoryAugmentedLayer.__init__, add: (1) a learnable scalar gate parameter self.delta_gate initialized to 0.0, (2) a learnable scaling parameter self.delta_scale initialized to 1.0. In MemoryAugmentedLayer.forward, modify the memory update line 'memory = memory + write_residual' to 'memory = memory + self.delta_scale * self.delta_gate * write_residual'. Register both parameters as nn.Parameter with requires_grad=True.",
+        "human_directions_item": "17"
+      },
+      "em_score": 0.0112,
+      "prev_best": 0.1276,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_003",
+      "wall_time_min": 41.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776275958.8185658,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_003",
+      "summary_logged": false,
+      "token_accuracy": 0.1119
     }
   ],
   "reference": {
