@@ -4921,3 +4921,16 @@ Raw response:
 **Rationale:** Human direction #19 (RMCA-Hybrid) was already tried extensively in iterations 378-387 with EM=0.0, so it cannot be repeated. Following the HYPERPARAMETER-FIRST POLICY, memory token count sweep (item 2) is a hyperparameter change that hasn't been explored and can be tested before architectural modifications. Current n_mem_tokens is fixed at 32 without systematic exploration.
 
 
+## Iter 389 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_389
+
+
+## Iter 389 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 71.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human direction item #19 (RMCA-Hybrid). Previous attempts (iter 379-387) failed due to implementation issues (planner errors, reverted results). Hyperparameters have been explored (warmup_ratio sweep, weight_decay, optimizer, batch_size). Memory token count sweep (item 2) was attempted in iter 388 but needs validation. RMCA-Hybrid architecture requires learnable write gates to control delta rule memory updates for stable retention.
+
+
