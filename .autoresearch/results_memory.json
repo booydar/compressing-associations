@@ -8463,6 +8463,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_387",
       "summary_logged": false,
       "token_accuracy": 0.0457
+    },
+    {
+      "id": 388,
+      "iter_tag": "iter_388",
+      "description": "A memory token count sweep exploring n_mem_tokens values of [16, 32, 64, 128] will improve EM accuracy by finding the optimal memory capacity for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "A memory token count sweep exploring n_mem_tokens values of [16, 32, 64, 128] will improve EM accuracy by finding the optimal memory capacity for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human direction #19 (RMCA-Hybrid) was already tried extensively in iterations 378-387 with EM=0.0, so it cannot be repeated. Following the HYPERPARAMETER-FIRST POLICY, memory token count sweep (item 2) is a hyperparameter change that hasn't been explored and can be tested before architectural modifications. Current n_mem_tokens is fixed at 32 without systematic exploration.",
+        "instruction": "In .autoresearch/experiment_config.yaml, change the n_mem_tokens parameter from a fixed value of 32 to a sweep configuration with values: [16, 32, 64, 128]. Add a comment indicating this implements Human Direction #2 - Memory token count sweep.",
+        "human_directions_item": "2"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_388",
+      "wall_time_min": 69.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776216695.9724762,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_388",
+      "summary_logged": false,
+      "token_accuracy": 0.0441
     }
   ],
   "reference": {

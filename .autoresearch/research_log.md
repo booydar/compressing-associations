@@ -4908,3 +4908,16 @@ Raw response:
 **Rationale:** Human direction #19 (RMCA-Hybrid) takes absolute priority per CRITICAL RULES. Previous RMCA-Hybrid attempts (iter 377-386) had EM=0.0 likely due to implementation issues rather than architectural invalidity. This implementation will properly integrate learnable write gates with delta rule memory updates in MemoryAugmentedLayer.
 
 
+## Iter 388 — RUNNING — N=16
+**Hypothesis:** A memory token count sweep exploring n_mem_tokens values of [16, 32, 64, 128] will improve EM accuracy by finding the optimal memory capacity for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_388
+
+
+## Iter 388 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** A memory token count sweep exploring n_mem_tokens values of [16, 32, 64, 128] will improve EM accuracy by finding the optimal memory capacity for the associative retrieval task.
+**Wall time:** 69.3 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction #19 (RMCA-Hybrid) was already tried extensively in iterations 378-387 with EM=0.0, so it cannot be repeated. Following the HYPERPARAMETER-FIRST POLICY, memory token count sweep (item 2) is a hyperparameter change that hasn't been explored and can be tested before architectural modifications. Current n_mem_tokens is fixed at 32 without systematic exploration.
+
+
