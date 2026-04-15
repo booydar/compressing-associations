@@ -49,3 +49,16 @@
 **Rationale:** Human directions #19 (RMCA-Hybrid) was already tried in iterations 1-2 and reverted. Following the 'Do not repeat a change that has already been tried' rule, I implement the next untried pending item #17 (RMCA-Delta). No hyperparameters have been exhausted yet per the HYPERPARAMETER-FIRST POLICY, but human_directions take absolute priority per the CRITICAL RULES.
 
 
+## Iter 4 — RUNNING — N=8
+**Hypothesis:** RMCA-Hybrid will improve EM accuracy by combining learnable delta updates with gating mechanisms for more stable and selective memory writing.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_004
+
+
+## Iter 4 — reverted — EM: 0.1106 (N=8)
+**Hypothesis:** RMCA-Hybrid will improve EM accuracy by combining learnable delta updates with gating mechanisms for more stable and selective memory writing.
+**Wall time:** 40.8 min
+**Result:** EM=0.1106 vs prev best=0.1276
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) as the latest pending suggestion. Previous iterations 1-3 attempted similar approaches but were reverted; this implementation will combine gated delta rule with learnable update scaling. All hyperparameter tuning must be exhausted before architectural changes, but human direction takes priority.
+
+
