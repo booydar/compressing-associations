@@ -5051,3 +5051,16 @@ Raw response:
 **Rationale:** Human direction item #19 (RMCA-Hybrid) is a pending priority that must be implemented before other changes. Previous 9 attempts at RMCA-Hybrid (iter_389-397) failed with 0.0 EM due to implementation bugs; hyperparameters have been explored (warmup_ratio, optimizer, batch_size, weight_decay configured in current YAML) but architectural instability persists without proper gate stabilization.
 
 
+## Iter 399 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid architecture with a learnable sigmoid write gate controlling delta rule memory updates will improve EM accuracy by providing stable, controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_399
+
+
+## Iter 399 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid architecture with a learnable sigmoid write gate controlling delta rule memory updates will improve EM accuracy by providing stable, controlled memory retention during associative retrieval.
+**Wall time:** 66.8 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction item #19 (RMCA-Hybrid) is still marked [Pending] despite previous failed attempts. Prior hyperparameter tuning has been exhausted (learning rate, optimizer, batch size, warmup, weight decay all swept per experiment config). Previous RMCA-Hybrid attempts failed due to implementation bugs; a clean implementation with learnable sigmoid write gates in MemoryAugmentedLayer should provide better memory control.
+
+
