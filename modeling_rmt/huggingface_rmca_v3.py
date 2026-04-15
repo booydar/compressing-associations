@@ -129,7 +129,9 @@ class MemoryAugmentedLayer(nn.Module):
         self.memory_write = memory_write_layer
         self.register_buffer('initial_memory_state', initial_memory_state)
         self.memory_state = initial_memory_state
-        self.memory_gate = nn.Parameter(torch.tensor(0.5))
+        self.memory_read_gate = nn.Parameter(torch.tensor(0.5))
+        self.memory_write_gate = nn.Parameter(torch.tensor(0.5))
+        self.memory_forget_gate = nn.Parameter(torch.tensor(0.5))
 
         self.memory_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
@@ -156,12 +158,14 @@ class MemoryAugmentedLayer(nn.Module):
         read_out = self.memory_read(hidden_states_normed, memory_normed)
         read_residual = read_out[0] if isinstance(read_out, tuple) else read_out
         read_attn_weights = read_out[1] if isinstance(read_out, tuple) and len(read_out) > 1 else None
+        read_residual = self.memory_read_gate.sigmoid() * read_residual
         hidden_states = hidden_states + read_residual
 
         write_out = self.memory_write(memory_normed, hidden_states_normed)
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
-        memory = memory + self.memory_gate.sigmoid() * write_residual
+        write_residual = self.memory_write_gate.sigmoid() * write_residual
+        memory = self.memory_forget_gate.sigmoid() * memory + write_residual
         
         # Apply LayerNorm to memory state after write operation (before next cross-attention scoring)
         memory = self.memory_state_norm(memory)

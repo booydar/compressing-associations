@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "none",
-    "em": -1.0,
+    "variant": "iter_009",
+    "em": 0.0072,
     "n_level": 16
   },
   "n_level": 16,
@@ -269,6 +269,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_008",
       "summary_logged": false,
       "token_accuracy": 0.8032
+    },
+    {
+      "id": 9,
+      "iter_tag": "iter_009",
+      "description": "RMCA-Gated will improve EM accuracy by implementing a more sophisticated multi-gate mechanism that separately controls memory read, write, and forget operations for better information regulation.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Gated will improve EM accuracy by implementing a more sophisticated multi-gate mechanism that separately controls memory read, write, and forget operations for better information regulation.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #18 (RMCA-Gated). Hyperparameter tuning has been attempted (warmup_ratio sweep in current config shows 3 values explored, lr set to 0.01 with base_model llama). Since multiple architectural variants (RMCA-Hybrid, RMCA-Delta) have been tried with mixed results and item 18 is a pending human suggestion with highest priority, implementing the RMCA-Gated architecture change takes precedence over further hyperparameter tuning.",
+        "instruction": "In MemoryAugmentedLayer.__init__(), replace the single scalar memory_gate parameter with three separate learnable gate parameters: memory_read_gate (controls read strength), memory_write_gate (controls write strength), and memory_forget_gate (controls how much old memory to retain). Apply these gates in the forward() method: read_residual = memory_read_gate.sigmoid() * read_residual, write_residual = memory_write_gate.sigmoid() * write_residual, and memory = memory_forget_gate.sigmoid() * memory + write_residual. Initialize all gates to 0.5.",
+        "human_directions_item": "18"
+      },
+      "em_score": 0.0072,
+      "prev_best": -1.0,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_009",
+      "wall_time_min": 73.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776292282.7107735,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_009",
+      "summary_logged": false,
+      "token_accuracy": 0.0844
     }
   ],
   "reference": {

@@ -118,3 +118,16 @@
 Previous N achieved EM=0.6490 >= threshold 0.5.
 
 
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** RMCA-Gated will improve EM accuracy by implementing a more sophisticated multi-gate mechanism that separately controls memory read, write, and forget operations for better information regulation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_009
+
+
+## Iter 9 — kept — EM: 0.0072 (N=16)
+**Hypothesis:** RMCA-Gated will improve EM accuracy by implementing a more sophisticated multi-gate mechanism that separately controls memory read, write, and forget operations for better information regulation.
+**Wall time:** 73.0 min
+**Result:** EM=0.0072 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #18 (RMCA-Gated). Hyperparameter tuning has been attempted (warmup_ratio sweep in current config shows 3 values explored, lr set to 0.01 with base_model llama). Since multiple architectural variants (RMCA-Hybrid, RMCA-Delta) have been tried with mixed results and item 18 is a pending human suggestion with highest priority, implementing the RMCA-Gated architecture change takes precedence over further hyperparameter tuning.
+
+

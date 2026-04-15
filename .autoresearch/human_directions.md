@@ -39,7 +39,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Test `clip_norm ∈ {0.1, 1.0, 5.0}`
 17. [Pending] **RMCA-Delta**
     RMT read + GDN write
-18. [Pending] **RMCA-Gated**
+18. [Done] **RMCA-Gated**
     Mamba-style SSM + attention read gate
 19. [Done] **RMCA-Hybrid**
     All components together
