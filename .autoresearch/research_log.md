@@ -62,3 +62,16 @@
 **Rationale:** Implementing human_directions item #19 (RMCA-Hybrid) as the latest pending suggestion. Previous iterations 1-3 attempted similar approaches but were reverted; this implementation will combine gated delta rule with learnable update scaling. All hyperparameter tuning must be exhausted before architectural changes, but human direction takes priority.
 
 
+## Iter 5 — RUNNING — N=8
+**Hypothesis:** RMCA-Hybrid will improve EM accuracy by implementing a gated delta rule for memory updates, allowing the model to learn how much new information to incorporate into memory versus retaining existing states.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_005
+
+
+## Iter 5 — reverted — EM: 0.0304 (N=8)
+**Hypothesis:** RMCA-Hybrid will improve EM accuracy by implementing a gated delta rule for memory updates, allowing the model to learn how much new information to incorporate into memory versus retaining existing states.
+**Wall time:** 42.3 min
+**Result:** EM=0.0304 vs prev best=0.1276
+**Metric source:** all_results
+**Rationale:** Human direction #19 (RMCA-Hybrid) is the most recent pending suggestion and takes absolute priority per CRITICAL RULES. Previous RMCA-Hybrid attempts were reverted but this specific gated delta rule implementation in MemoryAugmentedLayer has not been properly integrated.
+
+
