@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_0",
-    "em": -1,
+    "variant": "iter_000_baseline",
+    "em": 0.1276,
     "n_level": 8
   },
   "n_level": 8,
@@ -11,23 +11,24 @@
       "iter_tag": "iter_000_baseline",
       "description": "baseline \u2014 exact copy of v2",
       "hypothesis": null,
-      "em_score": null,
+      "em_score": 0.1276,
       "prev_best": -1,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "baseline",
+      "status": "completed",
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n8/iter_000_baseline",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
+      "wall_time_min": 39.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
       "is_partial": false,
-      "recovery_status": "pending",
+      "recovery_status": "final",
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
       "started_at": 1776267312.6118608,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_000_baseline",
-      "summary_logged": false
+      "summary_logged": false,
+      "token_accuracy": 0.552
     }
   ],
   "reference": {
