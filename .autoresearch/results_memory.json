@@ -8583,6 +8583,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_391",
       "summary_logged": false,
       "token_accuracy": 0.04505
+    },
+    {
+      "id": 392,
+      "iter_tag": "iter_392",
+      "description": "RMCA-Hybrid architecture with properly implemented learnable write gates and delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Hybrid architecture with properly implemented learnable write gates and delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #19 (RMCA-Hybrid). Previous RMCA-Hybrid attempts (iter 382-391) all failed with EM=0.0, likely due to implementation issues that need refinement rather than the architecture itself being invalid. Hyperparameters have been swept (n_mem_tokens, lr, batch_size, warmup_ratio) but architectural memory control mechanisms remain underexplored.",
+        "instruction": "Modify the MemoryAugmentedLayer class in huggingface_rmca_v3.py to implement RMCA-Hybrid: (1) Add learnable write gate parameter 'write_gate' initialized to 0.5, (2) Modify memory update to use gated delta rule: memory = memory + write_gate * write_residual, (3) Add learnable forget gate parameter 'forget_gate' initialized to 0.9, (4) Apply forget gate before write: memory = forget_gate * memory + write_gate * write_residual, (5) Ensure gates are per-layer learnable parameters with proper gradient flow.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0,
+      "prev_best": 0.0,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_392",
+      "wall_time_min": 71.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776233765.7776895,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/.autoresearch/artifacts/iter_392",
+      "summary_logged": false,
+      "token_accuracy": 0.04515
     }
   ],
   "reference": {
