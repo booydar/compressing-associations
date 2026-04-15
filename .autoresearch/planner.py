@@ -173,7 +173,29 @@ def plan_with_trace(
 
 
 def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None) -> dict:
-    return plan_with_trace(program_md, recent_experiments, provider_cfg, error_context=error_context)[0]
+    result = plan_with_trace(program_md, recent_experiments, provider_cfg, error_context=error_context)
+    return result[0] if isinstance(result, tuple) else result
+
+
+def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None) -> tuple[dict, dict]:
+    """
+    Call the planner LLM and return both parsed hypothesis and full trace data for logging.
+    """
+    messages = build_planner_messages(program_md, recent_experiments, error_context=error_context)
+    raw = call_llm(provider_cfg, messages, max_tokens=8192)
+    trace = {
+        "messages": messages,
+        "raw_response": raw,
+        "model_name": provider_cfg.get("model", "unknown"),
+        "provider": provider_cfg.get("provider", "unknown"),
+    }
+    try:
+        parsed = _parse_json_response(raw)
+    except Exception as exc:
+        trace["parse_error"] = str(exc)
+        raise PlannerResponseError(str(exc), trace) from exc
+    trace["parsed_response"] = parsed
+    return parsed, trace
 
 
 def _format_history(experiments: list[dict]) -> str:

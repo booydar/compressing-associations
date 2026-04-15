@@ -39,16 +39,17 @@ def execute(
     error_context: str | None = None,
     is_yaml: bool = False,
 ) -> str:
-    return execute_with_trace(
+    result = execute_with_trace_full(
         hypothesis,
         file_content,
         provider_cfg,
         error_context=error_context,
         is_yaml=is_yaml,
-    )[0]
+    )
+    return result[0] if isinstance(result, tuple) else result
 
 
-def execute_with_trace(
+def execute_with_trace_full(
     hypothesis: dict,
     file_content: str,
     provider_cfg: dict,
@@ -57,7 +58,7 @@ def execute_with_trace(
 ) -> tuple[str, dict]:
     """
     Call the executor LLM (via opencode) to apply the hypothesis change to the file.
-    Returns the complete new file content plus trace data for logging.
+    Returns the complete new file content plus full trace data for logging.
     Raises SyntaxError if the returned code is not valid Python/YAML.
     """
     target = hypothesis.get("target_component", "")
@@ -67,9 +68,7 @@ def execute_with_trace(
         target_path_obj = REPO_ROOT / target_path_obj
 
     # Write the current content to the actual target file so opencode can modify it in place.
-    # This allows opencode to see the file in its true location and look at other files.
     if not target or not target_path_obj.exists():
-        # Fallback to a temp file if target doesn't exist (e.g. in some tests)
         suffix = ".yaml" if is_yaml else ".py"
         with tempfile.NamedTemporaryFile(mode='w+', delete=False, suffix=suffix, dir=str(REPO_ROOT)) as temp_file:
             temp_file.write(file_content)
@@ -93,7 +92,6 @@ def execute_with_trace(
     )
 
     try:
-        # Prepare environment for opencode
         env = os.environ.copy()
         
         provider = provider_cfg.get("provider", "")
@@ -107,7 +105,6 @@ def execute_with_trace(
         elif provider == "openai":
             env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
 
-        # Call opencode
         print(f"[executor] Calling opencode with model: {model_name}")
         result = subprocess.run(
             ["opencode", "run", "-m", model_name, prompt],
@@ -124,9 +121,11 @@ def execute_with_trace(
             "context_files": context_files,
             "cwd": str(REPO_ROOT),
             "model_name": model_name,
+            "provider": provider,
             "stdout": result.stdout,
             "stderr": result.stderr,
             "returncode": result.returncode,
+            "target_file_content": file_content,
         }
 
         if result.returncode != 0:
@@ -134,7 +133,6 @@ def execute_with_trace(
             print(f"[executor] opencode stderr:\n{result.stderr}")
             raise ExecutorResponseError(f"opencode failed: {result.stderr}", trace)
 
-        # Read the modified content
         with open(target_path, 'r') as f:
             content = f.read()
 
@@ -155,17 +153,17 @@ def execute_with_trace(
             "editable_file": abs_target_path,
             "context_files": context_files,
             "cwd": str(REPO_ROOT),
+            "model_name": model_name,
+            "provider": provider,
+            "target_file_content": file_content,
         }
         raise ExecutorResponseError(str(exc), trace) from exc
         
     finally:
-        # Clean up or restore
         if is_temp:
             if os.path.exists(target_path):
                 os.remove(target_path)
         else:
-            # Restore the file to its original state so we don't leave it broken
-            # autoresearch.py will write the new content if validation passes.
             if original_disk_content is not None:
                 with open(target_path, 'w') as f:
                     f.write(original_disk_content)

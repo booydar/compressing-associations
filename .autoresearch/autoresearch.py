@@ -35,8 +35,8 @@ AUTORESEARCH_DIR = REPO_ROOT / ".autoresearch"
 sys.path.insert(0, str(AUTORESEARCH_DIR))
 
 from eval_harness import get_metrics
-from planner import plan
-from executor import execute, _validate_yaml
+from planner import plan, plan_with_trace_full
+from executor import execute, execute_with_trace_full, _validate_yaml
 
 MODEL_FILE = REPO_ROOT / "modeling_rmt" / "huggingface_rmca_v3.py"
 PROGRAM_MD = AUTORESEARCH_DIR / "program.md"
@@ -230,6 +230,24 @@ def append_research_log(entry: str) -> None:
 
 def _artifact_dir(iter_tag: str) -> Path:
     return ARTIFACTS_DIR / iter_tag
+
+
+def _save_traces_to_artifacts(iter_tag: str, planner_trace: dict | None, executor_trace: dict | None) -> None:
+    """Save planner and executor traces to the artifacts folder for this iteration."""
+    artifact_path = _artifact_dir(iter_tag)
+    artifact_path.mkdir(parents=True, exist_ok=True)
+
+    if planner_trace is not None:
+        planner_file = artifact_path / "planner_trace.json"
+        with open(planner_file, 'w') as f:
+            json.dump(planner_trace, f, indent=2, default=str)
+        print(f"[traces] saved planner trace to {planner_file}")
+
+    if executor_trace is not None:
+        executor_file = artifact_path / "executor_trace.json"
+        with open(executor_file, 'w') as f:
+            json.dump(executor_trace, f, indent=2, default=str)
+        print(f"[traces] saved executor trace to {executor_file}")
 
 
 def _ensure_runtime_files() -> None:
@@ -705,6 +723,8 @@ def main() -> None:
                 n_level,
                 current_best_em,
                 f"unhandled: {exc}",
+                planner_trace=None,
+                executor_trace=None,
             )
             save_memory(memory)
             continue
@@ -722,14 +742,16 @@ N_EXECUTOR_RETRIES = 4
 
 
 def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False):
-    """Run executor with validation retries. Returns new content or raises RuntimeError."""
+    """Run executor with validation retries. Returns (new_content, trace) or raises RuntimeError."""
     last_error = None
+    last_trace = None
     label = "config" if is_yaml else "code"
 
     for attempt in range(1, N_EXECUTOR_RETRIES + 1):
         print(f"[executor] applying {label} change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
         try:
-            new_content = execute(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=is_yaml)
+            result = execute_with_trace_full(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=is_yaml)
+            new_content, trace = result if isinstance(result, tuple) else (result, {})
         except Exception as e:
             last_error = f"Executor error: {e}"
             print(f"[executor] ERROR: {e}")
@@ -747,9 +769,10 @@ def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=Fal
             else:
                 sanity_check(new_content)
             print(f"[{check_label}] OK")
-            return new_content
+            return new_content, trace
         except Exception as e:
             last_error = f"{'YAML validation' if is_yaml else 'Sanity check'} failed: {e}"
+            last_trace = trace
             print(f"[{check_label}] FAILED (attempt {attempt}): {e}")
 
     raise RuntimeError(f"executor failed after {N_EXECUTOR_RETRIES} attempts: {last_error}")
@@ -809,6 +832,7 @@ def _run_iter(
             print(f"[retry] re-running unresolved iter {retry_of} as {iter_tag}")
 
         # ── Planner ──
+        planner_trace = None
         if retry_candidate is None:
             print("[planner] generating hypothesis...")
             program_md = load_program_md()
@@ -818,19 +842,20 @@ def _run_iter(
             planner_error = None
             for attempt in range(1, N_PLANNER_RETRIES + 1):
                 try:
-                    hypothesis = plan(program_md, recent, planner_cfg, error_context=planner_error)
+                    hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error)
                     break
                 except Exception as e:
                     planner_error = str(e)
                     print(f"[planner] ERROR (attempt {attempt}/{N_PLANNER_RETRIES}): {e}")
             else:
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner failed after {N_PLANNER_RETRIES} attempts: {planner_error}")
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner failed after {N_PLANNER_RETRIES} attempts: {planner_error}", planner_trace=planner_trace)
                 save_memory(memory)
                 return
 
             print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
             description = hypothesis.get("hypothesis", f"iter {iter_id}")
 
+        executor_trace = None
         if hypothesis is not None:
             target = hypothesis.get("target_component", "")
             is_config_change = _is_config_change_target(target)
@@ -838,11 +863,11 @@ def _run_iter(
             current_content = target_file.read_text()
 
             try:
-                new_content = _execute_with_retries(
+                new_content, executor_trace = _execute_with_retries(
                     hypothesis, current_content, executor_cfg, is_yaml=is_config_change,
                 )
             except RuntimeError as e:
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, str(e), hypothesis)
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, str(e), hypothesis, planner_trace=planner_trace, executor_trace=executor_trace)
                 save_memory(memory)
                 return
 
@@ -950,6 +975,9 @@ def _run_iter(
 
     save_memory(memory)
 
+    # ── Save traces to artifacts ──
+    _save_traces_to_artifacts(iter_tag, planner_trace, executor_trace)
+
     # ── Git commit ──
     if auto_commit:
         change_type = "config" if config_changed else "model"
@@ -973,11 +1001,14 @@ def _record_failed_iter(
     needs_retry: bool = False,
     retry_of: int | None = None,
     run_error: str | None = None,
+    planner_trace: dict | None = None,
+    executor_trace: dict | None = None,
 ) -> None:
+    iter_tag = f"iter_{iter_id:03d}"
     entry = _create_iter_entry(
         memory=memory,
         iter_id=iter_id,
-        iter_tag=f"iter_{iter_id:03d}",
+        iter_tag=iter_tag,
         n_level=n_level,
         current_best_em=current_best_em,
         description=f"FAILED: {error_msg}",
@@ -1002,6 +1033,7 @@ def _record_failed_iter(
         + ("**Next action:** retry this experiment before planning a new one.\n" if needs_retry else "")
     )
     _append_experiment_summary(entry, error_msg)
+    _save_traces_to_artifacts(iter_tag, planner_trace, executor_trace)
 
 
 if __name__ == "__main__":
