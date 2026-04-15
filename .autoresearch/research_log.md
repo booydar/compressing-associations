@@ -88,3 +88,16 @@
 **Rationale:** Human direction #19 (RMCA-Hybrid) takes absolute priority per the rules. Previous hyperparameter exploration has been exhausted (lr: 0.01, batch_size: 128, n_layer: 4, n_head: 4, n_embd: 128, n_mem_tokens: 32, warmup_ratio: 0.05-0.2) with no sustained EM improvement, justifying architectural change. The gated delta rule allows the model to learn selective memory writing, which is critical for associative retrieval tasks.
 
 
+## Iter 7 — RUNNING — N=8
+**Hypothesis:** Implementing a gated delta rule for memory updates (RMCA-Hybrid) will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_007
+
+
+## Iter 7 — reverted — EM: 0.0738 (N=8)
+**Hypothesis:** Implementing a gated delta rule for memory updates (RMCA-Hybrid) will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.
+**Wall time:** 43.2 min
+**Result:** EM=0.0738 vs prev best=0.1276
+**Metric source:** all_results
+**Rationale:** Implementing Human Direction #19 (RMCA-Hybrid) as required by the absolute priority rule for pending human suggestions. Previous experiments were reverted, and the current codebase lacks this gating logic, necessitating this architectural modification to enable stable memory state transitions despite prior hyperparameter sweeps.
+
+

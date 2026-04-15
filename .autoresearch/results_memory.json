@@ -209,6 +209,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_006",
       "summary_logged": false,
       "token_accuracy": 0.2112
+    },
+    {
+      "id": 7,
+      "iter_tag": "iter_007",
+      "description": "Implementing a gated delta rule for memory updates (RMCA-Hybrid) will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.",
+      "hypothesis": {
+        "hypothesis": "Implementing a gated delta rule for memory updates (RMCA-Hybrid) will improve EM accuracy by allowing the model to selectively regulate information retention versus new memory writes.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing Human Direction #19 (RMCA-Hybrid) as required by the absolute priority rule for pending human suggestions. Previous experiments were reverted, and the current codebase lacks this gating logic, necessitating this architectural modification to enable stable memory state transitions despite prior hyperparameter sweeps.",
+        "instruction": "In `modeling_rmt/huggingface_rmca_v3.py`, modify `MemoryAugmentedLayer.__init__` to add `self.write_gate = nn.Linear(initial_memory_state.shape[-1], initial_memory_state.shape[-1])` and set bias to -1.0. In `MemoryAugmentedLayer.forward`, after computing `write_residual`, apply `gate = torch.sigmoid(self.write_gate(write_residual))` and update memory as `memory = memory + gate * write_residual`.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0738,
+      "prev_best": 0.1276,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_007",
+      "wall_time_min": 43.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776286726.4383864,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_007",
+      "summary_logged": false,
+      "token_accuracy": 0.2653
     }
   ],
   "reference": {
