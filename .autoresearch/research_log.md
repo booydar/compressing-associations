@@ -5038,3 +5038,16 @@ Raw response:
 **Rationale:** Human Direction #19 (RMCA-Hybrid) takes absolute priority over hyperparameter tuning. Previous attempts (Iter 395-396) resulted in EM=0.0, indicating an architectural instability in the memory update mechanism rather than a hyperparameter issue; adding a learnable gate will regulate the delta rule magnitude.
 
 
+## Iter 398 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid architecture with properly stabilized learnable sigmoid write gates controlling delta rule memory updates will improve EM accuracy by preventing gradient instability during memory retention.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_398
+
+
+## Iter 398 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid architecture with properly stabilized learnable sigmoid write gates controlling delta rule memory updates will improve EM accuracy by preventing gradient instability during memory retention.
+**Wall time:** 64.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction item #19 (RMCA-Hybrid) is a pending priority that must be implemented before other changes. Previous 9 attempts at RMCA-Hybrid (iter_389-397) failed with 0.0 EM due to implementation bugs; hyperparameters have been explored (warmup_ratio, optimizer, batch_size, weight_decay configured in current YAML) but architectural instability persists without proper gate stabilization.
+
+
