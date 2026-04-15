@@ -27,7 +27,7 @@ base_model: llama         # base model to use
 lr: 1e-4                  # learning rate (changed to 1e-4 for lion optimizer)
 learning_rate: 0.01       # learning rate for SGD optimizer (changed from sweep to fixed value)
 warmup_ratio: 0.1         # warmup ratio - 0.1 of max_steps (Suggestion 10)
-batch_size: 32           # batch size - Suggestion 7 (fixed to 128)
+batch_size: 256           # batch size - Suggestion 7 (fixed to 128)
 em_threshold: 0.5         # evaluation metric threshold for early stopping (prevents iter_119-121 errors)
 
 # Optimizer configuration

@@ -2000,3 +2000,13 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 395 | reverted | N=16
+- Hypothesis: Implementing RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: 0.0000
+- Success: Change ran successfully and produced a measurable result.
+- Weaknesses: It did not improve over the previous best.
+- Failures: No executor or run failure, but the hypothesis underperformed.
+- Rationale: Implementing human direction item #19 (RMCA-Hybrid). This is a priority human suggestion that must be implemented before other changes. Previous attempts at RMCA-Hybrid were reverted but may have had implementation bugs; a clean implementation with learnable write gates should provide better memory control.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_395
+

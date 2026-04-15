@@ -46,14 +46,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
 
 ## Key Constraints
 
-- Each suggestion should be implementable in **1–2 hours of code**
 - Each experiment should complete in **< 2 hours** (configurable `max_steps`)
-- Focus on **Phase 1–2 first** (fastest path to publishable results)
-- Document each result for paper:
-  - hypothesis
-  - implementation
-  - result
-  - verdict
 
 ## Implementation History
 

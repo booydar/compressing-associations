@@ -4999,3 +4999,29 @@ Raw response:
 **Rationale:** Following Human Directions priority, item #19 (RMCA-Hybrid) is the latest pending suggestion and must be implemented before any other changes. Previous RMCA-Hybrid attempts (iter 384-393) failed likely due to implementation issues. This implementation adds a learnable write gate that modulates memory update strength, theoretically preventing memory overwriting and improving retrieval consistency.
 
 
+## Iter 395 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_395
+
+
+## Iter 395 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 44.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+
+
+## Iter 396 — RUNNING — N=16
+**Hypothesis:** Implementing a stable RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by enabling controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_396
+
+
+## Iter 396 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing a stable RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by enabling controlled memory retention during associative retrieval.
+**Wall time:** 66.4 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Implementing human direction #19 (RMCA-Hybrid). Previous attempts (Iter 386-395) reverted due to training instability; this change implements the Hybrid update with stable gating initialization to satisfy the pending human suggestion and allow successful model convergence.
+
+
