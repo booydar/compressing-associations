@@ -16,14 +16,15 @@ The loop:
 """
 import json
 import os
+import re
 import signal
 import subprocess
 import sys
 import time
 import urllib.request
-import urllib.error
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -33,7 +34,7 @@ AUTORESEARCH_DIR = REPO_ROOT / ".autoresearch"
 
 sys.path.insert(0, str(AUTORESEARCH_DIR))
 
-from eval_harness import get_em
+from eval_harness import get_metrics
 from planner import plan
 from executor import execute, _validate_yaml
 
@@ -43,7 +44,15 @@ RESEARCH_LOG = AUTORESEARCH_DIR / "research_log.md"
 MEMORY_FILE = AUTORESEARCH_DIR / "results_memory.json"
 CONFIG_FILE = AUTORESEARCH_DIR / "config.yaml"
 EXPERIMENT_CONFIG_FILE = AUTORESEARCH_DIR / "experiment_config.yaml"
+HUMAN_DIRECTIONS_FILE = AUTORESEARCH_DIR / "human_directions.md"
+CONVENTIONS_FILE = AUTORESEARCH_DIR / "conventions.md"
+SUMMARY_FILE = AUTORESEARCH_DIR / "experiment_summary.md"
+ARTIFACTS_DIR = AUTORESEARCH_DIR / "artifacts"
 RUN_SCRIPT = REPO_ROOT / "scripts" / "run_autoresearch_exp.sh"
+HUMAN_DIRECTION_STATUS_RE = re.compile(
+    r"^(?P<number>\d+)\.\s+\[(?P<status>Pending|Running|Done|Failed|Skipped)\]",
+    re.MULTILINE,
+)
 
 
 # ── cursor bridge ─────────────────────────────────────────────────────────────
@@ -138,6 +147,25 @@ def save_experiment_config(exp_cfg: dict) -> None:
         yaml.dump(exp_cfg, f, default_flow_style=False, sort_keys=False)
 
 
+def update_human_directions_status(item_number: str, new_status: str) -> bool:
+    """Update a numbered human_directions item status in place."""
+    if not HUMAN_DIRECTIONS_FILE.exists():
+        return False
+
+    content = HUMAN_DIRECTIONS_FILE.read_text()
+    pattern = rf"^({re.escape(item_number)}\.\s+)\[(Pending|Running|Done|Failed|Skipped)\]"
+    new_content, count = re.subn(pattern, rf"\1[{new_status}]", content, count=1, flags=re.MULTILINE)
+    if count:
+        HUMAN_DIRECTIONS_FILE.write_text(new_content)
+        print(f"[human_directions] marked item #{item_number} as [{new_status}]")
+        return True
+    return False
+
+
+def update_human_directions_completed(item_number: str) -> bool:
+    return update_human_directions_status(item_number, "Done")
+
+
 def _load_dotenv(path: Path) -> None:
     for line in path.read_text().splitlines():
         line = line.strip()
@@ -200,6 +228,318 @@ def append_research_log(entry: str) -> None:
         f.write(entry + "\n\n")
 
 
+def _artifact_dir(iter_tag: str) -> Path:
+    return ARTIFACTS_DIR / iter_tag
+
+
+def _ensure_runtime_files() -> None:
+    ARTIFACTS_DIR.mkdir(parents=True, exist_ok=True)
+    if not RESEARCH_LOG.exists():
+        RESEARCH_LOG.write_text(f"# Research Log\nStarted: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
+    if not SUMMARY_FILE.exists():
+        SUMMARY_FILE.write_text("# Experiment Summary\n\n")
+
+
+def _append_experiment_summary(entry: dict, error_msg: str | None = None) -> None:
+    if entry.get("summary_logged"):
+        return
+
+    hypothesis = entry.get("hypothesis") or {}
+    verdict = entry.get("verdict", "unknown")
+    em = entry.get("em_score")
+    target = hypothesis.get("target_component", "(none)")
+    rationale = hypothesis.get("rationale", "")
+    exp_path = entry.get("exp_path", "(none)")
+
+    if verdict in {"kept", "baseline", "recovered"}:
+        success_line = f"Accepted outcome: {verdict}."
+        weakness_line = "Weaknesses remain unclear from this iteration alone."
+        failure_line = "No execution failure."
+    elif verdict == "reverted":
+        success_line = "Change ran successfully and produced a measurable result."
+        weakness_line = "It did not improve over the previous best."
+        failure_line = "No executor or run failure, but the hypothesis underperformed."
+    else:
+        success_line = "No model improvement established."
+        weakness_line = "The experiment did not reach a valid kept result."
+        failure_line = error_msg or entry.get("run_error") or "Failure details unavailable."
+
+    block = (
+        f"## Iter {entry.get('id', '?')} | {verdict} | N={entry.get('n_level', '?')}\n"
+        f"- Hypothesis: {entry.get('description', '(none)')}\n"
+        f"- Target: {target}\n"
+        f"- EM: {f'{em:.4f}' if isinstance(em, (int, float)) else 'n/a'}\n"
+        f"- Success: {success_line}\n"
+        f"- Weaknesses: {weakness_line}\n"
+        f"- Failures: {failure_line}\n"
+        f"- Rationale: {rationale if rationale else '(none)'}\n"
+        f"- exp_path: {exp_path}\n"
+    )
+    with open(SUMMARY_FILE, "a") as f:
+        f.write(block + "\n")
+    entry["summary_logged"] = True
+
+
+def _create_iter_entry(
+    memory: dict,
+    iter_id: int,
+    iter_tag: str,
+    n_level: int,
+    current_best_em: float,
+    description: str,
+    exp_path: str,
+    hypothesis: dict | None = None,
+    retry_of: int | None = None,
+    status: str = "planning",
+) -> dict:
+    entry = {
+        "id": iter_id,
+        "iter_tag": iter_tag,
+        "description": description,
+        "hypothesis": hypothesis,
+        "em_score": None,
+        "prev_best": current_best_em,
+        "verdict": status,
+        "status": status,
+        "n_level": n_level,
+        "exp_path": exp_path,
+        "wall_time_min": 0.0,
+        "metric_step": None,
+        "metric_source": None,
+        "is_partial": False,
+        "recovery_status": "pending",
+        "needs_retry": False,
+        "retry_of": retry_of,
+        "run_error": None,
+        "started_at": time.time(),
+        "artifacts_dir": str(_artifact_dir(iter_tag)),
+        "summary_logged": False,
+    }
+    memory["experiments"].append(entry)
+    return entry
+
+
+def _build_retry_tag(memory: dict, retry_of: int) -> str:
+    retry_count = 1 + sum(1 for e in memory["experiments"] if e.get("retry_of") == retry_of)
+    return f"iter_{retry_of:03d}_retry{retry_count}"
+
+
+def _is_config_change_target(target: str) -> bool:
+    return target == ".autoresearch/experiment_config.yaml" or "experiment_config.yaml" in target
+
+
+def _record_running_iter(
+    memory: dict,
+    iter_id: int,
+    iter_tag: str,
+    n_level: int,
+    current_best_em: float,
+    description: str,
+    exp_path: str,
+    hypothesis: dict | None = None,
+    retry_of: int | None = None,
+) -> dict:
+    entry = _create_iter_entry(
+        memory=memory,
+        iter_id=iter_id,
+        iter_tag=iter_tag,
+        n_level=n_level,
+        current_best_em=current_best_em,
+        description=description,
+        exp_path=exp_path,
+        hypothesis=hypothesis,
+        retry_of=retry_of,
+        status="running",
+    )
+    append_research_log(
+        f"## Iter {iter_id} — RUNNING — N={n_level}\n"
+        f"**Hypothesis:** {description}\n"
+        f"**exp_path:** {exp_path}\n"
+    )
+    return entry
+
+
+def _revert_entry_change(entry: dict) -> None:
+    hypothesis = entry.get("hypothesis")
+    if not hypothesis:
+        return
+
+    if _is_config_change_target(hypothesis.get("target_component", "")):
+        git_revert_config()
+    else:
+        git_revert_model()
+
+
+def _finalize_running_entry(
+    memory: dict,
+    exp_cfg: dict,
+    entry: dict,
+    metrics: dict,
+    wall_time_min: float,
+    run_error: str | None = None,
+) -> tuple[str, float]:
+    em = metrics["exact_match"]
+    prev_best_em = entry.get("prev_best", memory["current_best"]["em"])
+    current_best_em = memory["current_best"]["em"]
+    is_baseline = entry["id"] == 0 and not entry.get("hypothesis")
+
+    if em > current_best_em:
+        verdict = "kept"
+        memory["current_best"] = {
+            "variant": entry.get("iter_tag", f"iter_{entry['id']:03d}"),
+            "em": em,
+            "n_level": entry["n_level"],
+        }
+    else:
+        verdict = "reverted" if entry.get("hypothesis") else "baseline"
+        if entry.get("hypothesis"):
+            _revert_entry_change(entry)
+
+    entry.update({
+        "em_score": em,
+        "prev_best": prev_best_em,
+        "verdict": verdict if not is_baseline else "baseline",
+        "status": "completed",
+        "wall_time_min": round(wall_time_min, 1),
+        "token_accuracy": metrics["token_accuracy"],
+        "metric_step": metrics["step"],
+        "metric_source": metrics["source"],
+        "is_partial": metrics["is_partial"],
+        "recovery_status": "recovered" if metrics["is_partial"] else "final",
+        "run_error": run_error,
+        "needs_retry": False,
+    })
+
+    return entry["verdict"], em
+
+
+def _mark_entry_unresolved(entry: dict, error_msg: str) -> None:
+    started_at = entry.get("started_at", time.time())
+    wall_time_min = max(0.0, (time.time() - started_at) / 60)
+    entry.update({
+        "em_score": None,
+        "verdict": "failed",
+        "status": "failed",
+        "wall_time_min": round(wall_time_min, 1),
+        "metric_source": None,
+        "is_partial": False,
+        "recovery_status": "unresolved",
+        "needs_retry": True,
+        "run_error": error_msg,
+    })
+    append_research_log(
+        f"## Iter {entry.get('id', '?')} — FAILED — N={entry.get('n_level', '?')}\n"
+        f"**Error:** {error_msg}\n"
+        f"**exp_path:** {entry.get('exp_path')}\n"
+        f"**Recovery status:** unresolved\n"
+        f"**Next action:** retry this experiment before planning a new one.\n"
+    )
+    _append_experiment_summary(entry, error_msg)
+
+
+def _reconcile_running_entries(memory: dict, exp_cfg: dict) -> tuple[int, int]:
+    recovered = 0
+    unresolved = 0
+
+    for entry in memory["experiments"]:
+        if entry.get("status") != "running":
+            continue
+
+        exp_path = entry.get("exp_path")
+        if not exp_path:
+            _mark_entry_unresolved(entry, "running entry is missing exp_path")
+            unresolved += 1
+            continue
+
+        try:
+            metrics = get_metrics(exp_path)
+        except Exception as exc:
+            _mark_entry_unresolved(entry, f"could not recover metrics from {exp_path}: {exc}")
+            unresolved += 1
+            continue
+
+        started_at = entry.get("started_at", time.time())
+        wall_time_min = max(0.0, (time.time() - started_at) / 60)
+        verdict, em = _finalize_running_entry(memory, exp_cfg, entry, metrics, wall_time_min, entry.get("run_error"))
+        description = entry.get("description", f"iter {entry['id']}")
+        append_research_log(
+            f"## Iter {entry['id']} — {verdict} — EM: {em:.4f} (N={entry['n_level']})\n"
+            f"**Hypothesis:** {description}\n"
+            f"**Wall time:** {wall_time_min:.1f} min\n"
+            f"**Result:** EM={em:.4f} vs prev best={entry.get('prev_best', -1.0):.4f}\n"
+            f"**Metric source:** {metrics['source']}\n"
+            + ("**Recovery:** checkpoint fallback used because final results were missing.\n" if metrics["is_partial"] else "")
+            + (f"**Run error:** {entry['run_error']}\n" if entry.get("run_error") else "")
+        )
+        _append_experiment_summary(entry)
+        if em >= exp_cfg["em_threshold"] and entry["n_level"] == memory["n_level"]:
+            next_n = entry["n_level"] * 2
+            memory["n_level"] = next_n
+            memory["current_best"] = {"variant": "none", "em": -1.0, "n_level": next_n}
+            append_research_log(
+                f"## >>> N-level advanced to N={memory['n_level']} <<<\n"
+                f"Previous N achieved EM={em:.4f} >= threshold {exp_cfg['em_threshold']}.\n"
+            )
+        recovered += 1
+
+    if recovered or unresolved:
+        update_program_md(memory["n_level"], memory["current_best"]["em"], memory["current_best"]["variant"])
+
+    return recovered, unresolved
+
+
+def _recover_metrics_for_entry(entry: dict) -> bool:
+    exp_path = entry.get("exp_path")
+    if not exp_path or entry.get("em_score") is not None:
+        return False
+
+    try:
+        metrics = get_metrics(exp_path)
+    except Exception:
+        return False
+
+    entry["em_score"] = metrics["exact_match"]
+    entry["token_accuracy"] = metrics["token_accuracy"]
+    entry["metric_step"] = metrics["step"]
+    entry["metric_source"] = metrics["source"]
+    entry["is_partial"] = metrics["is_partial"]
+    entry["recovery_status"] = "recovered"
+    entry["needs_retry"] = False
+    entry["status"] = "completed"
+    if entry.get("verdict") == "failed":
+        entry["verdict"] = "recovered"
+
+    append_research_log(
+        f"## Iter {entry.get('id', '?')} — RECOVERED — N={entry.get('n_level', '?')}\n"
+        f"**Recovered from:** {metrics['source']}\n"
+        f"**Recovered EM:** {metrics['exact_match']:.4f}\n"
+    )
+    _append_experiment_summary(entry)
+    return True
+
+
+def _reconcile_recoverable_runs(memory: dict) -> int:
+    recovered = 0
+    for entry in memory["experiments"]:
+        if _recover_metrics_for_entry(entry):
+            recovered += 1
+    return recovered
+
+
+def _get_retry_candidate(memory: dict, n_level: int) -> dict | None:
+    if not memory["experiments"]:
+        return None
+
+    last = memory["experiments"][-1]
+    if last.get("n_level") != n_level:
+        return None
+    if not last.get("needs_retry"):
+        return None
+    if not last.get("exp_path"):
+        return None
+    return last
+
+
 def git_revert_model() -> None:
     result = subprocess.run(
         ["git", "checkout", "--", str(MODEL_FILE.relative_to(REPO_ROOT))],
@@ -218,12 +558,6 @@ def git_revert_config() -> None:
         print(f"[WARN] git revert config failed: {result.stderr.strip()}")
 
 
-def git_revert_changes() -> None:
-    """Revert both model and config files to HEAD."""
-    git_revert_model()
-    git_revert_config()
-
-
 def git_commit(message: str) -> None:
     files = [
         str(MODEL_FILE.relative_to(REPO_ROOT)),
@@ -231,9 +565,25 @@ def git_commit(message: str) -> None:
         str(PROGRAM_MD.relative_to(REPO_ROOT)),
         str(RESEARCH_LOG.relative_to(REPO_ROOT)),
         str(MEMORY_FILE.relative_to(REPO_ROOT)),
+        str(SUMMARY_FILE.relative_to(REPO_ROOT)),
+        str(ARTIFACTS_DIR.relative_to(REPO_ROOT)),
     ]
-    subprocess.run(["git", "add"] + files, cwd=REPO_ROOT, capture_output=True)
-    subprocess.run(["git", "commit", "-m", message], cwd=REPO_ROOT, capture_output=True)
+    if HUMAN_DIRECTIONS_FILE.exists():
+        files.append(str(HUMAN_DIRECTIONS_FILE.relative_to(REPO_ROOT)))
+
+    add_result = subprocess.run(["git", "add"] + files, cwd=REPO_ROOT, capture_output=True, text=True)
+    if add_result.returncode != 0:
+        raise RuntimeError(f"git add failed: {add_result.stderr.strip() or add_result.stdout.strip()}")
+
+    commit_result = subprocess.run(
+        ["git", "commit", "-m", message],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+    )
+    if commit_result.returncode != 0:
+        detail = commit_result.stderr.strip() or commit_result.stdout.strip()
+        raise RuntimeError(f"git commit failed: {detail}")
 
 
 EXPERIMENT_TIMEOUT_SEC = 2 * 60 * 60  # 2 hours
@@ -309,7 +659,6 @@ def main() -> None:
     executor_cfg = cfg["llm"]["executor"]
     auto_commit = cfg.get("git", {}).get("auto_commit", True)
     n_start = cfg.get("n_start", 2)
-    em_threshold = cfg.get("em_threshold", 0.99)
 
     memory = load_memory()
 
@@ -323,10 +672,9 @@ def main() -> None:
 
     runs_dir = REPO_ROOT / "runs-autoresearch"
 
+    _ensure_runtime_files()
     if not PROGRAM_MD.exists():
         update_program_md(n_level, current_best_em, best_variant)
-    if not RESEARCH_LOG.exists():
-        RESEARCH_LOG.write_text(f"# Research Log\nStarted: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n")
 
     max_iters = cfg.get("max_iters", 100)
     iter_start = len(memory["experiments"])
@@ -351,7 +699,13 @@ def main() -> None:
             raise  # let SIGINT exit propagate
         except Exception as exc:
             print(f"[FATAL] unhandled exception in iter {iter_id}: {exc}")
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"unhandled: {exc}")
+            _record_failed_iter(
+                memory,
+                iter_id,
+                n_level,
+                current_best_em,
+                f"unhandled: {exc}",
+            )
             save_memory(memory)
             continue
 
@@ -362,6 +716,43 @@ def main() -> None:
 
     print("\n[done] autoresearch loop completed.")
     print(f"Best EM achieved: {current_best_em:.4f} at N={n_level}")
+
+
+N_EXECUTOR_RETRIES = 4
+
+
+def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False):
+    """Run executor with validation retries. Returns new content or raises RuntimeError."""
+    last_error = None
+    label = "config" if is_yaml else "code"
+
+    for attempt in range(1, N_EXECUTOR_RETRIES + 1):
+        print(f"[executor] applying {label} change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
+        try:
+            new_content = execute(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=is_yaml)
+        except Exception as e:
+            last_error = f"Executor error: {e}"
+            print(f"[executor] ERROR: {e}")
+            continue
+
+        if not is_yaml and new_content.strip() == current_content.strip():
+            print("[WARN] executor returned unchanged code — retrying")
+            continue
+
+        check_label = "validate" if is_yaml else "sanity"
+        print(f"[{check_label}] checking modified {label}...")
+        try:
+            if is_yaml:
+                _validate_yaml(new_content)
+            else:
+                sanity_check(new_content)
+            print(f"[{check_label}] OK")
+            return new_content
+        except Exception as e:
+            last_error = f"{'YAML validation' if is_yaml else 'Sanity check'} failed: {e}"
+            print(f"[{check_label}] FAILED (attempt {attempt}): {e}")
+
+    raise RuntimeError(f"executor failed after {N_EXECUTOR_RETRIES} attempts: {last_error}")
 
 
 def _run_iter(
@@ -378,7 +769,90 @@ def _run_iter(
     auto_commit: bool,
 ) -> None:
     is_baseline = (iter_id == 0)
+    hypothesis = None
+    retry_of = None
+    retry_candidate = None
+    change_applied = False
+    config_changed = False
+    prev_best_em = current_best_em  # capture before any mutation
     iter_tag = f"iter_{iter_id:03d}{'_baseline' if is_baseline else ''}"
+
+    if is_baseline:
+        print("[iter 0] Running baseline (no changes to model file)")
+        description = "baseline — exact copy of v2"
+    else:
+        recovered_pending, unresolved_pending = _reconcile_running_entries(memory, exp_cfg)
+        if recovered_pending or unresolved_pending:
+            print(
+                f"[recovery] resolved {recovered_pending} running run(s), "
+                f"marked {unresolved_pending} for retry"
+            )
+            save_memory(memory)
+            n_level = memory["n_level"]
+            current_best_em = memory["current_best"]["em"]
+            best_variant = memory["current_best"]["variant"]
+
+        recovered_count = _reconcile_recoverable_runs(memory)
+        if recovered_count:
+            print(f"[recovery] backfilled {recovered_count} prior run(s) from checkpoints")
+            save_memory(memory)
+            n_level = memory["n_level"]
+            current_best_em = memory["current_best"]["em"]
+            best_variant = memory["current_best"]["variant"]
+
+        retry_candidate = _get_retry_candidate(memory, n_level)
+        if retry_candidate:
+            retry_of = retry_candidate["id"]
+            iter_tag = _build_retry_tag(memory, retry_of)
+            hypothesis = retry_candidate.get("hypothesis")
+            description = retry_candidate.get("description", f"retry of iter {retry_of}")
+            print(f"[retry] re-running unresolved iter {retry_of} as {iter_tag}")
+
+        # ── Planner ──
+        if retry_candidate is None:
+            print("[planner] generating hypothesis...")
+            program_md = load_program_md()
+            recent = [entry for entry in memory["experiments"] if entry.get("status") != "running"][-10:]
+
+            N_PLANNER_RETRIES = 3
+            planner_error = None
+            for attempt in range(1, N_PLANNER_RETRIES + 1):
+                try:
+                    hypothesis = plan(program_md, recent, planner_cfg, error_context=planner_error)
+                    break
+                except Exception as e:
+                    planner_error = str(e)
+                    print(f"[planner] ERROR (attempt {attempt}/{N_PLANNER_RETRIES}): {e}")
+            else:
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner failed after {N_PLANNER_RETRIES} attempts: {planner_error}")
+                save_memory(memory)
+                return
+
+            print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
+            description = hypothesis.get("hypothesis", f"iter {iter_id}")
+
+        if hypothesis is not None:
+            target = hypothesis.get("target_component", "")
+            is_config_change = _is_config_change_target(target)
+            target_file = EXPERIMENT_CONFIG_FILE if is_config_change else MODEL_FILE
+            current_content = target_file.read_text()
+
+            try:
+                new_content = _execute_with_retries(
+                    hypothesis, current_content, executor_cfg, is_yaml=is_config_change,
+                )
+            except RuntimeError as e:
+                _record_failed_iter(memory, iter_id, n_level, current_best_em, str(e), hypothesis)
+                save_memory(memory)
+                return
+
+            target_file.write_text(new_content)
+            change_applied = True
+            config_changed = is_config_change
+            if is_config_change:
+                exp_cfg = yaml.safe_load(new_content)
+                print("[config] updated experiment config")
+
     exp_path = str(runs_dir / f"n{n_level}" / iter_tag)
 
     print(f"\n{'='*60}")
@@ -386,168 +860,60 @@ def _run_iter(
     print(f"  exp_path: {exp_path}")
     print(f"{'='*60}")
 
-    hypothesis = None
-    change_applied = False
-    config_changed = False
-    prev_best_em = current_best_em  # capture before any mutation
-
-    if is_baseline:
-        print("[iter 0] Running baseline (no changes to model file)")
-        description = "baseline — exact copy of v2"
-    else:
-        # ── Planner ──
-        print("[planner] generating hypothesis...")
-        program_md = load_program_md()
-        recent = memory["experiments"][-10:]
-        try:
-            hypothesis = plan(program_md, recent, planner_cfg)
-        except Exception as e:
-            print(f"[planner] ERROR: {e}")
-            _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner error: {e}")
-            save_memory(memory)
-            return
-
-        print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
-        description = hypothesis.get("hypothesis", f"iter {iter_id}")
-
-        # ── Executor + sanity (with retries) ──
-        N_EXECUTOR_RETRIES = 4
-        target = hypothesis.get("target_component", "")
-        is_config_change = target == ".autoresearch/experiment_config.yaml" or "experiment_config.yaml" in target
-        
-        if is_config_change:
-            current_content = EXPERIMENT_CONFIG_FILE.read_text()
-            new_content = None
-            last_error: str | None = None
-
-            for attempt in range(1, N_EXECUTOR_RETRIES + 1):
-                print(f"[executor] applying config change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
-                try:
-                    new_content = execute(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=True)
-                except Exception as e:
-                    last_error = f"Executor error: {e}"
-                    print(f"[executor] ERROR: {e}")
-                    continue
-
-                print("[validate] checking modified YAML...")
-                try:
-                    _validate_yaml(new_content)
-                    print("[validate] OK")
-                    break  # success
-                except Exception as e:
-                    last_error = f"YAML validation failed: {e}"
-                    print(f"[validate] FAILED (attempt {attempt}): {e}")
-                    new_content = None
-                    continue
-            else:
-                print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/validate failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
-                save_memory(memory)
-                return
-
-            EXPERIMENT_CONFIG_FILE.write_text(new_content)
-            exp_cfg = yaml.safe_load(new_content)
-            change_applied = True
-            config_changed = True
-            print(f"[config] updated experiment config")
-        else:
-            current_code = MODEL_FILE.read_text()
-            new_code = None
-            last_error: str | None = None
-
-            for attempt in range(1, N_EXECUTOR_RETRIES + 1):
-                print(f"[executor] applying change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
-                try:
-                    new_code = execute(hypothesis, current_code, executor_cfg, error_context=last_error)
-                except Exception as e:
-                    last_error = f"Executor error: {e}"
-                    print(f"[executor] ERROR: {e}")
-                    continue
-
-                print("[sanity] checking modified code...")
-                try:
-                    sanity_check(new_code)
-                    print("[sanity] OK")
-                    break  # success
-                except Exception as e:
-                    last_error = f"Sanity check failed: {e}"
-                    print(f"[sanity] FAILED (attempt {attempt}): {e}")
-                    new_code = None
-                    continue
-            else:
-                print(f"[executor] all {N_EXECUTOR_RETRIES} attempts failed. Skipping iteration.")
-                _record_failed_iter(memory, iter_id, n_level, current_best_em, f"executor/sanity failed after {N_EXECUTOR_RETRIES} attempts: {last_error}", hypothesis)
-                save_memory(memory)
-                return
-
-            MODEL_FILE.write_text(new_code)
-            change_applied = True
-            config_changed = False  # Model change, not config
+    running_entry = _record_running_iter(
+        memory=memory,
+        iter_id=iter_id,
+        iter_tag=iter_tag,
+        n_level=n_level,
+        current_best_em=current_best_em,
+        description=description,
+        exp_path=exp_path,
+        hypothesis=hypothesis,
+        retry_of=retry_of,
+    )
+    save_memory(memory)
 
     # ── Run experiment ──
     t0 = time.time()
+    run_error = None
     try:
         run_experiment(exp_path, n_pairs=n_level, exp_cfg=exp_cfg)
     except Exception as e:
         print(f"[experiment] ERROR: {e}")
-        if change_applied:
-            if config_changed:
-                print("[revert] reverting config file...")
-                git_revert_config()
-            else:
-                print("[revert] reverting model file...")
-                git_revert_model()
-        _record_failed_iter(memory, iter_id, n_level, current_best_em, f"experiment error: {e}", hypothesis)
-        save_memory(memory)
-        return
+        run_error = f"experiment error: {e}"
 
     wall_min = (time.time() - t0) / 60
 
     # ── Evaluate ──
     try:
-        em = get_em(exp_path)
+        metrics = get_metrics(exp_path)
+        em = metrics["exact_match"]
     except Exception as e:
         print(f"[eval] ERROR reading metrics: {e}")
         if change_applied:
-            if config_changed:
-                git_revert_config()
-            else:
-                git_revert_model()
-        _record_failed_iter(memory, iter_id, n_level, current_best_em, f"eval error: {e}", hypothesis)
+            _revert_entry_change(running_entry)
+        _mark_entry_unresolved(running_entry, run_error or f"eval error: {e}")
         save_memory(memory)
         return
+
+    if run_error:
+        print(f"[recovery] recovered metrics from {metrics['source']} after run failure")
 
     print(f"[eval] EM={em:.4f}  (prev best={prev_best_em:.4f})")
 
     # ── Keep or revert ──
-    if em > current_best_em:
-        verdict = "kept"
-        current_best_em = em
-        best_variant = iter_tag
-        memory["current_best"] = {"variant": iter_tag, "em": em, "n_level": n_level}
+    prior_best = memory["current_best"]["em"]
+    verdict, em = _finalize_running_entry(memory, exp_cfg, running_entry, metrics, wall_min, run_error)
+    current_best_em = memory["current_best"]["em"]
+    best_variant = memory["current_best"]["variant"]
+    if memory["current_best"]["em"] > prior_best:
         print(f"[result] KEPT  — new best EM={em:.4f}")
-    else:
-        verdict = "reverted" if change_applied else "baseline"
-        if change_applied:
-            print(f"[result] REVERTED — EM={em:.4f} did not beat {current_best_em:.4f}")
-            if config_changed:
-                git_revert_config()
-            else:
-                git_revert_model()
 
-    # ── Record ──
-    entry = {
-        "id": iter_id,
-        "description": description,
-        "hypothesis": hypothesis,
-        "em_score": em,
-        "prev_best": prev_best_em,
-        "verdict": verdict if not is_baseline else "baseline",
-        "n_level": n_level,
-        "exp_path": exp_path,
-        "wall_time_min": round(wall_min, 1),
-    }
-    memory["experiments"].append(entry)
+        # Mark human_directions item as [Done] if this was implementing one
+        if hypothesis and hypothesis.get("human_directions_item"):
+            update_human_directions_completed(hypothesis["human_directions_item"])
+    elif change_applied:
+        print(f"[result] REVERTED — EM={em:.4f} did not beat {prior_best:.4f}")
 
     # ── Update program.md ──
     update_program_md(n_level, current_best_em, best_variant)
@@ -558,7 +924,12 @@ def _run_iter(
         f"**Hypothesis:** {description}\n"
         f"**Wall time:** {wall_min:.1f} min\n"
         f"**Result:** EM={em:.4f} vs prev best={prev_best_em:.4f}\n"
+        f"**Metric source:** {metrics['source']}\n"
     )
+    if metrics["is_partial"]:
+        log_entry += "**Recovery:** checkpoint fallback used because final results were missing.\n"
+    if run_error:
+        log_entry += f"**Run error:** {run_error}\n"
     if hypothesis and hypothesis.get("rationale"):
         log_entry += f"**Rationale:** {hypothesis['rationale']}\n"
     append_research_log(log_entry)
@@ -596,22 +967,41 @@ def _record_failed_iter(
     current_best_em: float,
     error_msg: str,
     hypothesis: dict | None = None,
+    exp_path: str | None = None,
+    wall_time_min: float = 0,
+    recovery_status: str = "not_attempted",
+    needs_retry: bool = False,
+    retry_of: int | None = None,
+    run_error: str | None = None,
 ) -> None:
-    memory["experiments"].append({
-        "id": iter_id,
-        "description": f"FAILED: {error_msg}",
-        "hypothesis": hypothesis,
-        "em_score": None,
-        "prev_best": current_best_em,
-        "verdict": "failed",
-        "n_level": n_level,
-        "exp_path": None,
-        "wall_time_min": 0,
+    entry = _create_iter_entry(
+        memory=memory,
+        iter_id=iter_id,
+        iter_tag=f"iter_{iter_id:03d}",
+        n_level=n_level,
+        current_best_em=current_best_em,
+        description=f"FAILED: {error_msg}",
+        exp_path=exp_path or "",
+        hypothesis=hypothesis,
+        retry_of=retry_of,
+        status="failed",
+    )
+    entry.update({
+        "wall_time_min": round(wall_time_min, 1),
+        "metric_source": None,
+        "is_partial": False,
+        "recovery_status": recovery_status,
+        "needs_retry": needs_retry,
+        "run_error": run_error or error_msg,
     })
     append_research_log(
         f"## Iter {iter_id} — FAILED — N={n_level}\n"
         f"**Error:** {error_msg}\n"
+        + (f"**exp_path:** {exp_path}\n" if exp_path else "")
+        + (f"**Recovery status:** {recovery_status}\n" if recovery_status else "")
+        + ("**Next action:** retry this experiment before planning a new one.\n" if needs_retry else "")
     )
+    _append_experiment_summary(entry, error_msg)
 
 
 if __name__ == "__main__":

@@ -119,9 +119,17 @@ def _call_openai_compat(
     msg = response.choices[0].message
     content = msg.content
 
-    # Qwen3 / thinking models sometimes put output in reasoning_content only
-    if not content:
-        content = getattr(msg, "reasoning_content", None)
+    # Qwen3.5 / thinking models: prefer content over reasoning_content
+    # reasoning_content is typically the "thinking" part, content is the actual response
+    reasoning = getattr(msg, "reasoning_content", None)
+    
+    # If we have actual content, use it (it may include embedded thinking)
+    if content and content.strip():
+        return content
+    
+    # Fall back to reasoning_content if content is empty
+    if reasoning and reasoning.strip():
+        return reasoning
 
     if not content:
         raise RuntimeError(
@@ -132,6 +140,8 @@ def _call_openai_compat(
 
 
 def _build_base_url(provider_cfg: dict) -> str:
+    if "base_url" in provider_cfg:
+        return provider_cfg["base_url"]
     host = provider_cfg.get("host", "localhost")
     port = provider_cfg.get("port")
     if port is None:

@@ -2010,3 +2010,23 @@
 - Rationale: Implementing human direction item #19 (RMCA-Hybrid). This is a priority human suggestion that must be implemented before other changes. Previous attempts at RMCA-Hybrid were reverted but may have had implementation bugs; a clean implementation with learnable write gates should provide better memory control.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_395
 
+## Iter 400 | reverted | N=16
+- Hypothesis: Implementing RMCA-Hybrid architecture with learnable sigmoid write gates controlling delta rule memory updates will improve EM accuracy by providing stable, controlled memory retention during associative retrieval.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: 0.0000
+- Success: Change ran successfully and produced a measurable result.
+- Weaknesses: It did not improve over the previous best.
+- Failures: No executor or run failure, but the hypothesis underperformed.
+- Rationale: Human direction item #19 (RMCA-Hybrid) is the highest priority pending suggestion and must be implemented before other changes. Previous RMCA-Hybrid attempts (iterations 390-399) failed with EM=0.0, suggesting implementation bugs rather than architectural failure. This clean implementation will add learnable sigmoid write gates to control memory update magnitude.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_400
+
+## Iter 401 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: Human direction item #19 (RMCA-Hybrid) is the highest priority pending suggestion and must be implemented before other changes. Previous RMCA-Hybrid attempts (iterations 391-400) failed with EM=0.0, suggesting implementation bugs rather than architectural failure. A clean implementation with properly initialized learnable sigmoid write gates should prevent gradient instability and enable controlled memory updates.
+- exp_path: 
+

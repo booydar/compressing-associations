@@ -5064,3 +5064,21 @@ Raw response:
 **Rationale:** Human direction item #19 (RMCA-Hybrid) is still marked [Pending] despite previous failed attempts. Prior hyperparameter tuning has been exhausted (learning rate, optimizer, batch size, warmup, weight decay all swept per experiment config). Previous RMCA-Hybrid attempts failed due to implementation bugs; a clean implementation with learnable sigmoid write gates in MemoryAugmentedLayer should provide better memory control.
 
 
+## Iter 400 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Hybrid architecture with learnable sigmoid write gates controlling delta rule memory updates will improve EM accuracy by providing stable, controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_400
+
+
+## Iter 400 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** Implementing RMCA-Hybrid architecture with learnable sigmoid write gates controlling delta rule memory updates will improve EM accuracy by providing stable, controlled memory retention during associative retrieval.
+**Wall time:** 25.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+
+
+## Iter 401 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
