@@ -4882,3 +4882,16 @@ Raw response:
 **Rationale:** Human directions item #19 (RMCA-Hybrid) is marked [Pending] and takes absolute priority per CRITICAL RULES. Previous RMCA-Hybrid attempts (iter 375-384) failed likely due to incomplete implementation rather than the concept itself. No hyperparameter tuning is needed before implementing this human-directed architectural change.
 
 
+## Iter 386 — RUNNING — N=16
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs-autoresearch/n16/iter_386
+
+
+## Iter 386 — reverted — EM: 0.0000 (N=16)
+**Hypothesis:** RMCA-Hybrid architecture with learnable write gates controlling delta rule memory updates will improve EM accuracy by providing more stable and controlled memory retention during associative retrieval.
+**Wall time:** 71.2 min
+**Result:** EM=0.0000 vs prev best=0.0000
+**Metric source:** all_results
+**Rationale:** Human direction #19 (RMCA-Hybrid) is the latest pending item to implement and takes absolute priority per the rules. While iterations 376-385 attempted RMCA-Hybrid with EM=0.0, these were reverted experiments suggesting implementation issues rather than architectural flaws. We will implement a cleaner version with properly gated delta rule mechanisms.
+
+
