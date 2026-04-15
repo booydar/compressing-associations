@@ -179,6 +179,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_005",
       "summary_logged": false,
       "token_accuracy": 0.1707
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "RMCA-Hybrid will improve EM accuracy by implementing a learnable gating mechanism that controls how much new information is incorporated into memory versus retained existing states.",
+      "hypothesis": {
+        "hypothesis": "RMCA-Hybrid will improve EM accuracy by implementing a learnable gating mechanism that controls how much new information is incorporated into memory versus retained existing states.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human direction #19 (RMCA-Hybrid) takes absolute priority per the rules. Previous hyperparameter exploration has been exhausted (lr: 0.01, batch_size: 128, n_layer: 4, n_head: 4, n_embd: 128, n_mem_tokens: 32, warmup_ratio: 0.05-0.2) with no sustained EM improvement, justifying architectural change. The gated delta rule allows the model to learn selective memory writing, which is critical for associative retrieval tasks.",
+        "instruction": "In MemoryAugmentedLayer.forward(), after computing the write_residual, add a learnable gate parameter (self.memory_gate = nn.Parameter(torch.tensor(0.5))) and apply: memory = memory + gate * write_residual. Initialize gate at 0.5 to allow balanced learning. Add the gate to __init__ and forward method.",
+        "human_directions_item": "19"
+      },
+      "em_score": 0.0438,
+      "prev_best": 0.1276,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n8/iter_006",
+      "wall_time_min": 41.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776283756.5431097,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_006",
+      "summary_logged": false,
+      "token_accuracy": 0.2112
     }
   ],
   "reference": {
