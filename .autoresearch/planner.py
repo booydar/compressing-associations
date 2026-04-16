@@ -14,10 +14,12 @@ import json
 import re
 import sys
 import os
+import tempfile
+import subprocess
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
-from llm_client import call_llm
+from llm_client import _build_base_url
 
 AUTORESEARCH_DIR = Path(os.path.dirname(__file__))
 REPO_ROOT = AUTORESEARCH_DIR.parent
@@ -154,11 +156,11 @@ def plan_with_trace(
     error_context: str | None = None,
 ) -> tuple[dict, dict]:
     """
-    Call the planner LLM and return both parsed hypothesis and trace data.
+    Call the planner via opencode CLI and return both parsed hypothesis and trace data.
     Raises ValueError if the response cannot be parsed as JSON.
     """
     messages = build_planner_messages(program_md, recent_experiments, error_context=error_context)
-    raw = call_llm(provider_cfg, messages, max_tokens=8192)
+    raw = _call_opencode_planner(messages, provider_cfg)
     trace = {
         "messages": messages,
         "raw_response": raw,
@@ -179,10 +181,10 @@ def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, er
 
 def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None) -> tuple[dict, dict]:
     """
-    Call the planner LLM and return both parsed hypothesis and full trace data for logging.
+    Call the planner via opencode CLI and return both parsed hypothesis and full trace data for logging.
     """
     messages = build_planner_messages(program_md, recent_experiments, error_context=error_context)
-    raw = call_llm(provider_cfg, messages, max_tokens=8192)
+    raw = _call_opencode_planner(messages, provider_cfg)
     trace = {
         "messages": messages,
         "raw_response": raw,
@@ -196,6 +198,56 @@ def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provid
         raise PlannerResponseError(str(exc), trace) from exc
     trace["parsed_response"] = parsed
     return parsed, trace
+
+
+def _call_opencode_planner(messages: list[dict], provider_cfg: dict) -> str:
+    """
+    Call opencode CLI to get a planning response.
+    Returns the raw text response.
+    """
+    provider = provider_cfg.get("provider", "")
+    model_name = provider_cfg.get("model", "")
+    
+    # Build prompt from messages, preserving system prompt if present
+    system_prompt = None
+    user_content = ""
+    for msg in messages:
+        if msg["role"] == "system":
+            system_prompt = msg["content"]
+        elif msg["role"] == "user":
+            user_content = msg["content"]
+    
+    if system_prompt:
+        prompt = f"{system_prompt}\n\n---\n\n{user_content}"
+    else:
+        prompt = user_content
+
+    env = os.environ.copy()
+    
+    if provider in ("local", "cursor"):
+        env["OPENAI_BASE_URL"] = _build_base_url(provider_cfg)
+        env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
+    elif provider == "anthropic":
+        env["ANTHROPIC_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
+    elif provider == "openai":
+        env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
+
+    print(f"[planner] Calling opencode with model: {model_name}")
+    result = subprocess.run(
+        ["opencode", "run", "-m", model_name, prompt],
+        capture_output=True,
+        text=True,
+        env=env,
+        cwd=REPO_ROOT,
+        timeout=120,
+    )
+
+    if result.returncode != 0:
+        print(f"[planner] opencode failed with return code {result.returncode}")
+        print(f"[planner] opencode stderr:\n{result.stderr}")
+        raise RuntimeError(f"opencode failed: {result.stderr}")
+
+    return result.stdout
 
 
 def _format_history(experiments: list[dict]) -> str:
