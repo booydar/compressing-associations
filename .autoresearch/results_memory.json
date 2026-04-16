@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_009",
-    "em": 0.0072,
+    "variant": "iter_010",
+    "em": 0.0134,
     "n_level": 16
   },
   "n_level": 16,
@@ -299,6 +299,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_009",
       "summary_logged": false,
       "token_accuracy": 0.0844
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "Implementing RMCA-Delta with a proper learnable delta update rule for memory states will improve EM accuracy by enabling more precise memory state transitions.",
+      "hypothesis": {
+        "hypothesis": "Implementing RMCA-Delta with a proper learnable delta update rule for memory states will improve EM accuracy by enabling more precise memory state transitions.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Human direction item #17 (RMCA-Delta) is pending and takes absolute priority per the rules. Previous delta rule attempts (items 3, 5, 7) were reverted or kept with varying results, but item 17 specifically calls for this architectural change that has not been fully explored. This is an architectural change required before hyperparameter tuning can proceed.",
+        "instruction": "In MemoryAugmentedLayer.forward(), replace the current memory update 'memory = self.memory_forget_gate.sigmoid() * memory + write_residual' with a delta rule: compute delta = write_residual, then memory = memory + self.delta_gate.sigmoid() * delta, where delta_gate is a new learnable parameter initialized to 0.5. Add this parameter in __init__ alongside existing gates.",
+        "human_directions_item": "17"
+      },
+      "em_score": 0.0134,
+      "prev_best": 0.0072,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_010",
+      "wall_time_min": 72.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776296921.7520218,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_010",
+      "summary_logged": false,
+      "token_accuracy": 0.1151
     }
   ],
   "reference": {

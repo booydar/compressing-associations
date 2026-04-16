@@ -131,3 +131,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Implementing human_directions item #18 (RMCA-Gated). Hyperparameter tuning has been attempted (warmup_ratio sweep in current config shows 3 values explored, lr set to 0.01 with base_model llama). Since multiple architectural variants (RMCA-Hybrid, RMCA-Delta) have been tried with mixed results and item 18 is a pending human suggestion with highest priority, implementing the RMCA-Gated architecture change takes precedence over further hyperparameter tuning.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Implementing RMCA-Delta with a proper learnable delta update rule for memory states will improve EM accuracy by enabling more precise memory state transitions.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_010
+
+
+## Iter 10 — kept — EM: 0.0134 (N=16)
+**Hypothesis:** Implementing RMCA-Delta with a proper learnable delta update rule for memory states will improve EM accuracy by enabling more precise memory state transitions.
+**Wall time:** 72.3 min
+**Result:** EM=0.0134 vs prev best=0.0072
+**Metric source:** all_results
+**Rationale:** Human direction item #17 (RMCA-Delta) is pending and takes absolute priority per the rules. Previous delta rule attempts (items 3, 5, 7) were reverted or kept with varying results, but item 17 specifically calls for this architectural change that has not been fully explored. This is an architectural change required before hyperparameter tuning can proceed.
+
+

@@ -37,7 +37,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Auxiliary loss at segment boundaries
 16. [Pending] **Gradient clipping sweep**
     Test `clip_norm ∈ {0.1, 1.0, 5.0}`
-17. [Pending] **RMCA-Delta**
+17. [Done] **RMCA-Delta**
     RMT read + GDN write
 18. [Done] **RMCA-Gated**
     Mamba-style SSM + attention read gate
