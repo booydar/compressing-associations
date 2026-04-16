@@ -449,6 +449,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_014",
       "summary_logged": false,
       "token_accuracy": 0.0815
+    },
+    {
+      "id": 15,
+      "iter_tag": "iter_015",
+      "description": "Implementing a gradient clipping sweep with multiple max_grad_norm values (0.5, 1.0, 2.0, 5.0) will improve EM accuracy by stabilizing training dynamics and preventing gradient explosions during memory state updates.",
+      "hypothesis": {
+        "hypothesis": "Implementing a gradient clipping sweep with multiple max_grad_norm values (0.5, 1.0, 2.0, 5.0) will improve EM accuracy by stabilizing training dynamics and preventing gradient explosions during memory state updates.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "This implements human_directions_item #16 (Gradient clipping sweep). Previous gradient clipping attempts (iter 11-14) showed varying results, suggesting optimal clipping thresholds depend on model configuration and N-level. Systematic exploration of max_grad_norm values should identify the sweet spot for memory update stability.",
+        "instruction": "Add max_grad_norm parameter to training parameters section with values [0.5, 1.0, 2.0, 5.0] following the same list format as warmup_ratio, to enable gradient clipping sweep across multiple thresholds during training",
+        "human_directions_item": "16"
+      },
+      "em_score": 0.005,
+      "prev_best": 0.0134,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_015",
+      "wall_time_min": 69.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776318999.284829,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_015",
+      "summary_logged": false,
+      "token_accuracy": 0.0828
     }
   ],
   "reference": {
