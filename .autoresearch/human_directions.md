@@ -35,7 +35,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Randomly hide memory tokens (`p = 0.1–0.3`)
 15. [Pending] **Deep supervision**
     Auxiliary loss at segment boundaries
-16. [Pending] **Gradient clipping sweep**
+16. [Done] **Gradient clipping sweep**
     Test `clip_norm ∈ {0.1, 1.0, 5.0}`
 17. [Done] **RMCA-Delta**
     RMT read + GDN write

@@ -222,3 +222,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Human direction item #16 (Gradient clipping sweep) takes absolute priority per the priority rules. While iterations 11-15 attempted fixed max_grad_norm thresholds (0.5, 1.0, 2.0, 5.0) which were reverted, adaptive gradient clipping that dynamically adjusts based on gradient norm history has not been tried. This differs from the exhausted fixed-threshold approach and may better stabilize memory state updates in the recurrent architecture.
 
 
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Implementing a comprehensive gradient clipping sweep with lower thresholds (0.1, 0.5, 1.0) will stabilize training dynamics and improve EM accuracy by preventing gradient explosions during memory state updates.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_017
+
+
+## Iter 17 — kept — EM: 0.0138 (N=16)
+**Hypothesis:** Implementing a comprehensive gradient clipping sweep with lower thresholds (0.1, 0.5, 1.0) will stabilize training dynamics and improve EM accuracy by preventing gradient explosions during memory state updates.
+**Wall time:** 71.7 min
+**Result:** EM=0.0138 vs prev best=0.0134
+**Metric source:** all_results
+**Rationale:** Human direction item #16 (Gradient clipping sweep) is the highest priority pending task. Previous attempts (iterations 11-16) used various thresholds but all were reverted, suggesting a more systematic sweep with specific max_grad_norm values is needed. This is a hyperparameter change that must be exhausted before architectural modifications.
+
+
