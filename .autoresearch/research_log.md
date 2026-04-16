@@ -132,3 +132,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous deep supervision, gradient clipping, RMCA-Delta, RMCA-Gated, and RMCA-Hybrid have been tried, but memory-specific regularization has not yet been successfully explored.
 
 
+## Iter 9 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_009
+
+
+## Iter 9 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**Wall time:** 18.3 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout) as it is the highest priority pending item. This is a regularization technique specifically targeting memory tokens, which has not been thoroughly explored despite multiple memory dropout experiments failing due to git issues rather than architectural problems.
+
+
