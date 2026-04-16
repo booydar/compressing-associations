@@ -479,6 +479,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_015",
       "summary_logged": false,
       "token_accuracy": 0.0828
+    },
+    {
+      "id": 16,
+      "iter_tag": "iter_016",
+      "description": "Implementing adaptive gradient clipping that adjusts clipping thresholds based on training dynamics will improve EM accuracy by preventing gradient explosions while avoiding the overly restrictive fixed thresholds that caused training instability in previous attempts.",
+      "hypothesis": {
+        "hypothesis": "Implementing adaptive gradient clipping that adjusts clipping thresholds based on training dynamics will improve EM accuracy by preventing gradient explosions while avoiding the overly restrictive fixed thresholds that caused training instability in previous attempts.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Human direction item #16 (Gradient clipping sweep) takes absolute priority per the priority rules. While iterations 11-15 attempted fixed max_grad_norm thresholds (0.5, 1.0, 2.0, 5.0) which were reverted, adaptive gradient clipping that dynamically adjusts based on gradient norm history has not been tried. This differs from the exhausted fixed-threshold approach and may better stabilize memory state updates in the recurrent architecture.",
+        "instruction": "Add gradient clipping configuration parameters to experiment_config.yaml: (1) Add 'gradient_clipping' section with 'enabled: true', 'clip_type: adaptive' (options: fixed, adaptive, per_layer), 'max_grad_norm: 1.0' (for fixed mode), 'clip_alpha: 0.95' (for adaptive mode, decay factor for gradient norm tracking), and 'warmup_clipping_steps: 1000' (gradually enable clipping during warmup). (2) Ensure trainer reads these parameters and passes to optimizer's gradient clipping logic.",
+        "human_directions_item": "16"
+      },
+      "em_score": 0.004,
+      "prev_best": 0.0134,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_016",
+      "wall_time_min": 64.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776323457.2935665,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_016",
+      "summary_logged": false,
+      "token_accuracy": 0.0816
     }
   ],
   "reference": {
