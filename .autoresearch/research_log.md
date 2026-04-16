@@ -196,3 +196,16 @@ Use -f if you really want to add them.
 **Rationale:** Memory dropout (item 14) has been tried in iterations 2, 4-12 with no successful improvement - all were reverted or failed. Further hyperparameter tuning of dropout rates is unlikely to help. A curriculum learning approach (item 13) is a different strategy that systematically varies training difficulty, which has theoretical grounding for improving sequence learning generalization.
 
 
+## Iter 14 — RUNNING — N=8
+**Hypothesis:** Implementing memory dropout with a configurable dropout rate will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_014
+
+
+## Iter 14 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Implementing memory dropout with a configurable dropout rate will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns.
+**Wall time:** 32.2 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change from the human directions list. The experiment config already defines memory_dropout values [0.0, 0.1, 0.2, 0.3] but previous experiments failed, suggesting the feature needs proper implementation in the model code. Hyperparameters have not been exhausted yet - this is a human-directed architectural change that should be implemented before exhaustive hyperparameter tuning.
+
+
