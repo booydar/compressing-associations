@@ -389,6 +389,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_012",
       "summary_logged": false,
       "token_accuracy": 0.0782
+    },
+    {
+      "id": 13,
+      "iter_tag": "iter_013",
+      "description": "Implementing a gradient clipping sweep across multiple thresholds (0.1, 0.5, 1.0, 5.0) will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.",
+      "hypothesis": {
+        "hypothesis": "Implementing a gradient clipping sweep across multiple thresholds (0.1, 0.5, 1.0, 5.0) will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Implementing human_directions item #16 (Gradient clipping sweep). Previous attempts at gradient clipping (iter 11-12) were reverted, suggesting the clipping threshold was suboptimal. A systematic sweep across multiple values is needed to find the optimal threshold for stabilizing the memory write/read gates which can cause gradient instability.",
+        "instruction": "Add a gradient_clip_value parameter to the optimizer configuration section in .autoresearch/experiment_config.yaml with values: [0.1, 0.5, 1.0, 2.0, 5.0] to enable systematic gradient clipping threshold exploration during training. Update the trainer to accept and use this parameter for gradient clipping.",
+        "human_directions_item": "16"
+      },
+      "em_score": 0.0086,
+      "prev_best": 0.0134,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_013",
+      "wall_time_min": 70.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776310424.1783109,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_013",
+      "summary_logged": false,
+      "token_accuracy": 0.1006
     }
   ],
   "reference": {
