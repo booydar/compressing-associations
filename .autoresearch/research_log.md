@@ -119,3 +119,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending regularization technique that applies dropout specifically to memory tokens before read/write operations. Previous experiments with memory dropout (#2, #3, #4, #5, #6) had issues, so this implementation will be cleaner by adding dropout as a config parameter applied to memory states in MemoryAugmentedLayer.
 
 
+## Iter 8 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_008
+
+
+## Iter 8 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**Wall time:** 17.4 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous deep supervision, gradient clipping, RMCA-Delta, RMCA-Gated, and RMCA-Hybrid have been tried, but memory-specific regularization has not yet been successfully explored.
+
+

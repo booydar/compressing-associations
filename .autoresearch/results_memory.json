@@ -307,6 +307,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_007",
       "summary_logged": false,
       "token_accuracy": 0.0214
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous deep supervision, gradient clipping, RMCA-Delta, RMCA-Gated, and RMCA-Hybrid have been tried, but memory-specific regularization has not yet been successfully explored.",
+        "instruction": "Add memory dropout to the MemoryAugmentedLayer class. After computing the read_residual from memory read cross-attention, apply dropout with configurable probability before adding to hidden_states. Add a new config parameter 'memory_dropout' with default value 0.1. In the __init__ method, store self.memory_dropout = config.get('memory_dropout', 0.0). In the forward method, apply F.dropout(read_residual, p=self.memory_dropout, training=self.training) before the addition: hidden_states = hidden_states + F.dropout(read_residual, p=self.memory_dropout, training=self.training).",
+        "human_directions_item": "14"
+      },
+      "em_score": 0.0002,
+      "prev_best": 0.0006,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_008",
+      "wall_time_min": 17.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776366939.0897825,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_008",
+      "summary_logged": false,
+      "token_accuracy": 0.0218
     }
   ],
   "reference": {
