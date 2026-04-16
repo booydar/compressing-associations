@@ -66,3 +66,23 @@ Use -f if you really want to add them.
 - Rationale: Memory dropout (human_directions item #14) has been tried extensively in iterations 2, 5-14 with no improvement. Per HYPERPARAMETER-FIRST policy, I sweep hyperparameters before architectural changes. The current n_mem_tokens=32 differs from the documented default of 8, and no systematic sweep has been done. This is a hyperparameter change, not architectural.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_015
 
+## Iter 19 | failed | N=8
+- Hypothesis: Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Implementing human_directions item #12 (Multi-stage write). This is a pending architectural change that has not been tried yet. Hyperparameters like memory_dropout and gradient clipping have been explored, but the memory write mechanism itself has only used a single residual addition. Multi-stage write allows more sophisticated memory update dynamics.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_019
+
+## Iter 20 | failed | N=8
+- Hypothesis: Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with memory dropout and curriculum have shown marginal gains, but the memory update mechanism itself remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_020
+

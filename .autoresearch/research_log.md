@@ -260,3 +260,40 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #13 (Segment-length curriculum). This is the latest pending item from the human directions list. Previous experiments with memory dropout (items 14-16), deep supervision, and gradient clipping have been completed. Per the priority rules, I must implement pending human suggestions before proposing new hyperparameter or architectural changes.
 
 
+## Iter 19 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_019
+
+
+## Iter 19 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_019
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 20 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_020
+
+
+## Iter 20 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_020
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 21 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by allowing the model to compute adaptive gating weights for memory updates rather than using simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_021
+
+
+## Iter 21 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by allowing the model to compute adaptive gating weights for memory updates rather than using simple residual addition.
+**Wall time:** 18.3 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous iterations 19 and 20 attempted this but failed with experiment errors, suggesting the implementation needs refinement. This architectural change allows more sophisticated memory dynamics than the current single residual addition, with theoretical motivation from working memory models that separate information processing stages.
+
+
