@@ -128,7 +128,7 @@ class LlamaCrossAttention(nn.Module):
 
 class MemoryAugmentedLayer(nn.Module):
     """Wraps a transformer layer with memory read/write via cross-attention"""
-    def __init__(self, base_layer, memory_read_layer, memory_write_layer, initial_memory_state):
+    def __init__(self, base_layer, memory_read_layer, memory_write_layer, initial_memory_state, config=None):
         super().__init__()
         self.base_layer = base_layer
         self.memory_read = memory_read_layer
@@ -140,6 +140,7 @@ class MemoryAugmentedLayer(nn.Module):
         self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
+        self.memory_dropout = torch.nn.Dropout(config.get('memory_dropout', 0.0) if config else 0.0)
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
@@ -155,12 +156,14 @@ class MemoryAugmentedLayer(nn.Module):
         read_out = self.memory_read(hidden_states_normed, memory_normed)
         read_residual = read_out[0] if isinstance(read_out, tuple) else read_out
         read_attn_weights = read_out[1] if isinstance(read_out, tuple) and len(read_out) > 1 else None
+        read_residual = self.memory_dropout(read_residual)
         hidden_states = hidden_states + read_residual
 
         # Write to memory
         write_out = self.memory_write(memory_normed, hidden_states_normed)
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
+        write_residual = self.memory_dropout(write_residual)
         memory = memory + write_residual
         self.memory_state = memory
 

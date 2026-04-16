@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_001",
-    "em": 0.0006,
+    "variant": "iter_017",
+    "em": 0.001,
     "n_level": 8
   },
   "n_level": 8,
@@ -575,6 +575,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_016",
       "summary_logged": false,
       "token_accuracy": 0.0176
+    },
+    {
+      "id": 17,
+      "iter_tag": "iter_017",
+      "description": "Implementing memory dropout with proper configuration will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization.",
+      "hypothesis": {
+        "hypothesis": "Implementing memory dropout with proper configuration will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous experiments with memory dropout failed due to implementation issues - the config has memory_dropout values defined but the feature is not properly applied in MemoryAugmentedLayer. Per the priority rules, I must implement pending human directions before proposing new changes.",
+        "instruction": "Add memory dropout functionality to MemoryAugmentedLayer. In __init__, add: self.memory_dropout = torch.nn.Dropout(config.get('memory_dropout', 0.0)). In forward(), after computing read_residual but before adding to hidden_states, apply dropout: read_residual = self.memory_dropout(read_residual). Also apply dropout to write_residual before adding to memory. Make memory_dropout rate configurable via config.get('memory_dropout', 0.0).",
+        "human_directions_item": "14"
+      },
+      "em_score": 0.001,
+      "prev_best": 0.0006,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_017",
+      "wall_time_min": 18.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776378629.6536348,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_017",
+      "summary_logged": false,
+      "token_accuracy": 0.0206
     }
   ],
   "reference": {

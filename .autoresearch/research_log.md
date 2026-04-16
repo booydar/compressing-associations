@@ -234,3 +234,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change from the priority list. Previous experiments with memory dropout (iterations 2, 6-14) had implementation issues or were reverted. The config has memory_dropout values defined but the feature may not be properly implemented in MemoryAugmentedLayer.
 
 
+## Iter 17 — RUNNING — N=8
+**Hypothesis:** Implementing memory dropout with proper configuration will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_017
+
+
+## Iter 17 — kept — EM: 0.0010 (N=8)
+**Hypothesis:** Implementing memory dropout with proper configuration will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization.
+**Wall time:** 18.2 min
+**Result:** EM=0.0010 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous experiments with memory dropout failed due to implementation issues - the config has memory_dropout values defined but the feature is not properly applied in MemoryAugmentedLayer. Per the priority rules, I must implement pending human directions before proposing new changes.
+
+

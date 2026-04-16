@@ -31,7 +31,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Coarse selection + fine delta update
 13. [Pending] **Segment-length curriculum**
     Start `segment_size = 64`, grow to `512`
-14. [Pending] **Memory dropout**
+14. [Done] **Memory dropout**
     Randomly hide memory tokens (`p = 0.1–0.3`)
 15. [Done] **Deep supervision**
     Auxiliary loss at segment boundaries
