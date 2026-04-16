@@ -208,11 +208,17 @@ def _format_history(experiments: list[dict]) -> str:
         desc = e.get("description", "")
         hyp = e.get("hypothesis", {})
         hyp_str = hyp.get("hypothesis", "") if isinstance(hyp, dict) else str(hyp)
-        lines.append(
+        run_error = e.get("run_error")
+        line = (
             f"- iter {e.get('id', '?')} | N={e.get('n_level', '?')} | "
             f"EM={em} | {verdict} | {desc}"
             + (f"\n  hypothesis: {hyp_str}" if hyp_str else "")
         )
+        if run_error:
+            # Extract key info from error messages for better readability
+            error_preview = run_error[:200] if run_error else ""
+            line += f"\n  **Error:** {error_preview}"
+        lines.append(line)
     return "\n".join(lines)
 
 

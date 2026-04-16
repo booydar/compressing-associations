@@ -15,17 +15,6 @@ llm:
     port: 8117
 
   # planner:
-  #   provider: local
-  #   model: unsloth/Qwen3.5-27B-Q6K
-  #   host: 127.0.0.1
-  #   port: 8117
-  # executor:
-  #   provider: local
-  #   model: unsloth/Qwen3.5-27B-Q6K
-  #   host: 127.0.0.1
-  #   port: 8117
-
-  # planner:
   #   provider: anthropic          # anthropic | openai | local | cursor
   #   model: claude-opus-4-5
   #   api_key_env: ANTHROPIC_API_KEY
@@ -49,34 +38,10 @@ llm:
   #   host: 127.0.0.1
   #   port: 8765
 
-  # ── LMStudio (host: 127.0.0.1, port: 1234) ──────────────────────────────────
-  # Available models (from ~/.opencode/opencode.json):
-  #   qwen3.5-9b
-  #   qwen_qwen3.5-27b@q4_k_m
-  #   qwen_qwen3.5-27b@q5_k_m
-  #   lmstudio-community/Qwen3.5-27B-GGUF
-  #   openai/gpt-oss-20b
-  # executor:
-  #   provider: local
-  #   model: qwen3.5-9b
-  #   host: 127.0.0.1
-  #   port: 1234
-
-  # ── llama.cpp server (host: 127.0.0.1, port: 8117) ──────────────────────────
-  # Available models (from ~/.opencode/opencode.json):
-  #   unsloth/Qwen3.5-27B-Q6K
-  #   bartowski/Qwen_Qwen3.5-27B-GGUF
-  # executor:
-  #   provider: local
-  #   model: unsloth/Qwen3.5-27B-Q6K
-  #   host: 127.0.0.1
-  #   port: 8117
-
 # Experiment config is in experiment_config.yaml (can be modified by autoresearch)
 # N-level progression parameters (cannot be modified by autoresearch)
 max_iters: 200            # number of autoresearch iterations
 n_start: 2                # starting N-level (number of KV pairs)
-em_threshold: 0.99        # EM required to advance to next N-level
 
 git:
   auto_commit: true

@@ -129,22 +129,11 @@ class MemoryAugmentedLayer(nn.Module):
         self.memory_write = memory_write_layer
         self.register_buffer('initial_memory_state', initial_memory_state)
         self.memory_state = initial_memory_state
-        self.memory_read_gate = nn.Parameter(torch.tensor(0.5))
-        self.memory_write_gate = nn.Parameter(torch.tensor(0.5))
-        self.memory_forget_gate = nn.Parameter(torch.tensor(0.5))
-        self.delta_gate = nn.Parameter(torch.tensor(0.5))
 
         self.memory_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.input_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
-        
-        # Add LayerNorm for memory state after write operation
-        dim = initial_memory_state.shape[-1]
-        self.memory_state_norm = torch.nn.LayerNorm(dim, elementwise_affine=True)
-        with torch.no_grad():
-            self.memory_state_norm.weight.fill_(1.0)
-            self.memory_state_norm.bias.fill_(1.0)
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
@@ -153,30 +142,29 @@ class MemoryAugmentedLayer(nn.Module):
         else:
             memory = self.memory_state.to(hidden_states.device)
         
+        # Read from memory
         memory_normed = self.memory_layer_norm(memory)
         hidden_states_normed = self.input_layer_norm(hidden_states)
         
         read_out = self.memory_read(hidden_states_normed, memory_normed)
         read_residual = read_out[0] if isinstance(read_out, tuple) else read_out
         read_attn_weights = read_out[1] if isinstance(read_out, tuple) and len(read_out) > 1 else None
-        read_residual = self.memory_read_gate.sigmoid() * read_residual
         hidden_states = hidden_states + read_residual
 
+        # Write to memory
         write_out = self.memory_write(memory_normed, hidden_states_normed)
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
-        write_residual = self.memory_write_gate.sigmoid() * write_residual
-        delta = write_residual
-        memory = memory + self.delta_gate.sigmoid() * delta
-        
-        # Apply LayerNorm to memory state after write operation (before next cross-attention scoring)
-        memory = self.memory_state_norm(memory)
-        
+        memory = memory + write_residual
         self.memory_state = memory
 
+        # Base layer forward
+        # hidden_states = self.pre_base_layer_norm(hidden_states)
         output = self.base_layer(hidden_states, *args, **kwargs)
+        # hidden_states = hidden_states + (output[0] if isinstance(output, tuple) else output)
         hidden_states = output[0] if isinstance(output, tuple) else output
 
+        # Pass through base layer outputs (hidden_states, cache?, attentions?) and append cross-attention weights
         if isinstance(output, tuple):
             cross_attentions = (read_attn_weights, write_attn_weights)
             return (hidden_states,) + output[1:] + (cross_attentions,)
@@ -218,6 +206,7 @@ class RMCACell(torch.nn.Module):
                 dropout=attention_dropout,
                 bias=attention_bias,
             ).to(dtype=model_dtype, device=model_device)
+            # initial_memory = self.memory.unsqueeze(0).to(dtype=model_dtype, device=model_device)
             initial_memory = torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size)
             wrapped_layer = MemoryAugmentedLayer(
                 layer.to(dtype=model_dtype, device=model_device),
@@ -229,6 +218,7 @@ class RMCACell(torch.nn.Module):
 
     def forward(self, input_ids, **kwargs):
         out = self.model(input_ids=input_ids, **kwargs)
+        # memory_state = [layer.memory_state for layer in self.model.model.layers]
         return out
 
     def generate(self, input_ids, **kwargs):
@@ -249,6 +239,7 @@ class RMCAWrapperBase(torch.nn.Module):
                                         output_hidden_states=True)
             cell_outputs.append(cell_out)
 
+        # Extract labels_mask from segments if available
         labels_mask = None
         if 'labels_mask' in segments[0]:
             labels_mask = torch.cat([seg['labels_mask'] for seg in segments], dim=1)

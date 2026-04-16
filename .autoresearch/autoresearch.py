@@ -431,9 +431,10 @@ def _finalize_running_entry(
     return entry["verdict"], em
 
 
-def _mark_entry_unresolved(entry: dict, error_msg: str) -> None:
+def _mark_entry_unresolved(entry: dict, error_msg: str, planner_trace: dict | None = None, executor_trace: dict | None = None) -> None:
     started_at = entry.get("started_at", time.time())
     wall_time_min = max(0.0, (time.time() - started_at) / 60)
+    iter_tag = entry.get("iter_tag", f"iter_{entry.get('id', '?'):03d}")
     entry.update({
         "em_score": None,
         "verdict": "failed",
@@ -442,7 +443,7 @@ def _mark_entry_unresolved(entry: dict, error_msg: str) -> None:
         "metric_source": None,
         "is_partial": False,
         "recovery_status": "unresolved",
-        "needs_retry": True,
+        "needs_retry": False,
         "run_error": error_msg,
     })
     append_research_log(
@@ -450,9 +451,10 @@ def _mark_entry_unresolved(entry: dict, error_msg: str) -> None:
         f"**Error:** {error_msg}\n"
         f"**exp_path:** {entry.get('exp_path')}\n"
         f"**Recovery status:** unresolved\n"
-        f"**Next action:** retry this experiment before planning a new one.\n"
+        f"**Next action:** planner will propose new change based on error.\n"
     )
     _append_experiment_summary(entry, error_msg)
+    _save_traces_to_artifacts(iter_tag, planner_trace, executor_trace)
 
 
 def _reconcile_running_entries(memory: dict, exp_cfg: dict) -> tuple[int, int]:
@@ -472,7 +474,8 @@ def _reconcile_running_entries(memory: dict, exp_cfg: dict) -> tuple[int, int]:
         try:
             metrics = get_metrics(exp_path)
         except Exception as exc:
-            _mark_entry_unresolved(entry, f"could not recover metrics from {exp_path}: {exc}")
+            _mark_entry_unresolved(entry, f"could not recover metrics from {exp_path}: {exc}",
+                                   planner_trace=None, executor_trace=None)
             unresolved += 1
             continue
 
@@ -490,7 +493,8 @@ def _reconcile_running_entries(memory: dict, exp_cfg: dict) -> tuple[int, int]:
             + (f"**Run error:** {entry['run_error']}\n" if entry.get("run_error") else "")
         )
         _append_experiment_summary(entry)
-        if em >= exp_cfg["em_threshold"] and entry["n_level"] == memory["n_level"]:
+        em_threshold = exp_cfg.get("em_threshold", 0.5)
+        if em >= em_threshold and entry["n_level"] == memory["n_level"]:
             next_n = entry["n_level"] * 2
             memory["n_level"] = next_n
             memory["current_best"] = {"variant": "none", "em": -1.0, "n_level": next_n}
@@ -609,6 +613,16 @@ EXPERIMENT_TIMEOUT_SEC = 2 * 60 * 60  # 2 hours
 
 def run_experiment(exp_path: str, n_pairs: int, exp_cfg: dict) -> None:
     env = os.environ.copy()
+    
+    lr_value = exp_cfg.get("lr")
+    if lr_value is None:
+        lr_value = exp_cfg.get("learning_rate")
+    if lr_value is None:
+        raise KeyError(
+            "Learning rate not found in config. Expected 'lr' or 'learning_rate' key. "
+            f"Available keys: {list(exp_cfg.keys())}"
+        )
+    
     env.update({
         "L": str(exp_cfg["n_layer"]),
         "H": str(exp_cfg["n_head"]),
@@ -617,7 +631,7 @@ def run_experiment(exp_path: str, n_pairs: int, exp_cfg: dict) -> None:
         "V": str(exp_cfg["n_values"]),
         "N_MEM_TOKENS": str(exp_cfg["n_mem_tokens"]),
         "PAIRS_PER_SEGMENT": str(exp_cfg["pairs_per_segment"]),
-        "LR": str(exp_cfg["lr"]),
+        "LR": str(lr_value),
         "PER_DEVICE_BATCH_SIZE": str(exp_cfg["batch_size"]),
         "EVAL_STEPS": str(exp_cfg["eval_steps"]),
         "LOGGING_STEPS": str(exp_cfg["logging_steps"]),
@@ -625,7 +639,13 @@ def run_experiment(exp_path: str, n_pairs: int, exp_cfg: dict) -> None:
         "EARLY_STOPPING_PATIENCE": str(exp_cfg["early_stopping_patience"]),
         "BASE_MODEL": str(exp_cfg["base_model"]),
     })
-    cmd = ["bash", str(RUN_SCRIPT), exp_path, str(n_pairs), str(exp_cfg["max_steps"])]
+    max_steps = exp_cfg.get("max_steps")
+    if max_steps is None:
+        raise KeyError(
+            f"max_steps not found in config. Available keys: {list(exp_cfg.keys())}"
+        )
+    
+    cmd = ["bash", str(RUN_SCRIPT), exp_path, str(n_pairs), str(max_steps)]
     print(f"[run] {' '.join(cmd)}")
     try:
         result = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=EXPERIMENT_TIMEOUT_SEC)
@@ -903,6 +923,10 @@ def _run_iter(
     run_error = None
     try:
         run_experiment(exp_path, n_pairs=n_level, exp_cfg=exp_cfg)
+    except KeyError as e:
+        error_msg = f"Configuration error: missing required key {e}. Current exp_cfg keys: {list(exp_cfg.keys())}"
+        print(f"[experiment] ERROR: {error_msg}")
+        run_error = error_msg
     except Exception as e:
         print(f"[experiment] ERROR: {e}")
         run_error = f"experiment error: {e}"
@@ -917,7 +941,8 @@ def _run_iter(
         print(f"[eval] ERROR reading metrics: {e}")
         if change_applied:
             _revert_entry_change(running_entry)
-        _mark_entry_unresolved(running_entry, run_error or f"eval error: {e}")
+        _mark_entry_unresolved(running_entry, run_error or f"eval error: {e}",
+                               planner_trace=planner_trace, executor_trace=executor_trace)
         save_memory(memory)
         return
 
@@ -960,9 +985,15 @@ def _run_iter(
     append_research_log(log_entry)
 
     # ── Advance N-level if threshold reached ──
-    if em >= exp_cfg["em_threshold"]:
+    em_threshold = exp_cfg.get("em_threshold")
+    if em_threshold is None:
+        raise KeyError(
+            f"em_threshold not found in config. Available keys: {list(exp_cfg.keys())}"
+        )
+    
+    if em >= em_threshold:
         next_n = n_level * 2
-        print(f"[advance] EM={em:.4f} >= {exp_cfg['em_threshold']} — advancing N: {n_level} → {next_n}")
+        print(f"[advance] EM={em:.4f} >= {em_threshold} — advancing N: {n_level} → {next_n}")
         n_level = next_n
         memory["n_level"] = n_level
         current_best_em = -1.0
@@ -970,7 +1001,7 @@ def _run_iter(
         update_program_md(n_level, current_best_em, best_variant)
         append_research_log(
             f"## >>> N-level advanced to N={n_level} <<<\n"
-            f"Previous N achieved EM={em:.4f} >= threshold {exp_cfg['em_threshold']}.\n"
+            f"Previous N achieved EM={em:.4f} >= threshold {em_threshold}.\n"
         )
 
     save_memory(memory)
