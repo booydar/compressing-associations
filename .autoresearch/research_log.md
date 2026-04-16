@@ -260,3 +260,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Implementing human direction item #15 (Deep supervision). This is an architectural change, but follows human priority over hyperparameter tuning. Deep supervision is a well-established technique that adds auxiliary loss signals at intermediate layers to improve gradient flow and prevent vanishing gradients in deep recurrent memory architectures.
 
 
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Adding auxiliary retrieval losses at intermediate memory layers with proper gradient flow will improve EM accuracy by ensuring all layers encode task-relevant key-value information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_020
+
+
+## Iter 20 — reverted — EM: 0.0032 (N=16)
+**Hypothesis:** Adding auxiliary retrieval losses at intermediate memory layers with proper gradient flow will improve EM accuracy by ensuring all layers encode task-relevant key-value information.
+**Wall time:** 73.1 min
+**Result:** EM=0.0032 vs prev best=0.0138
+**Metric source:** all_results
+**Rationale:** Implementing human direction item #15 (Deep supervision). Previous attempts in iterations 18-19 failed due to implementation bugs. This version properly computes auxiliary retrieval losses at intermediate layers with correct gradient propagation through memory states.
+
+

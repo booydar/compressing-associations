@@ -598,6 +598,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_018_retry1",
       "summary_logged": false,
       "token_accuracy": 0.0804
+    },
+    {
+      "id": 20,
+      "iter_tag": "iter_020",
+      "description": "Adding auxiliary retrieval losses at intermediate memory layers with proper gradient flow will improve EM accuracy by ensuring all layers encode task-relevant key-value information.",
+      "hypothesis": {
+        "hypothesis": "Adding auxiliary retrieval losses at intermediate memory layers with proper gradient flow will improve EM accuracy by ensuring all layers encode task-relevant key-value information.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human direction item #15 (Deep supervision). Previous attempts in iterations 18-19 failed due to implementation bugs. This version properly computes auxiliary retrieval losses at intermediate layers with correct gradient propagation through memory states.",
+        "instruction": "Add deep supervision to MemoryAugmentedLayer: (1) Add 'use_deep_supervision' flag to RMCAConfig, (2) In MemoryAugmentedLayer.forward(), compute auxiliary retrieval loss by projecting memory_state to value predictions using a linear layer, (3) Store auxiliary losses in a list, (4) In RMCAWrapperBase.process_outputs(), sum auxiliary losses with weight 0.1 each, (5) Add config parameter deep_supervision_layers to specify which layers get auxiliary losses (e.g., [0, 1] for first half of layers). Ensure gradient flows through memory states for auxiliary loss computation.",
+        "human_directions_item": "15"
+      },
+      "em_score": 0.0032,
+      "prev_best": 0.0138,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_020",
+      "wall_time_min": 73.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776338784.507588,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_020",
+      "summary_logged": false,
+      "token_accuracy": 0.0672
     }
   ],
   "reference": {
