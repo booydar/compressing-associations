@@ -144,3 +144,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Human direction item #17 (RMCA-Delta) is pending and takes absolute priority per the rules. Previous delta rule attempts (items 3, 5, 7) were reverted or kept with varying results, but item 17 specifically calls for this architectural change that has not been fully explored. This is an architectural change required before hyperparameter tuning can proceed.
 
 
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_011
+
+
+## Iter 11 — reverted — EM: 0.0106 (N=16)
+**Hypothesis:** Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates.
+**Wall time:** 70.9 min
+**Result:** EM=0.0106 vs prev best=0.0134
+**Metric source:** all_results
+**Rationale:** Human direction #16 (Gradient clipping sweep) is the highest priority pending item and must be implemented before any other hyperparameter or architectural changes. Gradient clipping is a critical training hyperparameter that controls gradient norm during backpropagation, which can significantly impact convergence stability for memory-augmented networks. This is a training hyperparameter change, not architectural.
+
+
