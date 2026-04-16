@@ -235,3 +235,28 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Human direction item #16 (Gradient clipping sweep) is the highest priority pending task. Previous attempts (iterations 11-16) used various thresholds but all were reverted, suggesting a more systematic sweep with specific max_grad_norm values is needed. This is a hyperparameter change that must be exhausted before architectural modifications.
 
 
+## Iter 18 — RUNNING — N=16
+**Hypothesis:** Adding deep supervision with auxiliary retrieval losses at intermediate memory layers will improve EM accuracy by providing stronger gradient signals that guide memory states to encode task-relevant key-value information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_018
+
+
+## Iter 18 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_018
+**Recovery status:** unresolved
+**Next action:** retry this experiment before planning a new one.
+
+
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Adding deep supervision with auxiliary retrieval losses at intermediate memory layers will improve EM accuracy by providing stronger gradient signals that guide memory states to encode task-relevant key-value information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_018_retry1
+
+
+## Iter 19 — reverted — EM: 0.0048 (N=16)
+**Hypothesis:** Adding deep supervision with auxiliary retrieval losses at intermediate memory layers will improve EM accuracy by providing stronger gradient signals that guide memory states to encode task-relevant key-value information.
+**Wall time:** 71.9 min
+**Result:** EM=0.0048 vs prev best=0.0138
+**Metric source:** all_results
+**Rationale:** Implementing human direction item #15 (Deep supervision). This is an architectural change, but follows human priority over hyperparameter tuning. Deep supervision is a well-established technique that adds auxiliary loss signals at intermediate layers to improve gradient flow and prevent vanishing gradients in deep recurrent memory architectures.
+
+
