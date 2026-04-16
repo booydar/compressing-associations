@@ -157,3 +157,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Human direction #16 (Gradient clipping sweep) is the highest priority pending item and must be implemented before any other hyperparameter or architectural changes. Gradient clipping is a critical training hyperparameter that controls gradient norm during backpropagation, which can significantly impact convergence stability for memory-augmented networks. This is a training hyperparameter change, not architectural.
 
 
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_012
+
+
+## Iter 12 — reverted — EM: 0.0056 (N=16)
+**Hypothesis:** Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.
+**Wall time:** 72.1 min
+**Result:** EM=0.0056 vs prev best=0.0134
+**Metric source:** all_results
+**Rationale:** Implementing human direction #16 (Gradient clipping sweep) as it is the highest priority pending item. Previous experiments (iter 11) attempted gradient clipping but were reverted; a systematic sweep of clipping values may find an optimal range that was missed.
+
+

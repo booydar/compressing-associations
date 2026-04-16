@@ -359,6 +359,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_011",
       "summary_logged": false,
       "token_accuracy": 0.1122
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.",
+      "hypothesis": {
+        "hypothesis": "Implementing a gradient clipping sweep will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Implementing human direction #16 (Gradient clipping sweep) as it is the highest priority pending item. Previous experiments (iter 11) attempted gradient clipping but were reverted; a systematic sweep of clipping values may find an optimal range that was missed.",
+        "instruction": "Add a gradient_clipping parameter to .autoresearch/experiment_config.yaml with a sweep of values: [0.1, 0.5, 1.0, 5.0]. Update the trainer to use this value when calling torch.nn.utils.clip_grad_norm_() during training.",
+        "human_directions_item": "16"
+      },
+      "em_score": 0.0056,
+      "prev_best": 0.0134,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_012",
+      "wall_time_min": 72.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776305841.262809,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/.autoresearch/artifacts/iter_012",
+      "summary_logged": false,
+      "token_accuracy": 0.0782
     }
   ],
   "reference": {
