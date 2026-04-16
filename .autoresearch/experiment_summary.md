@@ -46,3 +46,13 @@ Use -f if you really want to add them.
 - Rationale: (none)
 - exp_path: 
 
+## Iter 12 | failed | N=8
+- Hypothesis: Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous experiments with memory dropout were reverted without establishing improvement, suggesting the implementation needs refinement. The current config has memory_dropout values defined but the feature may not be properly implemented in the model code.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_012
+

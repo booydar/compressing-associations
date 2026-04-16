@@ -171,3 +171,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). Previous iterations 2-10 attempted memory dropout but resulted in failures or reverted changes. The current implementation needs to properly integrate memory dropout as a configurable parameter that applies dropout to memory states during training only. This is a hyperparameter/architectural hybrid that adds regularization specifically to memory tokens.
 
 
+## Iter 12 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_012
+
+
+## Iter 12 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_012
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 13 — RUNNING — N=8
+**Hypothesis:** Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_013
+
+
+## Iter 13 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.
+**Wall time:** 17.5 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Memory dropout (item 14) has been tried in iterations 2, 4-12 with no successful improvement - all were reverted or failed. Further hyperparameter tuning of dropout rates is unlikely to help. A curriculum learning approach (item 13) is a different strategy that systematically varies training difficulty, which has theoretical grounding for improving sequence learning generalization.
+
+
