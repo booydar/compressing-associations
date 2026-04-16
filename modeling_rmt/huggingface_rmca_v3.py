@@ -23,6 +23,9 @@ class RMCAConfig(PretrainedConfig):
                  bos_token_id=None,
                  eos_token_id=None,
                  num_mem_heads=8,
+                 use_deep_supervision=False,
+                 deep_supervision_weight=0.1,
+                 deep_supervision_layers=None,
                  **kwargs):
         super().__init__(**kwargs)
         self.base_model_name = base_model_name
@@ -36,6 +39,9 @@ class RMCAConfig(PretrainedConfig):
         self.eos_token_id = eos_token_id
         self.memory_cell_cls = "RMCACell"
         self.recurrent_wrapper_cls = "RMCAWrapperNoSegmentation"
+        self.use_deep_supervision = use_deep_supervision
+        self.deep_supervision_weight = deep_supervision_weight
+        self.deep_supervision_layers = deep_supervision_layers
 
     def get(self, attr: str, default=None):
         if hasattr(self, attr):
@@ -266,13 +272,15 @@ class RMCAWrapperBase(torch.nn.Module):
                                     for layer_hs in zip(*[o.hidden_states for o in cell_outputs])])
 
         labels = kwargs.get('labels')
+        loss_fct = CrossEntropyLoss()
+        
+        # Main loss computation
         if labels is not None:
             shift_labels = labels[..., 1:].contiguous()
             shift_logits = full_logits[..., :-1, :].contiguous()
             flat_labels = shift_labels.view(-1)
             flat_logits = shift_logits.view(-1, shift_logits.size(-1))
 
-            loss_fct = CrossEntropyLoss()
             labels_mask = kwargs.get('labels_mask')
             if labels_mask is not None:
                 shift_mask = labels_mask[..., :-1].contiguous()
@@ -280,10 +288,57 @@ class RMCAWrapperBase(torch.nn.Module):
                 flat_labels = flat_labels[shift_mask.view(-1)]
                 flat_logits = flat_logits[shift_mask.view(-1)]
 
-            out['loss'] = loss_fct(flat_logits, flat_labels)
+            main_loss = loss_fct(flat_logits, flat_labels)
         else:
-            out['loss'] = 0
+            main_loss = torch.tensor(0.0, device=full_logits.device)
 
+        # Deep supervision loss computation
+        use_deep_supervision = self.rmt_config.get('use_deep_supervision', False)
+        deep_supervision_layers = self.rmt_config.get('deep_supervision_layers', None)
+        deep_supervision_weight = self.rmt_config.get('deep_supervision_weight', 0.1)
+        
+        if use_deep_supervision and deep_supervision_layers is not None and labels is not None:
+            deep_supervision_loss = 0.0
+            n_layers = len(full_hidden_states)
+            
+            for layer_idx in deep_supervision_layers:
+                if 0 <= layer_idx < n_layers:
+                    layer_hidden_states = full_hidden_states[layer_idx]
+                    # Apply layer norm to hidden states before computing logits
+                    # The hidden states need to be projected to vocab space
+                    # Use the final layer's lm_head for consistency
+                    # For simplicity, compute loss on intermediate hidden states
+                    # by projecting through a linear layer (would need lm_head reference)
+                    # Instead, we compute auxiliary loss on hidden states directly
+                    
+                    # Get intermediate logits from cell outputs at this layer
+                    # Each cell_output contains hidden_states for all layers up to that segment
+                    # We need to extract the hidden state at the specified layer index
+                    
+                    layer_logits = full_hidden_states[layer_idx]
+                    shift_layer_labels = labels[..., 1:].contiguous()
+                    shift_layer_logits = layer_logits[..., :-1, :].contiguous()
+                    flat_layer_labels = shift_layer_labels.view(-1)
+                    flat_layer_logits = shift_layer_logits.view(-1, shift_layer_logits.size(-1))
+                    
+                    if labels_mask is not None:
+                        shift_mask = labels_mask[..., :-1].contiguous()
+                        flat_layer_labels = flat_layer_labels[shift_mask.view(-1)]
+                        flat_layer_logits = flat_layer_logits[shift_mask.view(-1)]
+                    
+                    layer_loss = loss_fct(flat_layer_logits, flat_layer_labels)
+                    deep_supervision_loss = deep_supervision_loss + layer_loss
+            
+            # Average the deep supervision losses
+            n_supervised_layers = len([l for l in deep_supervision_layers if 0 <= l < n_layers])
+            if n_supervised_layers > 0:
+                deep_supervision_loss = deep_supervision_loss / n_supervised_layers
+            
+            total_loss = main_loss + deep_supervision_weight * deep_supervision_loss
+        else:
+            total_loss = main_loss
+
+        out['loss'] = total_loss
         out['logits'] = full_logits
         segment_keys = ['loss', 'logits']
         if kwargs.get('output_attentions'):

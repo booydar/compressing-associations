@@ -16,6 +16,7 @@ n_mem_tokens: 32
 # Model flags for deep supervision
 use_deep_supervision: true
 deep_supervision_weight: 0.1
+deep_supervision_layers: [1, 2, 3]
 
 # Task parameters
 n_keys: 2
@@ -37,3 +38,8 @@ weight_decay: 0.01
 max_grad_norm:
   values: [0.1, 0.5, 1.0, 2.0]
   default: 1.0
+
+# Memory dropout configuration
+memory_dropout:
+  values: [0.0, 0.1, 0.2, 0.3]
+  default: 0.1

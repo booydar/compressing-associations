@@ -33,7 +33,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Start `segment_size = 64`, grow to `512`
 14. [Pending] **Memory dropout**
     Randomly hide memory tokens (`p = 0.1–0.3`)
-15. [Pending] **Deep supervision**
+15. [Done] **Deep supervision**
     Auxiliary loss at segment boundaries
 16. [Done] **Gradient clipping sweep**
     Test `clip_norm ∈ {0.1, 1.0, 5.0}`
