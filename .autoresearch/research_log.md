@@ -183,3 +183,16 @@ Previous N achieved EM=0.6490 >= threshold 0.5.
 **Rationale:** Implementing human_directions item #16 (Gradient clipping sweep). Previous attempts at gradient clipping (iter 11-12) were reverted, suggesting the clipping threshold was suboptimal. A systematic sweep across multiple values is needed to find the optimal threshold for stabilizing the memory write/read gates which can cause gradient instability.
 
 
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Implementing a gradient clipping sweep with carefully tuned thresholds will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.2/runs-autoresearch/n16/iter_014
+
+
+## Iter 14 — reverted — EM: 0.0034 (N=16)
+**Hypothesis:** Implementing a gradient clipping sweep with carefully tuned thresholds will improve EM accuracy by preventing exploding gradients during training and stabilizing memory state updates in the recurrent memory architecture.
+**Wall time:** 61.8 min
+**Result:** EM=0.0034 vs prev best=0.0134
+**Metric source:** all_results
+**Rationale:** Human direction #16 is the highest priority pending item to implement. Gradient clipping was previously attempted (iterations 11-13) but all experiments were reverted. This change will explore a more comprehensive sweep of gradient clipping thresholds (0.1, 0.5, 1.0, 2.0, 5.0, 10.0) to find the optimal value for stabilizing memory updates.
+
+
