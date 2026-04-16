@@ -56,3 +56,13 @@ Use -f if you really want to add them.
 - Rationale: Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous experiments with memory dropout were reverted without establishing improvement, suggesting the implementation needs refinement. The current config has memory_dropout values defined but the feature may not be properly implemented in the model code.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_012
 
+## Iter 15 | failed | N=8
+- Hypothesis: Sweeping memory token count (n_mem_tokens) across values [8, 16, 32, 64] will find optimal capacity for associative retrieval, as current config shows 32 but default is 8 suggesting unexplored range.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Memory dropout (human_directions item #14) has been tried extensively in iterations 2, 5-14 with no improvement. Per HYPERPARAMETER-FIRST policy, I sweep hyperparameters before architectural changes. The current n_mem_tokens=32 differs from the documented default of 8, and no systematic sweep has been done. This is a hyperparameter change, not architectural.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_015
+

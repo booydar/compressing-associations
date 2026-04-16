@@ -209,3 +209,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change from the human directions list. The experiment config already defines memory_dropout values [0.0, 0.1, 0.2, 0.3] but previous experiments failed, suggesting the feature needs proper implementation in the model code. Hyperparameters have not been exhausted yet - this is a human-directed architectural change that should be implemented before exhaustive hyperparameter tuning.
 
 
+## Iter 15 — RUNNING — N=8
+**Hypothesis:** Sweeping memory token count (n_mem_tokens) across values [8, 16, 32, 64] will find optimal capacity for associative retrieval, as current config shows 32 but default is 8 suggesting unexplored range.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_015
+
+
+## Iter 15 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_015
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 16 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout with a configurable rate will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_016
+
+
+## Iter 16 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Adding memory dropout with a configurable rate will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization on the associative retrieval task.
+**Wall time:** 28.8 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change from the priority list. Previous experiments with memory dropout (iterations 2, 6-14) had implementation issues or were reverted. The config has memory_dropout values defined but the feature may not be properly implemented in MemoryAugmentedLayer.
+
+
