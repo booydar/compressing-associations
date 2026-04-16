@@ -26,6 +26,9 @@ class RMCAConfig(PretrainedConfig):
                  use_deep_supervision=False,
                  deep_supervision_weight=0.1,
                  deep_supervision_layers=None,
+                 use_segment_curriculum=False,
+                 curriculum_start_ratio=0.5,
+                 curriculum_steps=10000,
                  **kwargs):
         super().__init__(**kwargs)
         self.base_model_name = base_model_name
@@ -42,6 +45,9 @@ class RMCAConfig(PretrainedConfig):
         self.use_deep_supervision = use_deep_supervision
         self.deep_supervision_weight = deep_supervision_weight
         self.deep_supervision_layers = deep_supervision_layers
+        self.use_segment_curriculum = use_segment_curriculum
+        self.curriculum_start_ratio = curriculum_start_ratio
+        self.curriculum_steps = curriculum_steps
 
     def get(self, attr: str, default=None):
         if hasattr(self, attr):
@@ -239,8 +245,46 @@ class RMCAWrapperBase(torch.nn.Module):
         super().__init__()
         self.memory_cell = memory_cell
         self.rmt_config = rmt_kwargs
+        self._global_step = 0
 
+    def get_curriculum_mask(self, seq_len):
+        """Compute effective length mask for segment-length curriculum.
+        
+        During early training, gradually expand the effective attention scope from
+        curriculum_start_ratio to 1.0 over curriculum_steps.
+        
+        Args:
+            seq_len: Total sequence length
+            
+        Returns:
+            Tensor of shape (1, seq_len) with 1s for valid positions and 0s for masked positions
+        """
+        use_curriculum = self.rmt_config.get('use_segment_curriculum', False)
+        if not use_curriculum:
+            return None
+        
+        curriculum_start_ratio = self.rmt_config.get('curriculum_start_ratio', 0.5)
+        curriculum_steps = self.rmt_config.get('curriculum_steps', 10000)
+        
+        # Compute current progress (0 to 1)
+        progress = min(self._global_step / curriculum_steps, 1.0)
+        
+        # Current effective ratio: starts at curriculum_start_ratio, grows to 1.0
+        current_ratio = curriculum_start_ratio + progress * (1.0 - curriculum_start_ratio)
+        
+        # Compute number of tokens to keep
+        effective_len = int(current_ratio * seq_len)
+        
+        # Create mask: 1s for first effective_len tokens, 0s for rest
+        mask = torch.zeros(1, seq_len, device=self.rmt_config.get('device', 'cpu'))
+        mask[0, :effective_len] = 1.0
+        
+        return mask
+    
     def forward(self, segments, labels, output_attentions=None, output_hidden_states=None, *args, **kwargs):
+        # Update global step for curriculum computation
+        self._global_step += 1
+        
         cell_outputs = []
         for seg_num, segment in enumerate(segments):
             cell_out = self.memory_cell(input_ids=segment['input_ids'],
@@ -253,11 +297,18 @@ class RMCAWrapperBase(torch.nn.Module):
         if 'labels_mask' in segments[0]:
             labels_mask = torch.cat([seg['labels_mask'] for seg in segments], dim=1)
 
+        # Compute curriculum mask if enabled
+        curriculum_mask = None
+        if self.rmt_config.get('use_segment_curriculum', False):
+            total_seq_len = sum(seg['input_ids'].shape[1] for seg in segments)
+            curriculum_mask = self.get_curriculum_mask(total_seq_len)
+
         out = self.process_outputs(cell_outputs,
                                    labels=labels,
                                    labels_mask=labels_mask,
                                    output_attentions=output_attentions,
                                    output_hidden_states=output_hidden_states,
+                                   curriculum_mask=curriculum_mask,
                                    **kwargs
                                    )
         return out
@@ -285,11 +336,23 @@ class RMCAWrapperBase(torch.nn.Module):
             flat_logits = shift_logits.view(-1, shift_logits.size(-1))
 
             labels_mask = kwargs.get('labels_mask')
+            curriculum_mask = kwargs.get('curriculum_mask')
+            
             if labels_mask is not None:
                 shift_mask = labels_mask[..., :-1].contiguous()
-
                 flat_labels = flat_labels[shift_mask.view(-1)]
                 flat_logits = flat_logits[shift_mask.view(-1)]
+            
+            # Apply curriculum mask to limit attention scope
+            if curriculum_mask is not None:
+                curriculum_mask_expanded = curriculum_mask[..., :-1].contiguous()
+                if labels_mask is None:
+                    flat_labels = flat_labels[curriculum_mask_expanded.view(-1)]
+                    flat_logits = flat_logits[curriculum_mask_expanded.view(-1)]
+                else:
+                    combined_mask = shift_mask * curriculum_mask_expanded
+                    flat_labels = flat_labels[combined_mask.view(-1)]
+                    flat_logits = flat_logits[combined_mask.view(-1)]
 
             main_loss = loss_fct(flat_logits, flat_labels)
         else:

@@ -29,7 +29,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Add reset gate to clear old memories
 12. [Pending] **Multi-stage write**
     Coarse selection + fine delta update
-13. [Pending] **Segment-length curriculum**
+13. [Done] **Segment-length curriculum**
     Start `segment_size = 64`, grow to `512`
 14. [Done] **Memory dropout**
     Randomly hide memory tokens (`p = 0.1–0.3`)

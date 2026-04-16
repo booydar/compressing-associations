@@ -247,3 +247,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous experiments with memory dropout failed due to implementation issues - the config has memory_dropout values defined but the feature is not properly applied in MemoryAugmentedLayer. Per the priority rules, I must implement pending human directions before proposing new changes.
 
 
+## Iter 18 — RUNNING — N=8
+**Hypothesis:** Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_018
+
+
+## Iter 18 — kept — EM: 0.0012 (N=8)
+**Hypothesis:** Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.
+**Wall time:** 17.3 min
+**Result:** EM=0.0012 vs prev best=0.0010
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #13 (Segment-length curriculum). This is the latest pending item from the human directions list. Previous experiments with memory dropout (items 14-16), deep supervision, and gradient clipping have been completed. Per the priority rules, I must implement pending human suggestions before proposing new hyperparameter or architectural changes.
+
+

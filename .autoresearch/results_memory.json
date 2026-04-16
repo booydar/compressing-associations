@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_017",
-    "em": 0.001,
+    "variant": "iter_018",
+    "em": 0.0012,
     "n_level": 8
   },
   "n_level": 8,
@@ -605,6 +605,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_017",
       "summary_logged": false,
       "token_accuracy": 0.0206
+    },
+    {
+      "id": 18,
+      "iter_tag": "iter_018",
+      "description": "Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.",
+      "hypothesis": {
+        "hypothesis": "Implementing a segment-length curriculum that starts with shorter segments and gradually increases length will improve the model's ability to generalize to longer associative retrieval tasks.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #13 (Segment-length curriculum). This is the latest pending item from the human directions list. Previous experiments with memory dropout (items 14-16), deep supervision, and gradient clipping have been completed. Per the priority rules, I must implement pending human suggestions before proposing new hyperparameter or architectural changes.",
+        "instruction": "Add a curriculum learning mechanism to RMCAWrapperBase that gradually increases the effective segment length during training. Add a new config parameter 'use_segment_curriculum' (default False) and 'curriculum_start_ratio' (default 0.5) and 'curriculum_steps' (default 10000). In the forward method, compute an effective length mask that gradually expands from curriculum_start_ratio to 1.0 over curriculum_steps, applying this mask to limit the attention scope during early training stages.",
+        "human_directions_item": "13"
+      },
+      "em_score": 0.0012,
+      "prev_best": 0.001,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_018",
+      "wall_time_min": 17.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776379917.1915207,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_018",
+      "summary_logged": false,
+      "token_accuracy": 0.0244
     }
   ],
   "reference": {
