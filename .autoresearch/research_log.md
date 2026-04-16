@@ -145,3 +145,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout) as it is the highest priority pending item. This is a regularization technique specifically targeting memory tokens, which has not been thoroughly explored despite multiple memory dropout experiments failing due to git issues rather than architectural problems.
 
 
+## Iter 10 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_010
+
+
+## Iter 10 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.
+**Wall time:** 28.1 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending regularization technique that has not been fully explored despite being listed. Previous attempts showed instability but the configuration shows memory_dropout values [0.0, 0.1, 0.2, 0.3] are configured for exploration. Hyperparameter exploration is still in progress as per the config.
+
+
