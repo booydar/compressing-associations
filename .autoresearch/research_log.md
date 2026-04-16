@@ -80,3 +80,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous deep supervision and gradient clipping have been tried, but memory-specific regularization has not yet been explored.
 
 
+## Iter 5 — RUNNING — N=8
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction of memory tokens during training, preventing overfitting to specific memory patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_005
+
+
+## Iter 5 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction of memory tokens during training, preventing overfitting to specific memory patterns.
+**Wall time:** 24.6 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous experiments with memory dropout failed due to infrastructure issues (git add errors), not the concept itself. Memory dropout directly targets memory regularization which has not been successfully tested yet.
+
+
