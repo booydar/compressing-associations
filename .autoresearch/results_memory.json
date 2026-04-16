@@ -247,6 +247,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_005",
       "summary_logged": false,
       "token_accuracy": 0.0187
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "Memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous deep supervision (item #15) and gradient clipping (item #16) have been completed, but memory-specific regularization has not yet been successfully implemented. Memory dropout values [0.0, 0.1, 0.2, 0.3] are already configured in experiment_config.yaml.",
+        "instruction": "Add memory dropout to MemoryAugmentedLayer in modeling_rmt/huggingface_rmca_v3.py: 1) Add a memory_dropout parameter to the __init__ method, 2) Apply dropout to the memory_read output before adding it to hidden_states (only during training), 3) The dropout should randomly zero out entire memory token vectors with the specified probability. Use F.dropout on the read_residual with p=memory_dropout parameter.",
+        "human_directions_item": "14"
+      },
+      "em_score": 0.0002,
+      "prev_best": 0.0006,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_006",
+      "wall_time_min": 30.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776363538.4831257,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_006",
+      "summary_logged": false,
+      "token_accuracy": 0.0192
     }
   ],
   "reference": {

@@ -93,3 +93,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous experiments with memory dropout failed due to infrastructure issues (git add errors), not the concept itself. Memory dropout directly targets memory regularization which has not been successfully tested yet.
 
 
+## Iter 6 — RUNNING — N=8
+**Hypothesis:** Memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_006
+
+
+## Iter 6 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting and improving generalization on the associative retrieval task.
+**Wall time:** 30.6 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Implementing human directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous deep supervision (item #15) and gradient clipping (item #16) have been completed, but memory-specific regularization has not yet been successfully implemented. Memory dropout values [0.0, 0.1, 0.2, 0.3] are already configured in experiment_config.yaml.
+
+
