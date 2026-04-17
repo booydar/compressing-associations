@@ -126,3 +126,13 @@ Use -f if you really want to add them.
 - Rationale: Implementing human_directions item #12 (Multi-stage write). Previous attempts (iterations 19-28) failed due to implementation issues. The current MemoryAugmentedLayer at line 137 uses simple residual addition (memory = memory + write_residual). Multi-stage write with adaptive gating allows the model to learn update weights, providing more sophisticated memory dynamics.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_029
 
+## Iter 31 | failed | N=8
+- Hypothesis: FAILED: planner failed after 3 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 3 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+

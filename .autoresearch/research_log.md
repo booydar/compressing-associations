@@ -410,3 +410,21 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous 11 attempts (iterations 19-29) failed due to implementation complexity. All hyperparameters in the config have been explored (memory_dropout sweeps, gradient clipping, deep supervision, curriculum), but the core memory update mechanism remains a simple residual addition. A simplified multi-stage approach with just a learnable merge gate at line 137 will provide adaptive weighting without the read/update/merge complexity that caused failures.
 
 
+## Iter 31 — FAILED — N=8
+**Error:** planner failed after 3 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 32 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_032
+
+
+## Iter 32 — reverted — EM: 0.0000 (N=8)
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**Wall time:** 25.4 min
+**Result:** EM=0.0000 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-30) have shown marginal EM improvements (0.0002-0.0006) but suffered from implementation issues causing experiment failures. The current implementation at line 137-147 uses a merge gate but may need refinement. Per HYPERPARAMETER-FIRST policy, hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism itself remains unoptimized.
+
+
