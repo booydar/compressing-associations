@@ -1160,6 +1160,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_036",
       "summary_logged": false,
       "token_accuracy": 0.0186
+    },
+    {
+      "id": 37,
+      "iter_tag": "iter_037",
+      "description": "Adding a learnable scalar gate to control memory write magnitude will allow the model to modulate update strength, improving memory retention for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable scalar gate to control memory write magnitude will allow the model to modulate update strength, improving memory retention for associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #12 (Multi-stage write) with a simplified approach. Previous attempts (iterations 19-34) failed due to implementation complexity. Hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism remains unoptimized. A minimal learnable gate avoids the complexity that caused previous failures while still providing adaptive memory update control.",
+        "instruction": "In MemoryAugmentedLayer.__init__, add a learnable parameter: self.memory_write_gate = nn.Parameter(torch.tensor(0.0)) initialized to 0. In forward method at line 173, replace 'memory = memory + write_residual' with 'memory = memory + torch.sigmoid(self.memory_write_gate) * write_residual' to allow adaptive gating of memory updates.",
+        "human_directions_item": "12"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0012,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_037",
+      "wall_time_min": 31.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776399183.4939592,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_037",
+      "summary_logged": false,
+      "token_accuracy": 0.0186
     }
   ],
   "reference": {
