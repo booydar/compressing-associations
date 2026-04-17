@@ -385,3 +385,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-27) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues that need to be fixed. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 13, 14 marked Done), but the memory update mechanism itself remains unoptimized.
 
 
+## Iter 29 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with adaptive gating weights will improve memory utilization by learning which updates to apply rather than using uniform residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_029
+
+
+## Iter 29 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_029
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 30 — RUNNING — N=8
+**Hypothesis:** Implementing a simpler multi-stage write with learnable merge gate will improve memory utilization by allowing adaptive weighting between old memory and new writes without the complexity that caused previous failures.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_030
+
+
+## Iter 30 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Implementing a simpler multi-stage write with learnable merge gate will improve memory utilization by allowing adaptive weighting between old memory and new writes without the complexity that caused previous failures.
+**Wall time:** 43.3 min
+**Result:** EM=0.0002 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous 11 attempts (iterations 19-29) failed due to implementation complexity. All hyperparameters in the config have been explored (memory_dropout sweeps, gradient clipping, deep supervision, curriculum), but the core memory update mechanism remains a simple residual addition. A simplified multi-stage approach with just a learnable merge gate at line 137 will provide adaptive weighting without the read/update/merge complexity that caused failures.
+
+

@@ -116,3 +116,13 @@ Use -f if you really want to add them.
 - Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-25) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 14, 13 marked Done), but the memory update mechanism itself remains unoptimized.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_026
 
+## Iter 29 | failed | N=8
+- Hypothesis: Implementing multi-stage memory write with adaptive gating weights will improve memory utilization by learning which updates to apply rather than using uniform residual addition.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Implementing human_directions item #12 (Multi-stage write). Previous attempts (iterations 19-28) failed due to implementation issues. The current MemoryAugmentedLayer at line 137 uses simple residual addition (memory = memory + write_residual). Multi-stage write with adaptive gating allows the model to learn update weights, providing more sophisticated memory dynamics.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_029
+
