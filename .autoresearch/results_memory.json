@@ -170,6 +170,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_005",
       "summary_logged": false,
       "token_accuracy": 0.0074
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "A sweep over n_embd values will explore whether a larger or smaller hidden dimension improves the model's capacity to learn associative patterns.",
+      "hypothesis": {
+        "hypothesis": "A sweep over n_embd values will explore whether a larger or smaller hidden dimension improves the model's capacity to learn associative patterns.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Learning rate sweep (iter_4) and n_mem_tokens sweep (iter_5) have been attempted but only learning_rate produced valid results. n_embd has not been swept yet and is a key architectural hyperparameter that directly affects model capacity. Current n_embd=128 may be suboptimal for the task complexity.",
+        "instruction": "Change n_embd in .autoresearch/experiment_config.yaml to a sweep format: n_embd:\\n  values: [64, 128, 256]\\n  default: 128",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_006",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776426381.3171096,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_006",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

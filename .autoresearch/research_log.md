@@ -796,3 +796,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - only learning_rate was swept (iter_4 achieved EM=0.7442). n_mem_tokens has a pending sweep configuration [16,32,64,128] that has not been executed. Memory token capacity is critical for associative retrieval tasks.
 
 
+## Iter 6 — RUNNING — N=8
+**Hypothesis:** A sweep over n_embd values will explore whether a larger or smaller hidden dimension improves the model's capacity to learn associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_006
+
+
+## Iter 6 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A sweep over n_embd values will explore whether a larger or smaller hidden dimension improves the model's capacity to learn associative patterns.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Learning rate sweep (iter_4) and n_mem_tokens sweep (iter_5) have been attempted but only learning_rate produced valid results. n_embd has not been swept yet and is a key architectural hyperparameter that directly affects model capacity. Current n_embd=128 may be suboptimal for the task complexity.
+
+
