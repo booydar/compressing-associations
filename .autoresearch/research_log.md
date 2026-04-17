@@ -952,3 +952,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been partially exhausted: learning_rate, n_mem_tokens, n_embd, warmup_steps, max_steps, and n_layer have all been swept with mixed results (best EM=0.7442). Batch_size has not been systematically explored - the current value of 128 may be affecting gradient stability and convergence. A batch_size sweep will explore whether smaller batches (better generalization) or larger batches (better gradient estimates) improve performance.
 
 
+## Iter 13 — RUNNING — N=8
+**Hypothesis:** A weight_decay sweep will identify the optimal regularization strength for preventing overfitting while allowing the model to learn associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_013
+
+
+## Iter 20 — reverted — EM: 0.0198 (N=8)
+**Hypothesis:** Disabling deep supervision will improve EM accuracy by allowing the model to focus on the primary associative retrieval objective without conflicting auxiliary loss signals from intermediate layers.
+**Wall time:** 76.1 min
+**Result:** EM=0.0198 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted (learning_rate, n_mem_tokens, batch_size, max_steps sweeps all tried). Deep supervision adds auxiliary losses on layers [1,2,3] which may interfere with learning the exact-match task. The best EM (0.0228) was achieved with n_layer=6 but deep supervision was also enabled then; disabling it may help convergence.
+
+
