@@ -653,3 +653,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - while a learning rate sweep was attempted in iter_4, it failed due to infrastructure issues (no checkpoints), not training failure. No n_mem_tokens sweep has been tried yet, and memory capacity is critical for associative retrieval tasks where the model must store KV pairs across segments.
 
 
+## Iter 6 — RUNNING — N=8
+**Hypothesis:** A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_006
+
+
+## Iter 6 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - learning_rate sweep (iter_4) and n_mem_tokens sweep (iter_5) were attempted but experiments failed due to checkpoint issues, not training failure. No learning_rate or batch_size sweep with successful training has been completed. Following the hyperparameter-first policy, I propose a batch_size sweep before considering architectural changes.
+
+

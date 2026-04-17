@@ -169,6 +169,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_005",
       "summary_logged": false,
       "token_accuracy": 0.0234
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity.",
+      "hypothesis": {
+        "hypothesis": "A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have not been exhausted - learning_rate sweep (iter_4) and n_mem_tokens sweep (iter_5) were attempted but experiments failed due to checkpoint issues, not training failure. No learning_rate or batch_size sweep with successful training has been completed. Following the hyperparameter-first policy, I propose a batch_size sweep before considering architectural changes.",
+        "instruction": "Change batch_size in .autoresearch/experiment_config.yaml to a sweep format with values: [32, 64, 128, 256] and default: 128",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_006",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776418792.4024987,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_006",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
