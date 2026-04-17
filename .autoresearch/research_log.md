@@ -965,3 +965,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted (learning_rate, n_mem_tokens, batch_size, max_steps sweeps all tried). Deep supervision adds auxiliary losses on layers [1,2,3] which may interfere with learning the exact-match task. The best EM (0.0228) was achieved with n_layer=6 but deep supervision was also enabled then; disabling it may help convergence.
 
 
+## Iter 21 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength, as previous sweeps in iterations 11, 14, 16, 17 had infrastructure issues rather than training failure, and the current fixed rate of 0.001 may be suboptimal.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_021
+
+
+## Iter 21 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength, as previous sweeps in iterations 11, 14, 16, 17 had infrastructure issues rather than training failure, and the current fixed rate of 0.001 may be suboptimal.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - the learning rate has been swept multiple times but experiments failed due to infrastructure issues (git add errors, checkpoint recovery) rather than demonstrating that the sweep values are ineffective. The current fixed learning_rate of 0.001 needs to be tested with a proper sweep that completes successfully.
+
+
