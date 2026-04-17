@@ -835,3 +835,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps failed due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_layer=6, n_head=4, n_embd=128.
 
 
+## Iter 17 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_017
+
+
+## Iter 17 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps have been attempted (iter 4, 7, 9, 11, 14, 16) but all failed due to infrastructure issues (git, checkpoint recovery) rather than training failure. No successful baseline has been established with EM > 0, so further hyperparameter exploration is required before architectural changes are justified.
+
+
