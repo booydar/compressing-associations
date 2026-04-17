@@ -913,3 +913,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - the learning rate sweep (iter_4) achieved EM=0.7442, but subsequent sweeps on n_mem_tokens, n_embd, and warmup_steps all reverted with poor EM scores. The current max_steps=25000 may be insufficient for full convergence, especially given that iter_1 identified this as a potential issue but failed due to a configuration error. Increasing max_steps to 50000 provides more training budget before considering architectural changes.
 
 
+## Iter 10 — RUNNING — N=8
+**Hypothesis:** A sweep over n_layer values will explore whether more or fewer transformer layers improve the model's capacity to learn and retain associative patterns across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_010
+
+
+## Iter 10 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A sweep over n_layer values will explore whether more or fewer transformer layers improve the model's capacity to learn and retain associative patterns across segments.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameter sweeps for learning_rate (best: 0.7442 EM), n_mem_tokens, n_embd, warmup_steps, and max_steps have been exhausted with no improvement over iter_4. n_layer has not been swept yet and directly affects model capacity for associative pattern learning - more layers may enable better hierarchical pattern extraction.
+
+

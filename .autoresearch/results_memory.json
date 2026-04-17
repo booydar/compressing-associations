@@ -290,6 +290,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_009",
       "summary_logged": false,
       "token_accuracy": 0.1246
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "A sweep over n_layer values will explore whether more or fewer transformer layers improve the model's capacity to learn and retain associative patterns across segments.",
+      "hypothesis": {
+        "hypothesis": "A sweep over n_layer values will explore whether more or fewer transformer layers improve the model's capacity to learn and retain associative patterns across segments.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter sweeps for learning_rate (best: 0.7442 EM), n_mem_tokens, n_embd, warmup_steps, and max_steps have been exhausted with no improvement over iter_4. n_layer has not been swept yet and directly affects model capacity for associative pattern learning - more layers may enable better hierarchical pattern extraction.",
+        "instruction": "Change n_layer from scalar 6 to sweep format with values: [4, 6, 8, 10] and default: 6. This will run experiments with 4, 6, 8, and 10 transformer layers and use the best EM across all values.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_010",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776446572.7805626,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_010",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
