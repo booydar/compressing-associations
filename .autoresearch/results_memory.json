@@ -469,6 +469,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_015",
       "summary_logged": false,
       "token_accuracy": 0.0212
+    },
+    {
+      "id": 16,
+      "iter_tag": "iter_016",
+      "description": "A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have not been exhausted - multiple learning rate sweeps failed due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_layer=6, n_head=4, n_embd=128.",
+        "instruction": "Set learning_rate to use a sweep format with values [0.0001, 0.001, 0.01] and default 0.01 in experiment_config.yaml. Replace the current fixed learning_rate: 0.001 with the sweep YAML structure.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_016",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776436844.581612,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_016",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

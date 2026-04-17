@@ -822,3 +822,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been extensively tuned (learning_rate sweeps, batch_size sweeps, n_mem_tokens, n_layer increased to 6). The baseline issue in iter_1 mentioned that with max_steps=25000 and eval_steps=500, checkpoints should have been produced but weren't. Many experiments show EM=-1.0 (reverted) suggesting training didn't complete properly. Doubling max_steps addresses potential premature termination before convergence.
 
 
+## Iter 16 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_016
+
+
+## Iter 16 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps failed due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_layer=6, n_head=4, n_embd=128.
+
+
