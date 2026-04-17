@@ -529,6 +529,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_017",
       "summary_logged": false,
       "token_accuracy": 0.3876
+    },
+    {
+      "id": 18,
+      "iter_tag": "iter_018",
+      "description": "Replacing the scalar write_gate with a learnable vector gate will enable per-token adaptive memory updates, improving retention of associative patterns.",
+      "hypothesis": {
+        "hypothesis": "Replacing the scalar write_gate with a learnable vector gate will enable per-token adaptive memory updates, improving retention of associative patterns.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876. The scalar write_gate (single value 0.5) cannot adaptively control memory updates across different memory tokens, creating an architectural bottleneck for learning diverse associative patterns.",
+        "instruction": "In MemoryAugmentedLayer.__init__, replace the scalar write_gate parameter with a learnable vector: change 'self.write_gate = nn.Parameter(torch.tensor(0.5))' to 'self.write_gate = nn.Parameter(torch.ones(1, num_mem_tokens, 1))' where num_mem_tokens should be passed to __init__. In MemoryAugmentedLayer.forward, update the memory write operation from 'memory = memory + self.write_gate * write_residual' to apply the gate elementwise: 'memory = memory + self.write_gate * write_residual' (the vector will broadcast across batch dimension). Pass num_mem_tokens to __init__ from RMCACell where MemoryAugmentedLayer is instantiated.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0032,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_018",
+      "wall_time_min": 19.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776461520.446439,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_018",
+      "summary_logged": false,
+      "token_accuracy": 0.0745
     }
   ],
   "reference": {

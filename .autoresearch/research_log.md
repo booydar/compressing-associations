@@ -1068,3 +1068,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted through sweeps (learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, n_head). Best EM achieved was only 0.1246. The deep supervision is currently active with 3 layers supervised, which may be creating conflicting gradients. Disabling deep supervision will allow the model to focus on the primary task objective.
 
 
+## Iter 18 — RUNNING — N=8
+**Hypothesis:** Replacing the scalar write_gate with a learnable vector gate will enable per-token adaptive memory updates, improving retention of associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_018
+
+
+## Iter 18 — reverted — EM: 0.0032 (N=8)
+**Hypothesis:** Replacing the scalar write_gate with a learnable vector gate will enable per-token adaptive memory updates, improving retention of associative patterns.
+**Wall time:** 19.2 min
+**Result:** EM=0.0032 vs prev best=0.7442
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876. The scalar write_gate (single value 0.5) cannot adaptively control memory updates across different memory tokens, creating an architectural bottleneck for learning diverse associative patterns.
+
+
