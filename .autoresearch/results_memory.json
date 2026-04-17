@@ -559,6 +559,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_018",
       "summary_logged": false,
       "token_accuracy": 0.0745
+    },
+    {
+      "id": 19,
+      "iter_tag": "iter_019",
+      "description": "Adding LayerNorm to normalize write residuals before memory updates will stabilize gradient flow and prevent memory state divergence during training.",
+      "hypothesis": {
+        "hypothesis": "Adding LayerNorm to normalize write residuals before memory updates will stabilize gradient flow and prevent memory state divergence during training.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876 (iter_17 with deep_supervision disabled). Scalar and vector gating mechanisms failed (iter_16, iter_18). The unnormalized write_residual may cause memory state instability - LayerNorm will stabilize update magnitudes.",
+        "instruction": "In MemoryAugmentedLayer.__init__, add a self.write_norm = torch.nn.LayerNorm(initial_memory_state.shape[-1]) after the write_gate initialization. In MemoryAugmentedLayer.forward, wrap the write_residual with this norm before applying the gate: change 'memory = memory + self.write_gate * write_residual' to 'memory = memory + self.write_gate * self.write_norm(write_residual)'.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_019",
+      "wall_time_min": 21.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776462821.7352972,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_019",
+      "summary_logged": false,
+      "token_accuracy": 0.0187
     }
   ],
   "reference": {

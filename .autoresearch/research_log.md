@@ -1081,3 +1081,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876. The scalar write_gate (single value 0.5) cannot adaptively control memory updates across different memory tokens, creating an architectural bottleneck for learning diverse associative patterns.
 
 
+## Iter 19 — RUNNING — N=8
+**Hypothesis:** Adding LayerNorm to normalize write residuals before memory updates will stabilize gradient flow and prevent memory state divergence during training.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_019
+
+
+## Iter 19 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Adding LayerNorm to normalize write residuals before memory updates will stabilize gradient flow and prevent memory state divergence during training.
+**Wall time:** 21.3 min
+**Result:** EM=0.0006 vs prev best=0.7442
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876 (iter_17 with deep_supervision disabled). Scalar and vector gating mechanisms failed (iter_16, iter_18). The unnormalized write_residual may cause memory state instability - LayerNorm will stabilize update magnitudes.
+
+
