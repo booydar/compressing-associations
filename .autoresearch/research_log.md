@@ -978,3 +978,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - the learning rate has been swept multiple times but experiments failed due to infrastructure issues (git add errors, checkpoint recovery) rather than demonstrating that the sweep values are ineffective. The current fixed learning_rate of 0.001 needs to be tested with a proper sweep that completes successfully.
 
 
+## Iter 22 — RUNNING — N=8
+**Hypothesis:** Disabling deep supervision will improve EM accuracy by allowing the model to focus entirely on the primary associative retrieval objective without conflicting auxiliary loss signals from intermediate layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_022
+
+
+## Iter 22 — reverted — EM: 0.0080 (N=8)
+**Hypothesis:** Disabling deep supervision will improve EM accuracy by allowing the model to focus entirely on the primary associative retrieval objective without conflicting auxiliary loss signals from intermediate layers.
+**Wall time:** 73.3 min
+**Result:** EM=0.0080 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Learning rate and n_mem_tokens sweeps have been exhausted (iter 14, 16, 17, 18, 21) with best EM only ~0.02. Deep supervision is still enabled (use_deep_supervision: true) despite iter 20's hypothesis - this adds auxiliary losses that may confuse the training signal for the associative retrieval task.
+
+
