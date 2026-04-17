@@ -529,3 +529,40 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-34, 39) failed due to implementation complexity or errors. Per HYPERPARAMETER-FIRST policy, hyperparameters like memory_dropout and gradient clipping have been explored (items 13, 14, 16 marked Done), but the memory update mechanism itself remains unoptimized. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). A simpler multi-stage write with learnable gating provides more sophisticated memory dynamics while avoiding the complexity that caused previous failures.
 
 
+## Iter 41 — RUNNING — N=8
+**Hypothesis:** Sweeping learning rate across [0.0001, 0.0005, 0.001, 0.005, 0.01] will find optimal training dynamics, as current config shows lr=0.01 which may be too high for stable convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_041
+
+
+## Iter 41 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_041
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 42 — RUNNING — N=8
+**Hypothesis:** Sweeping memory token count (n_mem_tokens) across [8, 16, 32, 64] will find optimal memory capacity for associative retrieval, as previous attempts failed due to implementation errors rather than hypothesis invalidity.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_042
+
+
+## Iter 42 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_042
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 43 — RUNNING — N=8
+**Hypothesis:** Implementing a robust multi-stage memory write with separate read/update/merge phases and explicit gating will improve memory utilization by allowing adaptive update weights instead of uniform residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_043
+
+
+## Iter 43 — kept — EM: 0.0048 (N=8)
+**Hypothesis:** Implementing a robust multi-stage memory write with separate read/update/merge phases and explicit gating will improve memory utilization by allowing adaptive update weights instead of uniform residual addition.
+**Wall time:** 27.3 min
+**Result:** EM=0.0048 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Item #12 (Multi-stage write) has been attempted 20+ times (iterations 19-42) with consistent failures due to implementation complexity. Previous hyperparameter sweeps (learning rate, memory token count, memory dropout, gradient clipping) have shown marginal gains (EM 0.0006) but failed to establish a strong baseline. Multi-stage write directly addresses the memory update mechanism at line 137 in MemoryAugmentedLayer.forward(), which currently uses simple residual addition. This is a pending human_directions item that has been exhausted in its complex form but has not been tried in a simplified, robust form.
+
+

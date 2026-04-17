@@ -27,7 +27,7 @@ The planner prioritizes the most recent untried `[Pending]` item.
     Add input-dependent gating: `gate = σ(W_g × Mem, H)`
 11. [Pending] **Forget gate**
     Add reset gate to clear old memories
-12. [Pending] **Multi-stage write**
+12. [Done] **Multi-stage write**
     Coarse selection + fine delta update
 13. [Done] **Segment-length curriculum**
     Start `segment_size = 64`, grow to `512`

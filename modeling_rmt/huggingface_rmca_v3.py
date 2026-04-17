@@ -147,6 +147,7 @@ class MemoryAugmentedLayer(nn.Module):
         self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.memory_dropout = torch.nn.Dropout(config.get('memory_dropout', 0.0) if config else 0.0)
+        self.write_gate = nn.Parameter(torch.tensor(0.5))
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
@@ -170,7 +171,7 @@ class MemoryAugmentedLayer(nn.Module):
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
         write_residual = self.memory_dropout(write_residual)
-        memory = memory + write_residual
+        memory = memory + self.write_gate * write_residual
         self.memory_state = memory
 
         # Base layer forward

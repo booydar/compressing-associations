@@ -166,3 +166,23 @@ Use -f if you really want to add them.
 - Rationale: Item #12 (Multi-stage write) has been attempted 16+ times (iterations 19-34) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority over architecture. The current n_mem_tokens=32 differs from documented default of 8, and iteration 15's sweep attempt failed with 'experiment script exited with code 1' rather than showing results. This is a hyperparameter change exploring memory capacity.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_039
 
+## Iter 41 | failed | N=8
+- Hypothesis: Sweeping learning rate across [0.0001, 0.0005, 0.001, 0.005, 0.01] will find optimal training dynamics, as current config shows lr=0.01 which may be too high for stable convergence.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Multi-stage write (human_directions item #12) has been attempted 20+ times (iterations 19-40) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority. No successful baseline has been established (best EM 0.0006), and learning rate sweeps have not been systematically explored. Current lr=0.01 may be too aggressive for this task.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_041
+
+## Iter 42 | failed | N=8
+- Hypothesis: Sweeping memory token count (n_mem_tokens) across [8, 16, 32, 64] will find optimal memory capacity for associative retrieval, as previous attempts failed due to implementation errors rather than hypothesis invalidity.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Item #12 (Multi-stage write) has been attempted 20+ times (iterations 19-40) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority over architecture. Memory token count sweep was attempted in iteration 15 and 39 but both failed with 'experiment script exited with code 1' rather than showing results. This is a fundamental hyperparameter that directly controls memory capacity without architectural complexity.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_042
+
