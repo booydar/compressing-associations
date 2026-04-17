@@ -347,3 +347,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-24) have failed with implementation errors, suggesting the feature needs proper implementation. This is prioritized over hyperparameter tuning per the human directions priority rule.
 
 
+## Iter 26 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_026
+
+
+## Iter 26 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_026
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 27 — RUNNING — N=8
+**Hypothesis:** Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_027
+
+
+## Iter 27 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**Wall time:** 28.1 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item at position 12. Previous experiments with multi-stage write (iterations 19-26) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 14, 13 marked Done), but the memory update mechanism itself remains unoptimized. Current single-stage write at line 137 in MemoryAugmentedLayer.forward() uses simple residual addition without adaptive gating.
+
+
