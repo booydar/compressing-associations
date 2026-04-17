@@ -230,6 +230,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_007",
       "summary_logged": false,
       "token_accuracy": 0.024
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "A warmup_steps sweep will stabilize training convergence, as the current fixed 2500 steps (10% of max_steps) may be insufficient or excessive for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "A warmup_steps sweep will stabilize training convergence, as the current fixed 2500 steps (10% of max_steps) may be insufficient or excessive for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have not been exhausted: learning_rate sweep was attempted (iter_4 EM=0.7442 kept) but n_mem_tokens sweeps (iter_5, iter_7) and n_embd sweep (iter_6) were reverted with poor EM. No warmup_steps sweep has been tried yet. Warmup stabilizes early training by gradually increasing learning rate, which is critical for memory-augmented models that need to establish stable memory states before learning complex associative patterns.",
+        "instruction": "Change warmup_steps from the scalar value 2500 to a sweep format with values: [1000, 2500, 5000, 10000] and default: 2500. This will run experiments with each warmup value and select the best EM.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_008",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776438628.4837055,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_008",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

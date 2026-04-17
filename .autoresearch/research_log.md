@@ -861,3 +861,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - previous experiments show EM=0.7442 was achieved with learning_rate sweep (iter_4), but n_mem_tokens sweep in iter_5 was reverted with EM=0.0074. The current config shows n_mem_tokens already has a sweep defined [16, 32, 64, 128] but default is 64. Since n_embd sweep (iter_6) was also reverted, we should retry the n_mem_tokens sweep with different values or ensure it runs properly before considering architectural changes.
 
 
+## Iter 8 — RUNNING — N=8
+**Hypothesis:** A warmup_steps sweep will stabilize training convergence, as the current fixed 2500 steps (10% of max_steps) may be insufficient or excessive for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_008
+
+
+## Iter 8 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A warmup_steps sweep will stabilize training convergence, as the current fixed 2500 steps (10% of max_steps) may be insufficient or excessive for the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted: learning_rate sweep was attempted (iter_4 EM=0.7442 kept) but n_mem_tokens sweeps (iter_5, iter_7) and n_embd sweep (iter_6) were reverted with poor EM. No warmup_steps sweep has been tried yet. Warmup stabilizes early training by gradually increasing learning rate, which is critical for memory-augmented models that need to establish stable memory states before learning complex associative patterns.
+
+
