@@ -1107,3 +1107,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been extensively explored: learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head all swept. The current max_grad_norm uses a sweep [0.1, 0.5, 1.0, 2.0] but gradient clipping may be critical for the memory write mechanism which has seen repeated failures. Iter 23 achieved EM=0.025 with Adam optimizer, suggesting the model can learn but needs gradient stabilization.
 
 
+## Iter 25 — RUNNING — N=8
+**Hypothesis:** Adding layer normalization before the memory write operation will stabilize gradient flow through the cross-attention write pathway, improving convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_025
+
+
+## Iter 20 — reverted — EM: 0.0214 (N=8)
+**Hypothesis:** Adding gradient checkpointing will enable training deeper models with better memory retention for associative patterns.
+**Wall time:** 94.7 min
+**Result:** EM=0.0214 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Recent experiments show very low EM (0.0006 in iter_19). The current config has 6 layers and 128 hidden size. Gradient checkpointing can allow deeper models (more n_layer) without OOM, which should improve capacity for learning associative patterns. Hyperparameters like learning_rate and n_mem_tokens have been swept but depth has not been fully explored due to memory constraints.
+
+

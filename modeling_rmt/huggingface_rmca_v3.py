@@ -170,6 +170,7 @@ class MemoryAugmentedLayer(nn.Module):
         write_out = self.memory_write(memory_normed, hidden_states_normed)
         write_residual = write_out[0] if isinstance(write_out, tuple) else write_out
         write_attn_weights = write_out[1] if isinstance(write_out, tuple) and len(write_out) > 1 else None
+        write_residual = self.memory_layer_norm(write_residual)
         write_residual = self.memory_dropout(write_residual)
         memory = memory + self.write_gate * write_residual
         self.memory_state = memory
