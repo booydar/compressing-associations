@@ -1,38 +1,24 @@
 ## Iter 0 | failed | N=8
-- Hypothesis: FAILED: unhandled: cannot access local variable 'planner_trace' where it is not associated with a value
+- Hypothesis: baseline — exact copy of v2
 - Target: (none)
 - EM: n/a
 - Success: No model improvement established.
 - Weaknesses: The experiment did not reach a valid kept result.
-- Failures: unhandled: cannot access local variable 'planner_trace' where it is not associated with a value
+- Failures: could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline
 - Rationale: (none)
-- exp_path: 
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline
 
 ## Iter 1 | failed | N=8
-- Hypothesis: FAILED: unhandled: git add failed: The following paths are ignored by one of your .gitignore files:
-.autoresearch/artifacts
-Use -f if you really want to add them.
-- Target: (none)
+- Hypothesis: The model needs more training steps to converge on the associative retrieval task.
+- Target: .autoresearch/experiment_config.yaml
 - EM: n/a
 - Success: No model improvement established.
 - Weaknesses: The experiment did not reach a valid kept result.
-- Failures: unhandled: git add failed: The following paths are ignored by one of your .gitignore files:
-.autoresearch/artifacts
-Use -f if you really want to add them.
-- Rationale: (none)
-- exp_path: 
+- Failures: Configuration error: missing required key 'pairs_per_segment'. Current exp_cfg keys: ['max_steps', 'eval_steps', 'logging_steps', 'warmup_steps', 'early_stopping_patience', 'n_layer', 'n_head', 'n_embd', 'n_mem_tokens', 'n_keys', 'n_values', 'base_model', 'learning_rate', 'batch_size', 'em_threshold']
+- Rationale: The baseline experiment failed with no checkpoints - this is a training configuration issue. With max_steps=25000 and eval_steps=500, the model should have produced at least one checkpoint. However, the first experiment failed to establish any baseline. Increasing max_steps gives the model more opportunity to learn the associative patterns before evaluation.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_001
 
 ## Iter 2 | failed | N=8
-- Hypothesis: Adding memory dropout will regularize the memory tokens and prevent overfitting to specific memory patterns, improving generalization on the associative retrieval task.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change that adds regularization to memory tokens. Previous deep supervision and gradient clipping have been tried, but memory-specific regularization has not yet been explored.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_002
-
-## Iter 3 | failed | N=8
 - Hypothesis: FAILED: unhandled: git add failed: The following paths are ignored by one of your .gitignore files:
 .autoresearch/artifacts
 Use -f if you really want to add them.
@@ -46,143 +32,13 @@ Use -f if you really want to add them.
 - Rationale: (none)
 - exp_path: 
 
-## Iter 12 | failed | N=8
-- Hypothesis: Adding memory dropout will regularize memory tokens by randomly zeroing out a fraction during training, preventing overfitting to specific memory patterns and improving generalization.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #14 (Memory dropout). This is a pending hyperparameter/architectural hybrid change. Previous experiments with memory dropout were reverted without establishing improvement, suggesting the implementation needs refinement. The current config has memory_dropout values defined but the feature may not be properly implemented in the model code.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_012
-
-## Iter 15 | failed | N=8
-- Hypothesis: Sweeping memory token count (n_mem_tokens) across values [8, 16, 32, 64] will find optimal capacity for associative retrieval, as current config shows 32 but default is 8 suggesting unexplored range.
+## Iter 4 | failed | N=8
+- Hypothesis: A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.01 may be too high or too low for convergence.
 - Target: .autoresearch/experiment_config.yaml
 - EM: n/a
 - Success: No model improvement established.
 - Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Memory dropout (human_directions item #14) has been tried extensively in iterations 2, 5-14 with no improvement. Per HYPERPARAMETER-FIRST policy, I sweep hyperparameters before architectural changes. The current n_mem_tokens=32 differs from the documented default of 8, and no systematic sweep has been done. This is a hyperparameter change, not architectural.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_015
-
-## Iter 19 | failed | N=8
-- Hypothesis: Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write). This is a pending architectural change that has not been tried yet. Hyperparameters like memory_dropout and gradient clipping have been explored, but the memory write mechanism itself has only used a single residual addition. Multi-stage write allows more sophisticated memory update dynamics.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_019
-
-## Iter 20 | failed | N=8
-- Hypothesis: Implementing multi-stage memory write with separate read/update/merge phases will improve memory utilization by allowing the model to first retrieve relevant information, then compute updates, and finally merge them with adaptive weighting.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with memory dropout and curriculum have shown marginal gains, but the memory update mechanism itself remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_020
-
-## Iter 22 | failed | N=8
-- Hypothesis: Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write). Previous experiments with memory dropout and curriculum have shown marginal gains (EM 0.001-0.0012), but the memory update mechanism remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition in MemoryAugmentedLayer.forward() at line 137.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_022
-
-## Iter 24 | failed | N=8
-- Hypothesis: Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item at position 12. Previous experiments with multi-stage write (iterations 19-23) have failed with 'experiment script exited with code 1', suggesting implementation issues that need to be fixed. This architectural change allows more sophisticated memory dynamics than the current single residual addition in MemoryAugmentedLayer.forward() at line 137.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_024
-
-## Iter 26 | failed | N=8
-- Hypothesis: Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-25) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 14, 13 marked Done), but the memory update mechanism itself remains unoptimized.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_026
-
-## Iter 29 | failed | N=8
-- Hypothesis: Implementing multi-stage memory write with adaptive gating weights will improve memory utilization by learning which updates to apply rather than using uniform residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write). Previous attempts (iterations 19-28) failed due to implementation issues. The current MemoryAugmentedLayer at line 137 uses simple residual addition (memory = memory + write_residual). Multi-stage write with adaptive gating allows the model to learn update weights, providing more sophisticated memory dynamics.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_029
-
-## Iter 31 | failed | N=8
-- Hypothesis: FAILED: planner failed after 3 attempts: [Errno 7] Argument list too long: 'opencode'
-- Target: (none)
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: planner failed after 3 attempts: [Errno 7] Argument list too long: 'opencode'
-- Rationale: (none)
-- exp_path: 
-
-## Iter 33 | failed | N=8
-- Hypothesis: Implementing a simplified multi-stage memory write with learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-32) failed due to implementation complexity or ran into errors. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). A simpler multi-stage write with learnable gating provides more sophisticated memory dynamics while avoiding the complexity that caused previous failures.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_033
-
-## Iter 34 | failed | N=8
-- Hypothesis: Implementing a simplified multi-stage memory write with explicit learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
-- Target: modeling_rmt/huggingface_rmca_v3.py
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-33) failed due to implementation complexity or errors. Per HYPERPARAMETER-FIRST policy, hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism itself remains unoptimized. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). Multi-stage write with adaptive gating allows the model to learn update weights.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_034
-
-## Iter 39 | failed | N=8
-- Hypothesis: Systematically sweeping memory token count (n_mem_tokens) across [8, 16, 32, 64, 128] will find optimal memory capacity for associative retrieval, as iteration 15's attempt failed due to implementation error rather than hypothesis invalidity.
-- Target: .autoresearch/experiment_config.yaml
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Item #12 (Multi-stage write) has been attempted 16+ times (iterations 19-34) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority over architecture. The current n_mem_tokens=32 differs from documented default of 8, and iteration 15's sweep attempt failed with 'experiment script exited with code 1' rather than showing results. This is a hyperparameter change exploring memory capacity.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_039
-
-## Iter 41 | failed | N=8
-- Hypothesis: Sweeping learning rate across [0.0001, 0.0005, 0.001, 0.005, 0.01] will find optimal training dynamics, as current config shows lr=0.01 which may be too high for stable convergence.
-- Target: .autoresearch/experiment_config.yaml
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Multi-stage write (human_directions item #12) has been attempted 20+ times (iterations 19-40) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority. No successful baseline has been established (best EM 0.0006), and learning rate sweeps have not been systematically explored. Current lr=0.01 may be too aggressive for this task.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_041
-
-## Iter 42 | failed | N=8
-- Hypothesis: Sweeping memory token count (n_mem_tokens) across [8, 16, 32, 64] will find optimal memory capacity for associative retrieval, as previous attempts failed due to implementation errors rather than hypothesis invalidity.
-- Target: .autoresearch/experiment_config.yaml
-- EM: n/a
-- Success: No model improvement established.
-- Weaknesses: The experiment did not reach a valid kept result.
-- Failures: experiment error: Experiment script exited with code 1
-- Rationale: Item #12 (Multi-stage write) has been attempted 20+ times (iterations 19-40) with consistent failures, indicating exhaustion. Per HYPERPARAMETER-FIRST policy, hyperparameters take priority over architecture. Memory token count sweep was attempted in iteration 15 and 39 but both failed with 'experiment script exited with code 1' rather than showing results. This is a fundamental hyperparameter that directly controls memory capacity without architectural complexity.
-- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_042
+- Failures: could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004
+- Rationale: Hyperparameters have not been exhausted - only a learning rate sweep was attempted in iter_2 but failed due to a git issue, not training failure. The fixed learning_rate of 0.01 may be suboptimal; sweeping [0.0001, 0.0005, 0.001, 0.005, 0.01] will find the optimal value before considering architectural changes.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004
 

@@ -579,3 +579,77 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #11 (Forget gate), which is a pending architectural change. Multi-stage write (item #12) has been successfully implemented in iteration 43 (EM=0.0048, kept), but forget gate remains untried. A forget gate provides complementary functionality by controlling memory retention rather than just update magnitude.
 
 
+## Iter 45 — RUNNING — N=8
+**Hypothesis:** Adding a forget gate to the memory update mechanism will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_045
+
+
+## Iter 0 — RUNNING — N=8
+**Hypothesis:** baseline — exact copy of v2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline
+
+
+## Iter 0 — FAILED — N=8
+**Error:** could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_000_baseline
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 1 — RUNNING — N=8
+**Hypothesis:** The model needs more training steps to converge on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_001
+
+
+## Iter 1 — FAILED — N=8
+**Error:** Configuration error: missing required key 'pairs_per_segment'. Current exp_cfg keys: ['max_steps', 'eval_steps', 'logging_steps', 'warmup_steps', 'early_stopping_patience', 'n_layer', 'n_head', 'n_embd', 'n_mem_tokens', 'n_keys', 'n_values', 'base_model', 'learning_rate', 'batch_size', 'em_threshold']
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_001
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 2 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.01 may be too high or too low for convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_002
+
+
+## Iter 2 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.01 may be too high or too low for convergence.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=-1.0000
+**Metric source:** sweep
+**Rationale:** No hyperparameters have been systematically explored yet. The current learning_rate of 0.01 is a single point estimate that may not be optimal. Learning rate is the most critical hyperparameter for training convergence, and sweeping it across orders of magnitude (0.0001, 0.001, 0.01) will establish whether the model can learn at all and at what scale.
+
+
+## Iter 2 — FAILED — N=8
+**Error:** unhandled: git add failed: The following paths are ignored by one of your .gitignore files:
+.autoresearch/artifacts
+Use -f if you really want to add them.
+**Recovery status:** not_attempted
+
+
+## Iter 4 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.01 may be too high or too low for convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004
+
+
+## Iter 4 — FAILED — N=8
+**Error:** could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_004
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 5 — RUNNING — N=8
+**Hypothesis:** Increasing n_mem_tokens from 32 to 64 with a sweep will provide more capacity for storing associative patterns across the 4 transformer layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_005
+
+
+## Iter 5 — kept — EM: 0.0234 (N=8)
+**Hypothesis:** Increasing n_mem_tokens from 32 to 64 with a sweep will provide more capacity for storing associative patterns across the 4 transformer layers.
+**Wall time:** 58.0 min
+**Result:** EM=0.0234 vs prev best=-1.0000
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - while a learning rate sweep was attempted in iter_4, it failed due to infrastructure issues (no checkpoints), not training failure. No n_mem_tokens sweep has been tried yet, and memory capacity is critical for associative retrieval tasks where the model must store KV pairs across segments.
+
+

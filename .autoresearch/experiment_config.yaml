@@ -11,7 +11,6 @@ early_stopping_patience: 20
 n_layer: 4
 n_head: 4
 n_embd: 128
-n_mem_tokens: 32
 
 # Model flags for deep supervision
 use_deep_supervision: true
@@ -25,7 +24,7 @@ pairs_per_segment: 4
 
 # Training parameters
 base_model: llama
-learning_rate: 0.01
+learning_rate: 0.001
 batch_size: 128
 em_threshold: 0.95
 
@@ -39,7 +38,7 @@ max_grad_norm:
   values: [0.1, 0.5, 1.0, 2.0]
   default: 1.0
 
-# Memory dropout configuration
-memory_dropout:
-  values: [0.0, 0.1, 0.2, 0.3]
-  default: 0.1
+# Memory tokens configuration
+n_mem_tokens:
+  values: [16, 32, 64, 128]
+  default: 64
