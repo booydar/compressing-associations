@@ -428,3 +428,40 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-30) have shown marginal EM improvements (0.0002-0.0006) but suffered from implementation issues causing experiment failures. The current implementation at line 137-147 uses a merge gate but may need refinement. Per HYPERPARAMETER-FIRST policy, hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism itself remains unoptimized.
 
 
+## Iter 33 — RUNNING — N=8
+**Hypothesis:** Implementing a simplified multi-stage memory write with learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_033
+
+
+## Iter 33 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_033
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 34 — RUNNING — N=8
+**Hypothesis:** Implementing a simplified multi-stage memory write with explicit learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_034
+
+
+## Iter 34 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_034
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 35 — RUNNING — N=8
+**Hypothesis:** Adding a learnable write gate to the memory update will allow the model to control update magnitude, improving memory retention and retrieval accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_035
+
+
+## Iter 35 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Adding a learnable write gate to the memory update will allow the model to control update magnitude, improving memory retention and retrieval accuracy.
+**Wall time:** 21.3 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write) with a minimal, robust design. Previous 16 attempts failed due to implementation complexity. This version adds a single learnable gate parameter to control write magnitude, avoiding the complex multi-phase design that caused failures. Hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism remains unoptimized.
+
+
