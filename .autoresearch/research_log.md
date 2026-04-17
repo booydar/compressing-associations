@@ -874,3 +874,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted: learning_rate sweep was attempted (iter_4 EM=0.7442 kept) but n_mem_tokens sweeps (iter_5, iter_7) and n_embd sweep (iter_6) were reverted with poor EM. No warmup_steps sweep has been tried yet. Warmup stabilizes early training by gradually increasing learning rate, which is critical for memory-augmented models that need to establish stable memory states before learning complex associative patterns.
 
 
+## Iter 9 — RUNNING — N=8
+**Hypothesis:** Increasing max_steps will allow the model more training iterations to converge on the associative retrieval task, as previous experiments with shorter training did not establish stable performance.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_009
+
+
+## Iter 18 — reverted — EM: 0.0188 (N=8)
+**Hypothesis:** A n_mem_tokens sweep will identify the optimal memory capacity for storing associative patterns, as the current fixed value of 64 may be suboptimal for the task complexity.
+**Wall time:** 92.8 min
+**Result:** EM=0.0188 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Multiple learning rate sweeps have been attempted (iters 4, 8, 9, 11, 14, 16, 17) but all failed due to infrastructure issues rather than establishing training baselines. Hyperparameters have not been exhausted - n_mem_tokens has only been set to a sweep with [16,32,64,128] but results show EM=-1.0 indicating no successful training. Sweeping n_mem_tokens [8,16,32,64] with lower values will test if smaller memory capacity improves convergence.
+
+
