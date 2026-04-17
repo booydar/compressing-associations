@@ -504,3 +504,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous 16 attempts (iterations 19-37) with multi-stage write architectures have consistently failed due to implementation complexity. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). A single scalar gate is a minimal architectural change that provides adaptive update control while avoiding the complexity that caused repeated failures.
 
 
+## Iter 39 — RUNNING — N=8
+**Hypothesis:** Systematically sweeping memory token count (n_mem_tokens) across [8, 16, 32, 64, 128] will find optimal memory capacity for associative retrieval, as iteration 15's attempt failed due to implementation error rather than hypothesis invalidity.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_039
+
+
+## Iter 39 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_039
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 40 — RUNNING — N=8
+**Hypothesis:** Implementing a simplified multi-stage memory write with explicit learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_040
+
+
+## Iter 40 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Implementing a simplified multi-stage memory write with explicit learnable merge gate will improve memory utilization by computing adaptive gating weights for memory updates instead of uniform residual addition.
+**Wall time:** 21.6 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous attempts (iterations 19-34, 39) failed due to implementation complexity or errors. Per HYPERPARAMETER-FIRST policy, hyperparameters like memory_dropout and gradient clipping have been explored (items 13, 14, 16 marked Done), but the memory update mechanism itself remains unoptimized. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). A simpler multi-stage write with learnable gating provides more sophisticated memory dynamics while avoiding the complexity that caused previous failures.
+
+
