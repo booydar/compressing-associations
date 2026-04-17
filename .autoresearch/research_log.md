@@ -1094,3 +1094,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876 (iter_17 with deep_supervision disabled). Scalar and vector gating mechanisms failed (iter_16, iter_18). The unnormalized write_residual may cause memory state instability - LayerNorm will stabilize update magnitudes.
 
 
+## Iter 20 — RUNNING — N=8
+**Hypothesis:** Adding gradient checkpointing will enable training deeper models with better memory retention for associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_020
+
+
+## Iter 24 — kept — EM: 0.0798 (N=8)
+**Hypothesis:** Adding gradient clipping with max_grad_norm=0.5 will stabilize training by preventing gradient explosion in the cross-attention memory write pathway.
+**Wall time:** 111.9 min
+**Result:** EM=0.0798 vs prev best=0.0250
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been extensively explored: learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head all swept. The current max_grad_norm uses a sweep [0.1, 0.5, 1.0, 2.0] but gradient clipping may be critical for the memory write mechanism which has seen repeated failures. Iter 23 achieved EM=0.025 with Adam optimizer, suggesting the model can learn but needs gradient stabilization.
+
+

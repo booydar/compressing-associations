@@ -36,6 +36,9 @@ max_grad_norm:
   values: [0.1, 0.5, 1.0, 2.0]
   default: 1.0
 
+# Gradient checkpointing configuration
+gradient_checkpointing: true
+
 # Memory tokens configuration
 n_mem_tokens:
   values: [16, 32, 64, 128]
