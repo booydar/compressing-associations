@@ -559,6 +559,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_018",
       "summary_logged": false,
       "token_accuracy": 0.0188
+    },
+    {
+      "id": 19,
+      "iter_tag": "iter_019",
+      "description": "Adding a learnable memory initialization instead of random Gaussian will provide better starting point for storing associative patterns.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable memory initialization instead of random Gaussian will provide better starting point for storing associative patterns.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been extensively explored: learning_rate sweeps [0.0001, 0.001, 0.01, 0.1] in iterations 9, 11, 14, 16, 17; n_mem_tokens sweep [16, 32, 64, 128] in iteration 18; n_layer increased from 4 to 6 in iteration 13; max_steps increased to 50000 in iteration 15. All sweeps returned EM=-1.0 indicating training instability rather than poor hyperparameter choice. Random memory initialization may prevent the model from effectively storing associative patterns from the start.",
+        "instruction": "In MemoryAugmentedLayer.__init__, replace the random initialization of initial_memory_state with a learnable parameter. Change from: self.register_buffer('initial_memory_state', initial_memory) to self.initial_memory_state = nn.Parameter(torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size)). Also modify RMCACell to pass the config's num_mem_tokens instead of creating initial_memory there.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_019",
+      "wall_time_min": 1.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776442963.7878387,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_019",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

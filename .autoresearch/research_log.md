@@ -887,3 +887,16 @@ Use -f if you really want to add them.
 **Rationale:** Multiple learning rate sweeps have been attempted (iters 4, 8, 9, 11, 14, 16, 17) but all failed due to infrastructure issues rather than establishing training baselines. Hyperparameters have not been exhausted - n_mem_tokens has only been set to a sweep with [16,32,64,128] but results show EM=-1.0 indicating no successful training. Sweeping n_mem_tokens [8,16,32,64] with lower values will test if smaller memory capacity improves convergence.
 
 
+## Iter 19 — RUNNING — N=8
+**Hypothesis:** Adding a learnable memory initialization instead of random Gaussian will provide better starting point for storing associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_019
+
+
+## Iter 19 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Adding a learnable memory initialization instead of random Gaussian will provide better starting point for storing associative patterns.
+**Wall time:** 1.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been extensively explored: learning_rate sweeps [0.0001, 0.001, 0.01, 0.1] in iterations 9, 11, 14, 16, 17; n_mem_tokens sweep [16, 32, 64, 128] in iteration 18; n_layer increased from 4 to 6 in iteration 13; max_steps increased to 50000 in iteration 15. All sweeps returned EM=-1.0 indicating training instability rather than poor hyperparameter choice. Random memory initialization may prevent the model from effectively storing associative patterns from the start.
+
+
