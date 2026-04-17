@@ -322,3 +322,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with memory dropout and curriculum have shown marginal gains (EM 0.001-0.0012), but the memory update mechanism itself remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition at line 137.
 
 
+## Iter 24 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_024
+
+
+## Iter 24 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_024
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 25 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_025
+
+
+## Iter 25 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**Wall time:** 26.8 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-24) have failed with implementation errors, suggesting the feature needs proper implementation. This is prioritized over hyperparameter tuning per the human directions priority rule.
+
+
