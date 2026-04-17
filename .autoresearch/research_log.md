@@ -809,3 +809,16 @@ Use -f if you really want to add them.
 **Rationale:** Learning rate sweep (iter_4) and n_mem_tokens sweep (iter_5) have been attempted but only learning_rate produced valid results. n_embd has not been swept yet and is a key architectural hyperparameter that directly affects model capacity. Current n_embd=128 may be suboptimal for the task complexity.
 
 
+## Iter 7 — RUNNING — N=8
+**Hypothesis:** A sweep over n_mem_tokens values will explore whether more or fewer memory tokens improve the model's capacity to store and retrieve associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_007
+
+
+## Iter 15 — reverted — EM: 0.0212 (N=8)
+**Hypothesis:** Increasing max_steps from 25000 to 50000 will provide more training iterations for the model to converge on the associative retrieval task, as previous experiments may have terminated before learning the patterns.
+**Wall time:** 178.7 min
+**Result:** EM=0.0212 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been extensively tuned (learning_rate sweeps, batch_size sweeps, n_mem_tokens, n_layer increased to 6). The baseline issue in iter_1 mentioned that with max_steps=25000 and eval_steps=500, checkpoints should have been produced but weren't. Many experiments show EM=-1.0 (reverted) suggesting training didn't complete properly. Doubling max_steps addresses potential premature termination before convergence.
+
+
