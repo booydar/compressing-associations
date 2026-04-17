@@ -566,3 +566,16 @@ Use -f if you really want to add them.
 **Rationale:** Item #12 (Multi-stage write) has been attempted 20+ times (iterations 19-42) with consistent failures due to implementation complexity. Previous hyperparameter sweeps (learning rate, memory token count, memory dropout, gradient clipping) have shown marginal gains (EM 0.0006) but failed to establish a strong baseline. Multi-stage write directly addresses the memory update mechanism at line 137 in MemoryAugmentedLayer.forward(), which currently uses simple residual addition. This is a pending human_directions item that has been exhausted in its complex form but has not been tried in a simplified, robust form.
 
 
+## Iter 44 — RUNNING — N=8
+**Hypothesis:** Adding a forget gate to memory update will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_044
+
+
+## Iter 44 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Adding a forget gate to memory update will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.
+**Wall time:** 20.2 min
+**Result:** EM=0.0002 vs prev best=0.0048
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #11 (Forget gate), which is a pending architectural change. Multi-stage write (item #12) has been successfully implemented in iteration 43 (EM=0.0048, kept), but forget gate remains untried. A forget gate provides complementary functionality by controlling memory retention rather than just update magnitude.
+
+

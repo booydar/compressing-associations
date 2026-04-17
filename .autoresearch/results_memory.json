@@ -1367,6 +1367,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_043",
       "summary_logged": false,
       "token_accuracy": 0.0737
+    },
+    {
+      "id": 44,
+      "iter_tag": "iter_044",
+      "description": "Adding a forget gate to memory update will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Adding a forget gate to memory update will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #11 (Forget gate), which is a pending architectural change. Multi-stage write (item #12) has been successfully implemented in iteration 43 (EM=0.0048, kept), but forget gate remains untried. A forget gate provides complementary functionality by controlling memory retention rather than just update magnitude.",
+        "instruction": "Add a forget gate mechanism to MemoryAugmentedLayer.forward() at line 137. Create a learnable parameter self.forget_gate initialized to 0.5, and modify the memory update line to: memory = (1 - self.forget_gate) * memory + self.write_gate * write_residual. This allows the model to learn how much of the old memory to retain before applying new updates.",
+        "human_directions_item": "11"
+      },
+      "em_score": 0.0002,
+      "prev_best": 0.0048,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_044",
+      "wall_time_min": 20.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776407005.7009912,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_044",
+      "summary_logged": false,
+      "token_accuracy": 0.0187
     }
   ],
   "reference": {
