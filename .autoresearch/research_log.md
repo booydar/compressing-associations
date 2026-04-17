@@ -757,3 +757,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - only a learning rate sweep was attempted in iter_2 but failed due to a git issue, not training failure. The fixed learning_rate of 0.01 may be suboptimal; sweeping [0.0001, 0.0005, 0.001, 0.005, 0.01] will find the optimal value before considering architectural changes.
 
 
+## Iter 5 — RUNNING — N=8
+**Hypothesis:** Increasing n_mem_tokens will provide more capacity for the model to store and retrieve associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_005
+
+
+## Iter 13 — reverted — EM: 0.0228 (N=8)
+**Hypothesis:** Increasing n_layer from 4 to 6 will provide more capacity for learning complex associative patterns while remaining within the 2-hour experiment budget.
+**Wall time:** 95.6 min
+**Result:** EM=0.0228 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameter sweeps for learning_rate (iter_4, iter_7, iter_8, iter_9, iter_11), batch_size (iter_6, iter_10), and n_mem_tokens (iter_5) have been attempted. The architecture remains at 4 layers which may be insufficient for the associative retrieval task. Increasing layers provides more transformation depth before architectural changes are considered.
+
+
