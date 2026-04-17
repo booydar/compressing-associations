@@ -991,3 +991,16 @@ Use -f if you really want to add them.
 **Rationale:** Learning rate and n_mem_tokens sweeps have been exhausted (iter 14, 16, 17, 18, 21) with best EM only ~0.02. Deep supervision is still enabled (use_deep_supervision: true) despite iter 20's hypothesis - this adds auxiliary losses that may confuse the training signal for the associative retrieval task.
 
 
+## Iter 23 — RUNNING — N=8
+**Hypothesis:** Switching from Adam to AdamW optimizer with standard betas [0.9, 0.999] will improve gradient stability and convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_023
+
+
+## Iter 13 — reverted — EM: 0.0836 (N=8)
+**Hypothesis:** A weight_decay sweep will identify the optimal regularization strength for preventing overfitting while allowing the model to learn associative patterns.
+**Wall time:** 111.9 min
+**Result:** EM=0.0836 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have NOT been exhausted - while learning_rate, n_mem_tokens, n_embd, n_layer, batch_size, and warmup_steps have been swept, weight_decay has only been set to a fixed 0.01 without exploration. Weight_decay controls L2 regularization which is critical for preventing overfitting on the small associative retrieval task. Previous sweeps achieved EM up to 0.7442 (iter_4 lr sweep), showing the model can learn but may need better regularization tuning.
+
+
