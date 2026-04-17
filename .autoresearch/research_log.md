@@ -744,3 +744,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: learning_rate sweeps (iter_2,4,7,8,9,11) and batch_size sweeps (iter_6,10) failed to improve beyond EM=0.0234. n_mem_tokens sweep (iter_5) established baseline. The current fixed write_gate (0.5) lacks adaptability; a sigmoid-gated mechanism will enable layer-specific memory update control.
 
 
+## Iter 13 — RUNNING — N=8
+**Hypothesis:** Increasing n_layer from 4 to 6 will provide more capacity for learning complex associative patterns while remaining within the 2-hour experiment budget.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_013
+
+
+## Iter 4 — kept — EM: 0.7442 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.01 may be too high or too low for convergence.
+**Wall time:** 111.7 min
+**Result:** EM=0.7442 vs prev best=-1.0000
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - only a learning rate sweep was attempted in iter_2 but failed due to a git issue, not training failure. The fixed learning_rate of 0.01 may be suboptimal; sweeping [0.0001, 0.0005, 0.001, 0.005, 0.01] will find the optimal value before considering architectural changes.
+
+
