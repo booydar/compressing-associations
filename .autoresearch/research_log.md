@@ -491,3 +491,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write) with a simplified approach. Previous attempts (iterations 19-34) failed due to implementation complexity. Hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism remains unoptimized. A minimal learnable gate avoids the complexity that caused previous failures while still providing adaptive memory update control.
 
 
+## Iter 38 — RUNNING — N=8
+**Hypothesis:** Adding a simple learnable scalar gate to scale memory writes will allow the model to control update magnitude without the complexity that caused previous multi-stage write failures.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_038
+
+
+## Iter 38 — reverted — EM: 0.0002 (N=8)
+**Hypothesis:** Adding a simple learnable scalar gate to scale memory writes will allow the model to control update magnitude without the complexity that caused previous multi-stage write failures.
+**Wall time:** 33.6 min
+**Result:** EM=0.0002 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous 16 attempts (iterations 19-37) with multi-stage write architectures have consistently failed due to implementation complexity. The current MemoryAugmentedLayer.forward() at line 137 uses simple residual addition (memory = memory + write_residual). A single scalar gate is a minimal architectural change that provides adaptive update control while avoiding the complexity that caused repeated failures.
+
+
