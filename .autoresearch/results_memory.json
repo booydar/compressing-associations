@@ -289,6 +289,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_009",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity with n_mem_tokens=64.",
+      "hypothesis": {
+        "hypothesis": "A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity with n_mem_tokens=64.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have not been exhausted - learning rate sweeps (iter_2, iter_4, iter_7, iter_8, iter_9) failed due to infrastructure issues, not training failure. n_mem_tokens sweep succeeded (iter_5, EM=0.0234). Batch size has not been systematically explored; sweeping [64, 128, 256] will identify optimal gradient stability before architectural changes.",
+        "instruction": "Replace the learning_rate line 'learning_rate: 0.001' with a batch_size sweep in the format: batch_size:\\n  values: [64, 128, 256]\\n  default: 128",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_010",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776419566.8732793,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_010",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

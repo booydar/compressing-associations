@@ -705,3 +705,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - only n_mem_tokens sweep (iter_5) succeeded with EM=0.0234. Previous learning rate sweeps (iter_4, iter_7, iter_8) failed due to infrastructure issues (checkpoint recovery, git) not training failure. The current learning_rate of 0.001 was the default from iter_5's n_mem_tokens sweep; a broader LR sweep including higher values is needed before architectural changes.
 
 
+## Iter 10 — RUNNING — N=8
+**Hypothesis:** A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity with n_mem_tokens=64.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_010
+
+
+## Iter 10 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A batch size sweep will stabilize gradient estimates and improve convergence on the associative retrieval task, as the current fixed batch size of 128 may be suboptimal for the model's capacity with n_mem_tokens=64.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - learning rate sweeps (iter_2, iter_4, iter_7, iter_8, iter_9) failed due to infrastructure issues, not training failure. n_mem_tokens sweep succeeded (iter_5, EM=0.0234). Batch size has not been systematically explored; sweeping [64, 128, 256] will identify optimal gradient stability before architectural changes.
+
+
