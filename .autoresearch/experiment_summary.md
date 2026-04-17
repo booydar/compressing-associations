@@ -86,3 +86,13 @@ Use -f if you really want to add them.
 - Rationale: Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with memory dropout and curriculum have shown marginal gains, but the memory update mechanism itself remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_020
 
+## Iter 22 | failed | N=8
+- Hypothesis: Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Implementing human_directions item #12 (Multi-stage write). Previous experiments with memory dropout and curriculum have shown marginal gains (EM 0.001-0.0012), but the memory update mechanism remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition in MemoryAugmentedLayer.forward() at line 137.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_022
+

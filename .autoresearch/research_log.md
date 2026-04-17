@@ -297,3 +297,28 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write). Previous iterations 19 and 20 attempted this but failed with experiment errors, suggesting the implementation needs refinement. This architectural change allows more sophisticated memory dynamics than the current single residual addition, with theoretical motivation from working memory models that separate information processing stages.
 
 
+## Iter 22 — RUNNING — N=8
+**Hypothesis:** Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_022
+
+
+## Iter 22 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_022
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 23 — RUNNING — N=8
+**Hypothesis:** Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_023
+
+
+## Iter 23 — reverted — EM: 0.0004 (N=8)
+**Hypothesis:** Multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**Wall time:** 23.0 min
+**Result:** EM=0.0004 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with memory dropout and curriculum have shown marginal gains (EM 0.001-0.0012), but the memory update mechanism itself remains unoptimized. Multi-stage write allows more sophisticated memory dynamics than the current single residual addition at line 137.
+
+
