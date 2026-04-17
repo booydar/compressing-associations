@@ -1004,3 +1004,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have NOT been exhausted - while learning_rate, n_mem_tokens, n_embd, n_layer, batch_size, and warmup_steps have been swept, weight_decay has only been set to a fixed 0.01 without exploration. Weight_decay controls L2 regularization which is critical for preventing overfitting on the small associative retrieval task. Previous sweeps achieved EM up to 0.7442 (iter_4 lr sweep), showing the model can learn but may need better regularization tuning.
 
 
+## Iter 14 — RUNNING — N=8
+**Hypothesis:** Adding a learnable gating mechanism to control memory write updates will improve gradient flow and prevent catastrophic forgetting of associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_014
+
+
+## Iter 14 — reverted — EM: 0.0000 (N=8)
+**Hypothesis:** Adding a learnable gating mechanism to control memory write updates will improve gradient flow and prevent catastrophic forgetting of associative patterns.
+**Wall time:** 17.4 min
+**Result:** EM=0.0000 vs prev best=0.7442
+**Metric source:** all_results
+**Rationale:** All major hyperparameters have been exhausted: learning_rate (iter_4, iter_11), n_mem_tokens (iter_7), n_embd (iter_6), warmup_steps (iter_8), max_steps (iter_9), n_layer (iter_10), batch_size (iter_12), weight_decay (iter_13). The best EM achieved was 0.7442 (iter_4) with learning_rate sweep, but subsequent experiments failed. Since hyperparameter tuning has been systematically explored without sustained improvement, an architectural change targeting memory dynamics is now warranted.
+
+

@@ -410,6 +410,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_013",
       "summary_logged": false,
       "token_accuracy": 0.0836
+    },
+    {
+      "id": 14,
+      "iter_tag": "iter_014",
+      "description": "Adding a learnable gating mechanism to control memory write updates will improve gradient flow and prevent catastrophic forgetting of associative patterns.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable gating mechanism to control memory write updates will improve gradient flow and prevent catastrophic forgetting of associative patterns.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "All major hyperparameters have been exhausted: learning_rate (iter_4, iter_11), n_mem_tokens (iter_7), n_embd (iter_6), warmup_steps (iter_8), max_steps (iter_9), n_layer (iter_10), batch_size (iter_12), weight_decay (iter_13). The best EM achieved was 0.7442 (iter_4) with learning_rate sweep, but subsequent experiments failed. Since hyperparameter tuning has been systematically explored without sustained improvement, an architectural change targeting memory dynamics is now warranted.",
+        "instruction": "In MemoryAugmentedLayer.__init__, add a learnable write_gate parameter initialized to 0.0 (currently it's a fixed 0.5 tensor). Change: self.write_gate = nn.Parameter(torch.tensor(0.5)) to self.write_gate = nn.Parameter(torch.tensor(0.0)). Also add a read_gate similarly: self.read_gate = nn.Parameter(torch.tensor(0.0)), and apply both gates in forward: memory = memory + self.write_gate * write_residual and hidden_states = hidden_states + self.read_gate * read_residual.",
+        "human_directions_item": null
+      },
+      "em_score": 0.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_014",
+      "wall_time_min": 17.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776453905.3248284,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_014",
+      "summary_logged": false,
+      "token_accuracy": 0.0177
     }
   ],
   "reference": {
