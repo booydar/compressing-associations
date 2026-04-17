@@ -1030,3 +1030,28 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are being systematically explored. While learning_rate, n_mem_tokens, n_embd, n_layer, batch_size, warmup_steps, and weight_decay have been swept, n_head has not been explored yet. The current 4 heads may be insufficient for the cross-attention mechanism to effectively learn associative patterns.
 
 
+## Iter 16 — RUNNING — N=8
+**Hypothesis:** Replacing the scalar write_gate with an input-dependent gating mechanism will allow adaptive memory updates based on input content, improving retention of associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_016
+
+
+## Iter 16 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_016
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 17 — RUNNING — N=8
+**Hypothesis:** The deep supervision configuration is too aggressive and may be interfering with the model's ability to learn the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_017
+
+
+## Iter 23 — kept — EM: 0.0250 (N=8)
+**Hypothesis:** Switching from Adam to AdamW optimizer with standard betas [0.9, 0.999] will improve gradient stability and convergence on the associative retrieval task.
+**Wall time:** 93.5 min
+**Result:** EM=0.0250 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters are not yet exhausted - learning_rate and n_mem_tokens sweeps have been tried but optimizer configuration has not been optimized. The current Adam optimizer with non-standard betas [0.9, 0.95] is suboptimal; AdamW with decoupled weight decay and standard betas [0.9, 0.999] is the proven default for transformer training and should improve convergence.
+
+

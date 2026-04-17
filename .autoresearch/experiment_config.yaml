@@ -13,9 +13,7 @@ n_head: 4
 n_embd: 128
 
 # Model flags for deep supervision
-use_deep_supervision: true
-deep_supervision_weight: 0.1
-deep_supervision_layers: [1, 2, 3]
+use_deep_supervision: false
 
 # Task parameters
 n_keys: 2
