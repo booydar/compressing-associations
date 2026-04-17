@@ -409,6 +409,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_013",
       "summary_logged": false,
       "token_accuracy": 0.0228
+    },
+    {
+      "id": 14,
+      "iter_tag": "iter_014",
+      "description": "A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have not been exhausted - multiple learning rate sweeps were attempted but reverted due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_mem_tokens=64 sweep and n_layer=6. The sweep format ensures we find the optimal value before considering architectural changes.",
+        "instruction": "Change learning_rate in .autoresearch/experiment_config.yaml from fixed value 0.001 to a sweep format with values: [0.0001, 0.001, 0.01] and default: 0.01. This will run three separate sub-experiments and use the best EM across all values.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_014",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776425784.683079,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_014",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

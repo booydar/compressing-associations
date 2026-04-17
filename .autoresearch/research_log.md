@@ -770,3 +770,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameter sweeps for learning_rate (iter_4, iter_7, iter_8, iter_9, iter_11), batch_size (iter_6, iter_10), and n_mem_tokens (iter_5) have been attempted. The architecture remains at 4 layers which may be insufficient for the associative retrieval task. Increasing layers provides more transformation depth before architectural changes are considered.
 
 
+## Iter 14 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_014
+
+
+## Iter 14 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.01] will identify the optimal training signal strength for the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps were attempted but reverted due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_mem_tokens=64 sweep and n_layer=6. The sweep format ensures we find the optimal value before considering architectural changes.
+
+
