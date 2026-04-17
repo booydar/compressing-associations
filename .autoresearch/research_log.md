@@ -783,3 +783,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps were attempted but reverted due to infrastructure issues (git, checkpoint recovery) rather than training failure. The current fixed learning_rate of 0.001 may be suboptimal for the model's capacity with n_mem_tokens=64 sweep and n_layer=6. The sweep format ensures we find the optimal value before considering architectural changes.
 
 
+## Iter 15 — RUNNING — N=8
+**Hypothesis:** Increasing max_steps from 25000 to 50000 will provide more training iterations for the model to converge on the associative retrieval task, as previous experiments may have terminated before learning the patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_015
+
+
+## Iter 5 — reverted — EM: 0.0074 (N=8)
+**Hypothesis:** Increasing n_mem_tokens will provide more capacity for the model to store and retrieve associative patterns.
+**Wall time:** 75.5 min
+**Result:** EM=0.0074 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - only learning_rate was swept (iter_4 achieved EM=0.7442). n_mem_tokens has a pending sweep configuration [16,32,64,128] that has not been executed. Memory token capacity is critical for associative retrieval tasks.
+
+
