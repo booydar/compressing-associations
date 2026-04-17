@@ -900,3 +900,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been extensively explored: learning_rate sweeps [0.0001, 0.001, 0.01, 0.1] in iterations 9, 11, 14, 16, 17; n_mem_tokens sweep [16, 32, 64, 128] in iteration 18; n_layer increased from 4 to 6 in iteration 13; max_steps increased to 50000 in iteration 15. All sweeps returned EM=-1.0 indicating training instability rather than poor hyperparameter choice. Random memory initialization may prevent the model from effectively storing associative patterns from the start.
 
 
+## Iter 20 — RUNNING — N=8
+**Hypothesis:** Disabling deep supervision will improve EM accuracy by allowing the model to focus on the primary associative retrieval objective without conflicting auxiliary loss signals from intermediate layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_020
+
+
+## Iter 9 — reverted — EM: 0.1246 (N=8)
+**Hypothesis:** Increasing max_steps will allow the model more training iterations to converge on the associative retrieval task, as previous experiments with shorter training did not establish stable performance.
+**Wall time:** 127.0 min
+**Result:** EM=0.1246 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - the learning rate sweep (iter_4) achieved EM=0.7442, but subsequent sweeps on n_mem_tokens, n_embd, and warmup_steps all reverted with poor EM scores. The current max_steps=25000 may be insufficient for full convergence, especially given that iter_1 identified this as a potential issue but failed due to a configuration error. Increasing max_steps to 50000 provides more training budget before considering architectural changes.
+
+
