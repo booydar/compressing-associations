@@ -1055,3 +1055,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are not yet exhausted - learning_rate and n_mem_tokens sweeps have been tried but optimizer configuration has not been optimized. The current Adam optimizer with non-standard betas [0.9, 0.95] is suboptimal; AdamW with decoupled weight decay and standard betas [0.9, 0.999] is the proven default for transformer training and should improve convergence.
 
 
+## Iter 24 — RUNNING — N=8
+**Hypothesis:** Adding gradient clipping with max_grad_norm=0.5 will stabilize training by preventing gradient explosion in the cross-attention memory write pathway.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_024
+
+
+## Iter 17 — reverted — EM: 0.3876 (N=8)
+**Hypothesis:** The deep supervision configuration is too aggressive and may be interfering with the model's ability to learn the associative retrieval task.
+**Wall time:** 96.1 min
+**Result:** EM=0.3876 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted through sweeps (learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, n_head). Best EM achieved was only 0.1246. The deep supervision is currently active with 3 layers supervised, which may be creating conflicting gradients. Disabling deep supervision will allow the model to focus on the primary task objective.
+
+
