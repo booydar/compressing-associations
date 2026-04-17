@@ -372,3 +372,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item at position 12. Previous experiments with multi-stage write (iterations 19-26) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 14, 13 marked Done), but the memory update mechanism itself remains unoptimized. Current single-stage write at line 137 in MemoryAugmentedLayer.forward() uses simple residual addition without adaptive gating.
 
 
+## Iter 28 — RUNNING — N=8
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_028
+
+
+## Iter 28 — reverted — EM: 0.0006 (N=8)
+**Hypothesis:** Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.
+**Wall time:** 31.4 min
+**Result:** EM=0.0006 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-27) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues that need to be fixed. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 13, 14 marked Done), but the memory update mechanism itself remains unoptimized.
+
+

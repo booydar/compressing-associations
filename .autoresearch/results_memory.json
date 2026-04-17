@@ -900,6 +900,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_027",
       "summary_logged": false,
       "token_accuracy": 0.0183
+    },
+    {
+      "id": 28,
+      "iter_tag": "iter_028",
+      "description": "Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.",
+      "hypothesis": {
+        "hypothesis": "Implementing multi-stage memory write with separate read, update, and merge phases will improve memory utilization by computing adaptive gating weights for memory updates instead of simple residual addition.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Implementing human_directions item #12 (Multi-stage write), which is the latest pending item. Previous experiments with multi-stage write (iterations 19-27) have consistently failed with 'experiment script exited with code 1', suggesting implementation issues that need to be fixed. Per HYPERPARAMETER-FIRST policy, memory dropout and curriculum have been explored (items 13, 14 marked Done), but the memory update mechanism itself remains unoptimized.",
+        "instruction": "In MemoryAugmentedLayer.forward(), replace the simple memory write (memory = memory + write_residual) with a multi-stage process: (1) Read phase: compute read_residual from memory cross-attention, (2) Update phase: compute update_residual from memory cross-attention using the read-augmented hidden states, (3) Merge phase: compute gating weights alpha = sigmoid(W_g @ [memory_normed, update_residual]) to blend memory with update: memory = (1-alpha) * memory + alpha * update_residual. Add a learnable gate projection layer self.memory_gate = nn.Linear(hidden_size*2, hidden_size) and self.gate_sigmoid = nn.Sigmoid().",
+        "human_directions_item": "12"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0012,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_028",
+      "wall_time_min": 31.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776388630.3442335,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/.autoresearch/artifacts/iter_028",
+      "summary_logged": false,
+      "token_accuracy": 0.0184
     }
   ],
   "reference": {
