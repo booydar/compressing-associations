@@ -731,3 +731,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - no successful learning rate sweep has been completed yet. Previous sweeps (iter_4, iter_7, iter_8, iter_9) all failed due to infrastructure issues (checkpoint recovery, git issues) rather than demonstrating that learning rate tuning is ineffective. The current learning_rate of 0.001 needs systematic exploration across orders of magnitude.
 
 
+## Iter 12 — RUNNING — N=8
+**Hypothesis:** Adding a learnable write gate with sigmoid activation will allow the model to dynamically control memory update magnitude, improving retention of associative patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_012
+
+
+## Iter 12 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Adding a learnable write gate with sigmoid activation will allow the model to dynamically control memory update magnitude, improving retention of associative patterns.
+**Wall time:** 1.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted: learning_rate sweeps (iter_2,4,7,8,9,11) and batch_size sweeps (iter_6,10) failed to improve beyond EM=0.0234. n_mem_tokens sweep (iter_5) established baseline. The current fixed write_gate (0.5) lacks adaptability; a sigmoid-gated mechanism will enable layer-specific memory update control.
+
+

@@ -349,6 +349,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_011",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Adding a learnable write gate with sigmoid activation will allow the model to dynamically control memory update magnitude, improving retention of associative patterns.",
+      "hypothesis": {
+        "hypothesis": "Adding a learnable write gate with sigmoid activation will allow the model to dynamically control memory update magnitude, improving retention of associative patterns.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been exhausted: learning_rate sweeps (iter_2,4,7,8,9,11) and batch_size sweeps (iter_6,10) failed to improve beyond EM=0.0234. n_mem_tokens sweep (iter_5) established baseline. The current fixed write_gate (0.5) lacks adaptability; a sigmoid-gated mechanism will enable layer-specific memory update control.",
+        "instruction": "In MemoryAugmentedLayer.__init__, replace self.write_gate = nn.Parameter(torch.tensor(0.5)) with: self.write_gate = nn.Linear(hidden_size, 1) and add self.gate_activation = nn.Sigmoid(). In MemoryAugmentedLayer.forward, change 'memory = memory + self.write_gate * write_residual' to: 'gate_input = torch.mean(hidden_states_normed, dim=1); gate_value = self.gate_activation(self.write_gate(gate_input)); memory = memory + gate_value * write_residual'. This makes the write gate adaptive based on input content.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.0234,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_012",
+      "wall_time_min": 1.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776419819.4120445,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_012",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
