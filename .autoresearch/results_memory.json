@@ -440,6 +440,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_014",
       "summary_logged": false,
       "token_accuracy": 0.0177
+    },
+    {
+      "id": 15,
+      "iter_tag": "iter_015",
+      "description": "A n_head sweep will explore whether more attention heads improve the model's cross-attention capacity for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "A n_head sweep will explore whether more attention heads improve the model's cross-attention capacity for associative retrieval.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters are being systematically explored. While learning_rate, n_mem_tokens, n_embd, n_layer, batch_size, warmup_steps, and weight_decay have been swept, n_head has not been explored yet. The current 4 heads may be insufficient for the cross-attention mechanism to effectively learn associative patterns.",
+        "instruction": "Replace the learning_rate line (learning_rate: 0.001) with a n_head sweep configuration: n_head: values: [2, 4, 8, 16] default: 4",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_015",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776455261.919409,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_015",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

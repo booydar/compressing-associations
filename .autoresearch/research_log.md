@@ -1017,3 +1017,16 @@ Use -f if you really want to add them.
 **Rationale:** All major hyperparameters have been exhausted: learning_rate (iter_4, iter_11), n_mem_tokens (iter_7), n_embd (iter_6), warmup_steps (iter_8), max_steps (iter_9), n_layer (iter_10), batch_size (iter_12), weight_decay (iter_13). The best EM achieved was 0.7442 (iter_4) with learning_rate sweep, but subsequent experiments failed. Since hyperparameter tuning has been systematically explored without sustained improvement, an architectural change targeting memory dynamics is now warranted.
 
 
+## Iter 15 — RUNNING — N=8
+**Hypothesis:** A n_head sweep will explore whether more attention heads improve the model's cross-attention capacity for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_015
+
+
+## Iter 15 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A n_head sweep will explore whether more attention heads improve the model's cross-attention capacity for associative retrieval.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters are being systematically explored. While learning_rate, n_mem_tokens, n_embd, n_layer, batch_size, warmup_steps, and weight_decay have been swept, n_head has not been explored yet. The current 4 heads may be insufficient for the cross-attention mechanism to effectively learn associative patterns.
+
+
