@@ -926,3 +926,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameter sweeps for learning_rate (best: 0.7442 EM), n_mem_tokens, n_embd, warmup_steps, and max_steps have been exhausted with no improvement over iter_4. n_layer has not been swept yet and directly affects model capacity for associative pattern learning - more layers may enable better hierarchical pattern extraction.
 
 
+## Iter 11 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate may be suboptimal for convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_011
+
+
+## Iter 11 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate may be suboptimal for convergence.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been fully exhausted - while some sweeps have been attempted (n_mem_tokens, n_embd, n_layer, warmup_steps), they were reverted due to git issues or configuration errors, not because they failed to improve performance. The most recent successful experiment (iter_4) achieved EM=0.7442 with a learning_rate=0.001, but no systematic sweep has been completed. A learning_rate sweep over [0.0001, 0.001, 0.01] will find the optimal value before considering architectural changes.
+
+
