@@ -1,5 +1,8 @@
 # Experiment configuration - CAN BE MODIFIED by the autoresearch model
-# Current iteration: iter_247 (Adam optimizer, Human direction #1 - Systematic Training Hyperparameter Exploration)
+# Supported parameters: learning_rate, n_mem_tokens, n_layer, n_head, n_embd,
+#                       batch_size, max_steps, eval_steps, logging_steps,
+#                       warmup_steps, early_stopping_patience, n_keys, n_values,
+#                       pairs_per_segment, base_model
 
 max_steps: 25000
 eval_steps: 500
@@ -13,33 +16,13 @@ n_head: 4
 n_embd: 128
 n_mem_tokens: 32
 
-# Model flags for deep supervision
-use_deep_supervision: true
-deep_supervision_weight: 0.1
-deep_supervision_layers: [1, 2, 3]
-
 # Task parameters
 n_keys: 2
 n_values: 2
-pairs_per_segment: 4
+
 
 # Training parameters
 base_model: llama
 learning_rate: 0.01
 batch_size: 128
 em_threshold: 0.95
-
-# Optimizer configuration
-optimizer: adam
-betas: [0.9, 0.95]
-weight_decay: 0.01
-
-# Gradient clipping configuration
-max_grad_norm:
-  values: [0.1, 0.5, 1.0, 2.0]
-  default: 1.0
-
-# Memory dropout configuration
-memory_dropout:
-  values: [0.0, 0.1, 0.2, 0.3]
-  default: 0.1

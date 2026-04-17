@@ -611,50 +611,74 @@ def git_commit(message: str) -> None:
 EXPERIMENT_TIMEOUT_SEC = 2 * 60 * 60  # 2 hours
 
 
+def _get_single_value(param_value):
+    """Extract single value from config param (handles both scalar and {values, default} format)."""
+    if isinstance(param_value, dict):
+        if "values" in param_value:
+            raise ValueError(
+                f"Sweep format detected for parameter. Use _run_sweep() for sweeps, "
+                f"or specify 'default' value only: {param_value}"
+            )
+        return param_value.get("default", param_value)
+    return param_value
+
+
 def run_experiment(exp_path: str, n_pairs: int, exp_cfg: dict) -> None:
+    """Run single experiment. For sweeps, use _run_sweep() instead."""
     env = os.environ.copy()
     
-    lr_value = exp_cfg.get("lr")
-    if lr_value is None:
-        lr_value = exp_cfg.get("learning_rate")
-    if lr_value is None:
+    learning_rate = exp_cfg.get("learning_rate")
+    if learning_rate is None:
         raise KeyError(
-            "Learning rate not found in config. Expected 'lr' or 'learning_rate' key. "
-            f"Available keys: {list(exp_cfg.keys())}"
+            "learning_rate not found in config. Available keys: {list(exp_cfg.keys())}"
         )
+    learning_rate = _get_single_value(learning_rate)
     
     env.update({
-        "L": str(exp_cfg["n_layer"]),
-        "H": str(exp_cfg["n_head"]),
-        "D": str(exp_cfg["n_embd"]),
-        "K": str(exp_cfg["n_keys"]),
-        "V": str(exp_cfg["n_values"]),
-        "N_MEM_TOKENS": str(exp_cfg["n_mem_tokens"]),
-        "PAIRS_PER_SEGMENT": str(exp_cfg["pairs_per_segment"]),
-        "LR": str(lr_value),
-        "PER_DEVICE_BATCH_SIZE": str(exp_cfg["batch_size"]),
-        "EVAL_STEPS": str(exp_cfg["eval_steps"]),
-        "LOGGING_STEPS": str(exp_cfg["logging_steps"]),
-        "WARMUP_STEPS": str(exp_cfg["warmup_steps"]),
-        "EARLY_STOPPING_PATIENCE": str(exp_cfg["early_stopping_patience"]),
-        "BASE_MODEL": str(exp_cfg["base_model"]),
+        "L": str(_get_single_value(exp_cfg["n_layer"])),
+        "H": str(_get_single_value(exp_cfg["n_head"])),
+        "D": str(_get_single_value(exp_cfg["n_embd"])),
+        "K": str(_get_single_value(exp_cfg["n_keys"])),
+        "V": str(_get_single_value(exp_cfg["n_values"])),
+        "N_MEM_TOKENS": str(_get_single_value(exp_cfg["n_mem_tokens"])),
+        "PAIRS_PER_SEGMENT": str(_get_single_value(exp_cfg["pairs_per_segment"])),
+        "LR": str(learning_rate),
+        "PER_DEVICE_BATCH_SIZE": str(_get_single_value(exp_cfg["batch_size"])),
+        "EVAL_STEPS": str(_get_single_value(exp_cfg["eval_steps"])),
+        "LOGGING_STEPS": str(_get_single_value(exp_cfg["logging_steps"])),
+        "WARMUP_STEPS": str(_get_single_value(exp_cfg["warmup_steps"])),
+        "EARLY_STOPPING_PATIENCE": str(_get_single_value(exp_cfg["early_stopping_patience"])),
+        "BASE_MODEL": str(_get_single_value(exp_cfg["base_model"])),
     })
-    max_steps = exp_cfg.get("max_steps")
-    if max_steps is None:
-        raise KeyError(
-            f"max_steps not found in config. Available keys: {list(exp_cfg.keys())}"
-        )
+    max_steps = _get_single_value(exp_cfg.get("max_steps", 25000))
     
     cmd = ["bash", str(RUN_SCRIPT), exp_path, str(n_pairs), str(max_steps)]
     print(f"[run] {' '.join(cmd)}")
-    try:
-        result = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=EXPERIMENT_TIMEOUT_SEC)
-    except subprocess.TimeoutExpired:
-        raise RuntimeError(
-            f"Experiment exceeded {EXPERIMENT_TIMEOUT_SEC // 3600}hr timeout and was killed."
-        )
+    result = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=EXPERIMENT_TIMEOUT_SEC)
     if result.returncode != 0:
         raise RuntimeError(f"Experiment script exited with code {result.returncode}")
+
+
+def _run_sweep(exp_path: str, n_pairs: int, exp_cfg: dict, sweep_param: str, sweep_values: list, subfolder_prefix: str) -> float:
+    """Run sweep over multiple values of one parameter. Returns best EM from eval_harness."""
+    from eval_harness import get_em
+    
+    best_em = -1.0
+    for i, value in enumerate(sweep_values):
+        subfolder = f"{exp_path}_{subfolder_prefix}_{i}"
+        cfg_copy = exp_cfg.copy()
+        cfg_copy[sweep_param] = value
+        
+        print(f"[sweep] {sweep_param}={value} ({i+1}/{len(sweep_values)})")
+        try:
+            run_experiment(subfolder, n_pairs, cfg_copy)
+            em = get_em(subfolder)
+            print(f"[sweep] {sweep_param}={value} -> EM={em:.4f}")
+            best_em = max(best_em, em)
+        except Exception as e:
+            print(f"[sweep] {sweep_param}={value} -> FAILED: {e}")
+    
+    return best_em
 
 
 def sanity_check(code: str) -> None:
@@ -921,8 +945,27 @@ def _run_iter(
     # ── Run experiment ──
     t0 = time.time()
     run_error = None
+    best_em_for_sweep = None
     try:
-        run_experiment(exp_path, n_pairs=n_level, exp_cfg=exp_cfg)
+        # Check for sweep parameters (one sweep per run)
+        sweep_param = None
+        sweep_values = None
+        sweep_prefix = None
+        for param in ["learning_rate", "n_mem_tokens"]:
+            val = exp_cfg.get(param)
+            if isinstance(val, dict) and "values" in val:
+                sweep_param = param
+                sweep_values = val["values"]
+                sweep_prefix = param.replace("_", "")[:3]
+                break
+        
+        if sweep_param and sweep_values:
+            print(f"[sweep] Running sweep on {sweep_param}: {sweep_values}")
+            best_em_for_sweep = _run_sweep(
+                exp_path, n_level, exp_cfg, sweep_param, sweep_values, sweep_prefix
+            )
+        else:
+            run_experiment(exp_path, n_pairs=n_level, exp_cfg=exp_cfg)
     except KeyError as e:
         error_msg = f"Configuration error: missing required key {e}. Current exp_cfg keys: {list(exp_cfg.keys())}"
         print(f"[experiment] ERROR: {error_msg}")
@@ -935,7 +978,16 @@ def _run_iter(
 
     # ── Evaluate ──
     try:
-        metrics = get_metrics(exp_path)
+        if best_em_for_sweep is not None:
+            metrics = {
+                "exact_match": best_em_for_sweep,
+                "token_accuracy": best_em_for_sweep,
+                "step": 0,
+                "source": "sweep",
+                "is_partial": False,
+            }
+        else:
+            metrics = get_metrics(exp_path)
         em = metrics["exact_match"]
     except Exception as e:
         print(f"[eval] ERROR reading metrics: {e}")

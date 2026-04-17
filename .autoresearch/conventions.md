@@ -78,3 +78,34 @@ output = base_layer(hidden_states)
 - New helper classes: PascalCase, suffix with purpose (e.g. `MemoryGate`, `CrossLayerSkip`)
 - New nn.Module attributes in MemoryAugmentedLayer: snake_case
 - Buffer names: `initial_<thing>_state` pattern
+
+## Hyperparameter Sweeps (experiment_config.yaml)
+
+To sweep a hyperparameter, use the `values:` format with a `default`:
+
+```yaml
+learning_rate:
+  values: [0.0001, 0.0005, 0.001, 0.005, 0.01]
+  default: 0.01
+```
+
+Supported sweep parameters (ONE sweep per run):
+- `learning_rate` - learning rate sweep
+- `n_mem_tokens` - memory token count sweep
+
+The sweep runs all values as separate sub-experiments and uses the best EM across all values.
+Each sub-experiment is saved in a subfolder (e.g., `iter_045_lr_0_0`, `iter_045_lr_0_1`, etc.).
+
+Example for learning rate sweep:
+```yaml
+learning_rate:
+  values: [0.0001, 0.001, 0.01]
+  default: 0.01
+```
+
+Example for memory token sweep:
+```yaml
+n_mem_tokens:
+  values: [8, 16, 32, 64]
+  default: 32
+```
