@@ -848,3 +848,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - multiple learning rate sweeps have been attempted (iter 4, 7, 9, 11, 14, 16) but all failed due to infrastructure issues (git, checkpoint recovery) rather than training failure. No successful baseline has been established with EM > 0, so further hyperparameter exploration is required before architectural changes are justified.
 
 
+## Iter 18 — RUNNING — N=8
+**Hypothesis:** A n_mem_tokens sweep will identify the optimal memory capacity for storing associative patterns, as the current fixed value of 64 may be suboptimal for the task complexity.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_018
+
+
+## Iter 7 — reverted — EM: 0.0240 (N=8)
+**Hypothesis:** A sweep over n_mem_tokens values will explore whether more or fewer memory tokens improve the model's capacity to store and retrieve associative patterns.
+**Wall time:** 200.2 min
+**Result:** EM=0.0240 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted - previous experiments show EM=0.7442 was achieved with learning_rate sweep (iter_4), but n_mem_tokens sweep in iter_5 was reverted with EM=0.0074. The current config shows n_mem_tokens already has a sweep defined [16, 32, 64, 128] but default is 64. Since n_embd sweep (iter_6) was also reverted, we should retry the n_mem_tokens sweep with different values or ensure it runs properly before considering architectural changes.
+
+
