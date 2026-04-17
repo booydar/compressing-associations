@@ -465,3 +465,16 @@ Use -f if you really want to add them.
 **Rationale:** Implementing human_directions item #12 (Multi-stage write) with a minimal, robust design. Previous 16 attempts failed due to implementation complexity. This version adds a single learnable gate parameter to control write magnitude, avoiding the complex multi-phase design that caused failures. Hyperparameters like memory_dropout and gradient clipping have been explored (items 14, 16 marked Done), but the memory update mechanism remains unoptimized.
 
 
+## Iter 36 — RUNNING — N=8
+**Hypothesis:** Adding a forget gate to the memory update mechanism will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.3/runs-autoresearch/n8/iter_036
+
+
+## Iter 36 — reverted — EM: 0.0000 (N=8)
+**Hypothesis:** Adding a forget gate to the memory update mechanism will allow the model to selectively retain or discard old memory information, improving memory management for associative retrieval.
+**Wall time:** 25.3 min
+**Result:** EM=0.0000 vs prev best=0.0012
+**Metric source:** all_results
+**Rationale:** Multi-stage write (item #12) has been attempted 15+ times (iterations 19-35) with consistent failures. Per human directions priority, I should implement the next pending item. Forget gate (item #11) is a simpler architectural change that modifies the memory update equation at line 137 from 'memory = memory + write_residual' to 'memory = forget_gate * memory + write_residual', allowing controlled memory retention.
+
+
