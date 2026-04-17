@@ -666,3 +666,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been exhausted - learning_rate sweep (iter_4) and n_mem_tokens sweep (iter_5) were attempted but experiments failed due to checkpoint issues, not training failure. No learning_rate or batch_size sweep with successful training has been completed. Following the hyperparameter-first policy, I propose a batch_size sweep before considering architectural changes.
 
 
+## Iter 7 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.001 may be suboptimal for the established baseline (EM=0.0234 from iter_5).
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_007
+
+
+## Iter 7 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.001 may be suboptimal for the established baseline (EM=0.0234 from iter_5).
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.0234
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been exhausted: iter_5 established a valid baseline with n_mem_tokens sweep (EM=0.0234), but learning rate has only been attempted with failed runs (iter_2, iter_4 failed due to config/git issues, not training failure). The fixed learning_rate of 0.001 needs proper exploration across [0.0001, 0.0005, 0.001, 0.005, 0.01] before considering architectural changes.
+
+
