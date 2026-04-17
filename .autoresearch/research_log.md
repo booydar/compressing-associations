@@ -939,3 +939,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been fully exhausted - while some sweeps have been attempted (n_mem_tokens, n_embd, n_layer, warmup_steps), they were reverted due to git issues or configuration errors, not because they failed to improve performance. The most recent successful experiment (iter_4) achieved EM=0.7442 with a learning_rate=0.001, but no systematic sweep has been completed. A learning_rate sweep over [0.0001, 0.001, 0.01] will find the optimal value before considering architectural changes.
 
 
+## Iter 12 — RUNNING — N=8
+**Hypothesis:** A batch_size sweep will identify the optimal gradient batch size for stable convergence on the associative retrieval task, as the current fixed 128 may be suboptimal for the model's learning dynamics.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_012
+
+
+## Iter 12 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A batch_size sweep will identify the optimal gradient batch size for stable convergence on the associative retrieval task, as the current fixed 128 may be suboptimal for the model's learning dynamics.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been partially exhausted: learning_rate, n_mem_tokens, n_embd, warmup_steps, max_steps, and n_layer have all been swept with mixed results (best EM=0.7442). Batch_size has not been systematically explored - the current value of 128 may be affecting gradient stability and convergence. A batch_size sweep will explore whether smaller batches (better generalization) or larger batches (better gradient estimates) improve performance.
+
+

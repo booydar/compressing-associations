@@ -350,6 +350,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_011",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "A batch_size sweep will identify the optimal gradient batch size for stable convergence on the associative retrieval task, as the current fixed 128 may be suboptimal for the model's learning dynamics.",
+      "hypothesis": {
+        "hypothesis": "A batch_size sweep will identify the optimal gradient batch size for stable convergence on the associative retrieval task, as the current fixed 128 may be suboptimal for the model's learning dynamics.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been partially exhausted: learning_rate, n_mem_tokens, n_embd, warmup_steps, max_steps, and n_layer have all been swept with mixed results (best EM=0.7442). Batch_size has not been systematically explored - the current value of 128 may be affecting gradient stability and convergence. A batch_size sweep will explore whether smaller batches (better generalization) or larger batches (better gradient estimates) improve performance.",
+        "instruction": "Replace the batch_size parameter in experiment_config.yaml with a sweep configuration:\nbatch_size:\n  values: [32, 64, 128, 256]\n  default: 128\nThis will run sub-experiments for each batch size and use the best EM across all values.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_012",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776446899.034653,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_012",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
