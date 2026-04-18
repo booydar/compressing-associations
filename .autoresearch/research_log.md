@@ -1158,3 +1158,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, and weight_decay with best EM 0.3876. max_grad_norm sweep is configured but not yet tested - gradient clipping is critical for stable recurrent memory training as excessive gradients can corrupt memory states while overly aggressive clipping prevents learning.
 
 
+## Iter 23 — RUNNING — N=8
+**Hypothesis:** A batch_size sweep will identify the optimal training batch size for stable gradient estimates and better convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_023
+
+
+## Iter 23 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A batch_size sweep will identify the optimal training batch size for stable gradient estimates and better convergence on the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, weight_decay, n_head, and max_grad_norm. Best EM achieved was 0.3876. Batch_size has not been swept yet and may significantly impact gradient stability for memory updates.
+
+

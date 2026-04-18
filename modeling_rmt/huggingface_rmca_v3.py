@@ -147,7 +147,7 @@ class MemoryAugmentedLayer(nn.Module):
         self.pre_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.post_base_layer_norm = torch.nn.RMSNorm(initial_memory_state.shape[-1])
         self.memory_dropout = torch.nn.Dropout(config.get('memory_dropout', 0.0) if config else 0.0)
-        self.write_gate = nn.Parameter(torch.ones(1) * 0.5)
+        self.write_gate = nn.Parameter(torch.ones(1))
     
     def forward(self, hidden_states, *args, **kwargs):
         batch_size = hidden_states.shape[0]
