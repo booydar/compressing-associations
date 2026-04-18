@@ -1317,3 +1317,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have NOT been exhausted - learning rate sweeps in iterations 21 and 27 failed due to infrastructure issues ([Errno 7] Argument list too long) rather than training failure. Since the model now achieves 0.8672 EM with recent architectural improvements, a properly configured learning rate sweep is the next priority per the hyperparameter-first policy before considering further architectural changes.
 
 
+## Iter 30 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.00005, 0.0001, 0.0005, 0.001, 0.005] will identify the optimal training signal strength for the current architecture which achieved 0.8672 EM.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_030
+
+
+## Iter 30 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.00005, 0.0001, 0.0005, 0.001, 0.005] will identify the optimal training signal strength for the current architecture which achieved 0.8672 EM.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps (iterations 21, 27, 29) had infrastructure failures (-1.0 EM) rather than training failures. The current fixed learning rate of 0.001 was used after the successful architectural improvements (layer norm + learnable write gate), but the optimal rate has not been properly established due to those sweep failures. No pending human directions exist.
+
+
