@@ -1472,3 +1472,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous learning rate sweeps used values up to 0.01 which may be too high for the current small model (n_embd=128, n_layer=6). The n_mem_tokens sweep was configured but failed due to infrastructure issues, not hyperparameter exhaustion. For small models with limited capacity, lower learning rates typically yield better convergence.
 
 
+## Iter 42 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength, as previous learning rate sweeps failed due to infrastructure issues rather than demonstrating exhaustion.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_042_lr_sweep_focused_v2
+
+
+## Iter 42 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength, as previous learning rate sweeps failed due to infrastructure issues rather than demonstrating exhaustion.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored - previous learning rate sweeps (iter 34, 35, 38, 41) resulted in EM=-1.0 due to infrastructure failures or training failures, not because tuning is exhausted. The n_mem_tokens sweep (iter 32) achieved EM=0.0104 which is poor. Learning rate is fundamental to training success and needs proper exploration with a focused range for the small embedding dimension (128) architecture.
+
+
