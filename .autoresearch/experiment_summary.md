@@ -52,3 +52,13 @@ Use -f if you really want to add them.
 - Rationale: Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.1246. Further hyperparameter tuning is unlikely to help as the bottleneck appears to be architectural - the fixed scalar write_gate cannot adapt to varying input patterns.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_016
 
+## Iter 21 | failed | N=8
+- Hypothesis: Replacing the fixed scalar write_gate with an adaptive gating mechanism that computes gate values from input features will enable the model to control memory writes based on content importance, improving associative pattern retention.
+- Target: modeling_rmt/huggingface_rmca_v3.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.3876. Further hyperparameter tuning is unlikely to help as the scalar write_gate cannot adapt to varying input patterns - it applies uniform write strength regardless of input content importance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_021
+

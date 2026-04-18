@@ -1120,3 +1120,28 @@ Use -f if you really want to add them.
 **Rationale:** Recent experiments show very low EM (0.0006 in iter_19). The current config has 6 layers and 128 hidden size. Gradient checkpointing can allow deeper models (more n_layer) without OOM, which should improve capacity for learning associative patterns. Hyperparameters like learning_rate and n_mem_tokens have been swept but depth has not been fully explored due to memory constraints.
 
 
+## Iter 21 — RUNNING — N=8
+**Hypothesis:** Replacing the fixed scalar write_gate with an adaptive gating mechanism that computes gate values from input features will enable the model to control memory writes based on content importance, improving associative pattern retention.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_021
+
+
+## Iter 21 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_021
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 22 — RUNNING — N=8
+**Hypothesis:** A max_grad_norm sweep will identify the optimal gradient clipping threshold for stable memory updates during associative pattern learning, as the current default of 1.0 may be too aggressive or too permissive for the RMCA architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_022
+
+
+## Iter 25 — kept — EM: 0.7702 (N=8)
+**Hypothesis:** Adding layer normalization before the memory write operation will stabilize gradient flow through the cross-attention write pathway, improving convergence on the associative retrieval task.
+**Wall time:** 105.2 min
+**Result:** EM=0.7702 vs prev best=0.0798
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate (iter_4, iter_16, iter_17, iter_21), n_mem_tokens (iter_18), n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.0798 with gradient clipping. Further hyperparameter tuning is unlikely to help as the bottleneck appears to be gradient instability in the memory write pathway. The current write operation applies dropout directly to write_residual without normalization, which can cause unstable gradients.
+
+
