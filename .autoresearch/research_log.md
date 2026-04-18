@@ -1291,3 +1291,16 @@ Use -f if you really want to add them.
 **Rationale:** No pending human directions exist. Current learning_rate is fixed at 0.001 while other hyperparameters like n_mem_tokens and max_grad_norm are already being swept. Learning rate is the most critical training hyperparameter and has not been systematically explored.
 
 
+## Iter 38 — RUNNING — N=8
+**Hypothesis:** Sweeping n_mem_tokens across a wider range will find optimal memory capacity for storing associative mappings.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_038
+
+
+## Iter 28 — reverted — EM: 0.1280 (N=8)
+**Hypothesis:** Adding a learnable read gate will allow the model to dynamically control memory retrieval strength based on input context, improving the balance between reading from memory and processing current input.
+**Wall time:** 137.7 min
+**Result:** EM=0.1280 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted (sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head). Current best EM is 0.8672 (iter_26). The model now has a learnable write gate (iter_26) but no corresponding read gate - adding asymmetric gating for reads will enable adaptive memory retrieval.
+
+
