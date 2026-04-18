@@ -1368,3 +1368,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous learning rate sweeps (iters 27, 29, 30) failed with EM=-1.0 due to infrastructure issues, not training failure. The current architecture with learnable write gate achieved 0.8672 EM at lr=0.001, but this rate may not be optimal. The n_mem_tokens sweep (iter 32) achieved only 0.0104 EM, suggesting learning rate is a more critical hyperparameter to tune first before further architectural changes.
 
 
+## Iter 34 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the current architecture which achieved 0.8672 EM with layer norm and learnable write gate.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_034_lr_sweep_post_arch
+
+
+## Iter 34 — reverted — EM: 0.8564 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the current architecture which achieved 0.8672 EM with layer norm and learnable write gate.
+**Wall time:** 82.8 min
+**Result:** EM=0.8564 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Recent n_mem_tokens sweep (iter 32) was reverted with poor EM (0.0104), and multiple learning rate sweeps (iter 27, 29, 30) failed due to infrastructure issues (EM=-1.0), not training failure. The current fixed learning rate of 0.001 may not be optimal after the successful architectural improvements. Hyperparameters must be exhausted before architectural changes per the policy.
+
+
