@@ -1394,3 +1394,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored. The n_mem_tokens sweep (iter 32) was tried but reverted with poor EM (0.0104), suggesting memory token count may need tuning alongside learning rate. Recent learning rate sweeps (iter 27, 29, 30, 34) were reverted due to infrastructure issues or suboptimal results, not because the approach was exhausted. A focused learning rate sweep with a narrower range around the current 0.001 setting is needed.
 
 
+## Iter 36 — RUNNING — N=8
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals during training, improving convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_036_deep_supervision_enabled
+
+
+## Iter 36 — reverted — EM: 0.1330 (N=8)
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals during training, improving convergence on the associative retrieval task.
+**Wall time:** 218.3 min
+**Result:** EM=0.1330 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameter exploration has been ongoing with learning rate sweeps and n_mem_tokens sweeps, but none have achieved stable high performance beyond the baseline 0.8672 EM from iter 26. Deep supervision is a proven technique for improving gradient flow in deep networks and has not been tried yet. This is a hyperparameter change (use_deep_supervision flag and related parameters) rather than an architectural modification.
+
+

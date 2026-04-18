@@ -1072,6 +1072,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_035",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 36,
+      "iter_tag": "iter_036",
+      "description": "Enabling deep supervision with intermediate layer losses will provide stronger gradient signals during training, improving convergence on the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Enabling deep supervision with intermediate layer losses will provide stronger gradient signals during training, improving convergence on the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter exploration has been ongoing with learning rate sweeps and n_mem_tokens sweeps, but none have achieved stable high performance beyond the baseline 0.8672 EM from iter 26. Deep supervision is a proven technique for improving gradient flow in deep networks and has not been tried yet. This is a hyperparameter change (use_deep_supervision flag and related parameters) rather than an architectural modification.",
+        "instruction": "In .autoresearch/experiment_config.yaml, set use_deep_supervision to true, set deep_supervision_layers to [2, 4, 6] (intermediate layers), and set deep_supervision_weight to 0.1 to enable deep supervision training.",
+        "human_directions_item": null,
+        "run_name": "deep_supervision_enabled"
+      },
+      "em_score": 0.133,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_036_deep_supervision_enabled",
+      "wall_time_min": 218.3,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776509430.1423185,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_036",
+      "summary_logged": false,
+      "token_accuracy": 0.133
     }
   ],
   "reference": {
