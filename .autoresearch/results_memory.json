@@ -1103,6 +1103,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_036",
       "summary_logged": false,
       "token_accuracy": 0.133
+    },
+    {
+      "id": 37,
+      "iter_tag": "iter_037",
+      "description": "Increasing the model capacity by increasing n_embd from 128 to 256 will improve the model's ability to encode and retrieve associative information, as the current small embedding dimension may be a bottleneck for the memory-augmented architecture.",
+      "hypothesis": {
+        "hypothesis": "Increasing the model capacity by increasing n_embd from 128 to 256 will improve the model's ability to encode and retrieve associative information, as the current small embedding dimension may be a bottleneck for the memory-augmented architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters are still being explored. Recent learning rate sweeps (iter 27, 29, 30, 34, 35) have been attempted but failed due to infrastructure issues or training failures. The n_mem_tokens sweep in iter 32 achieved only 0.128 EM, and deep supervision in iter 36 achieved 0.133 EM - both significantly below the baseline 0.8672 EM achieved with layer norm + learnable write gate. The current architecture with n_embd=128, n_layer=6, n_head=4 may be underparameterized for the task, and increasing embedding dimension is a fundamental hyperparameter that directly affects model capacity.",
+        "instruction": "Change n_embd from 128 to 256 in .autoresearch/experiment_config.yaml to increase model capacity. Keep all other hyperparameters unchanged.",
+        "human_directions_item": null,
+        "run_name": "increased_embedding_dim"
+      },
+      "em_score": 0.0056,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_037_increased_embedding_dim",
+      "wall_time_min": 153.7,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776522607.5231643,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_037",
+      "summary_logged": false,
+      "token_accuracy": 0.0056
     }
   ],
   "reference": {

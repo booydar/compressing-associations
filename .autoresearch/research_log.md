@@ -1407,3 +1407,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameter exploration has been ongoing with learning rate sweeps and n_mem_tokens sweeps, but none have achieved stable high performance beyond the baseline 0.8672 EM from iter 26. Deep supervision is a proven technique for improving gradient flow in deep networks and has not been tried yet. This is a hyperparameter change (use_deep_supervision flag and related parameters) rather than an architectural modification.
 
 
+## Iter 37 — RUNNING — N=8
+**Hypothesis:** Increasing the model capacity by increasing n_embd from 128 to 256 will improve the model's ability to encode and retrieve associative information, as the current small embedding dimension may be a bottleneck for the memory-augmented architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_037_increased_embedding_dim
+
+
+## Iter 37 — reverted — EM: 0.0056 (N=8)
+**Hypothesis:** Increasing the model capacity by increasing n_embd from 128 to 256 will improve the model's ability to encode and retrieve associative information, as the current small embedding dimension may be a bottleneck for the memory-augmented architecture.
+**Wall time:** 153.7 min
+**Result:** EM=0.0056 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored. Recent learning rate sweeps (iter 27, 29, 30, 34, 35) have been attempted but failed due to infrastructure issues or training failures. The n_mem_tokens sweep in iter 32 achieved only 0.128 EM, and deep supervision in iter 36 achieved 0.133 EM - both significantly below the baseline 0.8672 EM achieved with layer norm + learnable write gate. The current architecture with n_embd=128, n_layer=6, n_head=4 may be underparameterized for the task, and increasing embedding dimension is a fundamental hyperparameter that directly affects model capacity.
+
+
