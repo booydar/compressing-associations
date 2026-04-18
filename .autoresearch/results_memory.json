@@ -1021,6 +1021,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_036",
       "summary_logged": false,
       "token_accuracy": 0.0042
+    },
+    {
+      "id": 37,
+      "iter_tag": "iter_037",
+      "description": "Sweeping learning rate across a wider range will find optimal training dynamics for the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Sweeping learning rate across a wider range will find optimal training dynamics for the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "No pending human directions exist. Current learning_rate is fixed at 0.001 while other hyperparameters like n_mem_tokens and max_grad_norm are already being swept. Learning rate is the most critical training hyperparameter and has not been systematically explored.",
+        "instruction": "Change learning_rate from scalar 0.001 to a sweep format with values: [0.0001, 0.0005, 0.001, 0.005, 0.01] and default: 0.001. Keep all other configuration unchanged.",
+        "human_directions_item": null
+      },
+      "em_score": -1.0,
+      "prev_best": 0.7442,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_037",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776485334.751672,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_037",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

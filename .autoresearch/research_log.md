@@ -1278,3 +1278,16 @@ Use -f if you really want to add them.
 **Rationale:** No pending human_directions items exist. Recent failures (iter 26-35) are planner errors, not model performance issues. Hyperparameters have NOT been exhausted - the current model has only n_embd=128, n_layer=6, n_head=4 which is quite small for learning complex associations. Per the hyperparameter-first policy, I will increase embedding dimension before any architectural changes.
 
 
+## Iter 37 — RUNNING — N=8
+**Hypothesis:** Sweeping learning rate across a wider range will find optimal training dynamics for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_037
+
+
+## Iter 37 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Sweeping learning rate across a wider range will find optimal training dynamics for the associative retrieval task.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** No pending human directions exist. Current learning_rate is fixed at 0.001 while other hyperparameters like n_mem_tokens and max_grad_norm are already being swept. Learning rate is the most critical training hyperparameter and has not been systematically explored.
+
+

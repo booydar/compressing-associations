@@ -18,7 +18,7 @@ Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 - N-level: 8
 - Current best EM: 0.7442
 - Best variant: iter_004
-- Last updated: 2026-04-18 07:05
+- Last updated: 2026-04-18 07:08
 
 ## Current Understanding
 (updated each iteration by autoresearch loop)
