@@ -1165,6 +1165,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_038",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 39,
+      "iter_tag": "iter_039",
+      "description": "Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameter exploration is ongoing: learning_rate sweeps have failed due to infrastructure issues (EM=-1.0), not training failure, and n_mem_tokens sweep at iter 32 achieved only 0.0104 EM. The n_layer hyperparameter has not been systematically explored despite being critical for model capacity - the baseline achieved 0.8672 EM but recent architectural changes (deep supervision, increased n_embd) degraded performance, suggesting the base architecture needs proper capacity tuning first.",
+        "instruction": "Change n_layer from 6 to use a sweep format with values [6, 8, 12, 16] and default 12 to systematically explore model depth.",
+        "human_directions_item": null,
+        "run_name": "n_layer_sweep_6_8_12_16"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_039_n_layer_sweep_6_8_12_16",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776531959.2923174,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_039",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

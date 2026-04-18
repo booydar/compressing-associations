@@ -1433,3 +1433,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous learning rate sweeps (iterations 29, 30, 34, 35) failed with EM=-1.0 due to infrastructure issues, not training failure. The current architecture achieved 0.8672 EM baseline, and learning rate is a critical hyperparameter that has not been successfully explored. The config currently shows learning_rate as a fixed value (0.001) rather than a sweep format, so this needs to be properly configured.
 
 
+## Iter 39 — RUNNING — N=8
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_039_n_layer_sweep_6_8_12_16
+
+
+## Iter 39 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameter exploration is ongoing: learning_rate sweeps have failed due to infrastructure issues (EM=-1.0), not training failure, and n_mem_tokens sweep at iter 32 achieved only 0.0104 EM. The n_layer hyperparameter has not been systematically explored despite being critical for model capacity - the baseline achieved 0.8672 EM but recent architectural changes (deep supervision, increased n_embd) degraded performance, suggesting the base architecture needs proper capacity tuning first.
+
+
