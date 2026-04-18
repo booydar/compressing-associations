@@ -1171,3 +1171,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, weight_decay, n_head, and max_grad_norm. Best EM achieved was 0.3876. Batch_size has not been swept yet and may significantly impact gradient stability for memory updates.
 
 
+## Iter 24 — RUNNING — N=8
+**Hypothesis:** Adding a skip connection around the memory write operation will improve gradient flow and stabilize memory updates during training.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_024
+
+
+## Iter 26 — kept — EM: 0.8672 (N=8)
+**Hypothesis:** Adding a learnable write gate with learned initialization will improve memory update control compared to the fixed scalar gate currently used.
+**Wall time:** 133.3 min
+**Result:** EM=0.8672 vs prev best=0.7702
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.7702 with layer normalization. The fixed scalar write_gate=0.5 applies uniform write strength; replacing it with a learned parameter initialized near 0.5 will allow the model to adaptively control memory update magnitude.
+
+
