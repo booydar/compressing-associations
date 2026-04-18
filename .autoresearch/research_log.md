@@ -1330,3 +1330,28 @@ Use -f if you really want to add them.
 **Rationale:** Previous learning rate sweeps (iterations 21, 27, 29) had infrastructure failures (-1.0 EM) rather than training failures. The current fixed learning rate of 0.001 was used after the successful architectural improvements (layer norm + learnable write gate), but the optimal rate has not been properly established due to those sweep failures. No pending human directions exist.
 
 
+## Iter 31 — RUNNING — N=8
+**Hypothesis:** iter 31
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031
+
+
+## Iter 31 — FAILED — N=8
+**Error:** could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 32 — RUNNING — N=8
+**Hypothesis:** Sweeping n_mem_tokens across [8, 16, 32, 64, 128, 256] will identify the optimal memory capacity for the associative retrieval task, as the current fixed value of 64 may not match the model's actual memory requirements.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_032_n_mem_tokens_sweep
+
+
+## Iter 32 — reverted — EM: 0.0104 (N=8)
+**Hypothesis:** Sweeping n_mem_tokens across [8, 16, 32, 64, 128, 256] will identify the optimal memory capacity for the associative retrieval task, as the current fixed value of 64 may not match the model's actual memory requirements.
+**Wall time:** 191.6 min
+**Result:** EM=0.0104 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored: n_mem_tokens sweep is already configured in experiment_config.yaml but has not been successfully executed (iter 31 failed due to infrastructure issues, not training failure). The current architecture achieved 0.8672 EM with learnable write gate and layer norm, and memory token count is a critical hyperparameter that directly affects the model's retrieval capacity. Learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure, so they can be revisited after n_mem_tokens sweep completes.
+
+

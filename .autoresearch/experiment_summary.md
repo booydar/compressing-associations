@@ -172,3 +172,13 @@ Use -f if you really want to add them.
 - Rationale: (none)
 - exp_path: 
 
+## Iter 31 | failed | N=8
+- Hypothesis: iter 31
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031
+- Rationale: Hyperparameters are still being explored: n_mem_tokens sweep is configured but not yet executed as a dedicated experiment. Previous learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure. The current architecture with learnable write gate achieved 0.8672 EM, and memory token count is a critical hyperparameter for memory-augmented models that directly affects retrieval capacity.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_031
+
