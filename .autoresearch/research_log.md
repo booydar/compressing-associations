@@ -1145,3 +1145,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate (iter_4, iter_16, iter_17, iter_21), n_mem_tokens (iter_18), n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.0798 with gradient clipping. Further hyperparameter tuning is unlikely to help as the bottleneck appears to be gradient instability in the memory write pathway. The current write operation applies dropout directly to write_residual without normalization, which can cause unstable gradients.
 
 
+## Iter 26 — RUNNING — N=8
+**Hypothesis:** Adding a learnable write gate with learned initialization will improve memory update control compared to the fixed scalar gate currently used.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_026
+
+
+## Iter 22 — reverted — EM: 0.1352 (N=8)
+**Hypothesis:** A max_grad_norm sweep will identify the optimal gradient clipping threshold for stable memory updates during associative pattern learning, as the current default of 1.0 may be too aggressive or too permissive for the RMCA architecture.
+**Wall time:** 138.9 min
+**Result:** EM=0.1352 vs prev best=0.7442
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, and weight_decay with best EM 0.3876. max_grad_norm sweep is configured but not yet tested - gradient clipping is critical for stable recurrent memory training as excessive gradients can corrupt memory states while overly aggressive clipping prevents learning.
+
+
