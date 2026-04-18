@@ -1227,6 +1227,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_040",
       "summary_logged": false,
       "token_accuracy": 0.0246
+    },
+    {
+      "id": 41,
+      "iter_tag": "iter_041",
+      "description": "A focused learning rate sweep with smaller values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength for the small embedding dimension (128) architecture.",
+      "hypothesis": {
+        "hypothesis": "A focused learning rate sweep with smaller values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength for the small embedding dimension (128) architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Previous learning rate sweeps used values up to 0.01 which may be too high for the current small model (n_embd=128, n_layer=6). The n_mem_tokens sweep was configured but failed due to infrastructure issues, not hyperparameter exhaustion. For small models with limited capacity, lower learning rates typically yield better convergence.",
+        "instruction": "Change the learning_rate in experiment_config.yaml to use a sweep format with values: [0.00005, 0.0001, 0.0002, 0.0005] and default: 0.0001. Keep all other parameters unchanged.",
+        "human_directions_item": null,
+        "run_name": "lr_sweep_small"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_041_lr_sweep_small",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776555510.7436125,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_041",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

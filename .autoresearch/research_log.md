@@ -1459,3 +1459,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored. Recent experiments show n_layer=6 achieved only 0.133 EM (iter 36) and 0.0056 EM (iter 37) with increased n_embd. The memory-augmented architecture requires deeper stacks to effectively chain cross-attention read/write operations with transformer computations. Previous layer count changes have not been thoroughly explored at higher values.
 
 
+## Iter 41 — RUNNING — N=8
+**Hypothesis:** A focused learning rate sweep with smaller values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength for the small embedding dimension (128) architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_041_lr_sweep_small
+
+
+## Iter 41 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A focused learning rate sweep with smaller values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength for the small embedding dimension (128) architecture.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps used values up to 0.01 which may be too high for the current small model (n_embd=128, n_layer=6). The n_mem_tokens sweep was configured but failed due to infrastructure issues, not hyperparameter exhaustion. For small models with limited capacity, lower learning rates typically yield better convergence.
+
+
