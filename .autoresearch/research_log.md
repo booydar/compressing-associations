@@ -1184,3 +1184,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head. Best EM achieved was 0.7702 with layer normalization. The fixed scalar write_gate=0.5 applies uniform write strength; replacing it with a learned parameter initialized near 0.5 will allow the model to adaptively control memory update magnitude.
 
 
+## Iter 27 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.001 may not be optimal after the recent architectural improvements.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_027
+
+
+## Iter 27 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep will identify the optimal training signal strength for the associative retrieval task, as the current fixed rate of 0.001 may not be optimal after the recent architectural improvements.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters have not been fully exhausted - while several architectural changes have been tried (learnable write gate, layer normalization, gradient clipping, AdamW optimizer), the learning_rate sweep with the improved architecture has not been completed. The current fixed learning_rate of 0.001 was set before the learnable write gate improvement (EM 0.8672), and the optimal rate may differ with the new architecture.
+
+
