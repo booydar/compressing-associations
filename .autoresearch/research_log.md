@@ -1420,3 +1420,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored. Recent learning rate sweeps (iter 27, 29, 30, 34, 35) have been attempted but failed due to infrastructure issues or training failures. The n_mem_tokens sweep in iter 32 achieved only 0.128 EM, and deep supervision in iter 36 achieved 0.133 EM - both significantly below the baseline 0.8672 EM achieved with layer norm + learnable write gate. The current architecture with n_embd=128, n_layer=6, n_head=4 may be underparameterized for the task, and increasing embedding dimension is a fundamental hyperparameter that directly affects model capacity.
 
 
+## Iter 38 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.0005, 0.001, 0.005, 0.01] will identify the optimal training signal strength, as previous sweeps failed due to infrastructure issues rather than demonstrating that learning rate tuning is exhausted.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_038_lr_sweep_v5
+
+
+## Iter 38 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.0005, 0.001, 0.005, 0.01] will identify the optimal training signal strength, as previous sweeps failed due to infrastructure issues rather than demonstrating that learning rate tuning is exhausted.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps (iterations 29, 30, 34, 35) failed with EM=-1.0 due to infrastructure issues, not training failure. The current architecture achieved 0.8672 EM baseline, and learning rate is a critical hyperparameter that has not been successfully explored. The config currently shows learning_rate as a fixed value (0.001) rather than a sweep format, so this needs to be properly configured.
+
+
