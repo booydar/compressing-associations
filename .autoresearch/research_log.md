@@ -1304,3 +1304,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been exhausted (sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head). Current best EM is 0.8672 (iter_26). The model now has a learnable write gate (iter_26) but no corresponding read gate - adding asymmetric gating for reads will enable adaptive memory retrieval.
 
 
+## Iter 29 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.005, 0.01] will identify the optimal training signal strength, as the current fixed rate of 0.001 may not be optimal after the successful architectural improvements (layer norm + learnable write gate) that achieved 0.8672 EM.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_029
+
+
+## Iter 29 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.001, 0.005, 0.01] will identify the optimal training signal strength, as the current fixed rate of 0.001 may not be optimal after the successful architectural improvements (layer norm + learnable write gate) that achieved 0.8672 EM.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters have NOT been exhausted - learning rate sweeps in iterations 21 and 27 failed due to infrastructure issues ([Errno 7] Argument list too long) rather than training failure. Since the model now achieves 0.8672 EM with recent architectural improvements, a properly configured learning rate sweep is the next priority per the hyperparameter-first policy before considering further architectural changes.
+
+
