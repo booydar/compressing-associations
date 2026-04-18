@@ -1446,3 +1446,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameter exploration is ongoing: learning_rate sweeps have failed due to infrastructure issues (EM=-1.0), not training failure, and n_mem_tokens sweep at iter 32 achieved only 0.0104 EM. The n_layer hyperparameter has not been systematically explored despite being critical for model capacity - the baseline achieved 0.8672 EM but recent architectural changes (deep supervision, increased n_embd) degraded performance, suggesting the base architecture needs proper capacity tuning first.
 
 
+## Iter 40 — RUNNING — N=8
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_040_n_layer_12_deeper
+
+
+## Iter 40 — reverted — EM: 0.0246 (N=8)
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**Wall time:** 390.4 min
+**Result:** EM=0.0246 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored. Recent experiments show n_layer=6 achieved only 0.133 EM (iter 36) and 0.0056 EM (iter 37) with increased n_embd. The memory-augmented architecture requires deeper stacks to effectively chain cross-attention read/write operations with transformer computations. Previous layer count changes have not been thoroughly explored at higher values.
+
+
