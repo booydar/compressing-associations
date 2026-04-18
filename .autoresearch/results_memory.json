@@ -979,6 +979,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_032",
       "summary_logged": false,
       "token_accuracy": 0.0104
+    },
+    {
+      "id": 33,
+      "iter_tag": "iter_033",
+      "description": "iter 33",
+      "hypothesis": {
+        "hypothesis:": "A learning rate sweep will identify the optimal training signal strength for the current improved architecture (layer norm + learnable write gate) which achieved 0.8672 EM, as previous learning rate sweeps failed due to infrastructure issues rather than training failure.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Previous learning rate sweeps (iters 27, 29, 30) failed with EM=-1.0 due to infrastructure issues, not training failure. The current architecture with learnable write gate achieved 0.8672 EM at lr=0.001, but this rate may not be optimal. The n_mem_tokens sweep (iter 32) achieved only 0.0104 EM, suggesting learning rate is a more critical hyperparameter to tune first before further architectural changes.",
+        "instruction": "Change learning_rate from fixed value 0.001 to a sweep configuration with values: [0.0001, 0.0005, 0.001, 0.005, 0.01] and default: 0.001. Keep all other hyperparameters unchanged.",
+        "human_directions_item": null,
+        "run_name": "learning_rate_sweep_v2"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_033_learning_rate_sweep_v2",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776504210.7234323,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_033",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

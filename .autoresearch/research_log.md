@@ -1355,3 +1355,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored: n_mem_tokens sweep is already configured in experiment_config.yaml but has not been successfully executed (iter 31 failed due to infrastructure issues, not training failure). The current architecture achieved 0.8672 EM with learnable write gate and layer norm, and memory token count is a critical hyperparameter that directly affects the model's retrieval capacity. Learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure, so they can be revisited after n_mem_tokens sweep completes.
 
 
+## Iter 33 — RUNNING — N=8
+**Hypothesis:** iter 33
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_033_learning_rate_sweep_v2
+
+
+## Iter 33 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** iter 33
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps (iters 27, 29, 30) failed with EM=-1.0 due to infrastructure issues, not training failure. The current architecture with learnable write gate achieved 0.8672 EM at lr=0.001, but this rate may not be optimal. The n_mem_tokens sweep (iter 32) achieved only 0.0104 EM, suggesting learning rate is a more critical hyperparameter to tune first before further architectural changes.
+
+
