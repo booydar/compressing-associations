@@ -1197,3 +1197,11 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have not been fully exhausted - while several architectural changes have been tried (learnable write gate, layer normalization, gradient clipping, AdamW optimizer), the learning_rate sweep with the improved architecture has not been completed. The current fixed learning_rate of 0.001 was set before the learnable write gate improvement (EM 0.8672), and the optimal rate may differ with the new architecture.
 
 
+## Iter 24 — reverted — EM: 0.0000 (N=8)
+**Hypothesis:** Adding a skip connection around the memory write operation will improve gradient flow and stabilize memory updates during training.
+**Wall time:** 13.1 min
+**Result:** EM=0.0000 vs prev best=0.7442
+**Metric source:** all_results
+**Rationale:** Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, and n_head with best EM of 0.3876. Recent adaptive gating attempts (iter_16, iter_21) failed. A residual skip connection around memory writes is a simpler architectural fix that stabilizes gradients without the complexity of adaptive mechanisms.
+
+
