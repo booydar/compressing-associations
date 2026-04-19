@@ -1382,6 +1382,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_045",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 46,
+      "iter_tag": "iter_046",
+      "description": "A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.",
+      "hypothesis": {
+        "hypothesis": "A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Previous learning rate sweeps failed due to infrastructure issues (EM=-1.0) rather than demonstrating exhaustion. The current architecture achieved moderate EM (0.2964 with n_mem_tokens sweep at iter 43), and learning rate remains a critical hyperparameter that has not been successfully tuned. Small embedding dimension (128) benefits from smaller learning rates.",
+        "instruction": "Change learning_rate in experiment_config.yaml to use sweep format with values: [0.00001, 0.00005, 0.0001, 0.0005, 0.001] and default: 0.0001",
+        "human_directions_item": null,
+        "run_name": "lr_sweep_small"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_046_lr_sweep_small",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776567846.6713362,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_046",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
