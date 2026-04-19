@@ -1576,3 +1576,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored - previous learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure. The current architecture with 6 layers and small embedding dimension (128) may lack sufficient capacity. Increasing depth is a standard approach for improving model capacity without increasing parameter count proportionally.
 
 
+## Iter 50 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_050_lr_sweep_focused_v2
+
+
+## Iter 50 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.00001, 0.00005, 0.0001, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Human directions have no pending items. Previous learning rate sweeps (iter 41-46) failed due to infrastructure issues (EM=-1.0) rather than training failure, so learning rate tuning is not exhausted. The current learning rate of 0.001 may not be optimal for this small embedding dimension (128) architecture.
+
+
