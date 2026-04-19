@@ -1498,3 +1498,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored: the n_mem_tokens sweep is configured with values [8, 16, 32, 64, 128, 256] but has not been executed as a dedicated experiment. Previous learning rate sweeps (iterations 34-42) failed due to infrastructure issues (EM=-1.0) rather than demonstrating that learning rate tuning is exhausted. Memory token count is a critical hyperparameter for memory-augmented architectures that directly affects retrieval capacity.
 
 
+## Iter 44 — RUNNING — N=8
+**Hypothesis:** A focused learning rate sweep with values [0.0001, 0.0005, 0.001, 0.005] will identify the optimal training signal strength for the small embedding dimension (128) architecture, as previous sweeps failed due to infrastructure issues rather than demonstrating exhaustion.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_044_lr_sweep_small_model
+
+
+## Iter 44 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A focused learning rate sweep with values [0.0001, 0.0005, 0.001, 0.005] will identify the optimal training signal strength for the small embedding dimension (128) architecture, as previous sweeps failed due to infrastructure issues rather than demonstrating exhaustion.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Learning rate hyperparameter has NOT been exhausted - previous sweeps (iterations 34, 35, 38, 41, 42) failed due to infrastructure issues (EM=-1.0) not training failures. The n_mem_tokens sweep (iter 43) achieved only 0.2964 EM. With current best EM at 0.8672, optimizing learning rate for the small 128-dim embedding architecture is critical before architectural changes.
+
+
