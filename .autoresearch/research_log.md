@@ -1589,3 +1589,16 @@ Use -f if you really want to add them.
 **Rationale:** Human directions have no pending items. Previous learning rate sweeps (iter 41-46) failed due to infrastructure issues (EM=-1.0) rather than training failure, so learning rate tuning is not exhausted. The current learning rate of 0.001 may not be optimal for this small embedding dimension (128) architecture.
 
 
+## Iter 51 — RUNNING — N=8
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_051_deep_supervision_enabled
+
+
+## Iter 51 — reverted — EM: 0.1304 (N=8)
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.
+**Wall time:** 200.1 min
+**Result:** EM=0.1304 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been extensively explored: multiple learning rate sweeps (iterations 41-46, 50) and n_mem_tokens sweeps (iterations 43, 47) have been attempted with limited success. Deep supervision is currently disabled but represents an unexplored training technique that can provide auxiliary learning signals to help the model learn better representations at intermediate layers.
+
+

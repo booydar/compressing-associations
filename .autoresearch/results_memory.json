@@ -1537,6 +1537,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_050",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 51,
+      "iter_tag": "iter_051",
+      "description": "Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.",
+      "hypothesis": {
+        "hypothesis": "Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters have been extensively explored: multiple learning rate sweeps (iterations 41-46, 50) and n_mem_tokens sweeps (iterations 43, 47) have been attempted with limited success. Deep supervision is currently disabled but represents an unexplored training technique that can provide auxiliary learning signals to help the model learn better representations at intermediate layers.",
+        "instruction": "Enable deep supervision by setting use_deep_supervision: true and configure deep_supervision_layers: [2, 3, 4, 5] to supervise intermediate layers, with deep_supervision_weight: 0.1",
+        "human_directions_item": null,
+        "run_name": "deep_supervision_enabled"
+      },
+      "em_score": 0.1304,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_051_deep_supervision_enabled",
+      "wall_time_min": 200.1,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776619781.8396423,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_051",
+      "summary_logged": false,
+      "token_accuracy": 0.1304
     }
   ],
   "reference": {
