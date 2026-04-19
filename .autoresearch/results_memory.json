@@ -1599,6 +1599,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_052",
       "summary_logged": false,
       "token_accuracy": 0.028
+    },
+    {
+      "id": 53,
+      "iter_tag": "iter_053",
+      "description": "Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters exploration continues: learning_rate (iterations 44-46, 50), n_mem_tokens (iterations 43, 47), n_layer (48-49), and deep_supervision (51-52) have been tried with poor EM. n_head has not been systematically swept and is critical for cross-attention capacity in memory-augmented architectures.",
+        "instruction": "Change n_head from 4 to a sweep format with values: [2, 4, 8, 16] and default: 8. Update experiment_config.yaml line 'n_head: 4' to 'n_head:\\n  values: [2, 4, 8, 16]\\n  default: 8'",
+        "human_directions_item": null,
+        "run_name": "n_head_sweep"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_053_n_head_sweep",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776639572.486041,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_053",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

@@ -1615,3 +1615,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous experiments show deep supervision was tried in iter 51 (EM=0.1304, reverted) but the config currently has use_deep_supervision: false. Learning rate and n_mem_tokens sweeps have been extensively explored (iter 43-47, 50) with infrastructure issues preventing valid results. Deep supervision is a hyperparameter flag that can be enabled without architectural changes.
 
 
+## Iter 53 — RUNNING — N=8
+**Hypothesis:** Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_053_n_head_sweep
+
+
+## Iter 53 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters exploration continues: learning_rate (iterations 44-46, 50), n_mem_tokens (iterations 43, 47), n_layer (48-49), and deep_supervision (51-52) have been tried with poor EM. n_head has not been systematically swept and is critical for cross-attention capacity in memory-augmented architectures.
+
+
