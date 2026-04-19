@@ -1289,6 +1289,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_042",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 43,
+      "iter_tag": "iter_043",
+      "description": "A memory token count sweep will identify the optimal memory capacity for the associative retrieval task, as n_mem_tokens is configured but not yet executed as a dedicated experiment despite previous learning rate sweeps failing due to infrastructure issues.",
+      "hypothesis": {
+        "hypothesis": "A memory token count sweep will identify the optimal memory capacity for the associative retrieval task, as n_mem_tokens is configured but not yet executed as a dedicated experiment despite previous learning rate sweeps failing due to infrastructure issues.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters are still being explored: the n_mem_tokens sweep is configured with values [8, 16, 32, 64, 128, 256] but has not been executed as a dedicated experiment. Previous learning rate sweeps (iterations 34-42) failed due to infrastructure issues (EM=-1.0) rather than demonstrating that learning rate tuning is exhausted. Memory token count is a critical hyperparameter for memory-augmented architectures that directly affects retrieval capacity.",
+        "instruction": "Enable the n_mem_tokens sweep by ensuring the configuration is active. The sweep should run with values [8, 16, 32, 64, 128, 256] and default 64. This is a one-sweep-per-run experiment that will identify the optimal number of memory tokens for the model.",
+        "human_directions_item": null,
+        "run_name": "n_mem_tokens_sweep"
+      },
+      "em_score": 0.2964,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_043_n_mem_tokens_sweep",
+      "wall_time_min": 199.8,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776555653.954491,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_043",
+      "summary_logged": false,
+      "token_accuracy": 0.2964
     }
   ],
   "reference": {

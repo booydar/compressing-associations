@@ -1485,3 +1485,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored - previous learning rate sweeps (iter 34, 35, 38, 41) resulted in EM=-1.0 due to infrastructure failures or training failures, not because tuning is exhausted. The n_mem_tokens sweep (iter 32) achieved EM=0.0104 which is poor. Learning rate is fundamental to training success and needs proper exploration with a focused range for the small embedding dimension (128) architecture.
 
 
+## Iter 43 — RUNNING — N=8
+**Hypothesis:** A memory token count sweep will identify the optimal memory capacity for the associative retrieval task, as n_mem_tokens is configured but not yet executed as a dedicated experiment despite previous learning rate sweeps failing due to infrastructure issues.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_043_n_mem_tokens_sweep
+
+
+## Iter 43 — reverted — EM: 0.2964 (N=8)
+**Hypothesis:** A memory token count sweep will identify the optimal memory capacity for the associative retrieval task, as n_mem_tokens is configured but not yet executed as a dedicated experiment despite previous learning rate sweeps failing due to infrastructure issues.
+**Wall time:** 199.8 min
+**Result:** EM=0.2964 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored: the n_mem_tokens sweep is configured with values [8, 16, 32, 64, 128, 256] but has not been executed as a dedicated experiment. Previous learning rate sweeps (iterations 34-42) failed due to infrastructure issues (EM=-1.0) rather than demonstrating that learning rate tuning is exhausted. Memory token count is a critical hyperparameter for memory-augmented architectures that directly affects retrieval capacity.
+
+
