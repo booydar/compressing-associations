@@ -1,8 +1,8 @@
 import json
 import logging
+import math
 import os
 from pathlib import Path
-import math
 
 import torch
 import numpy as np
@@ -13,14 +13,13 @@ import datasets
 import accelerate
 import transformers
 from transformers import (
-    AutoConfig, AutoTokenizer,
+    AutoTokenizer,
     AutoModelForCausalLM,
     Trainer, TrainerState,
     TrainingArguments,
     EarlyStoppingCallback, TrainerCallback,
     HfArgumentParser
 )
-
 from transformers.trainer_utils import get_last_checkpoint
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
@@ -31,7 +30,87 @@ logging.basicConfig(format=logger_fmt, level=log_lvl)
 logger = logging.getLogger('')
 
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
-from fla_model import FLAForCausalLM, FLA_MODELS
+
+# Register native FLA models so AutoModelForCausalLM can find them
+import fla.models.mamba          # noqa: F401  registers MambaConfig / MambaForCausalLM
+import fla.models.mamba2         # noqa: F401  registers Mamba2Config / Mamba2ForCausalLM
+import fla.models.gated_deltanet # noqa: F401  registers GatedDeltaNetConfig / GatedDeltaNetForCausalLM
+import fla.models.delta_net      # noqa: F401
+import fla.models.gla            # noqa: F401
+import fla.models.hgrn           # noqa: F401
+import fla.models.hgrn2          # noqa: F401
+import fla.models.rwkv6          # noqa: F401
+import fla.models.rwkv7          # noqa: F401
+import fla.models.retnet         # noqa: F401
+
+from fla.models.mamba.configuration_mamba import MambaConfig
+from fla.models.mamba2.configuration_mamba2 import Mamba2Config
+from fla.models.gated_deltanet.configuration_gated_deltanet import GatedDeltaNetConfig
+from fla.models.delta_net.configuration_delta_net import DeltaNetConfig
+from fla.models.gla.configuration_gla import GLAConfig
+from fla.models.hgrn.configuration_hgrn import HGRNConfig
+from fla.models.hgrn2.configuration_hgrn2 import HGRN2Config
+from fla.models.rwkv6.configuration_rwkv6 import RWKV6Config
+from fla.models.rwkv7.configuration_rwkv7 import RWKV7Config
+from fla.models.retnet.configuration_retnet import RetNetConfig
+
+# Maps --base_model CLI value → config class
+FLA_DEFAULT_CONFIGS = {
+    "mamba":           MambaConfig,
+    "mamba2":          Mamba2Config,
+    "gated_delta_net": GatedDeltaNetConfig,
+    "delta_net":       DeltaNetConfig,
+    "gla":             GLAConfig,
+    "hgrn":            HGRNConfig,
+    "hgrn2":           HGRN2Config,
+    "rwkv6":           RWKV6Config,
+    "rwkv7":           RWKV7Config,
+    "retention":       RetNetConfig,
+}
+
+
+def build_fla_config(base_model: str, args, tokenizer):
+    """Build the native FLA config for *base_model* from CLI args."""
+    common = dict(
+        vocab_size=tokenizer.vocab_size,
+        hidden_size=args.n_embd,
+        num_hidden_layers=args.n_layer,
+        pad_token_id=tokenizer.pad_token_id,
+        use_cache=False,
+        # let HF Trainer compute loss from logits; avoid fused triton CE kernel
+        fuse_cross_entropy=False,
+    )
+
+    if base_model in ("mamba", "mamba2"):
+        if args.state_size is not None:
+            common["state_size"] = args.state_size
+        if args.conv_kernel is not None:
+            common["conv_kernel"] = args.conv_kernel
+
+    elif base_model == "gated_delta_net":
+        # GatedDeltaNetConfig has no state_size; recurrent state = num_heads * head_dim.
+        # Map: head_dim = state_size // num_heads  (so total state matches the custom wrapper).
+        common["num_heads"] = args.n_head
+        if args.state_size is not None and args.n_head:
+            common["head_dim"] = args.state_size // args.n_head
+        if args.conv_kernel is not None:
+            common["conv_size"] = args.conv_kernel  # GDN uses conv_size, not conv_kernel
+
+    elif base_model in ("delta_net", "gla", "hgrn", "hgrn2", "rwkv6", "rwkv7", "retention"):
+        common["num_heads"] = args.n_head
+        if args.state_size is not None:
+            common["state_size"] = args.state_size
+        if args.conv_kernel is not None:
+            common.setdefault("conv_kernel", args.conv_kernel)
+
+    cfg_cls = FLA_DEFAULT_CONFIGS[base_model]
+    # Filter to only the kwargs accepted by this config class to avoid errors
+    import inspect
+    valid = set(inspect.signature(cfg_cls.__init__).parameters.keys()) - {"self", "kwargs"}
+    filtered = {k: v for k, v in common.items() if k in valid}
+    # Always pass unknown kwargs through __init__ **kwargs if they're not in valid
+    # (most FLA configs accept **kwargs), so pass everything
+    return cfg_cls(**common)
 
 
 def collate_fn(batch, tokenizer, max_input_length=None):
@@ -43,20 +122,15 @@ def collate_fn(batch, tokenizer, max_input_length=None):
     offsets_mapping = seq_encoded['offset_mapping']
 
     attn_mask = (input_ids != tokenizer.pad_token_id).to(dtype=torch.long)
-    # add labels_mask
-    # input_seq: 0, target_seq: 1, seq = input_seq + target_seq
     labels_mask = torch.zeros_like(input_ids)
     for i, item in enumerate(batch):
         input_seq_len = len(item['context']) + len(item['query'])
         target_seq_len = len(item['target'])
         target_st, target_end = input_seq_len, input_seq_len + target_seq_len
 
-        # find target tokens
-        # since target is closer to the end, search from the end
         in_target = False
         for j in range(len(offsets_mapping[i]) - 1, -1, -1):
             st, end = offsets_mapping[i][j]
-            # if (target_st, target_end) intersects with (st, end), it is a target token
             if st < target_end and end > target_st:
                 labels_mask[i, j] = 1
                 in_target = True
@@ -72,33 +146,27 @@ def collate_fn(batch, tokenizer, max_input_length=None):
 
 
 def preprocess_logits_for_metrics(logits, labels):
-    # saves gpu RAM, as HF Trainer accumulates all eval logits on GPU
     return logits.argmax(dim=-1)
 
 
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     predictions, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
 
-    # shift for lm loss
     predictions = predictions[..., :-1]
     labels = labels[..., 1:]
 
-    # Create a mask for tokens that are not padding (-100) and ignored tokens (like ! and |)
     mask = (labels != -100)
     for t_id in ignore_token_ids:
         mask &= (labels != t_id)
-    # Calculate token-level accuracy only on content tokens
     masked_predictions = predictions[mask]
     masked_labels = labels[mask]
 
     accuracy = (masked_predictions == masked_labels).mean()
 
-    # get exact_match per-sample accuracy, ignore masked tokens
-    # predictions.shape = (batch_size, seq_len)
     exact_match = np.mean([
         np.all(pred[mask[i]] == lab[mask[i]])
         for i, (pred, lab) in enumerate(zip(predictions, labels))
-        if np.any(mask[i])  # Skip samples that are all masked
+        if np.any(mask[i])
     ])
 
     for pred, label, inp in zip(predictions[:5], labels[:5], inputs[:5]):
@@ -137,11 +205,10 @@ class StopOnMetricValue(TrainerCallback):
 
 class CustomTrainer(Trainer):
     def create_scheduler(self, num_training_steps: int, optimizer: torch.optim.Optimizer = None):
-        num_training_steps = int(num_training_steps / 0.9)  # to make final lr not zero, for linear it is lr/10.
+        num_training_steps = int(num_training_steps / 0.9)
         return super().create_scheduler(num_training_steps, optimizer)
 
     def log(self, logs: Dict[str, float], start_time: Optional[float] = None) -> None:
-        # log early stopping patience
         for cb in self.callback_handler.callbacks:
             if isinstance(cb, EarlyStoppingCallback):
                 logs['patience'] = cb.early_stopping_patience_counter
@@ -153,12 +220,8 @@ class CustomTrainer(Trainer):
 class ExperimentArgs:
     exp_path: str = field()
     per_device_batch_size: int = field()
-    data_path: str = field(
-        default='./data/N2-K4V4-S4(32-64)_1M',
-    )
-    tokenizer_path: str = field(
-        default='./tokenizers/kv_alphabet_62/',
-    )
+    data_path: str = field(default='./data/N2-K4V4-S4(32-64)_1M')
+    tokenizer_path: str = field(default='./tokenizers/kv_alphabet_62/')
     gradient_accumulation_steps: Optional[int] = field(default=1)
     total_batch_size: Optional[int] = field(default=None)
     metric_for_best_model: Optional[str] = field(default='token_accuracy')
@@ -177,7 +240,7 @@ class ExperimentArgs:
     base_model: Optional[str] = field(default=None)
     pretrained_model: Optional[str] = field(default=None)
     n_layer: Optional[int] = field(default=4)
-    n_head: Optional[int] = field(default=4)
+    n_head: Optional[int] = field(default=1)
     n_embd: Optional[int] = field(default=128)
     state_size: Optional[int] = field(default=None)
     conv_kernel: Optional[int] = field(default=None)
@@ -188,7 +251,6 @@ class ExperimentArgs:
     n_pairs: Optional[int] = field(default=None)
     n_keys: Optional[int] = field(default=None)
     n_values: Optional[int] = field(default=None)
-
     # allow writing to existing folder & resume
     overwrite_output_dir: Optional[bool] = field(default=False)
     # skip training; evaluate best checkpoint
@@ -202,24 +264,24 @@ if __name__ == '__main__':
     accel = accelerate.Accelerator()
     from accelerate.logging import get_logger
     logger = get_logger('')
-    # datasets.utils.logging.set_verbosity(logger.log_level)
     transformers.utils.logging.set_verbosity(log_lvl)
 
     logger.info(f'num processes: {accel.num_processes}')
     logger.info(f'mixed precision: {accel.mixed_precision}')
     logger.info(f'accelerator state: {accel.state}')
 
-    assert not (args.pretrained_model is not None and args.base_model is not None), "only one of these args must be set"
+    assert not (args.pretrained_model is not None and args.base_model is not None), \
+        "only one of --pretrained_model / --base_model must be set"
 
     output_dir = Path(args.exp_path)
     if accel.is_main_process and output_dir.exists() and not args.overwrite_output_dir and not args.do_eval_only:
-        raise RuntimeError(f"Output directory already exists: {output_dir}. "
-                           f"Pass --overwrite_output_dir to resume/continue here, or choose a new --exp_path.")
+        raise RuntimeError(
+            f"Output directory already exists: {output_dir}. "
+            f"Pass --overwrite_output_dir to resume/continue here, or choose a new --exp_path."
+        )
 
     if accel.is_main_process and not args.do_eval_only:
-        config = {
-            'cli_args': dict(vars(args)),
-        }
+        config = {'cli_args': dict(vars(args))}
         logger.info('saving experiment configuration..')
         Path(args.exp_path).mkdir(parents=True, exist_ok=True)
         json.dump(config, open(os.path.join(args.exp_path, 'config.json'), 'w'), indent=4)
@@ -236,29 +298,22 @@ if __name__ == '__main__':
         tokenizer = AutoTokenizer.from_pretrained(args.pretrained_model)
         if tokenizer.pad_token_id is None:
             tokenizer.pad_token_id = tokenizer.eos_token_id
-        model = AutoModelForCausalLM.from_pretrained(args.pretrained_model, torch_dtype=dtype,
-                                                     attn_implementation=args.attn_implementation)
+        model = AutoModelForCausalLM.from_pretrained(
+            args.pretrained_model, torch_dtype=dtype,
+            attn_implementation=args.attn_implementation,
+        )
     else:
-        # create tokenizer
         tokenizer = AutoTokenizer.from_pretrained(args.tokenizer_path)
         tokenizer.truncation_side = 'left'
-        if args.base_model in FLA_MODELS:
-            layer_kwargs = {}
-            if args.state_size is not None:
-                layer_kwargs['state_size'] = args.state_size
-            if args.conv_kernel is not None:
-                layer_kwargs['conv_kernel'] = args.conv_kernel
-            model = FLAForCausalLM(
-                vocab_size=tokenizer.vocab_size,
-                hidden_size=args.n_embd,
-                num_layers=args.n_layer,
-                num_heads=args.n_head,
-                layer_type=FLA_MODELS[args.base_model],
-                pad_token_id=tokenizer.pad_token_id,
-                **layer_kwargs,
+
+        if args.base_model not in FLA_DEFAULT_CONFIGS:
+            raise ValueError(
+                f"Unknown --base_model '{args.base_model}'. "
+                f"Supported: {sorted(FLA_DEFAULT_CONFIGS.keys())}"
             )
-        else:
-            raise ValueError(f"Invalid base model: {args.base_model}")
+
+        cfg = build_fla_config(args.base_model, args, tokenizer)
+        model = AutoModelForCausalLM.from_config(cfg)
 
     model.config.use_cache = False
 
@@ -266,9 +321,8 @@ if __name__ == '__main__':
     logger.info(f'model: {model}')
     logger.info(f"number of model parameters: {sum(p.numel() for p in model.parameters()):,}")
     logger.info(f'model.dtype: {model.dtype}')
-    logger.info(f'attn_implementation: {args.attn_implementation}')
 
-    # Try to load existing dataset, otherwise generate it
+    # Load or generate dataset
     try:
         logger.info(f'Attempting to load dataset from: {args.data_path}')
         dataset = datasets.load_from_disk(args.data_path)
@@ -276,44 +330,44 @@ if __name__ == '__main__':
     except Exception as e:
         logger.info(f'Could not load dataset from {args.data_path}: {e}')
         from kv_dataset_utils import generate_sequence
-        
-        # Generate samples with all fields needed for collate_fn
+
         logger.info('Generating raw samples...')
         raw_samples = [
-            generate_sequence(num_kv_pairs=args.n_pairs,
-                              n_segments=1,
-                              min_segment_len = 0,
-                              max_segment_len = 0,
-                              k_length=args.n_keys, v_length=args.n_values)
+            generate_sequence(
+                num_kv_pairs=args.n_pairs,
+                n_segments=1,
+                min_segment_len=0,
+                max_segment_len=0,
+                k_length=args.n_keys,
+                v_length=args.n_values,
+            )
             for _ in range(1_005_000)
         ]
-        
-        # Convert to HuggingFace dataset format with context, query, target fields
+
         import datasets as ds
         dataset_dict = {
             'context': [s['context'] for s in raw_samples],
-            'query': [s['query'] for s in raw_samples],
-            'target': [s['target'] for s in raw_samples],
+            'query':   [s['query']   for s in raw_samples],
+            'target':  [s['target']  for s in raw_samples],
         }
         dataset = ds.Dataset.from_dict(dataset_dict)
         dataset = dataset.train_test_split(test_size=5_000, seed=args.seed)
-        # Ensure test set is called "valid" (for legacy code compatibility)
         if "test" in dataset:
             dataset = datasets.DatasetDict({
                 "train": dataset["train"],
                 "valid": dataset["test"],
             })
         dataset.save_to_disk(args.data_path)
-        logger.info(f'Successfully generated dataset with {len(dataset["train"])} train samples and {len(dataset["valid"])} validation samples')
+        logger.info(
+            f'Generated dataset with {len(dataset["train"])} train '
+            f'and {len(dataset["valid"])} validation samples'
+        )
 
     def data_collator(batch):
         return collate_fn(batch, tokenizer, max_input_length=args.max_input_length)
 
-    # Target sequence looks like: "XXXX!|"
-    # Let's not count ! and | in the accuracy calculation
     ignore_token_ids = [tokenizer.convert_tokens_to_ids(t) for t in ['!', '|']]
 
-    # Define custom compute metrics function with ignore tokens
     def compute_metrics(eval_pred):
         return compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer)
 
@@ -323,11 +377,9 @@ if __name__ == '__main__':
         args_total_bs = args.per_device_batch_size * accel.num_processes * args.gradient_accumulation_steps
         assert args.total_batch_size == args_total_bs
 
-    # Training arguments
     training_args = TrainingArguments(
         output_dir=str(output_dir),
         logging_dir=str(output_dir),
-        # overwrite_output_dir=args.overwrite_output_dir,
 
         max_steps=args.max_steps,
         per_device_train_batch_size=args.per_device_batch_size,
@@ -360,7 +412,6 @@ if __name__ == '__main__':
         seed=args.seed,
     )
 
-    # Initialize Trainer
     trainer = CustomTrainer(
         model=model,
         args=training_args,
@@ -369,15 +420,15 @@ if __name__ == '__main__':
         data_collator=data_collator,
         compute_metrics=compute_metrics,
         preprocess_logits_for_metrics=preprocess_logits_for_metrics,
-        callbacks=[EarlyStoppingCallback(early_stopping_patience=args.early_stopping_patience),
-                   StopOnMetricValue(metric_name='exact_match', value=1.0, higher_is_better=True),
-                   ],
+        callbacks=[
+            EarlyStoppingCallback(early_stopping_patience=args.early_stopping_patience),
+            StopOnMetricValue(metric_name='exact_match', value=1.0, higher_is_better=True),
+        ],
     )
 
     last_ckpt = get_last_checkpoint(output_dir)
 
     if args.do_eval_only:
-        # load best checkpoint and run eval
         try:
             state_path = Path(last_ckpt) / "trainer_state.json"
             trainer.state = TrainerState.load_from_json(state_path)
@@ -389,10 +440,9 @@ if __name__ == '__main__':
     else:
         if last_ckpt:
             logger.info(f'Resuming training from last checkpoint: {last_ckpt}')
-        # run training
         trainer.train(resume_from_checkpoint=last_ckpt)
         logger.info('training done. running final evaluation...')
-    # run final evaluation
+
     metrics = trainer.evaluate(dataset['valid'])
     logger.info(f'{metrics}')
     trainer.save_metrics(split='all', metrics=metrics)
