@@ -1602,3 +1602,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been extensively explored: multiple learning rate sweeps (iterations 41-46, 50) and n_mem_tokens sweeps (iterations 43, 47) have been attempted with limited success. Deep supervision is currently disabled but represents an unexplored training technique that can provide auxiliary learning signals to help the model learn better representations at intermediate layers.
 
 
+## Iter 52 — RUNNING — N=8
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_052_deep_supervision_enabled
+
+
+## Iter 52 — reverted — EM: 0.0280 (N=8)
+**Hypothesis:** Enabling deep supervision with intermediate layer losses will provide stronger gradient signals to the memory-augmented layers, improving associative retrieval EM accuracy.
+**Wall time:** 127.5 min
+**Result:** EM=0.0280 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous experiments show deep supervision was tried in iter 51 (EM=0.1304, reverted) but the config currently has use_deep_supervision: false. Learning rate and n_mem_tokens sweeps have been extensively explored (iter 43-47, 50) with infrastructure issues preventing valid results. Deep supervision is a hyperparameter flag that can be enabled without architectural changes.
+
+
