@@ -1444,6 +1444,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_047",
       "summary_logged": false,
       "token_accuracy": 0.0088
+    },
+    {
+      "id": 48,
+      "iter_tag": "iter_048",
+      "description": "Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.",
+      "hypothesis": {
+        "hypothesis": "Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters n_mem_tokens and learning_rate have been extensively swept (iter 38-47) with infrastructure failures and poor EM results, indicating the model needs more capacity. The current 6 layers is too shallow for the memory-augmented RMCA architecture to effectively learn the associative retrieval task with cross-attention mechanisms.",
+        "instruction": "Change n_layer from 6 to 12 in .autoresearch/experiment_config.yaml",
+        "human_directions_item": null,
+        "run_name": "n_layer_12"
+      },
+      "em_score": 0.1338,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_048_n_layer_12",
+      "wall_time_min": 362.7,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776575037.2457047,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_048",
+      "summary_logged": false,
+      "token_accuracy": 0.1338
     }
   ],
   "reference": {

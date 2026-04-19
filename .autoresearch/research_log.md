@@ -1550,3 +1550,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous n_mem_tokens sweep used values [8, 16, 32, 64, 128, 256] which may be too large for n_embd=128. With only 128 hidden dimensions, having 64-256 memory tokens creates a bottleneck where each memory token has insufficient representational capacity. Learning rate sweeps have been extensively attempted but mostly failed due to infrastructure issues rather than demonstrating exhaustion, so memory token tuning remains a high-priority hyperparameter to explore.
 
 
+## Iter 48 — RUNNING — N=8
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_048_n_layer_12
+
+
+## Iter 48 — reverted — EM: 0.1338 (N=8)
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**Wall time:** 362.7 min
+**Result:** EM=0.1338 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters n_mem_tokens and learning_rate have been extensively swept (iter 38-47) with infrastructure failures and poor EM results, indicating the model needs more capacity. The current 6 layers is too shallow for the memory-augmented RMCA architecture to effectively learn the associative retrieval task with cross-attention mechanisms.
+
+
