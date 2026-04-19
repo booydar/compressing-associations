@@ -1628,3 +1628,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters exploration continues: learning_rate (iterations 44-46, 50), n_mem_tokens (iterations 43, 47), n_layer (48-49), and deep_supervision (51-52) have been tried with poor EM. n_head has not been systematically swept and is critical for cross-attention capacity in memory-augmented architectures.
 
 
+## Iter 54 — RUNNING — N=8
+**Hypothesis:** Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_054_n_head_sweep_v2
+
+
+## Iter 54 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** Increasing n_head from 4 to 8 will provide better attention capacity for the cross-attention memory mechanisms to learn associative mappings.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameter exploration is ongoing: n_mem_tokens sweep is configured but not yet successfully executed (iter_047 failed with infrastructure issues). Learning rate has been swept multiple times without success. n_head has only been tried once (iter_53) which failed due to infrastructure, not the change itself. Increasing attention heads is a fundamental hyperparameter for attention-based memory models.
+
+
