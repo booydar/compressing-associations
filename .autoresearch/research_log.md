@@ -1563,3 +1563,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters n_mem_tokens and learning_rate have been extensively swept (iter 38-47) with infrastructure failures and poor EM results, indicating the model needs more capacity. The current 6 layers is too shallow for the memory-augmented RMCA architecture to effectively learn the associative retrieval task with cross-attention mechanisms.
 
 
+## Iter 49 — RUNNING — N=8
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_049_n_layer_12_deep
+
+
+## Iter 49 — reverted — EM: 0.1254 (N=8)
+**Hypothesis:** Increasing n_layer from 6 to 12 will provide sufficient model capacity for the memory-augmented architecture to learn complex associative mappings, as the current 6 layers may be insufficient for the cross-attention memory mechanisms to effectively encode and retrieve information.
+**Wall time:** 379.7 min
+**Result:** EM=0.1254 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are still being explored - previous learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure. The current architecture with 6 layers and small embedding dimension (128) may lack sufficient capacity. Increasing depth is a standard approach for improving model capacity without increasing parameter count proportionally.
+
+
