@@ -1511,3 +1511,16 @@ Use -f if you really want to add them.
 **Rationale:** Learning rate hyperparameter has NOT been exhausted - previous sweeps (iterations 34, 35, 38, 41, 42) failed due to infrastructure issues (EM=-1.0) not training failures. The n_mem_tokens sweep (iter 43) achieved only 0.2964 EM. With current best EM at 0.8672, optimizing learning rate for the small 128-dim embedding architecture is critical before architectural changes.
 
 
+## Iter 45 — RUNNING — N=8
+**Hypothesis:** A focused learning rate sweep with values [0.00005, 0.0001, 0.0002, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_045_lr_sweep_focused_v2
+
+
+## Iter 45 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A focused learning rate sweep with values [0.00005, 0.0001, 0.0002, 0.0005, 0.001] will identify the optimal training signal strength for the current architecture.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps have failed due to infrastructure issues (Argument list too long errors, EM=-1.0) rather than demonstrating that tuning is exhausted. The n_mem_tokens sweep in iter_43 achieved 0.2964 EM, suggesting the model can learn with proper configuration. Learning rate remains unoptimized as the learning signal strength directly affects convergence on this small-scale associative retrieval task.
+
+
