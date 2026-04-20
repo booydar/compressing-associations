@@ -1680,3 +1680,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are still being explored: learning_rate sweeps have been attempted but failed due to infrastructure issues (EM=-1.0), not training failure. The best EM achieved was 0.1338 with n_layer=12, but systematic learning rate exploration is critical before architectural changes. Previous n_mem_tokens and n_head sweeps also failed or reverted without establishing improved baselines.
 
 
+## Iter 58 — RUNNING — N=8
+**Hypothesis:** A focused learning rate sweep with values [0.0005, 0.001, 0.002, 0.005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance, as previous learning rate sweeps failed due to infrastructure issues rather than training failure.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_058_lr_sweep_focused
+
+
+## Iter 58 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A focused learning rate sweep with values [0.0005, 0.001, 0.002, 0.005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance, as previous learning rate sweeps failed due to infrastructure issues rather than training failure.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous learning rate sweeps (iterations 50, 56, 57) failed due to infrastructure issues (EM=-1.0), not training failure. The baseline 0.7442 EM was achieved with learning_rate=0.001, so a focused sweep around this value should identify the optimal range. Other hyperparameters like n_layer and n_head have already been tried and reverted, making learning rate the most viable remaining hyperparameter to optimize.
+
+
