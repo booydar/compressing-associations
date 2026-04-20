@@ -1706,3 +1706,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters are the priority according to human_directions.md. Previous learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure. The current learning rate of 0.001 needs systematic exploration with a focused sweep around this value to find optimal training signal strength.
 
 
+## Iter 60 — RUNNING — N=8
+**Hypothesis:** A focused n_mem_tokens sweep with values [8, 16, 32, 64] will identify the optimal memory capacity, as recent experiments failed due to infrastructure errors (planner 'Argument list too long') rather than training failure, and the current default of 64 may exceed capacity for the small embedding dimension (128) architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_060_n_mem_tokens_focused_sweep
+
+
+## Iter 60 — reverted — EM: 0.1266 (N=8)
+**Hypothesis:** A focused n_mem_tokens sweep with values [8, 16, 32, 64] will identify the optimal memory capacity, as recent experiments failed due to infrastructure errors (planner 'Argument list too long') rather than training failure, and the current default of 64 may exceed capacity for the small embedding dimension (128) architecture.
+**Wall time:** 141.8 min
+**Result:** EM=0.1266 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Recent iterations 26-59 all failed with infrastructure errors ('Argument list too long: opencode'), not training failure. The last valid run (iter 55) with n_mem_tokens sweep achieved EM=0.0078. Hyperparameters n_mem_tokens have been configured for sweeping but never successfully executed. A focused sweep with smaller values [8, 16, 32, 64] is appropriate for the 128-embedding architecture.
+
+
