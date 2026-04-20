@@ -886,7 +886,7 @@ def _run_iter(
             planner_error = None
             for attempt in range(1, N_PLANNER_RETRIES + 1):
                 try:
-                    hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error)
+                    hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error, iter_tag=iter_tag)
                     break
                 except Exception as e:
                     planner_error = str(e)

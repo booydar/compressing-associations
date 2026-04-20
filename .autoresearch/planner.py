@@ -17,6 +17,8 @@ import os
 import tempfile
 import subprocess
 from pathlib import Path
+from datetime import datetime
+import yaml
 
 sys.path.insert(0, os.path.dirname(__file__))
 from llm_client import _build_base_url
@@ -28,7 +30,13 @@ SUMMARY_FILE = AUTORESEARCH_DIR / "experiment_summary.md"
 EXPERIMENT_CONFIG_FILE = AUTORESEARCH_DIR / "experiment_config.yaml"
 CONVENTIONS_FILE = AUTORESEARCH_DIR / "conventions.md"
 MODEL_FILE = REPO_ROOT / "modeling_rmt" / "huggingface_rmca_v3.py"
-MAX_SUMMARY_CHARS = 12000
+RESEARCH_LOG = AUTORESEARCH_DIR / "research_log.md"
+MEMORY_FILE = AUTORESEARCH_DIR / "results_memory.json"
+ARTIFACTS_DIR = AUTORESEARCH_DIR / "artifacts"
+
+
+def _artifact_dir(iter_tag: str) -> Path:
+    return ARTIFACTS_DIR / iter_tag
 MAX_HUMAN_DIRECTIONS_CHARS = 8000
 MAX_CONFIG_CHARS = 8000
 MAX_CONVENTIONS_CHARS = 8000
@@ -92,16 +100,60 @@ class PlannerResponseError(ValueError):
         self.trace = trace
 
 
+def build_planner_context_file(iter_tag: str) -> Path:
+    """Create a context file with paths to all important files and save to artifacts."""
+    artifact_path = _artifact_dir(iter_tag)
+    artifact_path.mkdir(parents=True, exist_ok=True)
+    
+    context_file = artifact_path / "context.md"
+    
+    # Build context with file paths and key metadata
+    context_lines = [
+        "# Planner Context",
+        f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        "",
+        "## Important Files (use these paths to read content)",
+        f"- Model: {MODEL_FILE}",
+        f"- Experiment Config: {EXPERIMENT_CONFIG_FILE}",
+        f"- Human Directions: {HUMAN_DIRECTIONS_FILE}",
+        f"- Conventions: {CONVENTIONS_FILE}",
+        f"- Research Log: {RESEARCH_LOG}",
+        f"- Results Memory: {MEMORY_FILE}",
+        f"- Experiment Summary: {SUMMARY_FILE}",
+        "",
+        "## Key Hyperparameters (from experiment_config.yaml)",
+    ]
+    
+    # Read and include key hyperparameters
+    if EXPERIMENT_CONFIG_FILE.exists():
+        exp_cfg = yaml.safe_load(EXPERIMENT_CONFIG_FILE.read_text())
+        for key in ['n_layer', 'n_head', 'n_embd', 'n_mem_tokens', 'learning_rate', 'batch_size', 'max_steps']:
+            if key in exp_cfg:
+                context_lines.append(f"- {key}: {exp_cfg[key]}")
+    else:
+        context_lines.append("- (config not found)")
+    
+    context_file.write_text("\n".join(context_lines))
+    print(f"[planner] created context file: {context_file}")
+    return context_file
+
+
 def build_planner_messages(
     program_md: str,
     recent_experiments: list[dict],
     error_context: str | None = None,
-) -> list[dict]:
+    iter_tag: str | None = None,
+) -> tuple[list[dict], Path | None]:
     del program_md  # intentionally unused to keep planner context bounded
 
     history_text = _format_history(recent_experiments[-10:])
     human_directions_text, latest_pending_item = _load_human_directions()
-    experiment_summary = _load_summary_tail()
+    
+    # Create context file with paths to important files
+    context_file = None
+    if iter_tag:
+        context_file = build_planner_context_file(iter_tag)
+    
     config_text = _read_text(
         EXPERIMENT_CONFIG_FILE,
         default="(missing experiment_config.yaml)",
@@ -118,12 +170,21 @@ def build_planner_messages(
         max_chars=MAX_MODEL_CHARS,
     )
 
-    user_content = f"""## Human Directions (PRIORITY - implement if available)
+    # File path references for the planner
+    file_refs = f"""## Important Files
+- Model code: {MODEL_FILE}
+- Experiment config: {EXPERIMENT_CONFIG_FILE}
+- Human directions: {HUMAN_DIRECTIONS_FILE}
+- Conventions: {CONVENTIONS_FILE}
+- Research log: {RESEARCH_LOG}
+- Results memory: {MEMORY_FILE}
+- Experiment summary: {SUMMARY_FILE}
+"""
+
+    user_content = f"""{file_refs}
+## Human Directions (PRIORITY - implement if available)
 {human_directions_text}
 Latest pending item to implement: {latest_pending_item if latest_pending_item else "(none)"}
-
-## Experiment Summary
-{experiment_summary}
 
 ## Recent Experiment History (last 10, most recent last)
 {history_text}
@@ -152,7 +213,7 @@ Set "human_directions_item" to the item number you are implementing."""
     return [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": user_content},
-    ]
+    ], context_file
 
 
 def plan_with_trace(
@@ -160,16 +221,18 @@ def plan_with_trace(
     recent_experiments: list[dict],
     provider_cfg: dict,
     error_context: str | None = None,
+    iter_tag: str | None = None,
 ) -> tuple[dict, dict]:
     """
     Call the planner via opencode CLI and return both parsed hypothesis and trace data.
     Raises ValueError if the response cannot be parsed as JSON.
     """
-    messages = build_planner_messages(program_md, recent_experiments, error_context=error_context)
-    raw = _call_opencode_planner(messages, provider_cfg)
+    messages, context_file = build_planner_messages(program_md, recent_experiments, error_context=error_context, iter_tag=iter_tag)
+    raw = _call_opencode_planner(messages, provider_cfg, context_file)
     trace = {
         "messages": messages,
         "raw_response": raw,
+        "context_file": str(context_file) if context_file else None,
     }
     try:
         parsed = _parse_json_response(raw)
@@ -180,22 +243,23 @@ def plan_with_trace(
     return parsed, trace
 
 
-def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None) -> dict:
-    result = plan_with_trace(program_md, recent_experiments, provider_cfg, error_context=error_context)
+def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None) -> dict:
+    result = plan_with_trace(program_md, recent_experiments, provider_cfg, error_context=error_context, iter_tag=iter_tag)
     return result[0] if isinstance(result, tuple) else result
 
 
-def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None) -> tuple[dict, dict]:
+def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None) -> tuple[dict, dict]:
     """
     Call the planner via opencode CLI and return both parsed hypothesis and full trace data for logging.
     """
-    messages = build_planner_messages(program_md, recent_experiments, error_context=error_context)
-    raw = _call_opencode_planner(messages, provider_cfg)
+    messages, context_file = build_planner_messages(program_md, recent_experiments, error_context=error_context, iter_tag=iter_tag)
+    raw = _call_opencode_planner(messages, provider_cfg, context_file)
     trace = {
         "messages": messages,
         "raw_response": raw,
         "model_name": provider_cfg.get("model", "unknown"),
         "provider": provider_cfg.get("provider", "unknown"),
+        "context_file": str(context_file) if context_file else None,
     }
     try:
         parsed = _parse_json_response(raw)
@@ -206,7 +270,7 @@ def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provid
     return parsed, trace
 
 
-def _call_opencode_planner(messages: list[dict], provider_cfg: dict) -> str:
+def _call_opencode_planner(messages: list[dict], provider_cfg: dict, context_file: Path | None = None) -> str:
     """
     Call opencode CLI to get a planning response.
     Returns the raw text response.
@@ -239,8 +303,16 @@ def _call_opencode_planner(messages: list[dict], provider_cfg: dict) -> str:
         env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
 
     print(f"[planner] Calling opencode with model: {model_name}")
+    
+    # Build command with context file if available
+    cmd = ["opencode", "run", "-m", model_name]
+    if context_file:
+        cmd.append(str(context_file))
+        print(f"[planner] Using context file: {context_file}")
+    cmd.append(prompt)
+    
     result = subprocess.run(
-        ["opencode", "run", "-m", model_name, prompt],
+        cmd,
         capture_output=True,
         text=True,
         env=env,
