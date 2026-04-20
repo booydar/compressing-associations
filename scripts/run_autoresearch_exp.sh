@@ -63,7 +63,7 @@ accelerate launch \
   --base_model $BASE_MODEL \
   --n_mem_tokens $N_MEM_TOKENS \
   --n_ctrl_tokens 0 \
-  --pairs_per_segment $PAIRS_PER_SEGMENT \
+  --pairs_per_segment $N_PAIRS \
   --max_steps $MAX_STEPS \
   --eval_steps $EVAL_STEPS \
   --logging_steps $LOGGING_STEPS \
