@@ -1732,3 +1732,16 @@ Use -f if you really want to add them.
 **Rationale:** Learning rate sweeps (iter 56-59) and n_mem_tokens sweeps (iter 55, 60) have been exhausted with mostly infrastructure failures or training failures, not successful convergence. Deep supervision architectural change (iter 51-52) was already tried and reverted. Batch size is a critical hyperparameter for training stability in memory-augmented models, and the current 128 may be too small for stable gradient estimates with the complex cross-attention memory mechanisms.
 
 
+## Iter 62 — RUNNING — N=8
+**Hypothesis:** Making the memory write coefficient a learnable parameter instead of fixed 0.5 will allow the model to adaptively control memory update strength, improving associative retrieval EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_062_learnable_write_coef
+
+
+## Iter 62 — reverted — EM: 0.1304 (N=8)
+**Hypothesis:** Making the memory write coefficient a learnable parameter instead of fixed 0.5 will allow the model to adaptively control memory update strength, improving associative retrieval EM accuracy.
+**Wall time:** 203.5 min
+**Result:** EM=0.1304 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters have been extensively explored: n_mem_tokens sweeps with values [8, 16, 32, 64, 128, 256] and learning rate sweeps across [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005] have been attempted without consistent improvement. The fixed 0.5 write coefficient is an arbitrary architectural choice that may not be optimal.
+
+

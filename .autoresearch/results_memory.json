@@ -1878,6 +1878,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_061",
       "summary_logged": false,
       "token_accuracy": 0.1376
+    },
+    {
+      "id": 62,
+      "iter_tag": "iter_062",
+      "description": "Making the memory write coefficient a learnable parameter instead of fixed 0.5 will allow the model to adaptively control memory update strength, improving associative retrieval EM accuracy.",
+      "hypothesis": {
+        "hypothesis": "Making the memory write coefficient a learnable parameter instead of fixed 0.5 will allow the model to adaptively control memory update strength, improving associative retrieval EM accuracy.",
+        "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+        "rationale": "Hyperparameters have been extensively explored: n_mem_tokens sweeps with values [8, 16, 32, 64, 128, 256] and learning rate sweeps across [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005] have been attempted without consistent improvement. The fixed 0.5 write coefficient is an arbitrary architectural choice that may not be optimal.",
+        "instruction": "In MemoryAugmentedLayer.__init__, replace self.write_gate = nn.Parameter(torch.ones(1)) with initialization to 0.5 and in forward, change memory = memory + 0.5 * (self.write_gate * write_residual) to memory = memory + self.write_gate * write_residual (remove the fixed 0.5 multiplier).",
+        "human_directions_item": null,
+        "run_name": "learnable_write_coef"
+      },
+      "em_score": 0.1304,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_062_learnable_write_coef",
+      "wall_time_min": 203.5,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776668552.6897435,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_062",
+      "summary_logged": false,
+      "token_accuracy": 0.1304
     }
   ],
   "reference": {
