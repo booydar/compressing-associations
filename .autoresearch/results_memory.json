@@ -1692,6 +1692,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_055",
       "summary_logged": false,
       "token_accuracy": 0.0078
+    },
+    {
+      "id": 56,
+      "iter_tag": "iter_056",
+      "description": "A focused learning rate sweep centered around 0.0001 with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance.",
+      "hypothesis": {
+        "hypothesis": "A focused learning rate sweep centered around 0.0001 with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The best experiment (iter_004_lea_0) achieved 0.7442 EM with learning_rate=0.0001, n_layer=4, and n_mem_tokens=32. Recent experiments with learning_rate=0.001 and various sweeps have failed to reproduce this performance. The current learning_rate of 0.001 may be too high for stable convergence.",
+        "instruction": "Change the learning_rate field from 0.001 to a sweep format with values [0.00005, 0.0001, 0.0002, 0.0005] and default 0.0001. Format: learning_rate:\\n  values: [0.00005, 0.0001, 0.0002, 0.0005]\\n  default: 0.0001",
+        "human_directions_item": null,
+        "run_name": "lr_focused_sweep_around_baseline"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_056_lr_focused_sweep_around_baseline",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776645900.1950002,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_056",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {

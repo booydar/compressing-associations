@@ -1654,3 +1654,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous n_mem_tokens sweep (iter 47) tested [8, 16, 32, 64, 128, 256] and achieved EM=0.1338, which was lower than the baseline 0.8672. However, the sweep included large values (128, 256) that likely exceed capacity for n_embd=128. Testing smaller values [4, 8, 16, 32] focuses on the range where the model can actually utilize memory tokens effectively. Learning rate sweeps have been exhausted (iter 45, 46, 50) with infrastructure failures, not architectural limitations.
 
 
+## Iter 56 — RUNNING — N=8
+**Hypothesis:** A focused learning rate sweep centered around 0.0001 with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_056_lr_focused_sweep_around_baseline
+
+
+## Iter 56 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A focused learning rate sweep centered around 0.0001 with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** The best experiment (iter_004_lea_0) achieved 0.7442 EM with learning_rate=0.0001, n_layer=4, and n_mem_tokens=32. Recent experiments with learning_rate=0.001 and various sweeps have failed to reproduce this performance. The current learning_rate of 0.001 may be too high for stable convergence.
+
+
