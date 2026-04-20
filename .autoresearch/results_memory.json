@@ -1723,6 +1723,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_056",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 57,
+      "iter_tag": "iter_057",
+      "description": "A focused learning rate sweep with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance, as previous learning rate sweeps failed due to infrastructure issues rather than training failure.",
+      "hypothesis": {
+        "hypothesis": "A focused learning rate sweep with values [0.00005, 0.0001, 0.0002, 0.0005] will identify the optimal training signal strength that reproduces the baseline 0.7442 EM performance, as previous learning rate sweeps failed due to infrastructure issues rather than training failure.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Hyperparameters are still being explored: learning_rate sweeps have been attempted but failed due to infrastructure issues (EM=-1.0), not training failure. The best EM achieved was 0.1338 with n_layer=12, but systematic learning rate exploration is critical before architectural changes. Previous n_mem_tokens and n_head sweeps also failed or reverted without establishing improved baselines.",
+        "instruction": "Update the learning_rate configuration in experiment_config.yaml to use a sweep format with values: [0.00005, 0.0001, 0.0002, 0.0005] and default: 0.0001. Keep all other hyperparameters unchanged.",
+        "human_directions_item": null,
+        "run_name": "lr_sweep_focused"
+      },
+      "em_score": -1.0,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_057_lr_sweep_focused",
+      "wall_time_min": 0.0,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776645966.7865205,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_057",
+      "summary_logged": false,
+      "token_accuracy": -1.0
     }
   ],
   "reference": {
