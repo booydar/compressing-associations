@@ -1693,3 +1693,16 @@ Use -f if you really want to add them.
 **Rationale:** Previous learning rate sweeps (iterations 50, 56, 57) failed due to infrastructure issues (EM=-1.0), not training failure. The baseline 0.7442 EM was achieved with learning_rate=0.001, so a focused sweep around this value should identify the optimal range. Other hyperparameters like n_layer and n_head have already been tried and reverted, making learning rate the most viable remaining hyperparameter to optimize.
 
 
+## Iter 59 — RUNNING — N=8
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.0005, 0.001, 0.002, 0.005] will identify the optimal training signal strength, as the current fixed learning rate of 0.001 may not be optimal for the memory-augmented architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_059_lr_sweep_focused_v2
+
+
+## Iter 59 — reverted — EM: -1.0000 (N=8)
+**Hypothesis:** A learning rate sweep with values [0.0001, 0.0005, 0.001, 0.002, 0.005] will identify the optimal training signal strength, as the current fixed learning rate of 0.001 may not be optimal for the memory-augmented architecture.
+**Wall time:** 0.0 min
+**Result:** EM=-1.0000 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Hyperparameters are the priority according to human_directions.md. Previous learning rate sweeps failed due to infrastructure issues (EM=-1.0), not training failure. The current learning rate of 0.001 needs systematic exploration with a focused sweep around this value to find optimal training signal strength.
+
+
