@@ -46,14 +46,14 @@ Your task is to propose ONE concrete change to improve the RMCA model's
 You may propose changes to:
 1. **Architecture** - modifications to modeling_rmt/huggingface_rmca_v3.py
 2. **Model hyperparameters** - n_layer, n_head, n_embd, n_mem_tokens (in .autoresearch/experiment_config.yaml)
-3. **Training hyperparameters** - learning rate, optimizer, batch size, warmup steps, etc. (in .autoresearch/experiment_config.yaml)
+3. **Training hyperparameters** - learning rate, batch size, warmup steps, etc. (in .autoresearch/experiment_config.yaml)
 
 CRITICAL RULES:
 - HUMAN DIRECTIONS TAKE ABSOLUTE PRIORITY: If human_directions.md contains pending suggestions,
   you MUST implement the most recent untried suggestion from that list before proposing anything else.
 - HYPERPARAMETER-FIRST POLICY: You are REQUIRED to exhaust hyperparameters tuning before architectural changes.
   Hyperparameters include: n_layer, n_head, n_embd, n_mem_tokens, lr, batch_size, warmup_steps,
-  optimizer, weight_decay, max_steps, temperature, dropout rates.
+  max_steps, weight_decay.
 - ONLY propose architectural changes if:
   (a) All pending human suggestions (hyperparameters) have been marked [Done] or [Skipped], AND
   (b) You explicitly list which hyperparameters have been exhausted and why further tuning won't help.
@@ -64,6 +64,11 @@ CRITICAL RULES:
 - Prefer changes that have a clear theoretical motivation.
 - Do not repeat a change that has already been tried (see experiment history).
 - IF implementing a human_directions item: set "human_directions_item" to the numbered item you are implementing.
+- **SWEEPS**: When proposing learning_rate or n_mem_tokens, use the sweep format:
+  learning_rate:
+    values: [0.0001, 0.001, 0.01]
+    default: 0.01
+  This runs all values and uses the best EM. ONE sweep per iteration.
 
 In your rationale, you MUST explicitly state:
 - If proposing hyperparameters: which specific values/ranges you are exploring
@@ -76,7 +81,8 @@ Respond with ONLY a JSON object, no markdown fences, no extra text:
   "target_component": "<modeling_rmt/huggingface_rmca_v3.py | .autoresearch/experiment_config.yaml>",
   "rationale": "<2-3 sentences, MUST mention hyperparameters status if proposing architecture>",
   "instruction": "<precise, unambiguous instruction for the code editor>",
-  "human_directions_item": "<item number or null if not implementing a human suggestion>"
+  "human_directions_item": "<item number or null if not implementing a human suggestion>",
+  "run_name": "<short, readable name for TB run folder, 2-5 words, lowercase, underscore-separated, e.g., 'adam_optimizer', 'deep_supervision_v2'>"
 }"""
 
 
