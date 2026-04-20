@@ -1661,6 +1661,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_054",
       "summary_logged": false,
       "token_accuracy": -1.0
+    },
+    {
+      "id": 55,
+      "iter_tag": "iter_055",
+      "description": "A focused n_mem_tokens sweep with smaller values [4, 8, 16, 32] will identify the optimal memory capacity for the small embedding dimension (128) architecture, as the current default of 64 may exceed the model's capacity to effectively utilize memory tokens.",
+      "hypothesis": {
+        "hypothesis": "A focused n_mem_tokens sweep with smaller values [4, 8, 16, 32] will identify the optimal memory capacity for the small embedding dimension (128) architecture, as the current default of 64 may exceed the model's capacity to effectively utilize memory tokens.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Previous n_mem_tokens sweep (iter 47) tested [8, 16, 32, 64, 128, 256] and achieved EM=0.1338, which was lower than the baseline 0.8672. However, the sweep included large values (128, 256) that likely exceed capacity for n_embd=128. Testing smaller values [4, 8, 16, 32] focuses on the range where the model can actually utilize memory tokens effectively. Learning rate sweeps have been exhausted (iter 45, 46, 50) with infrastructure failures, not architectural limitations.",
+        "instruction": "Update n_mem_tokens sweep values in experiment_config.yaml from [8, 16, 32, 64, 128, 256] to [4, 8, 16, 32], keeping the default as 32.",
+        "human_directions_item": null,
+        "run_name": "n_mem_tokens_focused_sweep"
+      },
+      "em_score": 0.0078,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_055_n_mem_tokens_focused_sweep",
+      "wall_time_min": 101.3,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776639699.5037246,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_055",
+      "summary_logged": false,
+      "token_accuracy": 0.0078
     }
   ],
   "reference": {

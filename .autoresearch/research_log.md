@@ -1641,3 +1641,16 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameter exploration is ongoing: n_mem_tokens sweep is configured but not yet successfully executed (iter_047 failed with infrastructure issues). Learning rate has been swept multiple times without success. n_head has only been tried once (iter_53) which failed due to infrastructure, not the change itself. Increasing attention heads is a fundamental hyperparameter for attention-based memory models.
 
 
+## Iter 55 — RUNNING — N=8
+**Hypothesis:** A focused n_mem_tokens sweep with smaller values [4, 8, 16, 32] will identify the optimal memory capacity for the small embedding dimension (128) architecture, as the current default of 64 may exceed the model's capacity to effectively utilize memory tokens.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_055_n_mem_tokens_focused_sweep
+
+
+## Iter 55 — reverted — EM: 0.0078 (N=8)
+**Hypothesis:** A focused n_mem_tokens sweep with smaller values [4, 8, 16, 32] will identify the optimal memory capacity for the small embedding dimension (128) architecture, as the current default of 64 may exceed the model's capacity to effectively utilize memory tokens.
+**Wall time:** 101.3 min
+**Result:** EM=0.0078 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Previous n_mem_tokens sweep (iter 47) tested [8, 16, 32, 64, 128, 256] and achieved EM=0.1338, which was lower than the baseline 0.8672. However, the sweep included large values (128, 256) that likely exceed capacity for n_embd=128. Testing smaller values [4, 8, 16, 32] focuses on the range where the model can actually utilize memory tokens effectively. Learning rate sweeps have been exhausted (iter 45, 46, 50) with infrastructure failures, not architectural limitations.
+
+
