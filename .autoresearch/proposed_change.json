@@ -1,0 +1,7 @@
+{
+  "hypothesis": "Decoupling read and write memory tokens will prevent interference between memory retrieval and storage operations, improving associative pattern retention.",
+  "target_component": "modeling_rmt/huggingface_rmca_v3.py",
+  "rationale": "Hyperparameters have been exhausted: sweeps completed for learning_rate, n_mem_tokens, n_embd, warmup_steps, n_layer, batch_size, weight_decay, n_head, and max_grad_norm with best EM of 0.3876. Recent architectural changes (adaptive gates, skip connections) failed due to implementation errors. Decoupling read/write memory is theoretically motivated: current architecture uses same memory tokens for both operations, causing retrieval-write interference.",
+  "instruction": "In MemoryAugmentedLayer.__init__, add a separate nn.Parameter for initial_write_memory_state alongside initial_memory_state. In __init__, create initial_write_memory = torch.randn(1, num_mem_tokens, hidden_size) / math.sqrt(hidden_size) and register it as initial_write_memory_state buffer. In forward(), use memory (initial_memory_state) for read operations and write_memory (initial_write_memory_state) for write operations, maintaining them as separate states. Reset both in reset_memory(). Update RMCACell to initialize both memory states when creating MemoryAugmentedLayer.",
+  "human_directions_item": null
+}

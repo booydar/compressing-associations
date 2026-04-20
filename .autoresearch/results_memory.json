@@ -1909,6 +1909,36 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_062",
       "summary_logged": false,
       "token_accuracy": 0.1304
+    },
+    {
+      "id": 63,
+      "iter_tag": "iter_063",
+      "description": "iter 63",
+      "hypothesis": {
+        "hypothesis:": "Reducing max_grad_norm from 0.5 to 0.1 will prevent excessive gradient clipping that may be hindering learning in the memory-augmented architecture.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Recent experiments show n_mem_tokens sweeps (iter 55, 60) and learning rate sweeps (iter 56-59) have been explored but failed due to infrastructure issues, not training failure. The learnable write gate (iter 62) achieved 0.1376 EM but was reverted. max_grad_norm sweep is configured with values [0.1, 0.5, 1.0, 2.0] but not yet executed. Gradient clipping may be too aggressive at 0.5 for the small embedding dimension (128) architecture.",
+        "instruction": "Change max_grad_norm from sweep format to fixed value 0.1 in experiment_config.yaml: replace 'max_grad_norm:\\n  values: [0.1, 0.5, 1.0, 2.0]\\n  default: 0.5' with 'max_grad_norm: 0.1'",
+        "human_directions_item": null,
+        "run_name": "grad_norm_0_1"
+      },
+      "em_score": null,
+      "prev_best": 0.8672,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_063_grad_norm_0_1",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776680833.2644675,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_063",
+      "summary_logged": false
     }
   ],
   "reference": {

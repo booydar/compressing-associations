@@ -1745,3 +1745,8 @@ Use -f if you really want to add them.
 **Rationale:** Hyperparameters have been extensively explored: n_mem_tokens sweeps with values [8, 16, 32, 64, 128, 256] and learning rate sweeps across [0.00005, 0.0001, 0.0002, 0.0005, 0.001, 0.002, 0.005] have been attempted without consistent improvement. The fixed 0.5 write coefficient is an arbitrary architectural choice that may not be optimal.
 
 
+## Iter 63 — RUNNING — N=8
+**Hypothesis:** iter 63
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_063_grad_norm_0_1
+
+
