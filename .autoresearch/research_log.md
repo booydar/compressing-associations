@@ -1719,3 +1719,16 @@ Use -f if you really want to add them.
 **Rationale:** Recent iterations 26-59 all failed with infrastructure errors ('Argument list too long: opencode'), not training failure. The last valid run (iter 55) with n_mem_tokens sweep achieved EM=0.0078. Hyperparameters n_mem_tokens have been configured for sweeping but never successfully executed. A focused sweep with smaller values [8, 16, 32, 64] is appropriate for the 128-embedding architecture.
 
 
+## Iter 61 — RUNNING — N=8
+**Hypothesis:** Increasing batch_size from 128 to 256 will provide more stable gradient estimates for the memory-augmented architecture, improving convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_061_batch_size_256
+
+
+## Iter 61 — reverted — EM: 0.1376 (N=8)
+**Hypothesis:** Increasing batch_size from 128 to 256 will provide more stable gradient estimates for the memory-augmented architecture, improving convergence on the associative retrieval task.
+**Wall time:** 228.6 min
+**Result:** EM=0.1376 vs prev best=0.8672
+**Metric source:** sweep
+**Rationale:** Learning rate sweeps (iter 56-59) and n_mem_tokens sweeps (iter 55, 60) have been exhausted with mostly infrastructure failures or training failures, not successful convergence. Deep supervision architectural change (iter 51-52) was already tried and reverted. Batch size is a critical hyperparameter for training stability in memory-augmented models, and the current 128 may be too small for stable gradient estimates with the complex cross-attention memory mechanisms.
+
+

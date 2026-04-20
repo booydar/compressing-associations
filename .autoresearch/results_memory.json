@@ -1847,6 +1847,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_060",
       "summary_logged": false,
       "token_accuracy": 0.1266
+    },
+    {
+      "id": 61,
+      "iter_tag": "iter_061",
+      "description": "Increasing batch_size from 128 to 256 will provide more stable gradient estimates for the memory-augmented architecture, improving convergence on the associative retrieval task.",
+      "hypothesis": {
+        "hypothesis": "Increasing batch_size from 128 to 256 will provide more stable gradient estimates for the memory-augmented architecture, improving convergence on the associative retrieval task.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Learning rate sweeps (iter 56-59) and n_mem_tokens sweeps (iter 55, 60) have been exhausted with mostly infrastructure failures or training failures, not successful convergence. Deep supervision architectural change (iter 51-52) was already tried and reverted. Batch size is a critical hyperparameter for training stability in memory-augmented models, and the current 128 may be too small for stable gradient estimates with the complex cross-attention memory mechanisms.",
+        "instruction": "Change batch_size from 128 to 256 in .autoresearch/experiment_config.yaml. Keep all other hyperparameters unchanged.",
+        "human_directions_item": null,
+        "run_name": "batch_size_256"
+      },
+      "em_score": 0.1376,
+      "prev_best": 0.8672,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 8,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/runs-autoresearch/n8/iter_061_batch_size_256",
+      "wall_time_min": 228.6,
+      "metric_step": 0,
+      "metric_source": "sweep",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1776654734.4007485,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-v2.4/.autoresearch/artifacts/iter_061",
+      "summary_logged": false,
+      "token_accuracy": 0.1376
     }
   ],
   "reference": {
