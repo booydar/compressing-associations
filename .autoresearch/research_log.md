@@ -1499,3 +1499,11 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** After increasing n_embd to 256, performance collapsed (EM=0.0018). The expand_v=2.0 parameter controls the value projection expansion in the FLA layer, and combined with the larger n_embd, may be causing over-parameterization. Reducing expand_v to 1.5 maintains the larger embedding dimension while reducing the total parameter count in the value projection, potentially improving training stability. This is a hyperparameter change that has not been tried yet.
 
 
+## Iter 9 — reverted — EM: 0.8640 (N=4)
+**Hypothesis:** Increase expand_v from 2.0 to 4.0 to provide more value projection capacity in the FLA layer for encoding key-value associations.
+**Wall time:** 31.0 min
+**Result:** EM=0.8640 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The expand_v parameter controls the expansion ratio for the value projection in the GatedDeltaNet layer. A higher expand_v increases the hidden dimension of the value projection, allowing the recurrent memory to store richer representations of key-value pairs. This is a hyperparameter change that has not been tried yet in the experiment history.
+
+
