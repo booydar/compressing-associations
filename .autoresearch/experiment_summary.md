@@ -15778,3 +15778,33 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: The current n_head=1 limits the FLA layer to a single attention head, restricting its ability to learn parallel association patterns. For the associative retrieval task, multiple heads could capture diverse key-value mappings simultaneously. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_head has not been increased in prior successful experiments.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n2/iter_203_n_head_2
 
+## Iter 208 | failed | N=16
+- Hypothesis: Increase expand_v from 2.0 to 4.0 to provide more value projection capacity for storing key-value associations in the FLA recurrent memory.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The expand_v parameter controls the expansion factor for the value projection in FLA layers. Increasing it from 2.0 to 4.0 would double the value dimension, providing more capacity for the model to store and retrieve key-value associations. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and it has not been tried yet in the experiment history.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_208_expand_v_4_0
+
+## Iter 209 | failed | N=16
+- Hypothesis: Increase n_head from 1 to 2 to enable multi-head recurrent memory for learning diverse key-value association patterns.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiment (iter 203) with n_head=2 achieved EM=0.9912 but failed due to checkpoint recovery issues. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule. Since n_head=4 performed poorly (EM=0.3778), a moderate increase to n_head=2 is the most promising direction.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_209_n_head_2_retry
+
+## Iter 210 | failed | N=16
+- Hypothesis: Increase head_dim from 32 to 64 to double the per-head recurrent memory capacity while keeping state_size at 64.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Current state_size=64 with n_head=1 implies head_dim=64, but the model code uses head_dim=32 as a default. Increasing head_dim provides more capacity per head for storing key-value associations. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_210_head_dim_64
+

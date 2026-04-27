@@ -1341,3 +1341,49 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current configuration with n_layer=4, n_head=1, state_size=64 achieves EM~0.99. Experiment iter 2 showed that increasing learning_rate to 5e-3 achieved EM=0.9914. A further increase to 1e-2 may enable faster convergence and potentially higher final accuracy, following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 208 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 2.0 to 4.0 to provide more value projection capacity for storing key-value associations in the FLA recurrent memory.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_208_expand_v_4_0
+
+
+## Iter 208 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_208_expand_v_4_0
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 209 — RUNNING — N=16
+**Hypothesis:** Increase n_head from 1 to 2 to enable multi-head recurrent memory for learning diverse key-value association patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_209_n_head_2_retry
+
+
+## Iter 209 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_209_n_head_2_retry
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 210 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 32 to 64 to double the per-head recurrent memory capacity while keeping state_size at 64.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_210_head_dim_64
+
+
+## Iter 210 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_210_head_dim_64
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 206 — kept — EM: 0.0098 (N=16)
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more representation capacity for learning key-value associations.
+**Wall time:** 120.0 min
+**Result:** EM=0.0098 vs prev best=-1.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_206_n_embd_256', '16', '25000']' timed out after 7199.999982200039 seconds
+**Rationale:** The current embedding dimension of 128 may be limiting the model's ability to encode complex key-value patterns. Increasing n_embd to 256 provides 2x more representation capacity while keeping the state_size=64 (recurrent memory) constant. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd=256 has not been tried yet in the experiment history.
+
+
