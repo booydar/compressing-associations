@@ -1268,3 +1268,20 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The baseline with n_layer=2 achieves EM=0.9902. Increasing the number of transformer layers from 2 to 4 provides more computational depth for the recurrent memory to process and store associations across segments. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_layer=4 has not been systematically tested yet.
 
 
+## Iter 207 — RUNNING — N=16
+**Hypothesis:** Increase learning_rate from 1e-3 to 1e-2 to accelerate convergence and improve final EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_207_lr_1e_minus_2
+
+
+## Iter 205 — kept — EM: 0.9754 (N=8)
+**Hypothesis:** Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations.
+**Wall time:** 104.7 min
+**Result:** EM=0.9754 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The current state_size=32 (num_heads=2, head_dim=16 implied) may limit the recurrent memory capacity. For the associative retrieval task, increasing state_size to 64 doubles the memory capacity without changing the architecture fundamentally. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
+## >>> N-level advanced to N=16 <<<
+Previous N achieved EM=0.9754 >= threshold 0.95.
+
+

@@ -24,6 +24,6 @@ learning_rate: 1e-3
 
 # RMM-specific parameters (passed as uppercase env vars to the run script)
 fla_layer: GatedDeltaNet
-state_size: 32    # num_heads * head_dim
+state_size: 64    # num_heads * head_dim
 expand_v: 2.0
 conv_kernel: 4
