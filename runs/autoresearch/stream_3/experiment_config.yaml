@@ -9,7 +9,7 @@ early_stopping_patience: 20
 # Model architecture parameters
 n_layer: 4
 n_head: 4
-n_embd: 128
+n_embd: 256
 
 # Task parameters
 n_keys: 2

@@ -1293,3 +1293,23 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current n_layer=4 achieved EM=0.7046, which is below the baseline EM=0.9902. Increasing the number of recurrent transformer layers from 4 to 8 should provide more capacity for the model to learn and retain key-value associations across segments. This follows the HYPERPARAMETER-FIRST rule as n_layer is a hyperparameter in experiment_config.yaml.
 
 
+## Iter 206 — RUNNING — N=16
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more representation capacity for learning key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_206_n_embd_256
+
+
+## Iter 5 — RUNNING — N=4
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory to encode key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_005_n_embd_256
+
+
+## Iter 7 — kept — EM: 0.0018 (N=16)
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory layers to learn key-value associations.
+**Wall time:** 120.0 min
+**Result:** EM=0.0018 vs prev best=-1.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_007_n_embd_256', '16', '25000']' timed out after 7199.99997932103 seconds
+**Rationale:** The current n_embd=128 may limit the representational capacity of the recurrent memory layers. For the associative retrieval task, a larger embedding dimension allows each head to store more information. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd=256 has not been tried yet in the experiment history.
+
+
