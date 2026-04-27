@@ -1204,3 +1204,15 @@ Previous N achieved EM=0.9908 >= threshold 0.95.
 **Rationale:** The current model has only 2 transformer layers, which may limit its capacity to learn complex associative patterns. Increasing n_layer from 2 to 4 adds more recurrent memory layers without changing the state_size. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_layer=4 has not been tried yet.
 
 
+## Iter 205 — kept — EM: 0.9914 (N=8)
+**Hypothesis:** Increase state_size from 32 to 64 by increasing head_dim to provide more recurrent memory capacity for storing key-value associations.
+**Wall time:** 32.1 min
+**Result:** EM=0.9914 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The baseline achieved EM=0.9902 with state_size=32 (n_head=1, head_dim=32). Increasing head_dim from 32 to 64 doubles the recurrent memory capacity while keeping the simpler single-head architecture that worked well. This follows the HYPERPARAMETER-FIRST rule and has not been tried yet.
+
+
+## >>> N-level advanced to N=16 <<<
+Previous N achieved EM=0.9914 >= threshold 0.95.
+
+
