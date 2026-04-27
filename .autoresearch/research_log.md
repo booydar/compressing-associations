@@ -1152,3 +1152,20 @@ Previous N achieved EM=0.9912 >= threshold 0.95.
 Previous N achieved EM=0.9910 >= threshold 0.95.
 
 
+## Iter 203 — RECOVERED — N=2
+**Recovered from:** all_results
+**Recovered EM:** 0.9912
+
+
+## Iter 4 — kept — EM: 0.9900 (N=2)
+**Hypothesis:** Increase head_dim from 8 to 16 to provide more capacity per recurrent memory head while keeping n_head=4.
+**Wall time:** 9.6 min
+**Result:** EM=0.9900 vs prev best=0.5122
+**Metric source:** all_results
+**Rationale:** With n_head=4 and state_size=32, the head_dim is only 8 (32/4=8), which is very small for effective memory storage. The baseline with n_head=1 and state_size=32 achieved EM=0.9682, suggesting state_size=32 is adequate when head_dim=32. Increasing head_dim to 16 (and thus state_size to 64) should improve per-head capacity while maintaining multi-head benefits.
+
+
+## >>> N-level advanced to N=4 <<<
+Previous N achieved EM=0.9900 >= threshold 0.95.
+
+
