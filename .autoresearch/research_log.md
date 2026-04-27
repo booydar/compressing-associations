@@ -1418,3 +1418,16 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** With n_head=4, head_dim=32, and n_layer=4 already established, the model has substantial recurrent memory capacity. The current learning rate of 1e-3 may be too conservative for efficient training. A higher learning rate of 5e-3 could improve convergence speed and final performance on the associative retrieval task. This follows the HYPERPARAMETER-FIRST rule as a learning rate adjustment that has not been fully explored in stream 3.
 
 
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Decrease expand_v from 2.0 to 1.5 to reduce over-parameterization and improve training stability for the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_009_expand_v_1.5
+
+
+## Iter 7 — reverted — EM: 0.4946 (N=4)
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to provide more stable gradient initialization for the recurrent memory layers.
+**Wall time:** 40.0 min
+**Result:** EM=0.4946 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The current warmup_steps=2000 may be too short for the recurrent memory architecture to stabilize during early training. For the associative retrieval task, a longer warmup period allows the FLA layers to learn appropriate gating and state-update patterns before full learning rate is applied. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
+
+
