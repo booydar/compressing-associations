@@ -1228,3 +1228,30 @@ Previous N achieved EM=0.9914 >= threshold 0.95.
 Previous N achieved EM=0.9872 >= threshold 0.95.
 
 
+## Iter 4 — RUNNING — N=4
+**Hypothesis:** Increase n_layer from 4 to 8 to provide more recurrent transformer layers for better information retention across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_004_n_layer_8
+
+
+## Iter 206 — RUNNING — N=16
+**Hypothesis:** Increase n_layer from 2 to 4 to provide deeper recurrent memory processing for learning complex key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_206_n_layer_4
+
+
+## Iter 205 — RUNNING — N=8
+**Hypothesis:** Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n8/iter_205_state_size_64
+
+
+## Iter 6 — kept — EM: 0.9902 (N=8)
+**Hypothesis:** Increase n_layer from 2 to 4 to add more recurrent memory layers for learning hierarchical key-value associations.
+**Wall time:** 67.2 min
+**Result:** EM=0.9902 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The current configuration with n_layer=2 may be insufficient for learning complex associative patterns. Increasing to n_layer=4 adds more recurrent memory capacity while keeping head_dim=32 and n_head=4. This hyperparameter change follows the HYPERPARAMETER-FIRST rule and has not been tried in the experiment history.
+
+
+## >>> N-level advanced to N=16 <<<
+Previous N achieved EM=0.9902 >= threshold 0.95.
+
+
