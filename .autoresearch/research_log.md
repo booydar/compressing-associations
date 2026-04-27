@@ -1216,3 +1216,15 @@ Previous N achieved EM=0.9908 >= threshold 0.95.
 Previous N achieved EM=0.9914 >= threshold 0.95.
 
 
+## Iter 204 — kept — EM: 0.9872 (N=4)
+**Hypothesis:** Increase n_layer from 2 to 4 to provide more transformer layers for learning key-value associations.
+**Wall time:** 60.4 min
+**Result:** EM=0.9872 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The baseline used n_layer=4 and achieved good results. Current stream 4 configuration has n_layer=2, which may limit the model's capacity to learn the associative retrieval task. Increasing from 2 to 4 layers adds more transformer capacity while keeping n_head=2 (which has been validated as effective). This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
+## >>> N-level advanced to N=8 <<<
+Previous N achieved EM=0.9872 >= threshold 0.95.
+
+
