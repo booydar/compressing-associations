@@ -1444,3 +1444,18 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 212 — RUNNING — N=16
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory layers to process and store key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_212_n_embd_256
+
+
+## Iter 207 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate convergence and improve training of the recurrent memory architecture.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0098
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_207_lr_5e_minus_3', '16', '25000']' timed out after 7199.999978239997 seconds
+**Rationale:** The current learning rate of 1e-3 may be too conservative for effective training. Stream 2 achieved EM=0.9898 with lr=5e-3, suggesting higher learning rates can work well for this task. This hyperparameter change follows the HYPERPARAMETER-FIRST rule and has not been tried for stream 4.
+
+
