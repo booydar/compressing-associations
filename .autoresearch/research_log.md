@@ -1102,3 +1102,31 @@ Previous N achieved EM=0.9914 >= threshold 0.95.
 Previous N achieved EM=0.9912 >= threshold 0.95.
 
 
+## Iter 3 — RECOVERED — N=2
+**Recovered from:** trainer_state
+**Recovered EM:** 0.5052
+
+
+## Iter 3 — RUNNING — N=4
+**Hypothesis:** Increase n_layer from 2 to 4 to provide more recurrent transformer layers for better information retention across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_003_n_layer_4
+
+
+## Iter 204 — RUNNING — N=4
+**Hypothesis:** Increase n_layer from 2 to 4 to provide more transformer layers for learning key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n4/iter_204_n_layer_4
+
+
+## Iter 204 — RUNNING — N=4
+**Hypothesis:** Fix broken base: unhandled: 'NoneType' object has no attribute 'get'
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n4/iter_204_fix_broken_base
+
+
+## Iter 3 — kept — EM: 0.5122 (N=2)
+**Hypothesis:** Increase n_head from 1 to 4 to enable multi-head recurrent memory for learning diverse key-value association patterns.
+**Wall time:** 20.1 min
+**Result:** EM=0.5122 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The baseline achieved EM=0.9682 with n_head=1. Increasing the number of FLA heads from 1 to 4 allows the recurrent memory to learn multiple attention heads, each potentially capturing different aspects of the associative retrieval task. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_head=4 has not been tried yet.
+
+
