@@ -1459,3 +1459,11 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current learning rate of 1e-3 may be too conservative for effective training. Stream 2 achieved EM=0.9898 with lr=5e-3, suggesting higher learning rates can work well for this task. This hyperparameter change follows the HYPERPARAMETER-FIRST rule and has not been tried for stream 4.
 
 
+## Iter 8 — reverted — EM: 0.0012 (N=4)
+**Hypothesis:** Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations across segments.
+**Wall time:** 59.6 min
+**Result:** EM=0.0012 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The current state_size=32 (num_heads=1, head_dim=32) may be too small for the recurrent memory to retain information across multiple segments. For an associative retrieval task where the model must remember pairs from earlier segments, a larger hidden state should improve capacity. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule. Iter 1 with state_size=128 failed with an error, so trying state_size=64 is a moderate increase that may succeed.
+
+
