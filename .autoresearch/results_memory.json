@@ -4,7 +4,7 @@
     "em": 0.9314,
     "n_level": 4
   },
-  "n_level": 4,
+  "n_level": 16,
   "experiments": [
     {
       "id": 0,
@@ -106,25 +106,25 @@
         "instruction": "In experiment_config.yaml, change the n_head parameter from 1 to 4. Keep all other parameters unchanged.",
         "run_name": "n_head_4"
       },
-      "em_score": 0.5122,
+      "em_score": 0.3778,
       "prev_best": -1,
-      "verdict": "kept",
+      "verdict": "recovered",
       "status": "completed",
       "n_level": 2,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n2/iter_003_n_head_4",
-      "wall_time_min": 20.1,
-      "metric_step": 0,
-      "metric_source": "all_results",
-      "is_partial": false,
-      "recovery_status": "final",
+      "wall_time_min": 0.3,
+      "metric_step": 1000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
       "needs_retry": false,
       "retry_of": null,
-      "run_error": null,
+      "run_error": "could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n2/iter_003_n_head_4: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n2/iter_003_n_head_4",
       "started_at": 1777303553.0767138,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/artifacts/iter_003",
-      "summary_logged": false,
+      "summary_logged": true,
       "stream_id": "3",
-      "token_accuracy": 0.7561
+      "token_accuracy": 0.6184
     },
     {
       "id": 1,
@@ -5614,24 +5614,25 @@
         "run_name": "fix_broken_base",
         "_fix_base": true
       },
-      "em_score": null,
+      "em_score": 0.035,
       "prev_best": 0.0008,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "kept",
+      "status": "completed",
       "n_level": 16,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_211_fix_broken_base",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
+      "wall_time_min": 94.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
       "is_partial": false,
-      "recovery_status": "pending",
+      "recovery_status": "final",
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
       "started_at": 1777324564.4514189,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/artifacts/iter_211",
       "summary_logged": false,
-      "stream_id": "0"
+      "stream_id": "0",
+      "token_accuracy": 0.1704
     },
     {
       "id": 9,
@@ -5663,6 +5664,37 @@
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/artifacts/iter_009",
       "summary_logged": false,
       "stream_id": "3"
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations across segments.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations across segments.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The current state_size=32 (num_heads=1, head_dim=32) may be too small for the recurrent memory to retain information across multiple segments. For an associative retrieval task where the model must remember pairs from earlier segments, a larger hidden state should improve capacity. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule. Iter 1 with state_size=128 failed with an error, so trying state_size=64 is a moderate increase that may succeed.",
+        "instruction": "In experiment_config.yaml, change the state_size parameter from 32 to 64. Keep all other parameters unchanged. The state_size represents num_heads * head_dim, so this doubles the recurrent memory capacity.",
+        "run_name": "state_size_64"
+      },
+      "em_score": null,
+      "prev_best": 0.9314,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_008_state_size_64",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1777327529.2418602,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/artifacts/iter_008",
+      "summary_logged": false,
+      "stream_id": "2"
     }
   ]
 }

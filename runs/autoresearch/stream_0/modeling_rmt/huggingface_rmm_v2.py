@@ -120,6 +120,15 @@ class RecurrentMemoryCell(nn.Module):
             'hidden_size' and 'layer_idx' are injected automatically.
     """
 
+    @staticmethod
+    def _get_transformer_layers(base_model: nn.Module):
+        if hasattr(base_model, "model"):
+            return base_model.model.layers
+        elif hasattr(base_model, "transformer"):
+            return base_model.transformer.h
+        else:
+            raise AttributeError(f"Cannot find transformer layers in model {type(base_model).__name__}")
+
     def __init__(self, base_model: nn.Module, fla_layer_name: str = "GatedDeltaNet", **fla_layer_kwargs):
         super().__init__()
         self.model = base_model
@@ -139,7 +148,9 @@ class RecurrentMemoryCell(nn.Module):
             if k in sig.parameters and k not in excluded
         }
 
-        for i, layer in enumerate(self.model.model.layers):
+        transformer_layers = self._get_transformer_layers(base_model)
+
+        for i, layer in enumerate(transformer_layers):
             fla_layer = layer_cls(
                 hidden_size=hidden_size,
                 # layer_idx=0 per wrapper: each wrapper owns its own Cache(),
@@ -152,7 +163,7 @@ class RecurrentMemoryCell(nn.Module):
                 layer.to(dtype=model_dtype, device=model_device),
                 fla_layer,
             )
-            self.model.model.layers[i] = wrapped
+            transformer_layers[i] = wrapped
 
     def forward(self, input_ids: torch.Tensor, **kwargs):
         return self.model(input_ids=input_ids, **kwargs)
@@ -267,7 +278,7 @@ class RecurrentMemoryBase(PreTrainedModel):
 
     def forward(self, segments=None, labels=None, *args, **kwargs):
         out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
-        for layer in self.rmt.memory_cell.model.model.layers:
+        for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
             layer.reset_memory()
         return out
 

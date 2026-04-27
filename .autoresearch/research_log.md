@@ -1431,3 +1431,16 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current warmup_steps=2000 may be too short for the recurrent memory architecture to stabilize during early training. For the associative retrieval task, a longer warmup period allows the FLA layers to learn appropriate gating and state-update patterns before full learning rate is applied. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
 
 
+## Iter 8 — RUNNING — N=4
+**Hypothesis:** Increase state_size from 32 to 64 to provide more recurrent memory capacity for storing key-value associations across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_008_state_size_64
+
+
+## Iter 211 — kept — EM: 0.0350 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 94.0 min
+**Result:** EM=0.0350 vs prev best=0.0008
+**Metric source:** all_results
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
