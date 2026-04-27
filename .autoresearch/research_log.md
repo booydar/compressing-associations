@@ -1467,3 +1467,35 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current state_size=32 (num_heads=1, head_dim=32) may be too small for the recurrent memory to retain information across multiple segments. For an associative retrieval task where the model must remember pairs from earlier segments, a larger hidden state should improve capacity. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule. Iter 1 with state_size=128 failed with an error, so trying state_size=64 is a moderate increase that may succeed.
 
 
+## Iter 208 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 32 to 64 to provide more capacity per attention head for encoding key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_208_head_dim_64
+
+
+## Iter 208 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_208_head_dim_64
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — RUNNING — N=4
+**Hypothesis:** Increase expand_v from 2.0 to 4.0 to provide more value projection capacity in the FLA layer for encoding key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_009_expand_v_4_0
+
+
+## Iter 209 — RUNNING — N=16
+**Hypothesis:** Increase n_head from 2 to 4 and reduce head_dim from 32 to 16 to enable more parallel attention heads while keeping state_size constant at 64.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_209_n_head_4_head_dim_16
+
+
+## Iter 9 — reverted — EM: 0.0014 (N=16)
+**Hypothesis:** Decrease expand_v from 2.0 to 1.5 to reduce over-parameterization and improve training stability for the recurrent memory layers.
+**Wall time:** 120.0 min
+**Result:** EM=0.0014 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_009_expand_v_1.5', '16', '25000']' timed out after 7199.999972559977 seconds
+**Rationale:** After increasing n_embd to 256, performance collapsed (EM=0.0018). The expand_v=2.0 parameter controls the value projection expansion in the FLA layer, and combined with the larger n_embd, may be causing over-parameterization. Reducing expand_v to 1.5 maintains the larger embedding dimension while reducing the total parameter count in the value projection, potentially improving training stability. This is a hyperparameter change that has not been tried yet.
+
+

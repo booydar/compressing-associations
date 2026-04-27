@@ -15808,3 +15808,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: Current state_size=64 with n_head=1 implies head_dim=64, but the model code uses head_dim=32 as a default. Increasing head_dim provides more capacity per head for storing key-value associations. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_210_head_dim_64
 
+## Iter 208 | failed | N=16
+- Hypothesis: Increase head_dim from 32 to 64 to provide more capacity per attention head for encoding key-value associations.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With n_head=2 and state_size=64, the current head_dim is 32. Increasing head_dim to 64 will double the per-head representation capacity while keeping state_size=128 (2*64). This hyperparameter change follows the HYPERPARAMETER-FIRST rule and targets better encoding of associative patterns.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_208_head_dim_64
+
