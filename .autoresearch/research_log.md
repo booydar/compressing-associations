@@ -1400,3 +1400,21 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The baseline achieved good results with n_head=1, and n_head=4 was tried but performed worse (EM=0.5122). A moderate increase to n_head=2 could provide enough capacity for multi-head attention without the instability of 4 heads. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 7 — RUNNING — N=4
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to provide more stable gradient initialization for the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_007_warmup_5000
+
+
+## Iter 211 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_211_fix_broken_base
+
+
+## Iter 8 — reverted — EM: 0.0004 (N=16)
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate training convergence for the larger recurrent memory model.
+**Wall time:** 82.0 min
+**Result:** EM=0.0004 vs prev best=0.0018
+**Metric source:** all_results
+**Rationale:** With n_head=4, head_dim=32, and n_layer=4 already established, the model has substantial recurrent memory capacity. The current learning rate of 1e-3 may be too conservative for efficient training. A higher learning rate of 5e-3 could improve convergence speed and final performance on the associative retrieval task. This follows the HYPERPARAMETER-FIRST rule as a learning rate adjustment that has not been fully explored in stream 3.
+
+
