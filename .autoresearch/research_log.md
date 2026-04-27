@@ -1387,3 +1387,16 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current embedding dimension of 128 may be limiting the model's ability to encode complex key-value patterns. Increasing n_embd to 256 provides 2x more representation capacity while keeping the state_size=64 (recurrent memory) constant. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd=256 has not been tried yet in the experiment history.
 
 
+## Iter 207 — RUNNING — N=16
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate convergence and improve training of the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_207_lr_5e_minus_3
+
+
+## Iter 6 — reverted — EM: 0.1514 (N=4)
+**Hypothesis:** Increase n_head from 1 to 2 to enable dual-head recurrent memory for learning diverse key-value association patterns.
+**Wall time:** 63.6 min
+**Result:** EM=0.1514 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The baseline achieved good results with n_head=1, and n_head=4 was tried but performed worse (EM=0.5122). A moderate increase to n_head=2 could provide enough capacity for multi-head attention without the instability of 4 heads. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
