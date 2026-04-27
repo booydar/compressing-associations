@@ -1285,3 +1285,11 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 Previous N achieved EM=0.9754 >= threshold 0.95.
 
 
+## Iter 4 — reverted — EM: 0.0020 (N=4)
+**Hypothesis:** Increase n_layer from 4 to 8 to provide more recurrent transformer layers for better information retention across segments.
+**Wall time:** 113.1 min
+**Result:** EM=0.0020 vs prev best=0.7046
+**Metric source:** all_results
+**Rationale:** The current n_layer=4 achieved EM=0.7046, which is below the baseline EM=0.9902. Increasing the number of recurrent transformer layers from 4 to 8 should provide more capacity for the model to learn and retain key-value associations across segments. This follows the HYPERPARAMETER-FIRST rule as n_layer is a hyperparameter in experiment_config.yaml.
+
+
