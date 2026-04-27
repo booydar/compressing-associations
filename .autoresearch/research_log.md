@@ -1255,3 +1255,16 @@ Previous N achieved EM=0.9872 >= threshold 0.95.
 Previous N achieved EM=0.9902 >= threshold 0.95.
 
 
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory layers to learn key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_007_n_embd_256
+
+
+## Iter 206 — kept — EM: 0.0002 (N=16)
+**Hypothesis:** Increase n_layer from 2 to 4 to provide deeper recurrent memory processing for learning complex key-value associations.
+**Wall time:** 77.7 min
+**Result:** EM=0.0002 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The baseline with n_layer=2 achieves EM=0.9902. Increasing the number of transformer layers from 2 to 4 provides more computational depth for the recurrent memory to process and store associations across segments. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_layer=4 has not been systematically tested yet.
+
+
