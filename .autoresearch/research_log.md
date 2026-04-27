@@ -1321,3 +1321,23 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current embedding dimension of 128 may limit the representational capacity of the recurrent memory layers. For the associative retrieval task, a larger embedding dimension allows the model to encode more information about key-value pairs in the hidden state. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd has not been varied yet in the experiment history.
 
 
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate training convergence for the larger recurrent memory model.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_008_lr_5e_minus_3
+
+
+## Iter 6 — RUNNING — N=4
+**Hypothesis:** Increase n_head from 1 to 2 to enable dual-head recurrent memory for learning diverse key-value association patterns.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_006_n_head_2
+
+
+## Iter 207 — kept — EM: 0.0008 (N=16)
+**Hypothesis:** Increase learning_rate from 1e-3 to 1e-2 to accelerate convergence and improve final EM accuracy.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0002
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_207_lr_1e_minus_2', '16', '25000']' timed out after 7199.999976630963 seconds
+**Rationale:** The current configuration with n_layer=4, n_head=1, state_size=64 achieves EM~0.99. Experiment iter 2 showed that increasing learning_rate to 5e-3 achieved EM=0.9914. A further increase to 1e-2 may enable faster convergence and potentially higher final accuracy, following the HYPERPARAMETER-FIRST rule.
+
+
