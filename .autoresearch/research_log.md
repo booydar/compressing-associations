@@ -1313,3 +1313,11 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current n_embd=128 may limit the representational capacity of the recurrent memory layers. For the associative retrieval task, a larger embedding dimension allows each head to store more information. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd=256 has not been tried yet in the experiment history.
 
 
+## Iter 5 — kept — EM: 0.9314 (N=4)
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory to encode key-value associations.
+**Wall time:** 59.8 min
+**Result:** EM=0.9314 vs prev best=0.7046
+**Metric source:** all_results
+**Rationale:** The current embedding dimension of 128 may limit the representational capacity of the recurrent memory layers. For the associative retrieval task, a larger embedding dimension allows the model to encode more information about key-value pairs in the hidden state. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd has not been varied yet in the experiment history.
+
+
