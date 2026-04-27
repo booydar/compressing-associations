@@ -1191,3 +1191,16 @@ Previous N achieved EM=0.9900 >= threshold 0.95.
 Previous N achieved EM=0.9908 >= threshold 0.95.
 
 
+## Iter 6 — RUNNING — N=8
+**Hypothesis:** Increase n_layer from 2 to 4 to add more recurrent memory layers for learning hierarchical key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n8/iter_006_n_layer_4
+
+
+## Iter 3 — kept — EM: 0.7046 (N=4)
+**Hypothesis:** Increase n_layer from 2 to 4 to provide more recurrent transformer layers for better information retention across segments.
+**Wall time:** 62.3 min
+**Result:** EM=0.7046 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The current model has only 2 transformer layers, which may limit its capacity to learn complex associative patterns. Increasing n_layer from 2 to 4 adds more recurrent memory layers without changing the state_size. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_layer=4 has not been tried yet.
+
+
