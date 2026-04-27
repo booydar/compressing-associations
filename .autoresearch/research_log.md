@@ -1130,3 +1130,25 @@ Previous N achieved EM=0.9912 >= threshold 0.95.
 **Rationale:** The baseline achieved EM=0.9682 with n_head=1. Increasing the number of FLA heads from 1 to 4 allows the recurrent memory to learn multiple attention heads, each potentially capturing different aspects of the associative retrieval task. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_head=4 has not been tried yet.
 
 
+## Iter 2 — RECOVERED — N=2
+**Recovered from:** all_results
+**Recovered EM:** 0.9914
+
+
+## Iter 4 — RUNNING — N=2
+**Hypothesis:** Increase head_dim from 8 to 16 to provide more capacity per recurrent memory head while keeping n_head=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n2/iter_004_head_dim_16_state_size_64
+
+
+## Iter 204 — kept — EM: 0.9910 (N=4)
+**Hypothesis:** Fix broken base: unhandled: 'NoneType' object has no attribute 'get'
+**Wall time:** 19.0 min
+**Result:** EM=0.9910 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
+## >>> N-level advanced to N=8 <<<
+Previous N achieved EM=0.9910 >= threshold 0.95.
+
+

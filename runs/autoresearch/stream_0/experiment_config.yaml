@@ -1,0 +1,29 @@
+# Experiment configuration - CAN BE MODIFIED by the autoresearch model
+
+max_steps: 25000
+eval_steps: 500
+logging_steps: 500
+warmup_steps: 2000
+early_stopping_patience: 20
+
+# Model architecture parameters
+n_layer: 2
+n_head: 1
+n_embd: 128
+
+# Task parameters
+n_keys: 2
+n_values: 2
+pairs_per_segment: 2
+
+# Training parameters
+base_model: llama
+batch_size: 64
+em_threshold: 0.95
+learning_rate: 1e-3
+
+# RMM-specific parameters (passed as uppercase env vars to the run script)
+fla_layer: GatedDeltaNet
+state_size: 32    # num_heads * head_dim
+expand_v: 2.0
+conv_kernel: 4
