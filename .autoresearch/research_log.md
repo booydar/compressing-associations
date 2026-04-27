@@ -1169,3 +1169,25 @@ Previous N achieved EM=0.9910 >= threshold 0.95.
 Previous N achieved EM=0.9900 >= threshold 0.95.
 
 
+## Iter 205 — RUNNING — N=8
+**Hypothesis:** Increase state_size from 32 to 64 by increasing head_dim to provide more recurrent memory capacity for storing key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n8/iter_205_state_size_64
+
+
+## Iter 5 — RUNNING — N=4
+**Hypothesis:** Increase head_dim from 16 to 32 to provide more capacity per recurrent memory head while keeping n_head=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n4/iter_005_head_dim_32_state_128
+
+
+## Iter 5 — kept — EM: 0.9908 (N=4)
+**Hypothesis:** Increase head_dim from 16 to 32 to provide more capacity per recurrent memory head while keeping n_head=4.
+**Wall time:** 13.6 min
+**Result:** EM=0.9908 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** With n_head=4 and state_size=64, the effective head_dim is 16. Previous results showed that increasing head_dim from 8 to 16 improved EM from 0.5122 to 0.99. Increasing head_dim to 32 would give each of the 4 heads more capacity to learn key-value associations, potentially matching or exceeding the baseline performance while leveraging multi-head benefits.
+
+
+## >>> N-level advanced to N=8 <<<
+Previous N achieved EM=0.9908 >= threshold 0.95.
+
+
