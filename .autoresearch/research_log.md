@@ -1632,3 +1632,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The baseline achieved EM=0.9902 with conv_kernel=4. Increasing the convolutional kernel size from 4 to 8 doubles the local context window that the FLA layer can attend to via its short convolution, potentially improving retention of recently seen key-value pairs before they need to be compressed into the recurrent state. This hyperparameter has not been tried yet in the experiment history.
 
 
+## Iter 214 — RUNNING — N=16
+**Hypothesis:** Decrease state_size from 64 to 16 to reduce overparameterization and improve generalization on the small N=2 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_214_state_size_16
+
+
+## Iter 210 — kept — EM: 0.2222 (N=16)
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to provide more gradual learning rate warmup for stable training of the recurrent memory architecture.
+**Wall time:** 120.0 min
+**Result:** EM=0.2222 vs prev best=0.0098
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_210_warmup_steps_5000', '16', '25000']' timed out after 7199.99997364101 seconds
+**Rationale:** The current warmup_steps=2000 may be too short for the recurrent memory layers to stabilize during training. For the associative retrieval task with 25000 max_steps, a longer warmup period (20% of training) could help prevent early divergence and improve convergence. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
+
+
