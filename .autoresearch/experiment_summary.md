@@ -15848,3 +15848,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: Single-head configuration (n_head=1) achieved EM=0.99 in stream_1, while n_head=4 degraded to EM=0.51. With n_layer=4 and n_embd=256 now providing more capacity, returning to n_head=1 may recover the strong single-head performance. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_015_n_head_1_n_layer_4
 
+## Iter 16 | failed | N=8
+- Hypothesis: Increase n_embd from 256 to 512 to provide more hidden dimension capacity for encoding key-value associations in the recurrent memory layers.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All major hyperparameters have been tuned (n_head, state_size, expand_v, batch_size, weight_decay, head_dim, conv_kernel, n_layer, max_steps, learning_rate, warmup_steps). The embedding dimension n_embd controls the hidden size of the recurrent memory, which directly impacts the model's capacity to store and retrieve associations. Increasing from 256 to 512 doubles the representation capacity without changing the architecture.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_016_n_embd_512
+

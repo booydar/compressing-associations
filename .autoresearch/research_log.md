@@ -1792,3 +1792,30 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current max_steps=25000 may not provide sufficient training iterations for the recurrent memory layers to fully converge on the associative retrieval task. Given that n_layer=6, n_embd=256, and head_dim=64 have been established as effective, increasing the training budget should allow the model to better learn the key-value associations. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 16 — RUNNING — N=8
+**Hypothesis:** Increase n_embd from 256 to 512 to provide more hidden dimension capacity for encoding key-value associations in the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_016_n_embd_512
+
+
+## Iter 16 — FAILED — N=8
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_016_n_embd_512
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 17 — RUNNING — N=8
+**Hypothesis:** Increase n_embd from 256 to 384 to provide more hidden dimension capacity for encoding key-value associations while avoiding the failure seen at 512.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_017_n_embd_384
+
+
+## Iter 16 — reverted — EM: 0.0026 (N=16)
+**Hypothesis:** Decrease n_head from 4 to 2 to balance capacity and stability while retaining increased n_layer=4 and n_embd=256.
+**Wall time:** 120.0 min
+**Result:** EM=0.0026 vs prev best=0.9412
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_016_n_head_2', '16', '25000']' timed out after 7199.9999819400255 seconds
+**Rationale:** Single-head (n_head=1) achieved EM=0.99, while n_head=4 degraded to EM=0.51. With n_layer=4 and n_embd=256 already increased, reducing n_head to 2 may find a middle ground that preserves capacity while improving training stability. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
