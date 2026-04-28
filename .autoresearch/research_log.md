@@ -1647,3 +1647,16 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current warmup_steps=2000 may be too short for the recurrent memory layers to stabilize during training. For the associative retrieval task with 25000 max_steps, a longer warmup period (20% of training) could help prevent early divergence and improve convergence. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
 
 
+## Iter 211 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 2.0 to 3.0 to provide more capacity in the value projection of the GatedDeltaNet recurrent layer.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_211_expand_v_3_0
+
+
+## Iter 13 — kept — EM: 0.0000 (N=8)
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide more local context for the FLA layer's convolutional component in encoding key-value associations.
+**Wall time:** 106.4 min
+**Result:** EM=0.0000 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** The conv_kernel parameter controls the kernel size of the convolution in the GatedDeltaNet FLA layer. A larger kernel (from 4 to 8) allows the model to capture longer-range local dependencies within segments, which could improve the recurrent memory's ability to encode associations. This is a hyperparameter change that has not been tested yet in the experiment history.
+
+
