@@ -1660,3 +1660,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The conv_kernel parameter controls the kernel size of the convolution in the GatedDeltaNet FLA layer. A larger kernel (from 4 to 8) allows the model to capture longer-range local dependencies within segments, which could improve the recurrent memory's ability to encode associations. This is a hyperparameter change that has not been tested yet in the experiment history.
 
 
+## Iter 14 — RUNNING — N=8
+**Hypothesis:** Increase n_layer from 4 to 6 to provide more recurrent transformer layers for better information retention across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_014_n_layer_6
+
+
+## Iter 13 — reverted — EM: 0.0012 (N=16)
+**Hypothesis:** Decrease n_head from 4 to 2 to find a middle ground between single-head (EM=0.99) and 4-head (EM=0.51) configurations.
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_013_n_head_2', '16', '25000']' timed out after 7199.9999808900175 seconds
+**Rationale:** The 4-head configuration achieved poor EM=0.5122 compared to 1-head EM=0.99, suggesting multi-head attention may be detrimental for this task. Reducing to 2 heads could provide a balance between capacity and stability without the complexity that hurt the 4-head setup. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
