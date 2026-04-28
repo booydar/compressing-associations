@@ -1918,3 +1918,13 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The conv_kernel parameter controls the convolution kernel size in the GatedDeltaNet recurrent layer. A larger kernel size (8 vs 4) provides a wider receptive field for capturing local patterns in the input sequence, which could help the model better learn associations between keys and values. This is a hyperparameter change that has not been tried in the recent experiment history.
 
 
+## Iter 217 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Increase n_layer from 4 to 8 to provide more recurrent memory depth for learning key-value associations across segments.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_217_n_layer_8', '16', '25000']' timed out after 7199.999974080012 seconds
+**Rationale:** The current n_layer=4 may be insufficient for the recurrent memory to learn the associative retrieval task. Increasing the number of layers from 4 to 8 provides more recurrent memory depth, allowing the model to build hierarchical representations of key-value pairs. This is a hyperparameter change that has not been tried yet in the experiment history.
+
+
