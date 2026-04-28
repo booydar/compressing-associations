@@ -1552,3 +1552,18 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The baseline achieved strong EM=0.9902 with n_embd=128. Increasing the embedding dimension from 128 to 256 doubles the hidden size, providing more capacity for the FLA recurrent layers to encode and manipulate associative information. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd has not been explored in recent experiments.
 
 
+## Iter 213 — RUNNING — N=16
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide a larger short-term convolutional memory buffer for local context retention within segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_213_conv_kernel_8
+
+
+## Iter 209 — reverted — EM: 0.0036 (N=16)
+**Hypothesis:** Increase n_head from 2 to 4 and reduce head_dim from 32 to 16 to enable more parallel attention heads while keeping state_size constant at 64.
+**Wall time:** 120.0 min
+**Result:** EM=0.0036 vs prev best=0.0098
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_209_n_head_4_head_dim_16', '16', '25000']' timed out after 7199.999978271022 seconds
+**Rationale:** Stream 3 showed that n_head=2 achieved EM=0.9872, outperforming the baseline. Stream 4 currently has n_head=2 with state_size=64 (implying head_dim=32). Increasing n_head to 4 while adjusting head_dim to 16 maintains state_size=64 but provides more parallel attention capacity. This follows the hyperparameter-first rule and builds on the success of multi-head configuration.
+
+
