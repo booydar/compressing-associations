@@ -1903,3 +1903,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The experiment history shows n_head=1 achieved EM=0.99 while n_head=4 only achieved EM=0.3778. Multiple recent attempts to reduce n_head failed due to experiment script errors, not hypothesis failure. With warmup_steps now increased to 5000 (iter 14), retrying n_head=1 may recover the strong single-head performance while benefiting from the improved training stability.
 
 
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate convergence, following the success of this change on stream 2 (EM=0.9914).
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_020_lr_5e_minus_3
+
+
+## Iter 214 — kept — EM: 0.6966 (N=16)
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide larger receptive field for capturing local dependencies in key-value pairs.
+**Wall time:** 120.0 min
+**Result:** EM=0.6966 vs prev best=0.2222
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_214_conv_kernel_8', '16', '25000']' timed out after 7199.999973209982 seconds
+**Rationale:** The conv_kernel parameter controls the convolution kernel size in the GatedDeltaNet recurrent layer. A larger kernel size (8 vs 4) provides a wider receptive field for capturing local patterns in the input sequence, which could help the model better learn associations between keys and values. This is a hyperparameter change that has not been tried in the recent experiment history.
+
+

@@ -26,4 +26,4 @@ learning_rate: 1e-3
 fla_layer: GatedDeltaNet
 state_size: 64    # num_heads * head_dim
 expand_v: 2.0
-conv_kernel: 4
+conv_kernel: 8
