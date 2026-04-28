@@ -1819,3 +1819,37 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** Single-head (n_head=1) achieved EM=0.99, while n_head=4 degraded to EM=0.51. With n_layer=4 and n_embd=256 already increased, reducing n_head to 2 may find a middle ground that preserves capacity while improving training stability. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4, n_embd=256, and warmup_steps=5000.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_017_n_head_1_retain_capacity
+
+
+## Iter 17 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_017_n_head_1_retain_capacity
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 18 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4 and n_embd=256.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_018_n_head_1_retain_capacity
+
+
+## Iter 18 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_018_n_head_1_retain_capacity
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 216 — reverted — EM: 0.0012 (N=16)
+**Hypothesis:** Increase warmup_steps from 2000 to 4000 to provide more gradual learning rate schedule for stable recurrent memory training.
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_216_warmup_4000', '16', '25000']' timed out after 7199.999975220009 seconds
+**Rationale:** The current warmup_steps=2000 may be too aggressive for training the recurrent memory layers effectively. For the associative retrieval task, a longer warmup period allows the FLA recurrent state to develop more stable representations before full learning rate is applied. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been explicitly tuned in the recent experiment history.
+
+

@@ -15858,3 +15858,23 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: All major hyperparameters have been tuned (n_head, state_size, expand_v, batch_size, weight_decay, head_dim, conv_kernel, n_layer, max_steps, learning_rate, warmup_steps). The embedding dimension n_embd controls the hidden size of the recurrent memory, which directly impacts the model's capacity to store and retrieve associations. Increasing from 256 to 512 doubles the representation capacity without changing the architecture.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_016_n_embd_512
 
+## Iter 17 | failed | N=16
+- Hypothesis: Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4, n_embd=256, and warmup_steps=5000.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments showed single-head configurations achieving EM=0.99, while n_head=4 resulted in degraded performance (EM=0.51). Multiple attempts to decrease n_head to 2 or 1 have failed due to infrastructure errors, not conceptual issues. With the current best configuration having warmup_steps=5000, n_layer=4, and n_embd=256, reverting to n_head=1 should recover the strong single-head performance while benefiting from the increased depth and embedding dimension.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_017_n_head_1_retain_capacity
+
+## Iter 18 | failed | N=16
+- Hypothesis: Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4 and n_embd=256.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Experiments show that single-head configurations achieved EM=0.99 while multi-head (n_head=4) configurations degraded to EM=0.51. The current config has n_head=4 with n_layer=4 and n_embd=256. Reducing n_head to 1 should recover the strong single-head performance while maintaining the increased capacity from the larger model dimensions. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_018_n_head_1_retain_capacity
+
