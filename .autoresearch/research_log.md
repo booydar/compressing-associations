@@ -1567,3 +1567,16 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** Stream 3 showed that n_head=2 achieved EM=0.9872, outperforming the baseline. Stream 4 currently has n_head=2 with state_size=64 (implying head_dim=32). Increasing n_head to 4 while adjusting head_dim to 16 maintains state_size=64 but provides more parallel attention capacity. This follows the hyperparameter-first rule and builds on the success of multi-head configuration.
 
 
+## Iter 210 — RUNNING — N=16
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to provide more gradual learning rate warmup for stable training of the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_210_warmup_steps_5000
+
+
+## Iter 11 — reverted — EM: 0.0008 (N=4)
+**Hypothesis:** Add weight_decay=0.01 to improve generalization and prevent overfitting in the recurrent memory layers.
+**Wall time:** 44.4 min
+**Result:** EM=0.0008 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** Weight decay has not been tried in the experiment history and is a key hyperparameter for regularization. The current best configuration (EM=0.9314) has no explicit weight decay, which may lead to overfitting on the training data. Adding L2 regularization could improve generalization on the associative retrieval task.
+
+
