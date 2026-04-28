@@ -18,7 +18,7 @@ pairs_per_segment: 2
 
 # Training parameters
 base_model: llama
-batch_size: 64
+batch_size: 128
 em_threshold: 0.95
 learning_rate: 1e-3
 

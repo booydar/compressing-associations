@@ -18800,3 +18800,2163 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: (none)
 - exp_path: 
 
+## Iter 219 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T150955.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T150955.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 220 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151000.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151000.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 221 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151005.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151005.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 222 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151010.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151010.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 223 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151015.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151015.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 224 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151020.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151020.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 225 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151026.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151026.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 226 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151031.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151031.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 227 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151036.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151036.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 228 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151041.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151041.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 229 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151046.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151046.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 230 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151051.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151051.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 231 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151058.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151058.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 232 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151103.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151103.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 233 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151108.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151108.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 234 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151113.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151113.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 235 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151118.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151118.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 236 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151123.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151123.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 237 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151128.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151128.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 238 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151134.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151134.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 239 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151138.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151138.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 240 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151144.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151144.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 241 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151149.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151149.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 242 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151153.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151153.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 243 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151158.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151158.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 244 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151204.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151204.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 245 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151209.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151209.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 246 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151214.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151214.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 247 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151219.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151219.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 248 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151224.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151224.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 249 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151229.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151229.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 250 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151235.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151235.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 251 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151240.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151240.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 252 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151245.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151245.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 253 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151250.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151250.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 254 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151255.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151255.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 255 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151300.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151300.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 256 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151305.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151305.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 257 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151311.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151311.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 258 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151316.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151316.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 259 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151321.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151321.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 260 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151326.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151326.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 261 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151331.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151331.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 262 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151336.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151336.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 263 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151341.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151341.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 264 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151347.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151347.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 265 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151352.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151352.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 266 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151357.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151357.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 267 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151402.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151402.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 268 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151407.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151407.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 269 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151412.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151412.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 270 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151418.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151418.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 271 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151423.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151423.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 272 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151428.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151428.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 273 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151433.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151433.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 274 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151438.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151438.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 275 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151443.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151443.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 276 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151448.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151448.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 277 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151453.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151453.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 278 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151458.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151458.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 279 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151503.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151503.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 280 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151508.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151508.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 281 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151513.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151513.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 282 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151518.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151518.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 283 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151524.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151524.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 284 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151529.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151529.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 285 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151534.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151534.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 286 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151539.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151539.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 287 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151544.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151544.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 288 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151549.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151549.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 289 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151554.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151554.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 290 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151600.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151600.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 291 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151605.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151605.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 292 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151610.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151610.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 293 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151615.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151615.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 294 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151620.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151620.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 295 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151625.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151625.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 296 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151630.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151630.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 297 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151635.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151635.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 298 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151640.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151640.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 299 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151645.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151645.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 300 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151650.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151650.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 301 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151655.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151655.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 302 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151700.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151700.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 303 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151705.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151705.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 304 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151710.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151710.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 305 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151715.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151715.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 306 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151720.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151720.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 307 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151725.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151725.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 308 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151730.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151730.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 309 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151736.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151736.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 310 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151741.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151741.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 311 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151746.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151746.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 312 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151751.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151751.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 313 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151756.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151756.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 314 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151801.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151801.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 315 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151806.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151806.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 316 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151813.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151813.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 317 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151818.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151818.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 318 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151823.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151823.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 319 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151828.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151828.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 320 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151833.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151833.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 321 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151838.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151838.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 322 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151843.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151843.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 323 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151848.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151848.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 324 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151853.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151853.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 325 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151858.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151858.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 326 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151903.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151903.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 327 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151908.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151908.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 328 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151913.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151913.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 329 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151918.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151918.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 330 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151923.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151923.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 331 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151928.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151928.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 332 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151933.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151933.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 333 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151938.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151938.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 334 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151943.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151943.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 335 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151948.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151948.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 336 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151953.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151953.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 337 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151958.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T151958.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 338 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152003.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152003.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 339 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152008.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152008.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 340 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152013.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152013.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 341 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152019.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152019.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 342 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152025.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152025.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 343 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152030.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152030.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 344 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152035.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152035.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 345 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152040.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152040.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 346 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152045.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152045.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 347 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152050.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152050.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 348 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152056.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152056.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 349 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152101.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152101.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 350 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152106.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152106.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 351 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152111.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152111.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 352 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152116.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152116.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
+## Iter 353 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152121.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152121.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+- Rationale: (none)
+- exp_path: 
+
