@@ -1595,3 +1595,15 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** Previous experiments showed that increasing head_dim from 16 to 32 improved EM from 0.99 to 0.9908. With n_head=4 and head_dim=32, state_size=128. Increasing head_dim to 48 will increase state_size to 192, providing more recurrent memory capacity per head for the associative retrieval task. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 12 — kept — EM: 0.9902 (N=4)
+**Hypothesis:** Increase head_dim from 32 to 64 to provide more recurrent memory capacity per head for encoding key-value associations.
+**Wall time:** 15.0 min
+**Result:** EM=0.9902 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The current state_size=32 comes from num_heads=1 and head_dim=32. Increasing head_dim to 64 doubles the recurrent memory capacity while keeping n_head=1 (which worked well). This is different from the reverted state_size=64 experiment which likely changed a different parameter. The head_dim directly controls the dimensionality of the FLA layer's internal state.
+
+
+## >>> N-level advanced to N=8 <<<
+Previous N achieved EM=0.9902 >= threshold 0.95.
+
+

@@ -20,7 +20,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         from_pretrained=None,
         fla_layer_name="GatedDeltaNet",
         num_heads=1,
-        head_dim=32,
+        head_dim=64,
         expand_v=2.0,
         conv_size=4,
         max_n_segments=10,
