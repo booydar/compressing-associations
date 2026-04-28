@@ -1762,3 +1762,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current batch_size of 64 may provide noisy gradient estimates that hinder learning of key-value associations. A larger batch size of 128 will reduce gradient variance and potentially improve convergence. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and batch_size has not been systematically explored yet in the experiment history.
 
 
+## Iter 216 — RUNNING — N=16
+**Hypothesis:** Increase warmup_steps from 2000 to 4000 to provide more gradual learning rate schedule for stable recurrent memory training.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_216_warmup_4000
+
+
+## Iter 212 — reverted — EM: 0.0028 (N=16)
+**Hypothesis:** Add weight_decay of 0.01 to regularize training and prevent overfitting in the recurrent memory layers.
+**Wall time:** 120.0 min
+**Result:** EM=0.0028 vs prev best=0.2222
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_212_weight_decay_0.01', '16', '25000']' timed out after 7199.999982870009 seconds
+**Rationale:** Weight decay has not been tried in the experiment history. Adding L2 regularization with weight_decay=0.01 can help stabilize training of the GatedDeltaNet recurrent layers and improve generalization on the associative retrieval task. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
+
+
