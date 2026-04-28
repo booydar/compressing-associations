@@ -1607,3 +1607,28 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 Previous N achieved EM=0.9902 >= threshold 0.95.
 
 
+## Iter 12 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 13 — RUNNING — N=8
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide more local context for the FLA layer's convolutional component in encoding key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_013_conv_kernel_8
+
+
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 2 to find a middle ground between single-head (EM=0.99) and 4-head (EM=0.51) configurations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_013_n_head_2
+
+
+## Iter 213 — reverted — EM: 0.0012 (N=16)
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide a larger short-term convolutional memory buffer for local context retention within segments.
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_213_conv_kernel_8', '16', '25000']' timed out after 7199.99997335003 seconds
+**Rationale:** The baseline achieved EM=0.9902 with conv_kernel=4. Increasing the convolutional kernel size from 4 to 8 doubles the local context window that the FLA layer can attend to via its short convolution, potentially improving retention of recently seen key-value pairs before they need to be compressed into the recurrent state. This hyperparameter has not been tried yet in the experiment history.
+
+

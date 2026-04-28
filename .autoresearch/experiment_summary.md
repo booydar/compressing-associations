@@ -15828,3 +15828,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: The current configuration has n_head=4 and head_dim=32, giving state_size=128. Previous experiments showed that increasing head_dim from 8 to 16 to 32 improved EM from 0.5122 to 0.99 to 0.9908. Further increasing head_dim to 64 (state_size=256) should provide more capacity per recurrent memory head for storing key-value associations across segments, following the successful pattern of head_dim scaling.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_010_head_dim_64_state_size_256
 
+## Iter 12 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: The n_head=4 configuration caused a severe performance drop to EM=0.5122, while single-head achieved ~0.99 EM. A 2-head configuration may provide enough capacity for diverse patterns without the instability of 4 heads. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+- exp_path: 
+
