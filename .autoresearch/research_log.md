@@ -1507,3 +1507,33 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The expand_v parameter controls the expansion ratio for the value projection in the GatedDeltaNet layer. A higher expand_v increases the hidden dimension of the value projection, allowing the recurrent memory to store richer representations of key-value pairs. This is a hyperparameter change that has not been tried yet in the experiment history.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 128 to 256 by increasing head_dim from 32 to 64 to provide more recurrent memory capacity per head.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_010_head_dim_64_state_size_256
+
+
+## Iter 10 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_010_head_dim_64_state_size_256
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 10 — RUNNING — N=4
+**Hypothesis:** Increase batch_size from 64 to 128 to improve gradient stability and generalization for the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_010_batch_size_128
+
+
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 32 to 48 to provide more capacity per recurrent memory head while keeping n_head=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_011_head_dim_48
+
+
+## Iter 10 — reverted — EM: 0.9248 (N=4)
+**Hypothesis:** Increase batch_size from 64 to 128 to improve gradient stability and generalization for the recurrent memory architecture.
+**Wall time:** 37.8 min
+**Result:** EM=0.9248 vs prev best=0.9314
+**Metric source:** all_results
+**Rationale:** The current best configuration (EM=0.9314) has exhausted most hyperparameter options. Increasing batch_size from 64 to 128 can provide more stable gradient estimates, which is particularly important for training recurrent memory architectures that need to learn long-range dependencies across segments. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and batch_size has not been explored yet in the experiment history.
+
+

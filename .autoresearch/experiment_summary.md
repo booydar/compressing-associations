@@ -15818,3 +15818,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: With n_head=2 and state_size=64, the current head_dim is 32. Increasing head_dim to 64 will double the per-head representation capacity while keeping state_size=128 (2*64). This hyperparameter change follows the HYPERPARAMETER-FIRST rule and targets better encoding of associative patterns.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_208_head_dim_64
 
+## Iter 10 | failed | N=16
+- Hypothesis: Increase state_size from 128 to 256 by increasing head_dim from 32 to 64 to provide more recurrent memory capacity per head.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current configuration has n_head=4 and head_dim=32, giving state_size=128. Previous experiments showed that increasing head_dim from 8 to 16 to 32 improved EM from 0.5122 to 0.99 to 0.9908. Further increasing head_dim to 64 (state_size=256) should provide more capacity per recurrent memory head for storing key-value associations across segments, following the successful pattern of head_dim scaling.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_010_head_dim_64_state_size_256
+
