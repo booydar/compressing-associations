@@ -1863,3 +1863,28 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current best EM of 0.9912 has been achieved with n_head=2, n_layer=4, state_size=64, n_embd=256, and warmup_steps=5000. Since hyperparameters like warmup_steps have been tuned and achieved good results, reducing the learning rate could help the model converge more precisely to a better optimum. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
 
 
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4, n_embd=256, and warmup_steps=5000.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_019_n_head_1_retain_capacity
+
+
+## Iter 214 — RUNNING — N=16
+**Hypothesis:** Increase conv_kernel from 4 to 8 to provide larger receptive field for capturing local dependencies in key-value pairs.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_214_conv_kernel_8
+
+
+## Iter 217 — RUNNING — N=16
+**Hypothesis:** Increase n_layer from 4 to 8 to provide more recurrent memory depth for learning key-value associations across segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_217_n_layer_8
+
+
+## Iter 17 — reverted — EM: 0.0014 (N=8)
+**Hypothesis:** Increase n_embd from 256 to 384 to provide more hidden dimension capacity for encoding key-value associations while avoiding the failure seen at 512.
+**Wall time:** 120.0 min
+**Result:** EM=0.0014 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_017_n_embd_384', '8', '40000']' timed out after 7199.999975570012 seconds
+**Rationale:** The n_embd=512 experiment failed, but n_embd=256 may be too small for optimal performance. An intermediate value of 384 provides more capacity than the current 256 while being more conservative than the failed 512 configuration. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
+
+
