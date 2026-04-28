@@ -7,7 +7,7 @@ Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 ## Constraints
 - Target files: modeling_rmt/huggingface_rmm_v2.py (architecture) or .autoresearch/experiment_config.yaml (hyperparameters)
 - No parameter count explosion (~50% max increase without strong justification)
-- Max experiment length: 25000 steps
+- Max experiment length: 40000 steps
 
 ## Allowed Changes
 - **Architecture**: Any modification to huggingface_rmm_v2.py (layers, memory mechanisms, etc.)
@@ -17,9 +17,9 @@ Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 ## Current State
 - Stream: 2
 - N-level: 8
-- Current best EM: 0.0014
-- Best variant: iter_014
-- Last updated: 2026-04-28 09:26
+- Current best EM: 0.0018
+- Best variant: iter_015
+- Last updated: 2026-04-28 11:34
 
 ## Current Understanding
 (updated each iteration by autoresearch loop)

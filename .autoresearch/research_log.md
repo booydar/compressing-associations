@@ -1777,3 +1777,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** Weight decay has not been tried in the experiment history. Adding L2 regularization with weight_decay=0.01 can help stabilize training of the GatedDeltaNet recurrent layers and improve generalization on the associative retrieval task. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
 
 
+## Iter 213 — RUNNING — N=16
+**Hypothesis:** Reduce learning_rate from 1e-3 to 5e-4 to enable more stable fine-tuning and prevent oscillation near the optimal solution.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_213_lr_5e_minus_4
+
+
+## Iter 15 — kept — EM: 0.0018 (N=8)
+**Hypothesis:** Increase max_steps from 25000 to 40000 to allow more training iterations for better convergence of the recurrent memory architecture.
+**Wall time:** 120.0 min
+**Result:** EM=0.0018 vs prev best=0.0014
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_015_max_steps_40000', '8', '40000']' timed out after 7199.999964120972 seconds
+**Rationale:** The current max_steps=25000 may not provide sufficient training iterations for the recurrent memory layers to fully converge on the associative retrieval task. Given that n_layer=6, n_embd=256, and head_dim=64 have been established as effective, increasing the training budget should allow the model to better learn the key-value associations. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
