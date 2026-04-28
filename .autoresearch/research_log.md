@@ -1853,3 +1853,13 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current warmup_steps=2000 may be too aggressive for training the recurrent memory layers effectively. For the associative retrieval task, a longer warmup period allows the FLA recurrent state to develop more stable representations before full learning rate is applied. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been explicitly tuned in the recent experiment history.
 
 
+## Iter 213 — reverted — EM: 0.0690 (N=16)
+**Hypothesis:** Reduce learning_rate from 1e-3 to 5e-4 to enable more stable fine-tuning and prevent oscillation near the optimal solution.
+**Wall time:** 120.0 min
+**Result:** EM=0.0690 vs prev best=0.2222
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_213_lr_5e_minus_4', '16', '25000']' timed out after 7199.999976370018 seconds
+**Rationale:** The current best EM of 0.9912 has been achieved with n_head=2, n_layer=4, state_size=64, n_embd=256, and warmup_steps=5000. Since hyperparameters like warmup_steps have been tuned and achieved good results, reducing the learning rate could help the model converge more precisely to a better optimum. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
+
+
