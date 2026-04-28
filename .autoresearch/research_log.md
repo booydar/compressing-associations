@@ -1936,3 +1936,40 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current warmup_steps=2000 may be insufficient for the recurrent memory layers to stabilize during training. For the associative retrieval task, a longer warmup period could help the FLA-based recurrent memory learn to store and retrieve key-value pairs more reliably. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been systematically explored yet.
 
 
+## Iter 215 — RUNNING — N=16
+**Hypothesis:** Increase n_layer from 4 to 6 to provide more transformer layers for learning key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_215_n_layer_6
+
+
+## Iter 215 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_215_n_layer_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 218 — RUNNING — N=16
+**Hypothesis:** Decrease learning_rate from 1e-2 to 5e-3 for more stable training of recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_218_lr_5e_minus_3
+
+
+## Iter 216 — RUNNING — N=16
+**Hypothesis:** Increase batch_size from 64 to 128 to provide more stable gradient estimates for training the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_216_batch_size_128
+
+
+## Iter 19 — RUNNING — N=8
+**Hypothesis:** Decrease learning_rate from 5e-3 to 3e-3 to improve convergence stability with the current batch_size and warmup configuration.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_019_lower_lr_3e_minus_3
+
+
+## Iter 20 — reverted — EM: 0.0010 (N=16)
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate convergence, following the success of this change on stream 2 (EM=0.9914).
+**Wall time:** 120.0 min
+**Result:** EM=0.0010 vs prev best=0.9412
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_020_lr_5e_minus_3', '16', '25000']' timed out after 7199.9999711509445 seconds
+**Rationale:** Stream 2 achieved EM=0.9914 with learning_rate=5e-3, while stream 3 has been using 1e-3. The recent history shows extensive n_head tuning without clear improvement. Following HYPERPARAMETER-FIRST rule, increasing learning rate is a logical next step that has proven effective in a similar configuration.
+
+

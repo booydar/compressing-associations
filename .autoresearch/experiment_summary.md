@@ -15878,3 +15878,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: Experiments show that single-head configurations achieved EM=0.99 while multi-head (n_head=4) configurations degraded to EM=0.51. The current config has n_head=4 with n_layer=4 and n_embd=256. Reducing n_head to 1 should recover the strong single-head performance while maintaining the increased capacity from the larger model dimensions. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_018_n_head_1_retain_capacity
 
+## Iter 215 | failed | N=16
+- Hypothesis: Increase n_layer from 4 to 6 to provide more transformer layers for learning key-value associations.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current n_layer=4 may be insufficient for the recurrent memory architecture to learn complex associative patterns. Increasing to 6 layers provides more capacity for hierarchical feature learning while keeping all other hyperparameters constant. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_layer has not been varied in recent experiments.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_215_n_layer_6
+
