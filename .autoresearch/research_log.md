@@ -1580,3 +1580,18 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** Weight decay has not been tried in the experiment history and is a key hyperparameter for regularization. The current best configuration (EM=0.9314) has no explicit weight decay, which may lead to overfitting on the training data. Adding L2 regularization could improve generalization on the associative retrieval task.
 
 
+## Iter 12 — RUNNING — N=4
+**Hypothesis:** Increase head_dim from 32 to 64 to provide more recurrent memory capacity per head for encoding key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_012_head_dim_64
+
+
+## Iter 11 — reverted — EM: 0.0018 (N=16)
+**Hypothesis:** Increase head_dim from 32 to 48 to provide more capacity per recurrent memory head while keeping n_head=4.
+**Wall time:** 120.0 min
+**Result:** EM=0.0018 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_011_head_dim_48', '16', '25000']' timed out after 7199.99997766997 seconds
+**Rationale:** Previous experiments showed that increasing head_dim from 16 to 32 improved EM from 0.99 to 0.9908. With n_head=4 and head_dim=32, state_size=128. Increasing head_dim to 48 will increase state_size to 192, providing more recurrent memory capacity per head for the associative retrieval task. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+
+
