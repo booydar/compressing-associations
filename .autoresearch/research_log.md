@@ -1675,3 +1675,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The 4-head configuration achieved poor EM=0.5122 compared to 1-head EM=0.99, suggesting multi-head attention may be detrimental for this task. Reducing to 2 heads could provide a balance between capacity and stability without the complexity that hurt the 4-head setup. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 
 
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to improve training stability for the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_014_warmup_5000
+
+
+## Iter 214 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Decrease state_size from 64 to 16 to reduce overparameterization and improve generalization on the small N=2 associative retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_214_state_size_16', '16', '25000']' timed out after 7199.999949941004 seconds
+**Rationale:** Recent experiments increasing state_size, n_head, head_dim, and n_embd have mostly failed with 'Experiment script exited with code 1'. The baseline with n_layer=2 achieved EM=0.9902, suggesting the task may not need large recurrent memory capacity. Reducing state_size from 64 to 16 (by setting head_dim=16 with n_head=1) could reduce overfitting and improve convergence on this simple N=2, K=2V=2 task.
+
+
