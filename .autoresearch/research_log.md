@@ -4533,3 +4533,301 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 Previous N achieved EM=0.9654 >= threshold 0.95.
 
 
+## Iter 354 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152127.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 217 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152133.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 355 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152137.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 218 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152143.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 356 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152146.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 219 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152152.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 357 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152156.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 220 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152202.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 358 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152205.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 221 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152211.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 359 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152215.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 222 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152221.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 360 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152225.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 223 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152231.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 361 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152236.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 224 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152242.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 362 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152245.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 225 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152251.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 363 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152255.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 226 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152301.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 364 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152305.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 227 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152312.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 365 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152315.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 228 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152321.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 366 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152325.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 229 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152331.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 367 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152334.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 230 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152341.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 368 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152345.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 231 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152351.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 369 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152354.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 232 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152400.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 370 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152404.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 233 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152410.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 371 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152414.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 234 — FAILED — N=32
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode failed (rc=1): [91m[1mError: [0mUnexpected error, check log file at /cephfs/home/bulatov/.local/share/opencode/log/2026-04-28T152421.log for more details
+
+Failed to run the query 'PRAGMA journal_mode = WAL'
+
+**Recovery status:** not_attempted
+
+
+## Iter 19 — reverted — EM: 0.2100 (N=8)
+**Hypothesis:** Decrease learning_rate from 5e-3 to 3e-3 to improve convergence stability with the current batch_size and warmup configuration.
+**Wall time:** 120.0 min
+**Result:** EM=0.2100 vs prev best=0.6456
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_019_lower_lr_3e_minus_3', '8', '40000']' timed out after 7199.999970169971 seconds
+**Rationale:** The learning rate of 5e-3 may be too aggressive for stable training with batch_size=64 and warmup_steps=4000. A moderate reduction to 3e-3 could improve convergence without sacrificing training speed, especially given the recurrent memory architecture's sensitivity to optimization dynamics.
+
+
