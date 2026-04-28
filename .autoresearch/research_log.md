@@ -1888,3 +1888,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The n_embd=512 experiment failed, but n_embd=256 may be too small for optimal performance. An intermediate value of 384 provides more capacity than the current 256 while being more conservative than the failed 512 configuration. This follows the HYPERPARAMETER-FIRST rule as it is a hyperparameter change.
 
 
+## Iter 18 — RUNNING — N=8
+**Hypothesis:** Increase warmup_steps from 2000 to 4000 to provide more gradual learning rate rampup for stable training of the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_018_warmup_4000
+
+
+## Iter 19 — reverted — EM: 0.7876 (N=16)
+**Hypothesis:** Decrease n_head from 4 to 1 to recover the strong single-head performance (EM=0.99) while retaining the increased capacity from n_layer=4, n_embd=256, and warmup_steps=5000.
+**Wall time:** 120.0 min
+**Result:** EM=0.7876 vs prev best=0.9412
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_019_n_head_1_retain_capacity', '16', '25000']' timed out after 7199.9999720510095 seconds
+**Rationale:** The experiment history shows n_head=1 achieved EM=0.99 while n_head=4 only achieved EM=0.3778. Multiple recent attempts to reduce n_head failed due to experiment script errors, not hypothesis failure. With warmup_steps now increased to 5000 (iter 14), retrying n_head=1 may recover the strong single-head performance while benefiting from the improved training stability.
+
+
