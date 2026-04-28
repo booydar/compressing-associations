@@ -1690,3 +1690,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** Recent experiments increasing state_size, n_head, head_dim, and n_embd have mostly failed with 'Experiment script exited with code 1'. The baseline with n_layer=2 achieved EM=0.9902, suggesting the task may not need large recurrent memory capacity. Reducing state_size from 64 to 16 (by setting head_dim=16 with n_head=1) could reduce overfitting and improve convergence on this simple N=2, K=2V=2 task.
 
 
+## Iter 215 — RUNNING — N=16
+**Hypothesis:** Increase batch_size from 64 to 128 to provide more stable gradient estimates for training the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_215_batch_size_128
+
+
+## Iter 211 — reverted — EM: 0.0012 (N=16)
+**Hypothesis:** Increase expand_v from 2.0 to 3.0 to provide more capacity in the value projection of the GatedDeltaNet recurrent layer.
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.2222
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_4/n16/iter_211_expand_v_3_0', '16', '25000']' timed out after 7199.999981970002 seconds
+**Rationale:** The expand_v parameter controls the expansion factor for the value projection in the FLA layer. Increasing this from 2.0 to 3.0 provides more expressive capacity for the value transformations without changing the core state_size. This hyperparameter has not been explicitly tested in the recent experiment history, and a larger value projection could help the model better encode and retrieve key-value associations.
+
+
