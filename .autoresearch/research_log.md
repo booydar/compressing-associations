@@ -1537,3 +1537,18 @@ Previous N achieved EM=0.9754 >= threshold 0.95.
 **Rationale:** The current best configuration (EM=0.9314) has exhausted most hyperparameter options. Increasing batch_size from 64 to 128 can provide more stable gradient estimates, which is particularly important for training recurrent memory architectures that need to learn long-range dependencies across segments. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and batch_size has not been explored yet in the experiment history.
 
 
+## Iter 11 — RUNNING — N=4
+**Hypothesis:** Add weight_decay=0.01 to improve generalization and prevent overfitting in the recurrent memory layers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n4/iter_011_weight_decay_0.01
+
+
+## Iter 212 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Increase n_embd from 128 to 256 to provide more hidden dimension capacity for the recurrent memory layers to process and store key-value associations.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_212_n_embd_256', '16', '25000']' timed out after 7199.999979710963 seconds
+**Rationale:** The baseline achieved strong EM=0.9902 with n_embd=128. Increasing the embedding dimension from 128 to 256 doubles the hidden size, providing more capacity for the FLA recurrent layers to encode and manipulate associative information. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and n_embd has not been explored in recent experiments.
+
+
