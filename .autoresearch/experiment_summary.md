@@ -15838,3 +15838,13 @@ Now I have enough context. Looking at the Stream 14 experiment history from the 
 - Rationale: The n_head=4 configuration caused a severe performance drop to EM=0.5122, while single-head achieved ~0.99 EM. A 2-head configuration may provide enough capacity for diverse patterns without the instability of 4 heads. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
 - exp_path: 
 
+## Iter 15 | failed | N=16
+- Hypothesis: Decrease n_head from 4 to 1 to recover the strong performance seen in single-head configurations while retaining the increased capacity from n_layer=4 and n_embd=256.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Single-head configuration (n_head=1) achieved EM=0.99 in stream_1, while n_head=4 degraded to EM=0.51. With n_layer=4 and n_embd=256 now providing more capacity, returning to n_head=1 may recover the strong single-head performance. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_015_n_head_1_n_layer_4
+

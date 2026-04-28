@@ -1735,3 +1735,30 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current warmup_steps=2000 may be insufficient for stable training of the recurrent memory architecture with n_head=4, n_layer=4, and n_embd=256. A longer warmup period allows gradients to stabilize before full learning rate is applied, which is particularly important for FLA-based recurrent layers. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
 
 
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 1 to recover the strong performance seen in single-head configurations while retaining the increased capacity from n_layer=4 and n_embd=256.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_015_n_head_1_n_layer_4
+
+
+## Iter 15 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_015_n_head_1_n_layer_4
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Decrease n_head from 4 to 2 to balance capacity and stability while retaining increased n_layer=4 and n_embd=256.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_016_n_head_2
+
+
+## Iter 215 — reverted — EM: 0.0014 (N=16)
+**Hypothesis:** Increase batch_size from 64 to 128 to provide more stable gradient estimates for training the recurrent memory layers.
+**Wall time:** 120.0 min
+**Result:** EM=0.0014 vs prev best=0.0350
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_0/n16/iter_215_batch_size_128', '16', '25000']' timed out after 7199.999972690013 seconds
+**Rationale:** The current batch_size of 64 may provide noisy gradient estimates that hinder learning of key-value associations. A larger batch size of 128 will reduce gradient variance and potentially improve convergence. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and batch_size has not been systematically explored yet in the experiment history.
+
+
