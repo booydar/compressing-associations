@@ -1928,3 +1928,11 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current n_layer=4 may be insufficient for the recurrent memory to learn the associative retrieval task. Increasing the number of layers from 4 to 8 provides more recurrent memory depth, allowing the model to build hierarchical representations of key-value pairs. This is a hyperparameter change that has not been tried yet in the experiment history.
 
 
+## Iter 18 — kept — EM: 0.6456 (N=8)
+**Hypothesis:** Increase warmup_steps from 2000 to 4000 to provide more gradual learning rate rampup for stable training of the recurrent memory architecture.
+**Wall time:** 101.1 min
+**Result:** EM=0.6456 vs prev best=0.0018
+**Metric source:** all_results
+**Rationale:** The current warmup_steps=2000 may be insufficient for the recurrent memory layers to stabilize during training. For the associative retrieval task, a longer warmup period could help the FLA-based recurrent memory learn to store and retrieve key-value pairs more reliably. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been systematically explored yet.
+
+
