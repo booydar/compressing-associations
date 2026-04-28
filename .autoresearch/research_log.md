@@ -1720,3 +1720,18 @@ Previous N achieved EM=0.9902 >= threshold 0.95.
 **Rationale:** The current configuration has n_layer=4 with n_embd=256 and head_dim=64. While increasing n_layer to 8 was previously tried and reverted, that was with lower capacity in other dimensions. With the current higher-dimensional embeddings and larger head_dim, a more moderate increase to 6 layers may provide sufficient recurrent memory depth without the instability seen with 8 layers. This follows the HYPERPARAMETER-FIRST rule as n_layer is a model architecture hyperparameter.
 
 
+## Iter 15 — RUNNING — N=8
+**Hypothesis:** Increase max_steps from 25000 to 40000 to allow more training iterations for better convergence of the recurrent memory architecture.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_2/n8/iter_015_max_steps_40000
+
+
+## Iter 14 — kept — EM: 0.9412 (N=16)
+**Hypothesis:** Increase warmup_steps from 2000 to 5000 to improve training stability for the recurrent memory layers.
+**Wall time:** 120.0 min
+**Result:** EM=0.9412 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations/runs/autoresearch/stream_3/n16/iter_014_warmup_5000', '16', '25000']' timed out after 7199.999979640008 seconds
+**Rationale:** The current warmup_steps=2000 may be insufficient for stable training of the recurrent memory architecture with n_head=4, n_layer=4, and n_embd=256. A longer warmup period allows gradients to stabilize before full learning rate is applied, which is particularly important for FLA-based recurrent layers. This is a hyperparameter change following the HYPERPARAMETER-FIRST rule, and warmup_steps has not been tuned yet in the experiment history.
+
+
