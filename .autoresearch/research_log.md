@@ -104,3 +104,18 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** With n_embd=128 achieving EM=0.97+ on N=8, the model has sufficient embedding capacity. Current n_head=2 is relatively low for the state_size=32 budget (can support 4 heads with head_dim=8). Increasing n_head allows the GatedDeltaNet to track multiple associations in parallel, which is critical for the KV retrieval task. This follows HYPERPARAMETER-FIRST as it is a structural hyperparameter already defined in the config.
 
 
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Increasing n_embd from 64 to 128 will provide sufficient representational capacity to achieve high EM accuracy on the N=8 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_004_n_embd_128_baseline_restore
+
+
+## Iter 3 — kept — EM: 0.0088 (N=16)
+**Hypothesis:** Increasing n_head from 2 to 4 will improve parallel capacity for tracking multiple key-value associations on N=16.
+**Wall time:** 120.0 min
+**Result:** EM=0.0088 vs prev best=0.0004
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_003_n_head_4_parallel_capacity', '16', '25000']' timed out after 7199.999976739986 seconds
+**Rationale:** With n_embd=128 achieving EM=0.977 on N=8, the model has sufficient embedding capacity. The failure on N=16 (EM=0.0004) suggests insufficient parallel tracking capacity. Current n_head=2 limits the model's ability to monitor multiple associations simultaneously. Increasing to n_head=4 is supported by the state_size=32 budget (enables 4 heads with head_dim=8) and follows HYPERPARAMETER-FIRST as a structural hyperparameter.
+
+
