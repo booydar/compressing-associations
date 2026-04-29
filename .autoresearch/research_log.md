@@ -34,3 +34,30 @@
 Previous N achieved EM=0.9728 >= threshold 0.95.
 
 
+## Iter 0 — RECOVERED — N=8
+**Recovered from:** all_results
+**Recovered EM:** 0.1350
+
+
+## Iter 1 — RUNNING — N=8
+**Hypothesis:** Increasing n_embd from 64 to 128 will provide more representational capacity for the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n8/iter_001_n_embd_128_capacity
+
+
+## Iter 2 — RUNNING — N=16
+**Hypothesis:** Increasing learning_rate from 1e-3 to 5e-3 will accelerate convergence and improve final EM accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_002_lr_5e_3_convergence
+
+
+## Iter 1 — kept — EM: 0.9770 (N=8)
+**Hypothesis:** Increasing n_embd from 64 to 128 will provide more representational capacity for the associative retrieval task.
+**Wall time:** 100.2 min
+**Result:** EM=0.9770 vs prev best=0.1350
+**Metric source:** all_results
+**Rationale:** Stream 1 achieved EM=0.9728 with n_embd=128 on N=8, while stream 0 baseline with n_embd=64 only reached EM=0.135. Since n_layer, state_size, and conv_kernel are already at their maximums, increasing n_embd is the most direct hyperparameter improvement following the HYPERPARAMETER-FIRST rule.
+
+
+## >>> N-level advanced to N=16 <<<
+Previous N achieved EM=0.9770 >= threshold 0.95.
+
+
