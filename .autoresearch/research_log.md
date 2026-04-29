@@ -76,3 +76,16 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** With n_embd=128 achieving 0.9728 EM, the model has sufficient capacity but may benefit from a higher learning rate to reach optimal convergence. Since structural hyperparameters (n_layer, state_size, n_embd) are at their maximums, tuning learning_rate is the logical next step per HYPERPARAMETER-FIRST.
 
 
+## Iter 3 — RUNNING — N=16
+**Hypothesis:** Increasing n_head from 2 to 4 will improve FLA attention capacity for parallel key-value association tracking.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_003_n_head_4_parallel_capacity
+
+
+## Iter 2 — kept — EM: 0.0004 (N=16)
+**Hypothesis:** Increasing learning_rate from 1e-3 to 0.01 will improve convergence speed and final EM accuracy on N=16.
+**Wall time:** 101.6 min
+**Result:** EM=0.0004 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** With n_embd=128 achieving EM=0.977 on N=8, the model has sufficient capacity. Stream 1 is testing lr=5e-3 on N=16. Testing a higher learning rate (0.01) could further accelerate convergence. Following HYPERPARAMETER-FIRST, learning_rate tuning is appropriate before architectural changes.
+
+
