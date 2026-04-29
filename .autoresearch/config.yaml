@@ -1,0 +1,65 @@
+# Autoresearch configuration
+# Copy .env.template to .env and fill in API keys before running.
+
+# ── Experiment identity ───────────────────────────────────────────────────────
+# model_file   : repo-relative path to the model file the executor edits
+# main_script  : repo-relative path to the Python training script
+model_file: modeling_rmt/huggingface_rmm_v2.py
+main_script: run_rmm_on_kv_retrieval-v2.py
+
+llm:
+
+  planner:
+    provider: local
+    model: llama_local/unsloth/Qwen3.5-122B-A10B-GGUF
+    host: 127.0.0.1
+    port: 8117
+  executor:
+    provider: local
+    model: llama_local/unsloth/Qwen3.5-122B-A10B-GGUF
+    host: 127.0.0.1
+    port: 8117
+
+  # planner:
+  #   provider: anthropic          # anthropic | openai | local | cursor
+  #   model: claude-opus-4-5
+  #   api_key_env: ANTHROPIC_API_KEY
+
+  # executor:
+  #   provider: anthropic
+  #   model: claude-sonnet-4-5
+  #   api_key_env: ANTHROPIC_API_KEY
+
+  # ── OpenAI ───────────────────────────────────────────────────────────────────
+  # planner:
+  #   provider: openai
+  #   model: gpt-4o
+  #   api_key_env: OPENAI_API_KEY
+
+  # ── Cursor bridge (uses your Cursor subscription — all models, no extra cost)
+  # Requires cursor-openai-bridge to be running. See cursor_bridge section below.
+  # planner:
+  #   provider: cursor
+  #   model: claude-opus-4-5    # any model from: node <bridge_bin> --list-models
+  #   host: 127.0.0.1
+  #   port: 8765
+
+# Experiment config is in experiment_config.yaml (can be modified by autoresearch)
+# N-level progression parameters (cannot be modified by autoresearch)
+max_iters: 200            # number of autoresearch iterations
+n_start: 2                # starting N-level (number of KV pairs)
+
+git:
+  auto_commit: true
+
+env_file: .autoresearch/.env
+
+# ── Cursor bridge (optional) ──────────────────────────────────────────────────
+# Exposes Cursor IDE models as an OpenAI-compatible API on localhost.
+# Set auto_start: true to have autoresearch.py start it automatically.
+cursor_bridge:
+  bin: /Users/bulatov/Desktop/projects/opencode/tools/cursor-opencode-auth/packages/cursor-openai-bridge/dist/cli.js
+  host: 127.0.0.1
+  port: 8765
+  auto_start: false   # set true once bridge is built and you want it auto-launched
+  workspace: /Users/bulatov/Desktop/lab/autoresearch
