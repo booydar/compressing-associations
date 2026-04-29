@@ -88,3 +88,13 @@
 - Rationale: All N=16 experiments on stream 0 have failed or timed out with very low EM despite tuning n_embd, n_head, and warmup_steps. Higher learning rates (0.01) crashed training completely. The baseline lr=1e-3 may still be too aggressive for stable convergence on N=16. Decreasing to 5e-4 is an untested hyperparameter that should provide more stable gradient updates while the model learns the key-value association mapping.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_008_lr_5e_4_stability
 
+## Iter 10 | failed | N=16
+- Hypothesis: Increasing warmup_steps from 5000 to 15000 will provide more stable initial training for the GatedDeltaNet recurrent state on N=16.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All N=16 experiments have failed or timed out with EM<0.05 despite tuning learning_rate, n_head, n_embd, batch_size, and expand_v. The 5000-step warmup (20% of 25000 steps) may be insufficient for the FLA recurrent state to stabilize on the harder N=16 task. Increasing warmup_steps to 15000 (60% of training) is an untested hyperparameter that should provide more gradual convergence.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_010_warmup_15000_stability
+

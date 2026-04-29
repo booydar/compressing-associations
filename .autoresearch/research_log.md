@@ -239,3 +239,35 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** All N=16 experiments have failed despite tuning learning_rate, n_head=4, warmup_steps, batch_size, and expand_v. With state_size=32 fixed at maximum and n_embd=128, reducing n_head from 2 to 1 doubles head_dim (16→32), giving each head more representational capacity. This is particularly important for GatedDeltaNet where the recurrent state must store 16 distinct key-value associations.
 
 
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Decreasing n_head from 4 to 2 will increase head_dim from 8 to 16, providing more capacity per head for tracking key-value associations with state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_009_n_head_2_larger_head_dim
+
+
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from 5000 to 15000 will provide more stable initial training for the GatedDeltaNet recurrent state on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_010_warmup_15000_stability
+
+
+## Iter 10 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_010_warmup_15000_stability
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_011_weight_decay_0_01_regularization
+
+
+## Iter 9 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Decreasing n_head from 4 to 2 will increase head_dim from 8 to 16, providing more capacity per head for tracking key-value associations with state_size=32.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0088
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_009_n_head_2_larger_head_dim', '16', '25000']' timed out after 7199.999973890954 seconds
+**Rationale:** All N=16 experiments have failed despite tuning n_embd, n_head=4, learning_rate, warmup_steps, batch_size, and expand_v. With state_size=32 fixed, the current n_head=4 gives head_dim=8, which is too small for the recurrent state to store 16 key-value associations. Reducing n_head to 2 doubles head_dim to 16, providing more representational capacity per head while maintaining the same total state budget.
+
+
