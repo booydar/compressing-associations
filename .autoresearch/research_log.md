@@ -119,3 +119,30 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** With n_embd=128 achieving EM=0.977 on N=8, the model has sufficient embedding capacity. The failure on N=16 (EM=0.0004) suggests insufficient parallel tracking capacity. Current n_head=2 limits the model's ability to monitor multiple associations simultaneously. Increasing to n_head=4 is supported by the state_size=32 budget (enables 4 heads with head_dim=8) and follows HYPERPARAMETER-FIRST as a structural hyperparameter.
 
 
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from 5000 to 10000 will provide more stable training convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_004_warmup_10000_stability
+
+
+## Iter 4 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_004_warmup_10000_stability
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 5 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 4 — kept — EM: 0.0450 (N=16)
+**Hypothesis:** Increasing n_embd from 64 to 128 will provide sufficient representational capacity to achieve high EM accuracy on the N=8 associative retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0450 vs prev best=0.0010
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_004_n_embd_128_baseline_restore', '16', '25000']' timed out after 7199.999971229932 seconds
+**Rationale:** Stream 1 baseline with n_embd=64 achieved only EM=0.135 on N=8, while the n_embd=128 experiment achieved EM=0.9728 on the same task. The current config still has n_embd=64, which is insufficient for the associative retrieval task. Since n_layer and state_size are already at their maximums, increasing n_embd to 128 is the most direct hyperparameter improvement following HYPERPARAMETER-FIRST.
+
+
