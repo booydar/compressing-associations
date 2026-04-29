@@ -61,3 +61,18 @@ Previous N achieved EM=0.9728 >= threshold 0.95.
 Previous N achieved EM=0.9770 >= threshold 0.95.
 
 
+## Iter 2 — RUNNING — N=16
+**Hypothesis:** Increasing learning_rate from 1e-3 to 0.01 will improve convergence speed and final EM accuracy on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_002_lr_0_01_convergence
+
+
+## Iter 2 — kept — EM: 0.0010 (N=16)
+**Hypothesis:** Increasing learning_rate from 1e-3 to 5e-3 will accelerate convergence and improve final EM accuracy.
+**Wall time:** 120.0 min
+**Result:** EM=0.0010 vs prev best=-1.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_002_lr_5e_3_convergence', '16', '25000']' timed out after 7199.9999791199225 seconds
+**Rationale:** With n_embd=128 achieving 0.9728 EM, the model has sufficient capacity but may benefit from a higher learning rate to reach optimal convergence. Since structural hyperparameters (n_layer, state_size, n_embd) are at their maximums, tuning learning_rate is the logical next step per HYPERPARAMETER-FIRST.
+
+
