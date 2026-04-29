@@ -68,3 +68,23 @@
 - Rationale: All N=16 experiments have failed or timed out with very low EM despite tuning n_embd, n_head, warmup_steps, batch_size, and expand_v. Higher learning rates (5e-3, 0.01) crashed training. The baseline lr=1e-3 may still be too aggressive for stable convergence on N=16. Decreasing to 5e-4 is an untested hyperparameter that should provide more stable gradient updates while the model learns the key-value association mapping.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_008_lr_5e_4_stability
 
+## Iter 7 | failed | N=16
+- Hypothesis: Restoring n_embd to 128 will re-establish the proven high-performance baseline (EM=0.977 on N=8) before attempting N=16 optimization.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 0 iter_001 achieved EM=0.977 on N=8 with n_embd=128, but the current config has n_embd=64. All subsequent N=16 experiments failed from this weak baseline. Following HYPERPARAMETER-FIRST, restoring the proven n_embd=128 configuration is the prerequisite for any further optimization.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_007_n_embd_128_baseline_restore
+
+## Iter 8 | failed | N=16
+- Hypothesis: Decreasing learning_rate from 1e-3 to 5e-4 will stabilize training convergence on the N=16 associative retrieval task.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All N=16 experiments on stream 0 have failed or timed out with very low EM despite tuning n_embd, n_head, and warmup_steps. Higher learning rates (0.01) crashed training completely. The baseline lr=1e-3 may still be too aggressive for stable convergence on N=16. Decreasing to 5e-4 is an untested hyperparameter that should provide more stable gradient updates while the model learns the key-value association mapping.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_008_lr_5e_4_stability
+

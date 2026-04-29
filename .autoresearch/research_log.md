@@ -207,3 +207,35 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Stream 0 iter_001 achieved EM=0.977 on N=8 with n_embd=128, but the current config still has n_embd=64. All subsequent N=16 experiments failed from this weak baseline. Following HYPERPARAMETER-FIRST, restoring the proven n_embd=128 configuration is the prerequisite before further N=16 optimization.
 
 
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Restoring n_embd to 128 will re-establish the proven high-performance baseline (EM=0.977 on N=8) before attempting N=16 optimization.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_007_n_embd_128_baseline_restore
+
+
+## Iter 7 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_007_n_embd_128_baseline_restore
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Decreasing learning_rate from 1e-3 to 5e-4 will stabilize training convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_008_lr_5e_4_stability
+
+
+## Iter 8 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_008_lr_5e_4_stability
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — reverted — EM: 0.0002 (N=16)
+**Hypothesis:** Decreasing n_head from 2 to 1 will increase head_dim from 16 to 32, providing more capacity per attention head for tracking key-value associations in the GatedDeltaNet recurrent state.
+**Wall time:** 101.8 min
+**Result:** EM=0.0002 vs prev best=0.0450
+**Metric source:** all_results
+**Rationale:** All N=16 experiments have failed despite tuning learning_rate, n_head=4, warmup_steps, batch_size, and expand_v. With state_size=32 fixed at maximum and n_embd=128, reducing n_head from 2 to 1 doubles head_dim (16→32), giving each head more representational capacity. This is particularly important for GatedDeltaNet where the recurrent state must store 16 distinct key-value associations.
+
+
