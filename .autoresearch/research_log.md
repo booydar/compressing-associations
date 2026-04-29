@@ -146,3 +146,64 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Stream 1 baseline with n_embd=64 achieved only EM=0.135 on N=8, while the n_embd=128 experiment achieved EM=0.9728 on the same task. The current config still has n_embd=64, which is insufficient for the associative retrieval task. Since n_layer and state_size are already at their maximums, increasing n_embd to 128 is the most direct hyperparameter improvement following HYPERPARAMETER-FIRST.
 
 
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Restoring n_embd to 128 will re-establish the high-performance baseline (EM=0.977 on N=8) that was previously achieved but not persisted to config.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_006_n_embd_128_baseline_restore
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Increasing batch_size from 64 to 128 will provide more stable gradient estimates for training on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_005_batch_size_128_stability
+
+
+## Iter 5 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_005_batch_size_128_stability
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 6 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Increasing expand_v from 2.0 to 3.0 will provide larger value projections in the GatedDeltaNet, improving recurrent state capacity for N=16 associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_007_expand_v_3_0_value_capacity
+
+
+## Iter 7 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_007_expand_v_3_0_value_capacity
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Decreasing learning_rate from 1e-3 to 5e-4 will stabilize training convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_008_lr_5e_4_stability
+
+
+## Iter 8 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_008_lr_5e_4_stability
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Decreasing n_head from 2 to 1 will increase head_dim from 16 to 32, providing more capacity per attention head for tracking key-value associations in the GatedDeltaNet recurrent state.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_009_n_head_1_higher_dim_per_head
+
+
+## Iter 6 — reverted — EM: 0.0012 (N=16)
+**Hypothesis:** Restoring n_embd to 128 will re-establish the high-performance baseline (EM=0.977 on N=8) that was previously achieved but not persisted to config.
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.0088
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_006_n_embd_128_baseline_restore', '16', '25000']' timed out after 7199.999979799963 seconds
+**Rationale:** Stream 0 iter_001 achieved EM=0.977 on N=8 with n_embd=128, but the current config still has n_embd=64. All subsequent N=16 experiments failed from this weak baseline. Following HYPERPARAMETER-FIRST, restoring the proven n_embd=128 configuration is the prerequisite before further N=16 optimization.
+
+
