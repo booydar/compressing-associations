@@ -268,3 +268,93 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 21 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+
+## Iter 30 | failed | N=16
+- Hypothesis: Decreasing conv_kernel from 4 to 3 will satisfy the 'MUST BE UNDER 4' constraint and resolve FLA layer initialization crashes.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Recent experiment history shows repeated failures with conv_kernel=4 causing FLA layer initialization crashes. The config explicitly states 'MUST BE UNDER 4' for conv_kernel. Setting it to 3 satisfies this constraint while maintaining reasonable convolution capacity for the GatedDeltaNet.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_030_conv_kernel_3_fix_constraint
+
+## Iter 31 | failed | N=16
+- Hypothesis: Decreasing conv_kernel from 4 to 2 will resolve FLA layer initialization crashes by using a smaller convolution kernel compatible with the GatedDeltaNet implementation.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current conv_kernel=4 violates the 'MUST BE UNDER 4' constraint in the config, causing FLA layer initialization crashes. Previous experiments with conv_kernel=2 also failed to initialize. Setting conv_kernel=2 provides a conservative kernel size that should be compatible with the recurrent state mechanics while satisfying the constraint.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_031_conv_kernel_2_compatibility
+
+## Iter 32 | failed | N=16
+- Hypothesis: Setting conv_kernel from 4 to 2 will satisfy the 'MUST BE UNDER 4' constraint and allow GatedDeltaNet to initialize without crashes.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current config has conv_kernel=4 which violates its own constraint 'MUST BE UNDER 4'. This causes FLA layer initialization crashes in every N=16 experiment. Iter_017 showed conv_kernel=2 achieved EM=0.061 with a successful run. Fixing this constraint violation is the prerequisite for any further improvement.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_032_conv_kernel_2_constraint_fix
+
+## Iter 33 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_033_fix_broken_base
+
+## Iter 34 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_034_fix_broken_base
+
+## Iter 35 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_035_fix_broken_base
+
+## Iter 36 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_036_fix_broken_base
+
+## Iter 37 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_037_fix_broken_base
+
