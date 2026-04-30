@@ -271,3 +271,18 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** All N=16 experiments have failed despite tuning n_embd, n_head=4, learning_rate, warmup_steps, batch_size, and expand_v. With state_size=32 fixed, the current n_head=4 gives head_dim=8, which is too small for the recurrent state to store 16 key-value associations. Reducing n_head to 2 doubles head_dim to 16, providing more representational capacity per head while maintaining the same total state budget.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Reducing max_steps from 25000 to 15000 will allow experiments to complete without timeout while maintaining sufficient training for convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_010_max_steps_15000_no_timeout
+
+
+## Iter 11 — reverted — EM: 0.0404 (N=16)
+**Hypothesis:** Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0404 vs prev best=0.0450
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_011_weight_decay_0_01_regularization', '16', '25000']' timed out after 7199.999972619931 seconds
+**Rationale:** All N=16 experiments have failed or timed out despite extensive hyperparameter tuning (n_embd, n_head, learning_rate, warmup_steps, batch_size, expand_v). weight_decay is an untested regularization hyperparameter that could prevent overfitting and improve training stability on the harder N=16 task. This follows HYPERPARAMETER-FIRST as it is a standard training hyperparameter.
+
+
