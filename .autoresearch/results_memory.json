@@ -1,8 +1,8 @@
 {
   "current_best": {
-    "variant": "iter_000_baseline",
-    "em": 0.135,
-    "n_level": 8
+    "variant": "iter_015",
+    "em": 0.237,
+    "n_level": 16
   },
   "n_level": 16,
   "experiments": [
@@ -13,21 +13,21 @@
       "hypothesis": null,
       "em_score": 0.135,
       "prev_best": -1,
-      "verdict": "baseline",
+      "verdict": "recovered",
       "status": "completed",
       "n_level": 8,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n8/iter_000_baseline",
-      "wall_time_min": 100.7,
+      "wall_time_min": 0.4,
       "metric_step": 0,
       "metric_source": "all_results",
       "is_partial": false,
-      "recovery_status": "final",
+      "recovery_status": "recovered",
       "needs_retry": false,
       "retry_of": null,
-      "run_error": null,
+      "run_error": "could not recover metrics from /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n8/iter_000_baseline: No checkpoints found in /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n8/iter_000_baseline",
       "started_at": 1777459018.8776724,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/artifacts/iter_000_baseline",
-      "summary_logged": false,
+      "summary_logged": true,
       "stream_id": "0",
       "token_accuracy": 0.5565
     },
@@ -831,12 +831,44 @@
         "run_name": "fix_broken_base",
         "_fix_base": true
       },
-      "em_score": null,
+      "em_score": 0.237,
       "prev_best": 0.045,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_015_fix_broken_base",
+      "wall_time_min": 120.0,
+      "metric_step": 17000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_015_fix_broken_base', '16', '25000']' timed out after 7199.9999628509395 seconds",
+      "started_at": 1777516175.3973148,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/artifacts/iter_015",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.4855
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.",
+        "target_component": "experiment_config.yaml",
+        "rationale": "Stream 1 iter_011 with weight_decay=0.01 achieved EM=0.0404 on N=16, the highest score among all N=16 experiments. All stream 0 N=16 experiments have failed or timed out with EM<0.01. weight_decay is an untested regularization hyperparameter on stream 0 that could prevent overfitting and improve training stability.",
+        "instruction": "Add a new line 'weight_decay: 0.01' to experiment_config.yaml under the Training parameters section, after learning_rate. Keep all other parameters unchanged.",
+        "run_name": "weight_decay_0_01_regularization"
+      },
+      "em_score": null,
+      "prev_best": 0.0088,
       "verdict": "running",
       "status": "running",
       "n_level": 16,
-      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_015_fix_broken_base",
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_012_weight_decay_0_01_regularization",
       "wall_time_min": 0.0,
       "metric_step": null,
       "metric_source": null,
@@ -845,10 +877,10 @@
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
-      "started_at": 1777516175.3973148,
-      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/artifacts/iter_015",
+      "started_at": 1777523284.7201,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/artifacts/iter_012",
       "summary_logged": false,
-      "stream_id": "1"
+      "stream_id": "0"
     }
   ]
 }

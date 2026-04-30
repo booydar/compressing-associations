@@ -71,7 +71,10 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         super().__init__()
         self.base_layer = base_layer
         self.fla_layer = fla_layer
-        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5)
+        # Create fla_norm on the same device as the fla_layer
+        fla_device = next(fla_layer.parameters()).device
+        fla_dtype = next(fla_layer.parameters()).dtype
+        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5).to(fla_device, fla_dtype)
         # Cache is always a valid Cache object — never None — so that
         # update_layer_cache (called inside fla_layer.forward) always writes state.
         self.cache = Cache()
@@ -262,6 +265,14 @@ class RecurrentMemoryBase(PreTrainedModel):
             base_model = AutoModelForCausalLM.from_config(base_config)
 
         self.rmm_config = config
+        
+        # FLA layers (GatedDeltaNet, etc.) use Triton kernels for conv1d operations,
+        # which require GPU. If the base model is on CPU and GPU is available,
+        # move to GPU to avoid runtime errors.
+        base_device = next(base_model.parameters()).device
+        if base_device.type == "cpu" and torch.cuda.is_available():
+            base_model = base_model.to(device="cuda")
+        
         memory_cell = RecurrentMemoryCell(
             base_model,
             fla_layer_name=config.fla_layer_name,

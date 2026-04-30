@@ -350,3 +350,18 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Many N=16 experiments on stream 0 timed out at 120 minutes with max_steps=25000, preventing valid results. Iter_010 reduced max_steps to 15000 but got poor EM=0.0008. A moderate reduction to 20000 (80% of current) with proportional adjustments to eval_steps (400) and warmup_steps (4000) should allow experiments to complete while preserving more training than the 15000 attempt. This follows HYPERPARAMETER-FIRST as it is a training hyperparameter that directly impacts experiment feasibility.
 
 
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_012_weight_decay_0_01_regularization
+
+
+## Iter 15 — kept — EM: 0.2370 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.2370 vs prev best=0.0450
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_015_fix_broken_base', '16', '25000']' timed out after 7199.9999628509395 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
