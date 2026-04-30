@@ -392,3 +392,18 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Stream 1 iter_011 with weight_decay=0.01 achieved EM=0.0404 on N=16, the highest score among all N=16 experiments. All stream 0 N=16 experiments have failed or timed out with EM<0.01. weight_decay is an untested regularization hyperparameter on stream 0 that could prevent overfitting and improve training stability.
 
 
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Setting n_embd=128 and pairs_per_segment=1 will restore the proven N=8 baseline capacity while reducing per-segment memory load for N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_013_n_embd_128_pairs_1_baseline_restore
+
+
+## Iter 17 — reverted — EM: 0.0610 (N=16)
+**Hypothesis:** Decreasing conv_kernel from 4 to 2 will resolve FLA layer initialization crashes by using a more conservative convolution kernel size compatible with the GatedDeltaNet implementation.
+**Wall time:** 120.0 min
+**Result:** EM=0.0610 vs prev best=0.2370
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_017_conv_kernel_2_init_fix', '16', '25000']' timed out after 7199.999975319952 seconds
+**Rationale:** Nearly all N=16 experiments fail immediately with exit code 1, indicating initialization errors rather than training convergence issues. Iter 16 reduced conv_kernel from 4 to 3 but still crashed. Reducing further to 2 (a more conservative value well under the 'MUST BE UNDER 4' constraint) may resolve FLA layer compatibility issues that have prevented any N=16 experiment from completing successfully.
+
+
