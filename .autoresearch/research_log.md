@@ -590,3 +590,21 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Increasing early_stopping_patience from 20 to 50 will allow the model more training steps to converge on the difficult N=16 associative retrieval task before early stopping triggers.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_019_increase_patience_50
+
+
+## Iter 28 — RUNNING — N=16
+**Hypothesis:** Setting n_layer from 4 to 2 will satisfy the 'MUST BE UNDER 4' constraint and resolve configuration errors causing experiment crashes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_028_n_layer_2_valid_config
+
+
+## Iter 28 — reverted — EM: 0.0004 (N=16)
+**Hypothesis:** Setting n_layer from 4 to 2 will satisfy the 'MUST BE UNDER 4' constraint and resolve configuration errors causing experiment crashes.
+**Wall time:** 71.0 min
+**Result:** EM=0.0004 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** The current n_layer=4 violates the config constraint 'MUST BE UNDER 4', which should mean n_layer < 4 (i.e., 1, 2, or 3). This invalid configuration is likely causing many experiments to crash with 'exit code 1'. Setting n_layer=2 provides a valid, moderate depth that respects the constraint while maintaining reasonable representational capacity.
+
+
