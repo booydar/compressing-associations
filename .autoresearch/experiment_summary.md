@@ -148,3 +148,23 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 14 | failed | N=16
+- Hypothesis: Decreasing warmup_steps from 5000 to 2500 will reduce training overhead while still providing adequate initialization for the N=16 associative retrieval task.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous attempts with increased warmup_steps (10000) failed, and the baseline N=8 performance was achieved with the current configuration. Reducing warmup may allow more actual training steps within the max_steps limit, potentially improving convergence on N=16.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_014_reduce_warmup_steps
+
+## Iter 15 | failed | N=16
+- Hypothesis: Increasing n_head from 4 to 8 will provide more parallel attention heads for tracking key-value associations, distributing state_size=32 across 8 heads instead of 4.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All N=16 experiments have failed despite exhaustive tuning of n_embd, n_head=4, lr, warmup_steps, batch_size, expand_v, state_size, weight_decay, n_layer, pairs_per_segment, conv_kernel, and conv_kernel. With state_size=32 and n_head=4, each head has head_dim=8. Increasing n_head to 8 (keeping state_size=32) reduces head_dim to 4 per head, but provides more parallel attention mechanisms for tracking associations. This is an untested hyperparameter combination.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_015_n_head_8_more_attention_heads
+

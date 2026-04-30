@@ -422,3 +422,40 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Stream 0 achieved EM=0.977 on N=8 with n_embd=128 (iter_001), but current config has n_embd=64. All N=16 experiments failed from this weakened baseline. Additionally, pairs_per_segment=2 with state_size=32 creates mathematical bottleneck: 16 keys need tracking with only ~2 state dimensions per association. Reducing pairs_per_segment to 1 halves the per-segment memory load, making the task tractable within the state budget.
 
 
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Decreasing learning_rate from 1e-3 to 5e-4 will stabilize training and improve convergence on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_019_lr_half_stable
+
+
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Decreasing warmup_steps from 5000 to 2500 will reduce training overhead while still providing adequate initialization for the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_014_reduce_warmup_steps
+
+
+## Iter 14 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_014_reduce_warmup_steps
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Increasing n_head from 4 to 8 will provide more parallel attention heads for tracking key-value associations, distributing state_size=32 across 8 heads instead of 4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_015_n_head_8_more_attention_heads
+
+
+## Iter 15 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_015_n_head_8_more_attention_heads
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 19 — reverted — EM: 0.0002 (N=16)
+**Hypothesis:** Decreasing learning_rate from 1e-3 to 5e-4 will stabilize training and improve convergence on the N=16 associative retrieval task.
+**Wall time:** 103.7 min
+**Result:** EM=0.0002 vs prev best=0.2370
+**Metric source:** all_results
+**Rationale:** Previous experiments showed instability with the current learning rate of 1e-3. Reducing to 5e-4 should provide more stable gradient updates, especially important for the GatedDeltaNet recurrent state to properly learn key-value associations without oscillation.
+
+
