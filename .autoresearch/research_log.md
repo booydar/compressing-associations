@@ -608,3 +608,18 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** The current n_layer=4 violates the config constraint 'MUST BE UNDER 4', which should mean n_layer < 4 (i.e., 1, 2, or 3). This invalid configuration is likely causing many experiments to crash with 'exit code 1'. Setting n_layer=2 provides a valid, moderate depth that respects the constraint while maintaining reasonable representational capacity.
 
 
+## Iter 29 — RUNNING — N=16
+**Hypothesis:** Setting conv_kernel from 4 to 2 will satisfy the 'MUST BE UNDER 4' constraint and resolve FLA layer initialization crashes that cause immediate experiment failures on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_029_conv_kernel_2_constraint_fix
+
+
+## Iter 19 — reverted — EM: 0.0022 (N=16)
+**Hypothesis:** Increasing early_stopping_patience from 20 to 50 will allow the model more training steps to converge on the difficult N=16 associative retrieval task before early stopping triggers.
+**Wall time:** 120.0 min
+**Result:** EM=0.0022 vs prev best=0.0234
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_019_increase_patience_50', '16', '25000']' timed out after 7199.999977490981 seconds
+**Rationale:** Many experiments have failed or reverted with EM near zero, suggesting the model isn't getting enough training time to learn the associations. The current patience of 20 eval steps may be too aggressive for the N=16 task complexity. Increasing to 50 will give the model more opportunity to converge while still preventing infinite training.
+
+
