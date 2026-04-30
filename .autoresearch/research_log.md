@@ -365,3 +365,30 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Decreasing conv_kernel from 4 to 3 will resolve FLA layer initialization errors causing immediate experiment crashes on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_016_conv_kernel_3_init_fix
+
+
+## Iter 16 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_016_conv_kernel_3_init_fix
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Decreasing conv_kernel from 4 to 2 will resolve FLA layer initialization crashes by using a more conservative convolution kernel size compatible with the GatedDeltaNet implementation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_017_conv_kernel_2_init_fix
+
+
+## Iter 12 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Adding weight_decay=0.01 will regularize training and stabilize convergence on the N=16 associative retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0088
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_012_weight_decay_0_01_regularization', '16', '25000']' timed out after 7199.999972140067 seconds
+**Rationale:** Stream 1 iter_011 with weight_decay=0.01 achieved EM=0.0404 on N=16, the highest score among all N=16 experiments. All stream 0 N=16 experiments have failed or timed out with EM<0.01. weight_decay is an untested regularization hyperparameter on stream 0 that could prevent overfitting and improve training stability.
+
+

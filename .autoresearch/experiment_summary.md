@@ -128,3 +128,13 @@
 - Rationale: All N=16 experiments have failed despite exhaustive hyperparameter tuning (n_embd, n_head, lr, warmup_steps, batch_size, expand_v, state_size, weight_decay, n_layer). With state_size=32 and 16 keys to track, each association receives only ~2 dimensions of recurrent state - mathematically insufficient. Reducing pairs_per_segment from 2 to 1 halves the memory load per segment while maintaining the same total N=16 task difficulty across segments. This architectural change addresses the core capacity bottleneck.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_014_pairs_per_segment_1_reduced_load
 
+## Iter 16 | failed | N=16
+- Hypothesis: Decreasing conv_kernel from 4 to 3 will resolve FLA layer initialization errors causing immediate experiment crashes on N=16.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Nearly all N=16 experiments fail immediately with 'exit code 1' rather than timing out or producing metrics, suggesting a configuration or initialization error rather than a training convergence issue. The conv_kernel parameter (currently at maximum 4) controls the short-convolution kernel size in GatedDeltaNet. Reducing it to 3 is an untested hyperparameter that may resolve潜在的 compatibility issues with the FLA layer initialization while staying within the 'MUST BE UNDER 4' constraint. This follows HYPERPARAMETER-FIRST as a diagnostic step before further architectural changes.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_016_conv_kernel_3_init_fix
+
