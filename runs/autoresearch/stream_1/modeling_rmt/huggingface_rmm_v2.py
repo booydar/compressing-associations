@@ -152,6 +152,7 @@ class RecurrentMemoryCell(nn.Module):
         }
 
         transformer_layers = self._get_transformer_layers(base_model)
+        self.wrapped_layers = []
 
         for i, layer in enumerate(transformer_layers):
             fla_layer = layer_cls(
@@ -167,6 +168,7 @@ class RecurrentMemoryCell(nn.Module):
                 fla_layer,
             )
             transformer_layers[i] = wrapped
+            self.wrapped_layers.append(wrapped)
 
     def forward(self, input_ids: torch.Tensor, **kwargs):
         return self.model(input_ids=input_ids, **kwargs)
@@ -289,7 +291,7 @@ class RecurrentMemoryBase(PreTrainedModel):
 
     def forward(self, segments=None, labels=None, *args, **kwargs):
         out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
-        for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
+        for layer in self.rmt.memory_cell.wrapped_layers:
             layer.reset_memory()
         return out
 
