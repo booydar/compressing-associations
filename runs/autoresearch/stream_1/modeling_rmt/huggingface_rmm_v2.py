@@ -201,7 +201,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
             cell_outputs.append(cell_out)
 
         labels_mask = None
-        if "labels_mask" in segments[0]:
+        if segments and "labels_mask" in segments[0]:
             labels_mask = torch.cat([seg["labels_mask"] for seg in segments], dim=1)
 
         out = self.process_outputs(

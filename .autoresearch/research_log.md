@@ -757,3 +757,30 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Multiple experiments on both streams have failed due to conv_kernel=4 violating the 'MUST BE UNDER 4' constraint in the config. Stream 0 queue is empty and needs a hypothesis. Setting conv_kernel to 3 resolves the constraint violation while preserving convolution-based recurrence in GatedDeltaNet.
 
 
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Decreasing n_head from 4 to 2 will increase head_dim from 8 to 16, providing more capacity per attention head for tracking key-value associations with state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_023_n_head_2_larger_head_dim
+
+
+## Iter 23 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_023_n_head_2_larger_head_dim
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 24 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 38 — kept — EM: 0.0008 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_038_fix_broken_base', '16', '25000']' timed out after 7199.999960860005 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

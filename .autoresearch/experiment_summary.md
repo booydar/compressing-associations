@@ -358,3 +358,23 @@
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_037_fix_broken_base
 
+## Iter 23 | failed | N=16
+- Hypothesis: Decreasing n_head from 4 to 2 will increase head_dim from 8 to 16, providing more capacity per attention head for tracking key-value associations with state_size=32.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With state_size=32 fixed at maximum and n_head=4, each head has head_dim=8, which is insufficient for the recurrent state to store 16 key-value associations. Reducing n_head to 2 doubles head_dim to 16 while maintaining the same total state budget. This addresses the core capacity bottleneck identified in previous experiments.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_023_n_head_2_larger_head_dim
+
+## Iter 24 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+
