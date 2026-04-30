@@ -330,3 +330,23 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Many N=16 experiments timed out at 120 minutes with max_steps=25000, preventing valid results. Reducing max_steps to 15000 (60% of current) while proportionally adjusting eval_steps and warmup_steps should allow experiments to complete and provide actionable metrics. This follows HYPERPARAMETER-FIRST as it is a training hyperparameter that directly impacts experiment feasibility.
 
 
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Reducing max_steps from 25000 to 20000 will allow N=16 experiments to complete without timeout while maintaining sufficient training for convergence.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_011_max_steps_20000_no_timeout
+
+
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_015_fix_broken_base
+
+
+## Iter 11 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Reducing max_steps from 25000 to 20000 will allow N=16 experiments to complete without timeout while maintaining sufficient training for convergence.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0088
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_011_max_steps_20000_no_timeout', '16', '20000']' timed out after 7199.999973960919 seconds
+**Rationale:** Many N=16 experiments on stream 0 timed out at 120 minutes with max_steps=25000, preventing valid results. Iter_010 reduced max_steps to 15000 but got poor EM=0.0008. A moderate reduction to 20000 (80% of current) with proportional adjustments to eval_steps (400) and warmup_steps (4000) should allow experiments to complete while preserving more training than the 15000 attempt. This follows HYPERPARAMETER-FIRST as it is a training hyperparameter that directly impacts experiment feasibility.
+
+
