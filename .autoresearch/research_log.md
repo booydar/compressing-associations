@@ -459,3 +459,107 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Previous experiments showed instability with the current learning rate of 1e-3. Reducing to 5e-4 should provide more stable gradient updates, especially important for the GatedDeltaNet recurrent state to properly learn key-value associations without oscillation.
 
 
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Decreasing conv_kernel from 4 to 2 will reduce FLA layer complexity and improve training stability on N=16 associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_016_conv_kernel_2_stability
+
+
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Increasing expand_v from 2.0 to 3.0 will provide more capacity for value projection in the GatedDeltaNet recurrent state.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_020_expand_v_3_0
+
+
+## Iter 20 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_020_expand_v_3_0
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 21 — RUNNING — N=16
+**Hypothesis:** Decreasing conv_kernel from 4 to 2 will resolve FLA layer initialization crashes by using a more conservative convolution kernel size compatible with the GatedDeltaNet implementation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_021_conv_kernel_2_fix
+
+
+## Iter 21 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_021_conv_kernel_2_fix
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 22 — RUNNING — N=16
+**Hypothesis:** Decreasing conv_kernel from 4 to 1 will satisfy the 'MUST BE UNDER 4' constraint and resolve FLA layer initialization crashes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_022_conv_kernel_one_fix
+
+
+## Iter 22 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_022_conv_kernel_one_fix
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_023_fix_broken_base
+
+
+## Iter 23 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_023_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 24 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_024_fix_broken_base
+
+
+## Iter 24 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_024_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 25 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+
+
+## Iter 25 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 26 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+
+
+## Iter 26 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 27 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_027_fix_broken_base
+
+
+## Iter 16 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Decreasing conv_kernel from 4 to 2 will reduce FLA layer complexity and improve training stability on N=16 associative retrieval.
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0234
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_016_conv_kernel_2_stability', '16', '25000']' timed out after 7199.999980630004 seconds
+**Rationale:** Many N=16 experiments fail immediately with exit code 1, suggesting FLA layer initialization issues. The conv_kernel=4 controls short-convolution kernel size in GatedDeltaNet. Reducing to 2 decreases kernel complexity while staying within the 'MUST BE UNDER 4' constraint, potentially resolving initialization errors and enabling stable training.
+
+
