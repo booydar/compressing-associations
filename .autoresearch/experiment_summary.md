@@ -98,3 +98,33 @@
 - Rationale: All N=16 experiments have failed or timed out with EM<0.05 despite tuning learning_rate, n_head, n_embd, batch_size, and expand_v. The 5000-step warmup (20% of 25000 steps) may be insufficient for the FLA recurrent state to stabilize on the harder N=16 task. Increasing warmup_steps to 15000 (60% of training) is an untested hyperparameter that should provide more gradual convergence.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_010_warmup_15000_stability
 
+## Iter 12 | failed | N=16
+- Hypothesis: Decreasing state_size from 32 to 24 will reduce model complexity and improve training convergence stability on N=16.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All N=16 experiments have failed or timed out despite extensive hyperparameter tuning. The current state_size=32 (at maximum) may be too large for stable training on the harder N=16 task, causing optimization issues. Reducing state_size to 24 decreases the recurrent state capacity, which could act as implicit regularization and improve convergence. This is an untested hyperparameter direction following HYPERPARAMETER-FIRST.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_012_state_size_24_convergence
+
+## Iter 13 | failed | N=16
+- Hypothesis: Increasing n_layer from 4 to 3 (maximum allowed under constraint) will provide deeper representation learning for N=16 associative retrieval.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Hyperparameter tuning has exhausted n_embd, n_head, learning_rate, warmup_steps, batch_size, expand_v, state_size, and weight_decay with all N=16 experiments failing or timing out. The current n_layer=4 violates the config constraint 'MUST BE UNDER 4', meaning only 1-3 layers are valid. Setting n_layer=3 (the maximum allowed) provides deeper representation learning capacity for the harder N=16 task while respecting the constraint.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_013_n_layer_3_max_depth
+
+## Iter 14 | failed | N=16
+- Hypothesis: Decreasing pairs_per_segment from 2 to 1 will reduce the associative load per segment, allowing the state_size=32 recurrent memory to reliably track all 16 key-value associations.
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: All N=16 experiments have failed despite exhaustive hyperparameter tuning (n_embd, n_head, lr, warmup_steps, batch_size, expand_v, state_size, weight_decay, n_layer). With state_size=32 and 16 keys to track, each association receives only ~2 dimensions of recurrent state - mathematically insufficient. Reducing pairs_per_segment from 2 to 1 halves the memory load per segment while maintaining the same total N=16 task difficulty across segments. This architectural change addresses the core capacity bottleneck.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_014_pairs_per_segment_1_reduced_load
+

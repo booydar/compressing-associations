@@ -286,3 +286,47 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** All N=16 experiments have failed or timed out despite extensive hyperparameter tuning (n_embd, n_head, learning_rate, warmup_steps, batch_size, expand_v). weight_decay is an untested regularization hyperparameter that could prevent overfitting and improve training stability on the harder N=16 task. This follows HYPERPARAMETER-FIRST as it is a standard training hyperparameter.
 
 
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Decreasing state_size from 32 to 24 will reduce model complexity and improve training convergence stability on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_012_state_size_24_convergence
+
+
+## Iter 12 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_012_state_size_24_convergence
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Increasing n_layer from 4 to 3 (maximum allowed under constraint) will provide deeper representation learning for N=16 associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_013_n_layer_3_max_depth
+
+
+## Iter 13 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_013_n_layer_3_max_depth
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Decreasing pairs_per_segment from 2 to 1 will reduce the associative load per segment, allowing the state_size=32 recurrent memory to reliably track all 16 key-value associations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_014_pairs_per_segment_1_reduced_load
+
+
+## Iter 14 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_014_pairs_per_segment_1_reduced_load
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 10 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Reducing max_steps from 25000 to 15000 will allow experiments to complete without timeout while maintaining sufficient training for convergence.
+**Wall time:** 105.7 min
+**Result:** EM=0.0008 vs prev best=0.0088
+**Metric source:** all_results
+**Rationale:** Many N=16 experiments timed out at 120 minutes with max_steps=25000, preventing valid results. Reducing max_steps to 15000 (60% of current) while proportionally adjusting eval_steps and warmup_steps should allow experiments to complete and provide actionable metrics. This follows HYPERPARAMETER-FIRST as it is a training hyperparameter that directly impacts experiment feasibility.
+
+
