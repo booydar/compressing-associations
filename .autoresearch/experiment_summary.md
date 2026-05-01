@@ -408,3 +408,123 @@
 - Rationale: Multiple experiments have failed with conv_kernel=4 due to FLA layer initialization crashes. The constraint explicitly states conv_kernel MUST BE UNDER 4. Setting it to 3 satisfies this constraint while maintaining the largest valid kernel size for the convolution operation.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_041_conv_kernel_3_fix
 
+## Iter 26 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: Recent experiments show conv_kernel was reduced from 4 to 3 to satisfy the 'MUST BE UNDER 4' constraint. Many N=16 experiments fail with initialization errors or extremely low EM. The conv_kernel controls the local convolution in GatedDeltaNet's recurrent mechanism; reducing it further to 2 may simplify the model's inductive bias and improve convergence stability on the harder N=16 task.
+- exp_path: 
+
+## Iter 27 | failed | N=16
+- Hypothesis: Decreasing state_size from 32 to 16 will reduce memory overhead and improve training stability on the N=16 associative retrieval task.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: After exhausting conv_kernel and n_head adjustments, reducing state_size directly lowers the memory burden per layer. With N=16 keys/values, state_size=16 provides 2 bits per key, which may be sufficient for the task while avoiding the crashes seen with larger configurations.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_027_state_size_16_n16
+
+## Iter 28 | failed | N=16
+- Hypothesis: Increasing warmup_steps from 5000 to 10000 will provide more gradual learning rate warmup to stabilize training on the difficult N=16 associative retrieval task.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments show training instability with EM=None failures. Longer warmup allows the GatedDeltaNet to initialize its recurrent state more carefully before full learning rate kicks in, which is critical for N=16 where the task complexity is higher than N=8.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_028_warmup_extended_n16
+
+## Iter 29 | failed | N=16
+- Hypothesis: Decreasing eval_steps from 500 to 250 will provide more frequent evaluation signals for early stopping and better tracking of training progress on N=16.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With max_steps=25000 and eval_steps=500, there are only 50 evaluation points during training. On the difficult N=16 task where many experiments fail or timeout, more frequent evaluation (100 points) will provide finer-grained visibility into training dynamics and allow early stopping to trigger more precisely when validation performance degrades.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_029_eval_steps_250_frequent_tracking
+
+## Iter 30 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_030_fix_broken_base
+
+## Iter 31 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_031_fix_broken_base
+
+## Iter 32 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_032_fix_broken_base
+
+## Iter 33 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_033_fix_broken_base
+
+## Iter 34 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_034_fix_broken_base
+
+## Iter 35 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_035_fix_broken_base
+
+## Iter 36 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_036_fix_broken_base
+
+## Iter 37 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_037_fix_broken_base
+

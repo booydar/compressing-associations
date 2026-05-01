@@ -828,3 +828,153 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Previous experiments show instability with lr=1e-3. Lowering the learning rate is a standard approach to stabilize training, especially when experiments fail with code 1 errors. This hyperparameter adjustment should be tried before architectural changes.
 
 
+## Iter 42 — RUNNING — N=16
+**Hypothesis:** Setting conv_kernel from 4 to 3 will satisfy the MUST BE UNDER 4 constraint and allow GatedDeltaNet to initialize without crashes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_042_conv_kernel_3_fix_base
+
+
+## Iter 26 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 27 — RUNNING — N=16
+**Hypothesis:** Decreasing state_size from 32 to 16 will reduce memory overhead and improve training stability on the N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_027_state_size_16_n16
+
+
+## Iter 27 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_027_state_size_16_n16
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 28 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from 5000 to 10000 will provide more gradual learning rate warmup to stabilize training on the difficult N=16 associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_028_warmup_extended_n16
+
+
+## Iter 28 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_028_warmup_extended_n16
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 29 — RUNNING — N=16
+**Hypothesis:** Decreasing eval_steps from 500 to 250 will provide more frequent evaluation signals for early stopping and better tracking of training progress on N=16.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_029_eval_steps_250_frequent_tracking
+
+
+## Iter 29 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_029_eval_steps_250_frequent_tracking
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 30 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_030_fix_broken_base
+
+
+## Iter 30 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_030_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 31 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_031_fix_broken_base
+
+
+## Iter 31 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_031_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 32 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_032_fix_broken_base
+
+
+## Iter 32 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_032_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 33 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_033_fix_broken_base
+
+
+## Iter 33 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_033_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 34 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_034_fix_broken_base
+
+
+## Iter 34 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_034_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 35 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_035_fix_broken_base
+
+
+## Iter 35 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_035_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 36 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_036_fix_broken_base
+
+
+## Iter 36 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_036_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 37 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_037_fix_broken_base
+
+
+## Iter 37 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_037_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 42 — reverted — EM: 0.0002 (N=16)
+**Hypothesis:** Setting conv_kernel from 4 to 3 will satisfy the MUST BE UNDER 4 constraint and allow GatedDeltaNet to initialize without crashes.
+**Wall time:** 81.6 min
+**Result:** EM=0.0002 vs prev best=0.0008
+**Metric source:** all_results
+**Rationale:** Multiple experiments have failed with 'Experiment script exited with code 1' errors. The current conv_kernel=4 violates the constraint 'MUST BE UNDER 4' noted in the config. Setting conv_kernel=3 is the minimal change to satisfy the constraint while maintaining reasonable convolution capacity for the GatedDeltaNet layer.
+
+
