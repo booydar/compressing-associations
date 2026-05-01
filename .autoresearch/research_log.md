@@ -1066,3 +1066,13 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 45 — kept — EM: 0.0664 (N=16)
+**Hypothesis:** Setting conv_kernel from 4 to 3 will satisfy the 'MUST BE UNDER 4' constraint and allow GatedDeltaNet to initialize without crashes.
+**Wall time:** 120.0 min
+**Result:** EM=0.0664 vs prev best=0.0008
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_045_conv_kernel_3_fix_base', '16', '25000']' timed out after 7199.9999771900475 seconds
+**Rationale:** The current conv_kernel=4 violates the 'MUST BE UNDER 4' constraint in experiment_config.yaml, causing FLA layer initialization crashes. All recent experiments (iter 30-43) have failed with this configuration. Setting conv_kernel to 3 is the minimum change needed to satisfy the constraint while preserving the convolutional memory mechanism in GatedDeltaNet.
+
+
