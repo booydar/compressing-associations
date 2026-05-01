@@ -262,6 +262,14 @@ class RecurrentMemoryBase(PreTrainedModel):
             base_model = AutoModelForCausalLM.from_config(base_config)
 
         self.rmm_config = config
+        
+        # FLA layers (GatedDeltaNet, etc.) use Triton kernels for conv1d operations,
+        # which require GPU. If the base model is on CPU and GPU is available,
+        # move to GPU to avoid runtime errors.
+        base_device = next(base_model.parameters()).device
+        if base_device.type == "cpu" and torch.cuda.is_available():
+            base_model = base_model.to(device="cuda")
+        
         memory_cell = RecurrentMemoryCell(
             base_model,
             fla_layer_name=config.fla_layer_name,
