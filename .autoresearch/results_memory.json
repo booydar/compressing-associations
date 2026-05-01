@@ -1,9 +1,66 @@
 {
   "current_best": {
-    "variant": "iter_015",
-    "em": 0.237,
+    "variant": "iter_000_baseline",
+    "em": 0.0162,
     "n_level": 16
   },
   "n_level": 16,
-  "experiments": []
+  "experiments": [
+    {
+      "id": 0,
+      "iter_tag": "iter_000_baseline",
+      "description": "[Stream 0] baseline \u2014 exact copy of v2",
+      "hypothesis": null,
+      "em_score": 0.0162,
+      "prev_best": -1,
+      "verdict": "baseline",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_000_baseline",
+      "wall_time_min": 120.0,
+      "metric_step": 8500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_000_baseline', '16', '25000']' timed out after 7199.999974830076 seconds",
+      "started_at": 1777628197.3598168,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/artifacts/iter_000_baseline",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0991
+    },
+    {
+      "id": 1,
+      "iter_tag": "iter_001",
+      "description": "Increase FLA layer from 1 to 4 heads to improve capacity for tracking multiple key-value associations",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Increase FLA layer from 1 to 4 heads to improve capacity for tracking multiple key-value associations",
+        "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+        "rationale": "The experiment_config.yaml specifies n_head=4 but RecurrentMemoryConfig defaults to num_heads=1. This mismatch likely underutilizes the 32-dimensional state capacity. With 4 heads at 8 head_dim each, the model can track multiple associative pairs in parallel, which is critical for the N=16 associative retrieval task.",
+        "instruction": "In RecurrentMemoryConfig.__init__, change the default value of num_heads from 1 to 4. Also update the fla_layer_kwargs method to ensure num_heads is properly passed to the FLA layer.",
+        "run_name": "n4_heads_baseline"
+      },
+      "em_score": null,
+      "prev_best": -1,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_001_n4_heads_baseline",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1777628400.9885542,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_001",
+      "summary_logged": false,
+      "stream_id": "1"
+    }
+  ]
 }
