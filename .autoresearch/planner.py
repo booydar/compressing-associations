@@ -89,11 +89,11 @@ CRITICAL: When describing your hypothesis, explicitly state your stream ID conte
 - "Stream {stream_id}: Explore learning rate sweep from 1e-4 to 1e-2"
 
 CRITICAL RULES:
-- HYPERPARAMETER-FIRST POLICY: You are REQUIRED to exhaust hyperparameters tuning before architectural changes.
-  Hyperparameters include: n_layer, n_head, n_embd, lr, batch_size, warmup_steps,
+- Human directions (provided in user context) take PRECEDENCE over all default policies.
+  If human directions specify architectural focus, prioritize architecture over hyperparameters.
+- Hyperparameters include: n_layer, n_head, n_embd, lr, batch_size, warmup_steps,
   max_steps, weight_decay, and any model-specific params listed in experiment_config.yaml.
-- ONLY propose architectural changes if you explicitly list which hyperparameters have been exhausted
-  and why further tuning won't help.
+- If human directions forbid specific searches (e.g. LR sweep), do NOT propose them.
 - Propose ONLY ONE change per iteration.
 - For architectural changes: target {model_file}.
 - For hyperparameters changes: target .autoresearch/experiment_config.yaml.
@@ -105,13 +105,14 @@ CRITICAL RULES:
 
 In your rationale, you MUST explicitly state:
 - If proposing hyperparameters: which specific values/ranges you are exploring
-- If proposing architecture: which hyperparameters have been exhausted and why further tuning won't help
+- If proposing architecture: why this architectural change best matches the active human directions
+  and current bottleneck in recent experiment history
 
 Respond with ONLY a JSON object, no markdown fences, no extra text:
 {{
   "hypothesis": "<one sentence>",
   "target_component": "<{model_file} | .autoresearch/experiment_config.yaml>",
-  "rationale": "<2-3 sentences, MUST mention hyperparameters status if proposing architecture>",
+  "rationale": "<2-3 sentences, aligned with human directions and bottleneck>",
   "instruction": "<precise, unambiguous instruction for the code editor>",
   "run_name": "<short, readable name for TB run folder, 2-5 words, lowercase, underscore-separated, e.g., 'adam_optimizer', 'deep_supervision_v2'>"
 }}"""
@@ -120,8 +121,7 @@ Respond with ONLY a JSON object, no markdown fences, no extra text:
 DIRECTOR_SYSTEM_PROMPT = """\
 You are a research director for a neural memory architecture project.
 Read the free-form human research directions below and extract a list of
-concrete, actionable experiment plans. Be conservative: only extract
-experiments that are explicitly suggested or clearly implied — do NOT invent ideas.
+concrete, actionable experiment plans.
 
 Each plan must be a JSON object with exactly these fields:
   "hypothesis"       : one-sentence description of the proposed change
@@ -135,7 +135,11 @@ RULES:
 - Do NOT repeat experiments that already appear in the recent history.
 - For hyperparameter changes target .autoresearch/experiment_config.yaml.
 - For architecture changes target {model_file}.
-- If nothing clearly actionable is found, return an empty array.
+- Human directions are highest priority and must be operationalized into runnable plans.
+- If directions are strategic (e.g. "focus on architecture"), generate 1-3 concrete architecture
+  plans that are clearly implied by current bottlenecks/history; do not leave it abstract.
+- Respect explicit constraints in directions (e.g. "do not grid search LR").
+- Return an empty array ONLY when directions are truly non-actionable or contradictory.
 
 Respond with ONLY a JSON array, no markdown fences, no extra text.
 """
@@ -211,6 +215,7 @@ def build_planner_messages(
         default="(missing conventions.md)",
         max_chars=MAX_CONVENTIONS_CHARS,
     )
+    human_directions_text, _ = _load_human_directions()
 
     # File path references for the planner
     file_refs = f"""## Important Files
@@ -224,6 +229,9 @@ def build_planner_messages(
 """
 
     user_content = f"""{file_refs}
+## Human Research Directions (PRIORITY)
+{human_directions_text}
+
 ## Recent Experiment History (last 10, most recent last)
 {history_text}
 
@@ -233,7 +241,7 @@ def build_planner_messages(
 ## Repository Conventions
 {conventions_text}
 
-The experiment queue is empty — propose the next change to try based on the experiment history above."""
+The experiment queue is empty — propose the next change to try based on the experiment history and human directions above."""
 
     if error_context:
         user_content += (
@@ -440,10 +448,10 @@ def _build_planner_prompt(
         f"## Research Rules\n"
         f"You are a research scientist specialising in recurrent neural memory architectures.\n"
         f"Propose ONE concrete change to improve EM accuracy on the associative retrieval task.\n"
-        f"- HYPERPARAMETER-FIRST: exhaust hyperparameter tuning before architectural changes.\n"
-        f"  Hyperparameters: n_layer, n_head, n_embd, lr, batch_size, warmup_steps, weight_decay,\n"
+        f"- Human directions (above) take PRECEDENCE over default policies.\n"
+        f"  If human directions specify architectural focus, prioritize architecture over hyperparameters.\n"
+        f"- Hyperparameters include: n_layer, n_head, n_embd, lr, batch_size, warmup_steps, weight_decay,\n"
         f"  and any model-specific params listed in experiment_config.yaml.\n"
-        f"- Only propose architectural changes if you list which hyperparameters have been exhausted.\n"
         f"- Do not repeat a change that has already been tried.\n"
         f"- Do not use sweep format unless a human direction explicitly requests it.\n"
         f"- Prefer changes with clear theoretical motivation.\n"
