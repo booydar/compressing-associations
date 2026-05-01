@@ -978,3 +978,66 @@ Previous N achieved EM=0.9770 >= threshold 0.95.
 **Rationale:** Multiple experiments have failed with 'Experiment script exited with code 1' errors. The current conv_kernel=4 violates the constraint 'MUST BE UNDER 4' noted in the config. Setting conv_kernel=3 is the minimal change to satisfy the constraint while maintaining reasonable convolution capacity for the GatedDeltaNet layer.
 
 
+## Iter 43 — RUNNING — N=16
+**Hypothesis:** Setting conv_kernel from 4 to 3 will satisfy the 'MUST BE UNDER 4' constraint and allow the experiment to run without initialization crashes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_043_fix_conv_kernel_base
+
+
+## Iter 38 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_038_fix_broken_base
+
+
+## Iter 38 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_038_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 39 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_039_fix_broken_base
+
+
+## Iter 39 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_039_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 40 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_040_fix_broken_base
+
+
+## Iter 40 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_040_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 41 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_041_fix_broken_base
+
+
+## Iter 41 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_041_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 43 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Setting conv_kernel from 4 to 3 will satisfy the 'MUST BE UNDER 4' constraint and allow the experiment to run without initialization crashes.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0008
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_1/n16/iter_043_fix_conv_kernel_base', '16', '25000']' timed out after 7199.999963319977 seconds
+**Rationale:** The experiment history shows repeated failures with conv_kernel=4 violating the constraint. Iter 42 achieved EM=0.0002 with conv_kernel=3 before reverting. The current config still has conv_kernel: 4 which breaks experiments. Fixing this is a prerequisite for any further improvements.
+
+

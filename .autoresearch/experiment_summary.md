@@ -528,3 +528,43 @@
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_037_fix_broken_base
 
+## Iter 38 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_038_fix_broken_base
+
+## Iter 39 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_039_fix_broken_base
+
+## Iter 40 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_040_fix_broken_base
+
+## Iter 41 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v2/runs/autoresearch/stream_0/n16/iter_041_fix_broken_base
+
