@@ -187,17 +187,19 @@ class RecurrentMemoryWrapperBase(nn.Module):
 
     def forward(self, segments, labels, output_attentions=None, output_hidden_states=None, *args, **kwargs):
         cell_outputs = []
+        # Get the device from the model parameters
+        device = next(self.memory_cell.parameters()).device
         for seg_num, segment in enumerate(segments):
             cell_out = self.memory_cell(
-                input_ids=segment["input_ids"],
-                attention_mask=segment["attention_mask"],
+                input_ids=segment["input_ids"].to(device),
+                attention_mask=segment["attention_mask"].to(device),
                 output_hidden_states=True,
             )
             cell_outputs.append(cell_out)
 
         labels_mask = None
         if "labels_mask" in segments[0]:
-            labels_mask = torch.cat([seg["labels_mask"] for seg in segments], dim=1)
+            labels_mask = torch.cat([seg["labels_mask"].to(device) for seg in segments], dim=1)
 
         out = self.process_outputs(
             cell_outputs,
@@ -205,11 +207,12 @@ class RecurrentMemoryWrapperBase(nn.Module):
             labels_mask=labels_mask,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
+            device=device,
             **kwargs,
         )
         return out
 
-    def process_outputs(self, cell_outputs, **kwargs):
+    def process_outputs(self, cell_outputs, device, **kwargs):
         out = CausalLMOutputWithCrossAttentions()
         full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
         full_hidden_states = tuple([
@@ -219,6 +222,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
 
         labels = kwargs.get("labels")
         if labels is not None:
+            labels = labels.to(device)
             shift_labels = labels[..., 1:].contiguous()
             shift_logits = full_logits[..., :-1, :].contiguous()
             flat_labels = shift_labels.view(-1)

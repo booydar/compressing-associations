@@ -1646,3 +1646,90 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The experiment_config.yaml specifies state_size=32 which equals num_heads * head_dim. With n_head=4, head_dim should be 8 (4*8=32), not 32. The current default of head_dim=32 creates a 128-dimensional state that violates the constraint and may cause training instability.
 
 
+## Iter 3 — RUNNING — N=16
+**Hypothesis:** Set num_heads=2 and head_dim=16 to fully utilize the 32-dimensional state capacity with a balanced multi-head configuration
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_003_n2_heads_dim16
+
+
+## Iter 3 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_003_n2_heads_dim16
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 8 to 16 while reducing heads to 2 to fully utilize 32-dim state capacity with more expressive per-head representations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_004_n2_heads_h16_dim
+
+
+## Iter 4 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_004_n2_heads_h16_dim
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 64 by setting head_dim=16 with num_heads=4 to double the recurrent memory capacity for tracking more associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_005_state64_head_dim16
+
+
+## Iter 5 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_005_state64_head_dim16
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_006_fix_broken_base
+
+
+## Iter 6 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_006_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_007_fix_broken_base
+
+
+## Iter 7 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_007_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_008_fix_broken_base
+
+
+## Iter 8 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_008_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_009_fix_broken_base
+
+
+## Iter 9 — kept — EM: 0.0008 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_009_fix_broken_base', '16', '25000']' timed out after 7199.999972230056 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

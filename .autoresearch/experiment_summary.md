@@ -3194,3 +3194,63 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: (none)
 - exp_path: 
 
+## Iter 3 | failed | N=16
+- Hypothesis: Set num_heads=2 and head_dim=16 to fully utilize the 32-dimensional state capacity with a balanced multi-head configuration
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current defaults (num_heads=1, head_dim=32) underutilize multi-head capacity. Previous 4-head experiment timed out, possibly due to excessive complexity. A 2-head, 16-dim configuration (2*16=32) balances capacity and trainability while fully using the state_size budget.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_003_n2_heads_dim16
+
+## Iter 4 | failed | N=16
+- Hypothesis: Increase head_dim from 8 to 16 while reducing heads to 2 to fully utilize 32-dim state capacity with more expressive per-head representations
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments show 4 heads with 8 head_dim underperforms. Reducing to 2 heads with 16 head_dim maintains the 32-dim state capacity but gives each head more expressive power to capture complex key-value relationships. This configuration was hinted at in iter_003 but needs proper default configuration.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_004_n2_heads_h16_dim
+
+## Iter 5 | failed | N=16
+- Hypothesis: Increase state_size from 32 to 64 by setting head_dim=16 with num_heads=4 to double the recurrent memory capacity for tracking more associations
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current state_size=32 (4 heads x 8 head_dim) may be too constrained for the N=16 associative retrieval task. Doubling the state capacity to 64 dimensions (4 heads x 16 head_dim) allows the GatedDeltaNet to maintain richer representations of key-value pairs across segments. This change requires updating the state_size constraint in experiment_config.yaml and ensuring the model config supports head_dim=16.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_005_state64_head_dim16
+
+## Iter 6 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_006_fix_broken_base
+
+## Iter 7 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_007_fix_broken_base
+
+## Iter 8 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_008_fix_broken_base
+
