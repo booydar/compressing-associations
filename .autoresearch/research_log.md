@@ -1763,3 +1763,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** After the FLA layer produces its output, applying a post-norm before the residual connection can prevent gradient explosion and improve convergence. This is a standard practice in modern transformer architectures and may help stabilize the recurrent memory updates.
 
 
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Set head_dim=8 to make num_heads*head_dim=32 match the state_size constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_012_head_dim_8_match_state_size
+
+
+## Iter 12 — kept — EM: 0.0112 (N=16)
+**Hypothesis:** Set head_dim=8 to make num_heads*head_dim=32 match the state_size constraint
+**Wall time:** 120.0 min
+**Result:** EM=0.0112 vs prev best=0.0008
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_012_head_dim_8_match_state_size', '16', '25000']' timed out after 7199.999972061021 seconds
+**Rationale:** The experiment_config.yaml specifies state_size=32 and n_head=4, but RecurrentMemoryConfig defaults to head_dim=32, giving 4*32=128 which exceeds the state_size limit. Setting head_dim=8 ensures 4*8=32 matches the configured state_size, allowing the FLA layer to properly utilize the recurrent memory capacity.
+
+

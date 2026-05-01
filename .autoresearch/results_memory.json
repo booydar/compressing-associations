@@ -5152,6 +5152,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.018
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Set head_dim=8 to make num_heads*head_dim=32 match the state_size constraint",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Set head_dim=8 to make num_heads*head_dim=32 match the state_size constraint",
+        "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+        "rationale": "The experiment_config.yaml specifies state_size=32 and n_head=4, but RecurrentMemoryConfig defaults to head_dim=32, giving 4*32=128 which exceeds the state_size limit. Setting head_dim=8 ensures 4*8=32 matches the configured state_size, allowing the FLA layer to properly utilize the recurrent memory capacity.",
+        "instruction": "In RecurrentMemoryConfig.__init__, change the default value of head_dim from 32 to 8. This ensures num_heads (4) * head_dim (8) = 32 matches the state_size constraint specified in experiment_config.yaml.",
+        "run_name": "head_dim_8_match_state_size"
+      },
+      "em_score": 0.0112,
+      "prev_best": 0.0008,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_012_head_dim_8_match_state_size",
+      "wall_time_min": 120.0,
+      "metric_step": 9000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_012_head_dim_8_match_state_size', '16', '25000']' timed out after 7199.999972061021 seconds",
+      "started_at": 1777670649.228745,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_012",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.0854
     }
   ]
 }
