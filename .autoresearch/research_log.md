@@ -1733,3 +1733,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Reduce learning rate from 1e-3 to 5e-4 to stabilize training and prevent optimization divergence
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_010_reduced_lr_stable
+
+
+## Iter 10 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Reduce learning rate from 1e-3 to 5e-4 to stabilize training and prevent optimization divergence
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0008
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_010_reduced_lr_stable', '16', '25000']' timed out after 7199.999968210934 seconds
+**Rationale:** Many previous experiments timed out or failed with errors, suggesting training instability. The current learning rate of 1e-3 may be too aggressive for the FLA-based recurrent architecture. Reducing to 5e-4 is a conservative change that often improves convergence in state-space models while maintaining reasonable training speed.
+
+
