@@ -1748,3 +1748,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Many previous experiments timed out or failed with errors, suggesting training instability. The current learning rate of 1e-3 may be too aggressive for the FLA-based recurrent architecture. Reducing to 5e-4 is a conservative change that often improves convergence in state-space models while maintaining reasonable training speed.
 
 
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Add layer normalization after the FLA output before residual addition to stabilize training dynamics
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_011_fla_post_norm_stabilization
+
+
+## Iter 11 — reverted — EM: 0.0004 (N=16)
+**Hypothesis:** Add layer normalization after the FLA output before residual addition to stabilize training dynamics
+**Wall time:** 120.0 min
+**Result:** EM=0.0004 vs prev best=0.0008
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_011_fla_post_norm_stabilization', '16', '25000']' timed out after 7199.99996638007 seconds
+**Rationale:** After the FLA layer produces its output, applying a post-norm before the residual connection can prevent gradient explosion and improve convergence. This is a standard practice in modern transformer architectures and may help stabilize the recurrent memory updates.
+
+

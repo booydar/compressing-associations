@@ -5120,6 +5120,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.0161
+    },
+    {
+      "id": 11,
+      "iter_tag": "iter_011",
+      "description": "Add layer normalization after the FLA output before residual addition to stabilize training dynamics",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Add layer normalization after the FLA output before residual addition to stabilize training dynamics",
+        "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+        "rationale": "After the FLA layer produces its output, applying a post-norm before the residual connection can prevent gradient explosion and improve convergence. This is a standard practice in modern transformer architectures and may help stabilize the recurrent memory updates.",
+        "instruction": "In RecurrentMemoryLayerWrapper.forward(), after computing fla_output from the FLA layer (line 94) and before the residual addition (line 100), add a layer normalization step. Create a new nn.LayerNorm or nn.RMSNorm instance in __init__ with dimension fla_layer.hidden_size, apply it to fla_output, then use the normalized output for the residual connection. Name the norm layer 'fla_post_norm'.",
+        "run_name": "fla_post_norm_stabilization"
+      },
+      "em_score": 0.0004,
+      "prev_best": 0.0008,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_011_fla_post_norm_stabilization",
+      "wall_time_min": 120.0,
+      "metric_step": 9000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_011_fla_post_norm_stabilization', '16', '25000']' timed out after 7199.99996638007 seconds",
+      "started_at": 1777663258.1000118,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_011",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.018
     }
   ]
 }
