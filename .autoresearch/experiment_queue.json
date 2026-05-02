@@ -1,5 +1,14 @@
 {
-  "queue": [],
+  "queue": [
+    {
+      "stream_id": "0",
+      "hypothesis": "Set conv_kernel to 1 to eliminate local convolution interference and let GatedDeltaNet handle all long-range dependencies",
+      "target_component": ".autoresearch/experiment_config.yaml",
+      "rationale": "Multiple experiments have failed with conv_kernel=4, likely due to interference between local convolution and global FLA mechanisms. Setting conv_kernel=1 removes the convolution entirely, allowing the GatedDeltaNet recurrent state to handle all associative memory without competing inductive biases. This was partially tried in iter_224 but needs to be tested cleanly.",
+      "instruction": "In .autoresearch/experiment_config.yaml, change the conv_kernel parameter value from 4 to 1. This eliminates the local convolution layer and lets the GatedDeltaNet handle all sequence dependencies through its recurrent mechanism.",
+      "run_name": "conv_kernel_one_clean"
+    }
+  ],
   "last_directions_hash": "75b9f2660ad867cbed41cb2b2b7b8f08",
-  "last_updated": "2026-05-02T11:37:45.323311"
+  "last_updated": "2026-05-02T14:35:35.127098"
 }

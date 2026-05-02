@@ -1920,3 +1920,25 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments show conv_kernel=4 causes interference with FLA recurrent state. Additionally, num_heads defaults to 1 while experiment_config.yaml specifies n_head=4, creating a capacity mismatch. Combining conv_kernel=1 with num_heads=4 addresses both issues: removes local convolution interference and enables parallel tracking of multiple associations.
 
 
+## Iter 28 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_028_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 225 — RUNNING — N=16
+**Hypothesis:** Initialize GatedDeltaNet decay bias to -1.0 (logit for ~0.73 retention) to balance forgetting vs. stability for associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_225_gdn_decay_init_minus1
+
+
+## Iter 225 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Initialize GatedDeltaNet decay bias to -1.0 (logit for ~0.73 retention) to balance forgetting vs. stability for associative memory
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_225_gdn_decay_init_minus1', '16', '25000']' timed out after 7199.99997422006 seconds
+**Rationale:** Previous experiments tried initializing decay bias for longer retention (iter_20) and log_sum_exp initialization (iter_22), but neither achieved strong EM. A moderate decay bias of -1.0 provides a better starting point that balances retention with training stability, allowing the model to learn optimal forgetting patterns during training rather than starting from an extreme value.
+
+
