@@ -2028,3 +2028,30 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Many previous experiments failed due to implementation errors. A simple hyperparameter change like increasing learning rate is less likely to cause errors and may improve training dynamics. The current lr of 1e-3 may be too conservative for this simple task.
 
 
+## Iter 230 — RUNNING — N=16
+**Hypothesis:** Reduce warmup_steps from 5000 to 2500 to allow faster learning rate schedule on the simple associative retrieval task
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_230_reduce_warmup_steps
+
+
+## Iter 230 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_230_reduce_warmup_steps
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 231 — RUNNING — N=16
+**Hypothesis:** Reduce warmup_steps from 5000 to 2500 to allow faster learning rate schedule on the simple associative retrieval task
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_231_reduce_warmup_steps_half
+
+
+## Iter 231 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Reduce warmup_steps from 5000 to 2500 to allow faster learning rate schedule on the simple associative retrieval task
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_231_reduce_warmup_steps_half', '16', '25000']' timed out after 7199.999971811078 seconds
+**Rationale:** Recent experiment iter 230 tried this but failed. The task is simple (N=16 pairs) and doesn't need 5000 warmup steps which is 20% of max_steps. Reducing warmup should allow the model to start learning the association pattern sooner.
+
+

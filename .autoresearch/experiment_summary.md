@@ -3374,3 +3374,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_031_fix_broken_base
 
+## Iter 230 | failed | N=16
+- Hypothesis: Reduce warmup_steps from 5000 to 2500 to allow faster learning rate schedule on the simple associative retrieval task
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Many recent experiments failed with implementation errors. A simple hyperparameter change like reducing warmup steps is less likely to cause errors. The current 5000 warmup steps may be excessive for this simple N=16 associative retrieval task, delaying useful gradient updates.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_230_reduce_warmup_steps
+
