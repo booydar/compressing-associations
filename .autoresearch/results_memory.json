@@ -5403,6 +5403,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.0289
+    },
+    {
+      "id": 20,
+      "iter_tag": "iter_020",
+      "description": "Initialize FLA decay bias to favor longer retention for associative memory",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Initialize FLA decay bias to favor longer retention for associative memory",
+        "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+        "rationale": "GatedDeltaNet uses a learned decay mechanism to control information retention. For associative retrieval tasks, the model needs to maintain key-value pairs across many segments. Initializing the decay bias to favor slower decay (more negative bias) should help the recurrent state retain associations longer, improving retrieval accuracy.",
+        "instruction": "In RecurrentMemoryCell.__init__, after creating the fla_layer, access the A (decay) bias parameter if it exists (typically called 'A_bias' or 'decay_bias') and initialize it to a negative value like -1.0 to favor longer retention. If the FLA layer does not expose this directly, add a post-initialization hook that modifies the decay bias after layer creation.",
+        "run_name": "decay_bias_longer_retention"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0018,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_020_decay_bias_longer_retention",
+      "wall_time_min": 120.0,
+      "metric_step": 7000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_020_decay_bias_longer_retention', '16', '25000']' timed out after 7199.99997161096 seconds",
+      "started_at": 1777698665.57502,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_020",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.0153
     }
   ]
 }

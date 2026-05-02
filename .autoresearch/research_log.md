@@ -1808,3 +1808,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments show unstable training with many configuration changes failing. A learnable gate initialized to 1.0 allows the model to start with full residual signal and learn to down-weight it if needed. This is a standard technique (e.g., ZeroInit) that improves training stability in deep networks without changing the model capacity.
 
 
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Initialize FLA decay bias to favor longer retention for associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_020_decay_bias_longer_retention
+
+
+## Iter 20 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Initialize FLA decay bias to favor longer retention for associative memory
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0018
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_020_decay_bias_longer_retention', '16', '25000']' timed out after 7199.99997161096 seconds
+**Rationale:** GatedDeltaNet uses a learned decay mechanism to control information retention. For associative retrieval tasks, the model needs to maintain key-value pairs across many segments. Initializing the decay bias to favor slower decay (more negative bias) should help the recurrent state retain associations longer, improving retrieval accuracy.
+
+
