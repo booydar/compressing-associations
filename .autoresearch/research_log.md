@@ -2006,3 +2006,25 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 31 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_031_fix_broken_base
+
+
+## Iter 31 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_031_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 229 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Increase learning_rate from 1e-3 to 5e-3 to accelerate convergence on the associative retrieval task
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_229_increase_lr_five_x', '16', '25000']' timed out after 7199.999973871047 seconds
+**Rationale:** Many previous experiments failed due to implementation errors. A simple hyperparameter change like increasing learning rate is less likely to cause errors and may improve training dynamics. The current lr of 1e-3 may be too conservative for this simple task.
+
+
