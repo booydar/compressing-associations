@@ -1942,3 +1942,42 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments tried initializing decay bias for longer retention (iter_20) and log_sum_exp initialization (iter_22), but neither achieved strong EM. A moderate decay bias of -1.0 provides a better starting point that balances retention with training stability, allowing the model to learn optimal forgetting patterns during training rather than starting from an extreme value.
 
 
+## Iter 226 — RUNNING — N=16
+**Hypothesis:** Set conv_kernel to 1 to eliminate local convolution interference and let GatedDeltaNet handle all long-range dependencies
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_226_conv_kernel_one_clean
+
+
+## Iter 226 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_226_conv_kernel_one_clean
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 227 — RUNNING — N=16
+**Hypothesis:** Add learnable forget_gate parameter to GatedDeltaNet to enable adaptive retention control for associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_227_learnable_forget_gate
+
+
+## Iter 29 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_029_fix_broken_base
+
+
+## Iter 29 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_029_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 227 — reverted — EM: 0.0078 (N=16)
+**Hypothesis:** Add learnable forget_gate parameter to GatedDeltaNet to enable adaptive retention control for associative memory
+**Wall time:** 120.0 min
+**Result:** EM=0.0078 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_227_learnable_forget_gate', '16', '25000']' timed out after 7199.999973680009 seconds
+**Rationale:** Recent experiments tried various fixed decay bias initializations (-1.0, -3.0) with mixed/failed results. A learnable forget gate parameter would allow the model to discover optimal retention rates during training rather than relying on hand-tuned initializations. This is consistent with GatedDeltaNet's gating mechanism design.
+
+

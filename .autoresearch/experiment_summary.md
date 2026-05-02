@@ -3334,3 +3334,23 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_028_fix_broken_base
 
+## Iter 226 | failed | N=16
+- Hypothesis: Set conv_kernel to 1 to eliminate local convolution interference and let GatedDeltaNet handle all long-range dependencies
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Multiple experiments have failed with conv_kernel=4, likely due to interference between local convolution and global FLA mechanisms. Setting conv_kernel=1 removes the convolution entirely, allowing the GatedDeltaNet recurrent state to handle all associative memory without competing inductive biases. This was partially tried in iter_224 but needs to be tested cleanly.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_226_conv_kernel_one_clean
+
+## Iter 29 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_029_fix_broken_base
+
