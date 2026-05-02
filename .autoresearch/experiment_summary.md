@@ -3254,3 +3254,73 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_008_fix_broken_base
 
+## Iter 21 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: The expand_v parameter controls the expansion factor for the value projection in GatedDeltaNet. With state_size=32 and head_dim=8, increasing expand_v from 2.0 to 3.0 will increase the intermediate value dimension from 64 to 96, providing more capacity to encode and retrieve key-value associations. This complements the existing gamma gate (iter 19) by giving the value projection more expressive power for associative retrieval.
+- exp_path: 
+
+## Iter 22 | failed | N=16
+- Hypothesis: Add log_sum_exp initialization to GatedDeltaNet decay bias for stronger long-term retention in associative memory
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiment (iter 20) that initialized decay bias for longer retention was reverted but showed promise. For associative retrieval with N=16 keys, the model needs to maintain strong retention over many timesteps. Using log_sum_exp initialization on the B (decay) bias ensures the model starts with a retention rate that preserves information across longer sequences, critical for matching keys to values after intervening tokens.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_022_decay_lse_init
+
+## Iter 23 | failed | N=16
+- Hypothesis: Increase head_dim from 8 to 10 to expand per-head representational capacity for storing key-value associations
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With 4 heads and state_size 32, each head currently has only 8 dimensions for value projection. Increasing head_dim to 10 (requiring state_size adjustment to 40) gives each head more capacity to encode and retrieve associative pairs. This differs from previous expand_v changes by directly expanding the memory state dimensionality per head.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_023_head_dim_10_expanded
+
+## Iter 24 | failed | N=16
+- Hypothesis: Add learnable decay_bias initializer to GatedDeltaNet with default -3.0 (logit for 0.95 retention) to enable slower forgetting for long-range associative memory
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: GatedDeltaNet uses a learned decay mechanism to control information retention. The default initialization may decay too quickly for N=16 associative recall across many segments. Initializing decay_bias to -3.0 gives ~95% initial retention (sigmoid(-3) ≈ 0.05 decay), allowing the model to maintain key-value associations longer. Making it learnable lets the model adapt retention to task needs.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_024_init_decay_bias_retention
+
+## Iter 25 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+
+## Iter 26 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+
+## Iter 27 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_027_fix_broken_base
+

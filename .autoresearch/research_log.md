@@ -1823,3 +1823,100 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** GatedDeltaNet uses a learned decay mechanism to control information retention. For associative retrieval tasks, the model needs to maintain key-value pairs across many segments. Initializing the decay bias to favor slower decay (more negative bias) should help the recurrent state retain associations longer, improving retrieval accuracy.
 
 
+## Iter 21 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 22 — RUNNING — N=16
+**Hypothesis:** Add log_sum_exp initialization to GatedDeltaNet decay bias for stronger long-term retention in associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_022_decay_lse_init
+
+
+## Iter 22 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_022_decay_lse_init
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 8 to 10 to expand per-head representational capacity for storing key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_023_head_dim_10_expanded
+
+
+## Iter 23 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_023_head_dim_10_expanded
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 24 — RUNNING — N=16
+**Hypothesis:** Add learnable decay_bias initializer to GatedDeltaNet with default -3.0 (logit for 0.95 retention) to enable slower forgetting for long-range associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_024_init_decay_bias_retention
+
+
+## Iter 24 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_024_init_decay_bias_retention
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 224 — RUNNING — N=16
+**Hypothesis:** Set conv_kernel to 1 and increase n_head to match config default of 4 to eliminate convolution interference while utilizing full multi-head capacity
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_224_n4_heads_conv1_baseline
+
+
+## Iter 25 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+
+
+## Iter 25 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 26 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+
+
+## Iter 26 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 27 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_027_fix_broken_base
+
+
+## Iter 27 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_027_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 28 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_028_fix_broken_base
+
+
+## Iter 224 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Set conv_kernel to 1 and increase n_head to match config default of 4 to eliminate convolution interference while utilizing full multi-head capacity
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_224_n4_heads_conv1_baseline', '16', '25000']' timed out after 7199.999964270042 seconds
+**Rationale:** Previous experiments show conv_kernel=4 causes interference with FLA recurrent state. Additionally, num_heads defaults to 1 while experiment_config.yaml specifies n_head=4, creating a capacity mismatch. Combining conv_kernel=1 with num_heads=4 addresses both issues: removes local convolution interference and enables parallel tracking of multiple associations.
+
+
