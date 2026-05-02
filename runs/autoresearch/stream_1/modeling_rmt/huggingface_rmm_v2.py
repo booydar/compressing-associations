@@ -94,7 +94,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         fla_output = fla_out[0]
         # fla_out[2] is the (possibly same) Cache object; re-assign defensively
         # in case the FLA layer ever returns a new Cache instance.
-        self.cache = fla_out[2]
+        if fla_out[2] is not None:
+            self.cache = fla_out[2]
 
         # 3. Residual
         hidden_states = hidden_states + fla_output
@@ -186,6 +187,8 @@ class RecurrentMemoryWrapperBase(nn.Module):
         self.rmt_config = rmt_kwargs
 
     def forward(self, segments, labels, output_attentions=None, output_hidden_states=None, *args, **kwargs):
+        if len(segments) == 0:
+            raise ValueError("segments cannot be empty")
         cell_outputs = []
         # Get the device from the model parameters
         device = next(self.memory_cell.parameters()).device

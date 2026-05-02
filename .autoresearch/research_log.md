@@ -1778,3 +1778,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The experiment_config.yaml specifies state_size=32 and n_head=4, but RecurrentMemoryConfig defaults to head_dim=32, giving 4*32=128 which exceeds the state_size limit. Setting head_dim=8 ensures 4*8=32 matches the configured state_size, allowing the FLA layer to properly utilize the recurrent memory capacity.
 
 
+## Iter 18 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_018_fix_broken_base
+
+
+## Iter 18 — kept — EM: 0.0006 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0112
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_018_fix_broken_base', '16', '25000']' timed out after 7199.999972720048 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
