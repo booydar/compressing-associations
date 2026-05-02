@@ -265,6 +265,8 @@ class RecurrentMemoryBase(PreTrainedModel):
         else:
             if config.base_model_config is None:
                 base_config = AutoConfig.from_pretrained(config.base_model_name)
+            elif isinstance(config.base_model_config, str):
+                base_config = AutoConfig.from_pretrained(config.base_model_config)
             else:
                 base_config = config.base_model_config
             base_model = AutoModelForCausalLM.from_config(base_config)
