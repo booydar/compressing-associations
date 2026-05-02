@@ -26,13 +26,13 @@ BASE_MODELS=(mamba)
 # - run_mamba_on_kv_retrieval-all-conf-more-4.sh
 # Format: D:L:STATE_SIZE:CONV_KERNEL
 
-N_LAYER_VALUES=(1 2 4)
+N_LAYER_VALUES=(2 4)
 N_EMBD_VALUES=(64 128 256)
 STATE_SIZE_VALUES=(4 16 32)
 CONV_KERNEL_VALUES=(2 4)
 
 for BASE_MODEL in "${BASE_MODELS[@]}"; do
-  for N_PAIRS in 8 16 32; do
+  for N_PAIRS in 8; do
     for N_LAYER in "${N_LAYER_VALUES[@]}"; do
       for N_EMBD in "${N_EMBD_VALUES[@]}"; do
         for STATE_SIZE in "${STATE_SIZE_VALUES[@]}"; do

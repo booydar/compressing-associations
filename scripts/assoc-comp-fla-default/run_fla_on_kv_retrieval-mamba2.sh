@@ -17,7 +17,7 @@ TOKENIZER_PATH="./tokenizers/kv_alphabet_${VOCAB_SIZE}/"
 
 # Keep mamba2 if that is your intended FLA backend.
 # If you want exact architectural parity with the original Mamba sweeps, change this to: BASE_MODELS=(mamba)
-BASE_MODELS=(mamba)
+BASE_MODELS=(mamba2)
 
 # Union of:
 # - run_mamba_on_kv_retrieval-all-conf-more.sh
