@@ -5371,6 +5371,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.015
+    },
+    {
+      "id": 19,
+      "iter_tag": "iter_019",
+      "description": "Add learnable gamma gate parameter to scale FLA residual connection for better training stability",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Add learnable gamma gate parameter to scale FLA residual connection for better training stability",
+        "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+        "rationale": "Previous experiments show unstable training with many configuration changes failing. A learnable gate initialized to 1.0 allows the model to start with full residual signal and learn to down-weight it if needed. This is a standard technique (e.g., ZeroInit) that improves training stability in deep networks without changing the model capacity.",
+        "instruction": "In RecurrentMemoryLayerWrapper.__init__, add a learnable parameter self.gamma = nn.Parameter(torch.tensor(1.0)). In the forward method, multiply the fla_output by self.gamma before adding to hidden_states (i.e., hidden_states = hidden_states + self.gamma * fla_output).",
+        "run_name": "learnable_residual_gate"
+      },
+      "em_score": 0.0018,
+      "prev_best": 0.0006,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_019_learnable_residual_gate",
+      "wall_time_min": 120.0,
+      "metric_step": 6500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_019_learnable_residual_gate', '16', '25000']' timed out after 7199.999972759979 seconds",
+      "started_at": 1777691173.4813209,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_019",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.0289
     }
   ]
 }

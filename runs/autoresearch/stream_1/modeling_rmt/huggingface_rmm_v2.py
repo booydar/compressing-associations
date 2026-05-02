@@ -72,6 +72,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         self.base_layer = base_layer
         self.fla_layer = fla_layer
         self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5)
+        self.gamma = nn.Parameter(torch.tensor(1.0))
         # Cache is always a valid Cache object — never None — so that
         # update_layer_cache (called inside fla_layer.forward) always writes state.
         self.cache = Cache()
@@ -98,7 +99,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             self.cache = fla_out[2]
 
         # 3. Residual
-        hidden_states = hidden_states + fla_output
+        hidden_states = hidden_states + self.gamma * fla_output
 
         # 4. Propagate remaining outputs from the base layer (KV cache, attentions…)
         if isinstance(output, tuple):

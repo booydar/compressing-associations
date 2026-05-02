@@ -1793,3 +1793,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Add learnable gamma gate parameter to scale FLA residual connection for better training stability
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_019_learnable_residual_gate
+
+
+## Iter 19 — kept — EM: 0.0018 (N=16)
+**Hypothesis:** Add learnable gamma gate parameter to scale FLA residual connection for better training stability
+**Wall time:** 120.0 min
+**Result:** EM=0.0018 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_019_learnable_residual_gate', '16', '25000']' timed out after 7199.999972759979 seconds
+**Rationale:** Previous experiments show unstable training with many configuration changes failing. A learnable gate initialized to 1.0 allows the model to start with full residual signal and learn to down-weight it if needed. This is a standard technique (e.g., ZeroInit) that improves training stability in deep networks without changing the model capacity.
+
+
