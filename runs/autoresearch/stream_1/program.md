@@ -17,9 +17,9 @@ Advance N-level: N=2 → N=4 → N=8 as EM ≥ 0.99 at each level.
 ## Current State
 - Stream: 1
 - N-level: 16
-- Current best EM: 0.0200
-- Best variant: iter_033
-- Last updated: 2026-05-03 11:25
+- Current best EM: 0.3618
+- Best variant: iter_035
+- Last updated: 2026-05-03 14:36
 
 ## Current Understanding
 (updated each iteration by autoresearch loop)
