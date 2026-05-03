@@ -2465,3 +2465,25 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Layer normalization before output projection can reduce internal covariate shift and stabilize training dynamics. This is particularly important for recurrent models where activations can drift over time steps, potentially improving convergence on the associative retrieval task.
 
 
+## Iter 46 — RUNNING — N=16
+**Hypothesis:** Add weight_decay of 0.01 to regularize weights and improve generalization on the associative retrieval task
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_046_weight_decay_0_01
+
+
+## Iter 46 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_046_weight_decay_0_01
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 253 — kept — EM: 0.0136 (N=16)
+**Hypothesis:** Increase FLA heads from 1 to 4 to enable parallel tracking of multiple key-value associations
+**Wall time:** 120.0 min
+**Result:** EM=0.0136 vs prev best=0.0010
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_253_n4_heads_parallel_tracking', '16', '25000']' timed out after 7199.999974090024 seconds
+**Rationale:** The current default of num_heads=1 underutilizes the 32-dimensional state capacity. With 4 heads at 8 head_dim each, the model can track multiple associative pairs in parallel, which is critical for the N=16 associative retrieval task. This change aligns the FLA layer configuration with the transformer's n_head=4 setting.
+
+

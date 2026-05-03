@@ -3644,3 +3644,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The current state_size of 32 (num_heads * head_dim) limits the memory capacity for associative tracking. Increasing to 64 (e.g., 4 heads x 16 dim) provides more capacity to encode and retrieve associations, which is critical for the N=16 associative retrieval task. This leverages the full state_size budget allowed by the constraints.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_252_increase_state_size_64
 
+## Iter 46 | failed | N=16
+- Hypothesis: Add weight_decay of 0.01 to regularize weights and improve generalization on the associative retrieval task
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Many previous experiments failed or showed poor EM accuracy. Adding weight decay can help prevent overfitting and improve generalization by penalizing large weights. This is a standard regularization technique that has not been tried yet in this experiment series.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_046_weight_decay_0_01
+
