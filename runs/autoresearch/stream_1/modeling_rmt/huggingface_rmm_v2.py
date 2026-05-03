@@ -287,6 +287,9 @@ class RecurrentMemoryBase(PreTrainedModel):
         )
 
     def forward(self, segments=None, labels=None, *args, **kwargs):
+        # Ensure model is on GPU for FLA Triton kernels
+        if next(self.parameters()).device.type == "cpu" and torch.cuda.is_available():
+            self.to("cuda")
         out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
         for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
             layer.reset_memory()

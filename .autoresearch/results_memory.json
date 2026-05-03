@@ -6186,24 +6186,25 @@
         "run_name": "fix_broken_base",
         "_fix_base": true
       },
-      "em_score": null,
+      "em_score": 0.0006,
       "prev_best": 0.0006,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "kept",
+      "status": "completed",
       "n_level": 16,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_032_fix_broken_base",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
-      "is_partial": false,
-      "recovery_status": "pending",
+      "wall_time_min": 120.0,
+      "metric_step": 8500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
       "needs_retry": false,
       "retry_of": null,
-      "run_error": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_032_fix_broken_base', '16', '25000']' timed out after 7199.999959740089 seconds",
       "started_at": 1777780814.6049001,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_032",
       "summary_logged": false,
-      "stream_id": "1"
+      "stream_id": "1",
+      "token_accuracy": 0.0196
     }
   ]
 }

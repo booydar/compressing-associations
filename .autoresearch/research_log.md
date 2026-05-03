@@ -2119,3 +2119,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments with conv_kernel=1 showed promise but were not combined with increased expand_v. Setting conv_kernel=1 eliminates local interference, while increasing expand_v to 4.0 provides more capacity for associative memory without changing head_dim. This combination addresses both convolution interference and capacity constraints.
 
 
+## Iter 32 — kept — EM: 0.0006 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_032_fix_broken_base', '16', '25000']' timed out after 7199.999959740089 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
