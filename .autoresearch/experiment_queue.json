@@ -1,14 +1,5 @@
 {
-  "queue": [
-    {
-      "stream_id": "0",
-      "hypothesis": "Increase early_stopping_patience from 20 to 40 to allow more training time before premature convergence on associative task",
-      "target_component": ".autoresearch/experiment_config.yaml",
-      "rationale": "Many experiments show low EM values (0.0006-0.0078) suggesting models may be converging too quickly or getting stuck. The current patience of 20 may be too aggressive for this task. Increasing to 40 gives the optimizer more opportunity to find better solutions without premature early stopping.",
-      "instruction": "Change early_stopping_patience from 20 to 40 in experiment_config.yaml to allow longer training before early stopping triggers.",
-      "run_name": "increase_patience_to_40"
-    }
-  ],
+  "queue": [],
   "last_directions_hash": "75b9f2660ad867cbed41cb2b2b7b8f08",
-  "last_updated": "2026-05-03T02:00:36.886598"
+  "last_updated": "2026-05-03T05:31:06.305979"
 }
