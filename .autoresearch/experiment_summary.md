@@ -3624,3 +3624,23 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: GatedDeltaNet with fewer, wider heads may better capture key-value associations. The current 4x8 configuration splits capacity across many narrow heads. A 2x16 configuration doubles feature dimension per head, potentially improving associative memory capacity while keeping total state_size at 32.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_044_n2_heads_dim16
 
+## Iter 251 | failed | N=16
+- Hypothesis: Increase FLA layer from 1 to 4 heads to improve capacity for tracking multiple key-value associations
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The RecurrentMemoryConfig defaults to num_heads=1 while the experiment_config.yaml specifies n_head=4. This mismatch underutilizes the 32-dimensional state capacity. With 4 heads at 8 head_dim each, the model can track multiple associative pairs in parallel, which is critical for the N=16 associative retrieval task. This change was previously attempted (iter_1) but timed out; retrying with proper configuration may succeed.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_251_n4_heads_baseline
+
+## Iter 252 | failed | N=16
+- Hypothesis: Increase state_size from 32 to 64 to expand memory capacity for tracking more key-value pairs
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current state_size of 32 (num_heads * head_dim) limits the memory capacity for associative tracking. Increasing to 64 (e.g., 4 heads x 16 dim) provides more capacity to encode and retrieve associations, which is critical for the N=16 associative retrieval task. This leverages the full state_size budget allowed by the constraints.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_252_increase_state_size_64
+

@@ -2426,3 +2426,42 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Recent experiments have been failing with exit code 1, suggesting potential training instability. Residual connections are a well-established technique to stabilize training in deep networks and improve gradient propagation. This architectural change could help resolve the base experiment failures.
 
 
+## Iter 251 — RUNNING — N=16
+**Hypothesis:** Increase FLA layer from 1 to 4 heads to improve capacity for tracking multiple key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_251_n4_heads_baseline
+
+
+## Iter 251 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_251_n4_heads_baseline
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 252 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 64 to expand memory capacity for tracking more key-value pairs
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_252_increase_state_size_64
+
+
+## Iter 252 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_252_increase_state_size_64
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 253 — RUNNING — N=16
+**Hypothesis:** Increase FLA heads from 1 to 4 to enable parallel tracking of multiple key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_253_n4_heads_parallel_tracking
+
+
+## Iter 45 — reverted — EM: 0.0034 (N=16)
+**Hypothesis:** Add layer_norm before the output projection to stabilize training and improve gradient flow in deep recurrent stacks
+**Wall time:** 120.0 min
+**Result:** EM=0.0034 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_045_enable_layer_norm', '16', '25000']' timed out after 7199.999975090963 seconds
+**Rationale:** Layer normalization before output projection can reduce internal covariate shift and stabilize training dynamics. This is particularly important for recurrent models where activations can drift over time steps, potentially improving convergence on the associative retrieval task.
+
+
