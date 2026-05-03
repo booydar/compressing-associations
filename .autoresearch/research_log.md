@@ -2355,3 +2355,74 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The current state_size of 32 (num_heads * head_dim) may be limiting the model's ability to store and retrieve the 16 key-value pairs required by the task. Increasing state_size to 48 provides 50% more memory capacity while staying under the 32 limit constraint. This should improve the model's ability to maintain accurate associations over long contexts.
 
 
+## Iter 39 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 40 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 250 — RUNNING — N=16
+**Hypothesis:** Add residual connections around the RMM layer to improve gradient flow and representation learning
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_250_residual_rmm_fix
+
+
+## Iter 41 — RUNNING — N=16
+**Hypothesis:** Add weight_decay of 0.01 to regularize weights and improve generalization on the associative retrieval task
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_041_weight_decay_0_01
+
+
+## Iter 41 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_041_weight_decay_0_01
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 42 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 43 — RUNNING — N=16
+**Hypothesis:** Add initial_decay_rate parameter to GatedDeltaNet with default 0.95 to enable slower forgetting for long-range associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_043_initial_decay_0_95
+
+
+## Iter 43 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_043_initial_decay_0_95
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 44 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 8 to 16 and reduce n_head from 4 to 2 to maintain state_size=32 while providing wider feature representations per head
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_044_n2_heads_dim16
+
+
+## Iter 44 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_044_n2_heads_dim16
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 45 — RUNNING — N=16
+**Hypothesis:** Add layer_norm before the output projection to stabilize training and improve gradient flow in deep recurrent stacks
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_045_enable_layer_norm
+
+
+## Iter 250 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Add residual connections around the RMM layer to improve gradient flow and representation learning
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0010
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_250_residual_rmm_fix', '16', '25000']' timed out after 7199.99997314997 seconds
+**Rationale:** Recent experiments have been failing with exit code 1, suggesting potential training instability. Residual connections are a well-established technique to stabilize training in deep networks and improve gradient propagation. This architectural change could help resolve the base experiment failures.
+
+

@@ -3564,3 +3564,63 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: (none)
 - exp_path: 
 
+## Iter 39 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+
+## Iter 40 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+
+## Iter 41 | failed | N=16
+- Hypothesis: Add weight_decay of 0.01 to regularize weights and improve generalization on the associative retrieval task
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Weight decay (L2 regularization) can help prevent overfitting and improve generalization. Adding a moderate weight_decay of 0.01 to the optimizer should encourage smaller weights and potentially improve EM accuracy on the N=16 task.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_041_weight_decay_0_01
+
+## Iter 42 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+
+## Iter 43 | failed | N=16
+- Hypothesis: Add initial_decay_rate parameter to GatedDeltaNet with default 0.95 to enable slower forgetting for long-range associative memory
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: GatedDeltaNet uses a decay mechanism to control memory retention. Setting a higher initial decay rate (closer to 1.0) will slow down forgetting, which is critical for maintaining key-value associations over long sequences in the N=16 task. This complements the increased expand_v=4.0 by ensuring stored information persists longer.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_043_initial_decay_0_95
+
+## Iter 44 | failed | N=16
+- Hypothesis: Increase head_dim from 8 to 16 and reduce n_head from 4 to 2 to maintain state_size=32 while providing wider feature representations per head
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: GatedDeltaNet with fewer, wider heads may better capture key-value associations. The current 4x8 configuration splits capacity across many narrow heads. A 2x16 configuration doubles feature dimension per head, potentially improving associative memory capacity while keeping total state_size at 32.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_044_n2_heads_dim16
+
