@@ -1,14 +1,5 @@
 {
-  "queue": [
-    {
-      "stream_id": "1",
-      "hypothesis": "Increase conv_kernel from 4 to 8 to expand the receptive field for capturing longer-range local dependencies in associative retrieval",
-      "target_component": ".autoresearch/experiment_config.yaml",
-      "rationale": "The conv_kernel parameter controls the convolution kernel size in GatedDeltaNet, determining how far back the model can attend to local patterns. Increasing it from 4 to 8 allows the model to capture longer-range dependencies within the convolutional pathway, complementing the recurrent memory mechanism for the N=16 task.",
-      "instruction": "Change the conv_kernel value from 4 to 8 in the experiment_config.yaml file under the RMM-specific parameters section.",
-      "run_name": "conv_kernel_8"
-    }
-  ],
+  "queue": [],
   "last_directions_hash": "75b9f2660ad867cbed41cb2b2b7b8f08",
-  "last_updated": "2026-05-03T12:25:19.769220"
+  "last_updated": "2026-05-03T15:25:49.113749"
 }
