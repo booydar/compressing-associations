@@ -3414,3 +3414,33 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: (none)
 - exp_path: 
 
+## Iter 237 | failed | N=16
+- Hypothesis: Add learnable decay_rate parameter initialized to 0.99 for stronger long-term retention in associative memory
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Multiple experiments with decay bias initialization failed. A learnable decay_rate parameter would allow the model to adaptively learn optimal retention without manual tuning. The default 0.99 value favors retention which suits associative retrieval.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_237_learnable_decay_rate
+
+## Iter 238 | failed | N=16
+- Hypothesis: Reduce n_head from 4 to 2 to increase head_dim from 8 to 16 for better per-head associative capacity
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments with increased head_dim (iter 23) failed due to implementation errors, but the hypothesis was sound. Reducing n_head while keeping state_size constant achieves the same goal of larger head_dim without breaking the state_size constraint. Larger heads may better store key-value associations.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_238_reduce_heads_larger_dim
+
+## Iter 239 | failed | N=16
+- Hypothesis: Set conv_kernel to 1 and increase expand_v to 4.0 to eliminate convolution interference while expanding value projection capacity
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments with conv_kernel=1 showed promise but were not combined with increased expand_v. Setting conv_kernel=1 eliminates local interference, while increasing expand_v to 4.0 provides more capacity for associative memory without changing head_dim. This combination addresses both convolution interference and capacity constraints.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_239_conv1_expand4_combined
+

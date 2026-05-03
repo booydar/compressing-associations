@@ -2129,3 +2129,54 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 33 — RUNNING — N=16
+**Hypothesis:** Decrease learning_rate from 1e-3 to 5e-4 to enable more stable training and better convergence on the associative retrieval task
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_033_lower_lr_stable_train
+
+
+## Iter 237 — RUNNING — N=16
+**Hypothesis:** Add learnable decay_rate parameter initialized to 0.99 for stronger long-term retention in associative memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_237_learnable_decay_rate
+
+
+## Iter 237 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_237_learnable_decay_rate
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 238 — RUNNING — N=16
+**Hypothesis:** Reduce n_head from 4 to 2 to increase head_dim from 8 to 16 for better per-head associative capacity
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_238_reduce_heads_larger_dim
+
+
+## Iter 238 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_238_reduce_heads_larger_dim
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 239 — RUNNING — N=16
+**Hypothesis:** Set conv_kernel to 1 and increase expand_v to 4.0 to eliminate convolution interference while expanding value projection capacity
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_239_conv1_expand4_combined
+
+
+## Iter 239 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_239_conv1_expand4_combined
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 33 — kept — EM: 0.0200 (N=16)
+**Hypothesis:** Decrease learning_rate from 1e-3 to 5e-4 to enable more stable training and better convergence on the associative retrieval task
+**Wall time:** 120.0 min
+**Result:** EM=0.0200 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_033_lower_lr_stable_train', '16', '25000']' timed out after 7199.999974849983 seconds
+**Rationale:** Recent experiments show frequent failures with 'experiment error: Experiment script exited with code 1', which may indicate training instability from too high a learning rate. Reducing learning_rate to 5e-4 can provide more stable gradient updates, allowing the model to properly learn key-value associations over the 25000 step training budget.
+
+
