@@ -2345,3 +2345,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 38 — reverted — EM: 0.0262 (N=16)
+**Hypothesis:** Increase state_size from 32 to 48 to provide more memory capacity for storing key-value associations in the N=16 associative retrieval task
+**Wall time:** 120.0 min
+**Result:** EM=0.0262 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_038_state_size_48', '16', '25000']' timed out after 7199.999975999934 seconds
+**Rationale:** The current state_size of 32 (num_heads * head_dim) may be limiting the model's ability to store and retrieve the 16 key-value pairs required by the task. Increasing state_size to 48 provides 50% more memory capacity while staying under the 32 limit constraint. This should improve the model's ability to maintain accurate associations over long contexts.
+
+
