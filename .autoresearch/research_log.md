@@ -2055,3 +2055,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Recent experiment iter 230 tried this but failed. The task is simple (N=16 pairs) and doesn't need 5000 warmup steps which is 20% of max_steps. Reducing warmup should allow the model to start learning the association pattern sooner.
 
 
+## Iter 232 — RUNNING — N=16
+**Hypothesis:** Set state_size to 16 and n_head to 2 to use head_dim=8, matching GatedDeltaNet default for better stability
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_232_state_16_heads_2
+
+
+## Iter 232 — reverted — EM: 0.0010 (N=16)
+**Hypothesis:** Set state_size to 16 and n_head to 2 to use head_dim=8, matching GatedDeltaNet default for better stability
+**Wall time:** 120.0 min
+**Result:** EM=0.0010 vs prev best=0.0162
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_232_state_16_heads_2', '16', '25000']' timed out after 7199.999975580024 seconds
+**Rationale:** Current config uses state_size=32 with n_head=4, forcing head_dim=8. Many failed experiments tried increasing head_dim or adding parameters. Using state_size=16 with n_head=2 maintains head_dim=8 (the GatedDeltaNet default) which may be more stable. This simplifies the configuration while still providing 16-dimensional memory capacity.
+
+

@@ -6023,6 +6023,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0145
+    },
+    {
+      "id": 232,
+      "iter_tag": "iter_232",
+      "description": "Set state_size to 16 and n_head to 2 to use head_dim=8, matching GatedDeltaNet default for better stability",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Set state_size to 16 and n_head to 2 to use head_dim=8, matching GatedDeltaNet default for better stability",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Current config uses state_size=32 with n_head=4, forcing head_dim=8. Many failed experiments tried increasing head_dim or adding parameters. Using state_size=16 with n_head=2 maintains head_dim=8 (the GatedDeltaNet default) which may be more stable. This simplifies the configuration while still providing 16-dimensional memory capacity.",
+        "instruction": "Change state_size from 32 to 16 and change n_head from 4 to 2 in experiment_config.yaml. This will result in head_dim=8 (16/2=8) which matches the GatedDeltaNet default.",
+        "run_name": "state_16_heads_2"
+      },
+      "em_score": 0.001,
+      "prev_best": 0.0162,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_232_state_16_heads_2",
+      "wall_time_min": 120.0,
+      "metric_step": 5500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_232_state_16_heads_2', '16', '25000']' timed out after 7199.999975580024 seconds",
+      "started_at": 1777763235.5213852,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/artifacts/iter_232",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0246
     }
   ]
 }
