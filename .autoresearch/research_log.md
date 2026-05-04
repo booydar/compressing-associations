@@ -2656,3 +2656,40 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments with expand_v=4.0 showed mixed results with some runs achieving moderate EM but failing to converge. Reducing expand_v may improve training stability by reducing model capacity slightly while maintaining sufficient representation power for the N=16 task.
 
 
+## Iter 53 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 264 — RUNNING — N=16
+**Hypothesis:** Switch FLA layer from GatedDeltaNet to RetNet to improve stable long-term memory retention
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_264_retnet_architecture
+
+
+## Iter 264 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_264_retnet_architecture
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 54 — RUNNING — N=16
+**Hypothesis:** Increase n_embd from 128 to 192 to provide more capacity for learning key-value associations without changing state_size
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_054_n_embd_192
+
+
+## Iter 265 — RUNNING — N=16
+**Hypothesis:** Reduce learning_rate from 1e-3 to 5e-4 to improve training stability and convergence
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_265_lower_lr_stable
+
+
+## Iter 54 — reverted — EM: 0.0154 (N=16)
+**Hypothesis:** Increase n_embd from 128 to 192 to provide more capacity for learning key-value associations without changing state_size
+**Wall time:** 120.0 min
+**Result:** EM=0.0154 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_054_n_embd_192', '16', '25000']' timed out after 7199.999974531005 seconds
+**Rationale:** The current embedding dimension of 128 may limit the model's representational capacity for the N=16 associative retrieval task. Increasing n_embd to 192 provides 50% more capacity for the input/output projections while keeping the recurrent state size at 32, allowing richer feature extraction without increasing memory complexity.
+
+
