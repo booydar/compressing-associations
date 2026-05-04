@@ -2888,3 +2888,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The conv_kernel=4 controls the local window for the FLA mechanism's convolution. A smaller kernel (2) forces the model to focus more tightly on recent keys, which could improve precision when retrieving from 16 associations. This complements the expand_v=4.0 setting by tightening the local receptive field.
 
 
+## Iter 60 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 64 to provide more capacity for storing key-value associations in the recurrent memory
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_060_state_size_64_capacity
+
+
+## Iter 277 — kept — EM: 0.0012 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.2400
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_277_fix_broken_base', '16', '25000']' timed out after 7199.999974459992 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

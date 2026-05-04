@@ -8227,12 +8227,44 @@
         "run_name": "fix_broken_base",
         "_fix_base": true
       },
-      "em_score": null,
+      "em_score": 0.0012,
       "prev_best": 0.24,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_277_fix_broken_base",
+      "wall_time_min": 120.0,
+      "metric_step": 5000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_277_fix_broken_base', '16', '25000']' timed out after 7199.999974459992 seconds",
+      "started_at": 1777926924.0787542,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/artifacts/iter_277",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0257
+    },
+    {
+      "id": 60,
+      "iter_tag": "iter_060",
+      "description": "Increase state_size from 32 to 64 to provide more capacity for storing key-value associations in the recurrent memory",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Increase state_size from 32 to 64 to provide more capacity for storing key-value associations in the recurrent memory",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Recent experiments show the model struggles with N=16 associative retrieval. The current state_size of 32 (4 heads \u00d7 8 head_dim) may be insufficient to maintain distinct representations for multiple key-value pairs across segments. Doubling to 64 increases the recurrent state capacity without changing the architecture, allowing the FLA layer to store more information about learned associations.",
+        "instruction": "In experiment_config.yaml, change the state_size value from 32 to 64. This will increase the total recurrent memory capacity while keeping n_head=4 and requiring head_dim to be adjusted to 16 (since state_size = num_heads * head_dim).",
+        "run_name": "state_size_64_capacity"
+      },
+      "em_score": null,
+      "prev_best": 0.3618,
       "verdict": "running",
       "status": "running",
       "n_level": 16,
-      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_277_fix_broken_base",
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_060_state_size_64_capacity",
       "wall_time_min": 0.0,
       "metric_step": null,
       "metric_source": null,
@@ -8241,10 +8273,10 @@
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
-      "started_at": 1777926924.0787542,
-      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/artifacts/iter_277",
+      "started_at": 1777927771.4675941,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/artifacts/iter_060",
       "summary_logged": false,
-      "stream_id": "0"
+      "stream_id": "1"
     }
   ]
 }

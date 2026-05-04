@@ -287,9 +287,11 @@ class RecurrentMemoryBase(PreTrainedModel):
     def forward(self, segments=None, labels=None, *args, **kwargs):
         if next(self.parameters()).device.type == "cpu" and torch.cuda.is_available():
             self.to("cuda")
-        out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
-        for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
-            layer.reset_memory()
+        try:
+            out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
+        finally:
+            for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
+                layer.reset_memory()
         return out
 
     def generate(self, *args, **kwargs):
