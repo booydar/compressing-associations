@@ -2693,3 +2693,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The current embedding dimension of 128 may limit the model's representational capacity for the N=16 associative retrieval task. Increasing n_embd to 192 provides 50% more capacity for the input/output projections while keeping the recurrent state size at 32, allowing richer feature extraction without increasing memory complexity.
 
 
+## Iter 265 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Reduce learning_rate from 1e-3 to 5e-4 to improve training stability and convergence
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0010
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_265_lower_lr_stable', '16', '25000']' timed out after 7199.999964470044 seconds
+**Rationale:** Many recent experiments failed with errors, suggesting potential training instability. Reducing the learning rate can help stabilize training and allow the model to converge more reliably on the associative retrieval task.
+
+
