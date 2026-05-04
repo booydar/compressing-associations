@@ -3734,3 +3734,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_259_fix_broken_base
 
+## Iter 50 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+

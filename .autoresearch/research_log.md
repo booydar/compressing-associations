@@ -2577,3 +2577,28 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Layer normalization before attention mechanisms is a standard practice that helps stabilize training in deep networks. This should improve convergence on the associative retrieval task by normalizing inputs to the FLA layer.
 
 
+## Iter 50 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 51 — RUNNING — N=16
+**Hypothesis:** Add a learnable forget gate parameter to control retention decay dynamically based on input patterns
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_051_learnable_forget_gate
+
+
+## Iter 260 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_260_fix_broken_base
+
+
+## Iter 51 — reverted — EM: 0.0008 (N=16)
+**Hypothesis:** Add a learnable forget gate parameter to control retention decay dynamically based on input patterns
+**Wall time:** 120.0 min
+**Result:** EM=0.0008 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_051_learnable_forget_gate', '16', '25000']' timed out after 7199.999969389988 seconds
+**Rationale:** Previous attempts to add decay parameters (initial_decay_rate, decay_bias) failed. A learnable forget gate that modulates the decay based on input content could provide adaptive memory retention, allowing the model to dynamically control what information to keep vs forget during associative retrieval.
+
+
