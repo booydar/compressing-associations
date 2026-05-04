@@ -2703,3 +2703,23 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Many recent experiments failed with errors, suggesting potential training instability. Reducing the learning rate can help stabilize training and allow the model to converge more reliably on the associative retrieval task.
 
 
+## Iter 55 — RUNNING — N=16
+**Hypothesis:** Increase warmup_steps from 5000 to 10000 to provide more stable gradient updates during early training phases
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_055_warmup_10000
+
+
+## Iter 266 — RUNNING — N=16
+**Hypothesis:** Increase warmup_steps from 5000 to 10000 to improve training stability and convergence
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_266_longer_warmup_schedule
+
+
+## Iter 55 — reverted — EM: 0.2438 (N=16)
+**Hypothesis:** Increase warmup_steps from 5000 to 10000 to provide more stable gradient updates during early training phases
+**Wall time:** 120.0 min
+**Result:** EM=0.2438 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_055_warmup_10000', '16', '25000']' timed out after 7199.999975991086 seconds
+**Rationale:** Many experiments show training instability and failures. A longer warmup period allows the model to learn better initial representations before full learning rate kicks in, which is especially important for GatedDeltaNet's recurrent memory mechanisms.
+
+
