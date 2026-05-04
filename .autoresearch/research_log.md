@@ -2903,3 +2903,25 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 278 — RUNNING — N=16
+**Hypothesis:** Add post-norm after FLA output before residual addition to improve gradient flow and training stability
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_278_fla_postnorm_addition
+
+
+## Iter 278 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_278_fla_postnorm_addition
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 60 — kept — EM: 0.8756 (N=16)
+**Hypothesis:** Increase state_size from 32 to 64 to provide more capacity for storing key-value associations in the recurrent memory
+**Wall time:** 120.0 min
+**Result:** EM=0.8756 vs prev best=0.3618
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_060_state_size_64_capacity', '16', '25000']' timed out after 7199.999977060012 seconds
+**Rationale:** Recent experiments show the model struggles with N=16 associative retrieval. The current state_size of 32 (4 heads × 8 head_dim) may be insufficient to maintain distinct representations for multiple key-value pairs across segments. Doubling to 64 increases the recurrent state capacity without changing the architecture, allowing the FLA layer to store more information about learned associations.
+
+

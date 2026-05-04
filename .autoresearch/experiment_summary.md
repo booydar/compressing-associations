@@ -3924,3 +3924,13 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_276_fix_broken_base
 
+## Iter 278 | failed | N=16
+- Hypothesis: Add post-norm after FLA output before residual addition to improve gradient flow and training stability
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current architecture applies RMSNorm only before the FLA layer (pre-norm style). Adding a second RMSNorm after the FLA output before residual addition creates a more balanced normalization scheme, which can prevent activation explosion and improve gradient propagation through the recurrent memory pathway. This is particularly important for the N=16 associative retrieval task where stable memory updates are critical.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_278_fla_postnorm_addition
+
