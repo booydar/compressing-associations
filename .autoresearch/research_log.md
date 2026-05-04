@@ -2602,3 +2602,18 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous attempts to add decay parameters (initial_decay_rate, decay_bias) failed. A learnable forget gate that modulates the decay based on input content could provide adaptive memory retention, allowing the model to dynamically control what information to keep vs forget during associative retrieval.
 
 
+## Iter 52 — RUNNING — N=16
+**Hypothesis:** Reduce expand_v from 4.0 to 3.0 to test if smaller value projection improves learning stability
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_052_expand_v_3_0_stability
+
+
+## Iter 260 — kept — EM: 0.0010 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0010 vs prev best=0.0136
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_260_fix_broken_base', '16', '25000']' timed out after 7199.99997076008 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

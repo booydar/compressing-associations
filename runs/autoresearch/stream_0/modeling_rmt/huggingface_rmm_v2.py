@@ -71,7 +71,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         super().__init__()
         self.base_layer = base_layer
         self.fla_layer = fla_layer
-        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5)
+        fla_device = next(fla_layer.parameters()).device
+        fla_dtype = next(fla_layer.parameters()).dtype
+        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5).to(
+            device=fla_device, dtype=fla_dtype
+        )
         # Cache is always a valid Cache object — never None — so that
         # update_layer_cache (called inside fla_layer.forward) always writes state.
         self.cache = Cache()
@@ -187,18 +191,19 @@ class RecurrentMemoryWrapperBase(nn.Module):
         self.rmt_config = rmt_kwargs
 
     def forward(self, segments, labels, output_attentions=None, output_hidden_states=None, *args, **kwargs):
+        device = next(self.memory_cell.parameters()).device
         cell_outputs = []
         for seg_num, segment in enumerate(segments):
             cell_out = self.memory_cell(
-                input_ids=segment["input_ids"],
-                attention_mask=segment["attention_mask"],
+                input_ids=segment["input_ids"].to(device),
+                attention_mask=segment["attention_mask"].to(device),
                 output_hidden_states=True,
             )
             cell_outputs.append(cell_out)
 
         labels_mask = None
         if "labels_mask" in segments[0]:
-            labels_mask = torch.cat([seg["labels_mask"] for seg in segments], dim=1)
+            labels_mask = torch.cat([seg["labels_mask"].to(device) for seg in segments], dim=1)
 
         out = self.process_outputs(
             cell_outputs,
@@ -211,6 +216,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
         return out
 
     def process_outputs(self, cell_outputs, **kwargs):
+        device = next(self.memory_cell.parameters()).device
         out = CausalLMOutputWithCrossAttentions()
         full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
         full_hidden_states = tuple([
@@ -220,6 +226,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
 
         labels = kwargs.get("labels")
         if labels is not None:
+            labels = labels.to(device)
             shift_labels = labels[..., 1:].contiguous()
             shift_logits = full_logits[..., :-1, :].contiguous()
             flat_labels = shift_labels.view(-1)
@@ -278,6 +285,8 @@ class RecurrentMemoryBase(PreTrainedModel):
         )
 
     def forward(self, segments=None, labels=None, *args, **kwargs):
+        if next(self.parameters()).device.type == "cpu" and torch.cuda.is_available():
+            self.to("cuda")
         out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
         for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
             layer.reset_memory()
