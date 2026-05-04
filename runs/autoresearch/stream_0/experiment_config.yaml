@@ -3,7 +3,7 @@
 max_steps: 25000  # MUST BE UNDER 25000
 eval_steps: 500
 logging_steps: 500
-warmup_steps: 5000
+warmup_steps: 10000
 early_stopping_patience: 20
 
 # Model architecture parameters

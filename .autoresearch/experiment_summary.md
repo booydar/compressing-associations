@@ -3794,3 +3794,23 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: RetNet's retention mechanism provides more stable gradient flow and better long-term dependencies than GatedDeltaNet. Recent experiments show modest EM gains (0.0136) with FLA modifications, suggesting architecture changes could yield further improvements.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_264_retnet_architecture
 
+## Iter 56 | failed | N=16
+- Hypothesis: Increase warmup_steps from 5000 to 10000 to provide more stable gradient updates during early training phases
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments showed high variance in EM scores (0.0006 to 0.2438), suggesting training instability. A longer warmup period allows the model to establish stable representations before aggressive learning rate updates, which is critical for the associative retrieval task requiring precise key-value mappings.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_056_warmup_10000
+
+## Iter 57 | failed | N=16
+- Hypothesis: Add weight_decay of 0.01 to regularize model weights and prevent overfitting on the associative retrieval task
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments showed mixed results with weight_decay (iter 41, 46 failed with experiment errors). Adding L2 regularization can help the model generalize better by constraining weight magnitudes, which is particularly important for memory mechanisms that may overfit to training patterns.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_057_weight_decay_0_01
+
