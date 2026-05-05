@@ -1,5 +1,14 @@
 {
-  "queue": [],
+  "queue": [
+    {
+      "stream_id": "1",
+      "hypothesis": "Increase n_head from 4 to 8 to improve multi-head parallelism for key-value binding",
+      "target_component": ".autoresearch/experiment_config.yaml",
+      "rationale": "With state_size at 64 and n_head at 4, each head has 16 dimensions. Increasing to 8 heads with 8 dimensions each may improve the model's ability to learn diverse key-value associations through more parallel attention pathways.",
+      "instruction": "Change n_head from 4 to 8 in experiment_config.yaml",
+      "run_name": "increase_n_head"
+    }
+  ],
   "last_directions_hash": "75b9f2660ad867cbed41cb2b2b7b8f08",
-  "last_updated": "2026-05-05T01:42:30.071367"
+  "last_updated": "2026-05-05T04:41:23.060131"
 }
