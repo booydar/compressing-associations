@@ -4044,3 +4044,43 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_286_fix_broken_base
 
+## Iter 65 | failed | N=16
+- Hypothesis: Increase n_head from 4 to 8 to improve multi-head parallelism for key-value binding
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With state_size at 64 and n_head at 4, each head has 16 dimensions. Increasing to 8 heads with 8 dimensions each may improve the model's ability to learn diverse key-value associations through more parallel attention pathways.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_065_increase_n_head
+
+## Iter 66 | failed | N=16
+- Hypothesis: Reduce expand_v from 4.0 to 3.0 to improve value projection efficiency for associative retrieval
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiment (iter 64) showed expand_v=2.0 achieved EM=0.7212 when reverted. Reducing from 4.0 to 3.0 tests intermediate capacity, potentially finding optimal balance between memory efficiency and retrieval accuracy.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_066_expand_v_reduction
+
+## Iter 67 | failed | N=16
+- Hypothesis: Add layer normalization after FLA output projection to stabilize training dynamics
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Recent experiments show state_size=64 improves EM to 0.8756 when kept. The FLA layer outputs may benefit from additional normalization to reduce variance in the residual stream, especially with the current high expand_v=4.0 which increases value projection dimensionality.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_067_fla_output_norm
+
+## Iter 68 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_068_fix_broken_base
+

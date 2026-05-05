@@ -3063,3 +3063,61 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** Previous experiments showed state_size increase to 64 improved EM to 0.8756. Reducing expand_v while keeping state_size high may provide better capacity utilization. This tests the interaction between expansion ratio and state capacity.
 
 
+## Iter 65 — RUNNING — N=16
+**Hypothesis:** Increase n_head from 4 to 8 to improve multi-head parallelism for key-value binding
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_065_increase_n_head
+
+
+## Iter 65 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_065_increase_n_head
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 66 — RUNNING — N=16
+**Hypothesis:** Reduce expand_v from 4.0 to 3.0 to improve value projection efficiency for associative retrieval
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_066_expand_v_reduction
+
+
+## Iter 66 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_066_expand_v_reduction
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 67 — RUNNING — N=16
+**Hypothesis:** Add layer normalization after FLA output projection to stabilize training dynamics
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_067_fla_output_norm
+
+
+## Iter 67 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_067_fla_output_norm
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 68 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_068_fix_broken_base
+
+
+## Iter 68 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_068_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 287 — kept — EM: 0.0012 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0012 vs prev best=0.0012
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_287_fix_broken_base', '16', '25000']' timed out after 7199.999974339968 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

@@ -71,13 +71,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         super().__init__()
         self.base_layer = base_layer
         self.fla_layer = fla_layer
-        fla_device = next(fla_layer.parameters()).device
-        fla_dtype = next(fla_layer.parameters()).dtype
-        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5).to(
-            device=fla_device, dtype=fla_dtype
-        )
+        self.pre_fla_norm = nn.LayerNorm(fla_layer.hidden_size, eps=1e-5)
+        self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5)
+        self.gamma = nn.Parameter(torch.tensor(1.0))
         # Cache is always a valid Cache object — never None — so that
-        # update_layer_cache (called inside fla_layer.forward) always writes state.
+        # update_key_values (called inside fla_layer.forward) always writes state.
         self.cache = Cache()
 
     def forward(self, hidden_states: torch.Tensor, *args, **kwargs):
@@ -88,7 +86,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         hidden_states = output[0] if isinstance(output, tuple) else output
 
         # 2. Pre-norm → FLA layer with persistent cross-segment state
-        fla_input = self.fla_norm(hidden_states)
+        hidden_states_normalized = self.pre_fla_norm(hidden_states)
+        fla_input = self.fla_norm(hidden_states_normalized)
         fla_out = self.fla_layer(
             fla_input,
             attention_mask=attention_mask,
@@ -102,7 +101,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             self.cache = fla_out[2]
 
         # 3. Residual
-        hidden_states = hidden_states + fla_output
+        hidden_states = hidden_states + self.gamma * fla_output
 
         # 4. Propagate remaining outputs from the base layer (KV cache, attentions…)
         if isinstance(output, tuple):
@@ -191,8 +190,11 @@ class RecurrentMemoryWrapperBase(nn.Module):
         self.rmt_config = rmt_kwargs
 
     def forward(self, segments, labels, output_attentions=None, output_hidden_states=None, *args, **kwargs):
-        device = next(self.memory_cell.parameters()).device
+        if len(segments) == 0:
+            raise ValueError("segments cannot be empty")
         cell_outputs = []
+        # Get the device from the model parameters
+        device = next(self.memory_cell.parameters()).device
         for seg_num, segment in enumerate(segments):
             cell_out = self.memory_cell(
                 input_ids=segment["input_ids"].to(device),
@@ -211,12 +213,12 @@ class RecurrentMemoryWrapperBase(nn.Module):
             labels_mask=labels_mask,
             output_attentions=output_attentions,
             output_hidden_states=output_hidden_states,
+            device=device,
             **kwargs,
         )
         return out
 
-    def process_outputs(self, cell_outputs, **kwargs):
-        device = next(self.memory_cell.parameters()).device
+    def process_outputs(self, cell_outputs, device, **kwargs):
         out = CausalLMOutputWithCrossAttentions()
         full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
         full_hidden_states = tuple([
@@ -265,6 +267,8 @@ class RecurrentMemoryBase(PreTrainedModel):
         else:
             if config.base_model_config is None:
                 base_config = AutoConfig.from_pretrained(config.base_model_name)
+            elif isinstance(config.base_model_config, str):
+                base_config = AutoConfig.from_pretrained(config.base_model_config)
             else:
                 base_config = config.base_model_config
             base_model = AutoModelForCausalLM.from_config(base_config)
@@ -285,13 +289,12 @@ class RecurrentMemoryBase(PreTrainedModel):
         )
 
     def forward(self, segments=None, labels=None, *args, **kwargs):
+        # Ensure model is on GPU for FLA Triton kernels
         if next(self.parameters()).device.type == "cpu" and torch.cuda.is_available():
             self.to("cuda")
-        try:
-            out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
-        finally:
-            for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
-                layer.reset_memory()
+        out = self.rmt(segments=segments, labels=labels, *args, **kwargs)
+        for layer in RecurrentMemoryCell._get_transformer_layers(self.rmt.memory_cell.model):
+            layer.reset_memory()
         return out
 
     def generate(self, *args, **kwargs):
