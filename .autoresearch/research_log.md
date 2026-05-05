@@ -136,3 +136,61 @@
 **Rationale:** The current conv_kernel=2 limits the short convolution to only 2 tokens, which may be too restrictive for capturing local patterns in the key-value association task. Increasing to 4 (the maximum allowed) expands the receptive field of the FLA layer's local convolution, potentially improving the model's ability to learn associations between adjacent key and value tokens.
 
 
+## Iter 3 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to give the FLA layer more capacity to store associative mappings
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_003_expand_v_to_6_0
+
+
+## Iter 3 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_003_expand_v_to_6_0
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Combine n_head=8 with expand_v=6.0 to maximize FLA layer capacity for multi-association tracking
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_004_n_head_8_expand_v_6
+
+
+## Iter 4 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_004_n_head_8_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 2 — RUNNING — N=16
+**Hypothesis:** Combine n_head=8 with expand_v=6.0 to maximize both parallel head capacity and value projection dimension
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_002_n_head_8_expand_v_6_combined
+
+
+## Iter 2 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_002_n_head_8_expand_v_6_combined
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Combine n_head=8 with expand_v=6.0 to maximize FLA layer capacity for multi-association tracking
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_004_n_head_8_expand_v_6
+
+
+## Iter 4 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_004_n_head_8_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 2 — kept — EM: 0.4274 (N=16)
+**Hypothesis:** Increase state_size from 32 to 48 to provide more recurrent memory capacity for storing key-value associations
+**Wall time:** 120.0 min
+**Result:** EM=0.4274 vs prev best=0.2830
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_002_increase_state_size_to_48', '16', '25000']' timed out after 7199.999975349987 seconds
+**Rationale:** With expand_v already increased to 6.0, the FLA layer has expanded value projection capacity. Increasing state_size from 32 to 48 provides more total recurrent memory (num_heads * head_dim) for storing key-value associations across segments. This complements the expand_v increase by expanding the core memory state itself.
+
+
