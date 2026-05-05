@@ -60,3 +60,18 @@
 **Rationale:** The current expand_v=4.0 may be too constrained for learning the key-value associations. Increasing to 6.0 expands the value projection dimension, providing more representational capacity without changing the core state_size constraint. This is a low-risk hyperparameter adjustment with clear theoretical motivation.
 
 
+## Iter 0 — RECOVERED — N=16
+**Recovered from:** trainer_state
+**Recovered EM:** 0.2072
+
+
+## Iter 1 — kept — EM: 0.1822 (N=16)
+**Hypothesis:** Reduce n_head from 4 to 2 to increase head_dim from 8 to 16 while keeping state_size constant at 32
+**Wall time:** 120.0 min
+**Result:** EM=0.1822 vs prev best=-1.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_001_reduce_n_head_to_2', '16', '25000']' timed out after 7199.9999817512 seconds
+**Rationale:** With state_size fixed at 32, reducing n_head from 4 to 2 increases head_dim from 8 to 16. Wider heads may better capture long-range dependencies and complex associative patterns in the retrieval task, complementing the parallel head approach tested in stream 1.
+
+
