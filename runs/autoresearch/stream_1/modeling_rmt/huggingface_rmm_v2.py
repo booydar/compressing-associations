@@ -197,7 +197,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
             cell_out = self.memory_cell(
                 input_ids=segment["input_ids"].to(device),
                 attention_mask=segment["attention_mask"].to(device),
-                output_hidden_states=output_hidden_states,
+                output_hidden_states=True,
             )
             cell_outputs.append(cell_out)
 
@@ -216,7 +216,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
         )
         return out
 
-    def process_outputs(self, cell_outputs, device, **kwargs):
+    def process_outputs(self, cell_outputs, device, output_hidden_states=None, **kwargs):
         out = CausalLMOutputWithCrossAttentions()
         full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
 
@@ -240,11 +240,11 @@ class RecurrentMemoryWrapperBase(nn.Module):
             out["loss"] = 0
 
         out["logits"] = full_logits
-        if kwargs.get("output_hidden_states"):
-            full_hidden_states = tuple([
-                torch.cat(layer_hs, dim=1)
-                for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
-            ])
+        full_hidden_states = tuple([
+            torch.cat(layer_hs, dim=1)
+            for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
+        ])
+        if output_hidden_states:
             out["hidden_states"] = full_hidden_states
 
         return out
