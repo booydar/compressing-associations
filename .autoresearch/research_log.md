@@ -3180,3 +3180,61 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 70 — RUNNING — N=16
+**Hypothesis:** Increase n_head from 4 to 8 with head_dim=8 to enable finer-grained parallel tracking of key-value pairs
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_070_n8_heads_head_dim_8
+
+
+## Iter 70 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_070_n8_heads_head_dim_8
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 71 — RUNNING — N=16
+**Hypothesis:** Increase head_dim from 8 to 16 to match state_size=64 with n_head=4 for proper memory capacity utilization
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_071_head_dim_16_match_state
+
+
+## Iter 71 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_071_head_dim_16_match_state
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 72 — RUNNING — N=16
+**Hypothesis:** Enable gradient checkpointing to reduce memory usage and allow longer context training for better associative retrieval
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_072_enable_gradient_checkpointing
+
+
+## Iter 72 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_072_enable_gradient_checkpointing
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 73 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_073_fix_broken_base
+
+
+## Iter 73 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_073_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 295 — kept — EM: 0.0100 (N=16)
+**Hypothesis:** Reduce learning_rate from 1e-3 to 5e-4 for more stable convergence on the associative retrieval task
+**Wall time:** 120.0 min
+**Result:** EM=0.0100 vs prev best=0.0012
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_295_lower_lr_stable', '16', '25000']' timed out after 7199.999967651092 seconds
+**Rationale:** Many recent experiments failed with code 1 errors, possibly due to unstable training dynamics. A lower learning rate may help the model converge more reliably within the 25000 step budget while still achieving meaningful EM accuracy.
+
+

@@ -4144,3 +4144,43 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: With max_steps=25000 and warmup_steps=10000, only 60% of training steps use full learning rate. Reducing warmup to 5000 gives 80% full LR steps, potentially improving EM accuracy on the associative retrieval task.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_294_reduced_warmup_5k
 
+## Iter 70 | failed | N=16
+- Hypothesis: Increase n_head from 4 to 8 with head_dim=8 to enable finer-grained parallel tracking of key-value pairs
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With state_size=64 fixed, increasing heads from 4 to 8 reduces head_dim from 16 to 8, creating more parallel attention channels. This finer-grained decomposition may improve binding precision for the N=16 associative retrieval task by allowing more specialized head-level representations.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_070_n8_heads_head_dim_8
+
+## Iter 71 | failed | N=16
+- Hypothesis: Increase head_dim from 8 to 16 to match state_size=64 with n_head=4 for proper memory capacity utilization
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current config has state_size=64 and n_head=4, but head_dim defaults to 8, giving only 32 total capacity (4*8=32). Increasing head_dim to 16 ensures the full 64-dimensional state is utilized (4*16=64), matching the successful iter_60 configuration.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_071_head_dim_16_match_state
+
+## Iter 72 | failed | N=16
+- Hypothesis: Enable gradient checkpointing to reduce memory usage and allow longer context training for better associative retrieval
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Many recent experiments failed with 'Experiment script exited with code 1' which often indicates OOM or training instability. Gradient checkpointing trades compute for memory, enabling more stable training at the current hyperparameter settings. This is a standard technique for improving training stability in memory-constrained recurrent models.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_072_enable_gradient_checkpointing
+
+## Iter 73 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_073_fix_broken_base
+

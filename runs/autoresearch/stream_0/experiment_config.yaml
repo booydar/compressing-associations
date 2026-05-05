@@ -20,7 +20,7 @@ pairs_per_segment: 1
 base_model: llama
 batch_size: 64 # DO NOT CHANGE THIS VALUE
 em_threshold: 0.95
-learning_rate: 1e-3
+learning_rate: 5e-4
 
 # RMM-specific parameters (passed as uppercase env vars to the run script)
 fla_layer: GatedDeltaNet
