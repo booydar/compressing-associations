@@ -4184,3 +4184,43 @@ Failed to run the query 'PRAGMA journal_mode = WAL'
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_073_fix_broken_base
 
+## Iter 296 | failed | N=16
+- Hypothesis: Add a learnable output gate on the FLA pathway to control memory contribution to the residual stream
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The FLA pathway currently contributes equally at all timesteps via a fixed gamma parameter. A learnable output gate would allow the model to modulate how much memory information flows to the residual stream, potentially improving associative retrieval by suppressing noise during query phases and enhancing signal during recall.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_296_fla_output_gate
+
+## Iter 74 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_1/n16/iter_074_fix_broken_base
+
+## Iter 297 | failed | N=16
+- Hypothesis: Increase state_size from 32 to 64 to improve associative memory capacity while staying under the 128 embedding dimension limit
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current state_size of 32 (num_heads * head_dim) may be limiting the model's ability to store and retrieve key-value associations. Increasing to 64 doubles the memory capacity while still being under n_embd=128, which should improve EM accuracy on the associative retrieval task.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_297_increase_state_size_64
+
+## Iter 298 | failed | N=16
+- Hypothesis: Apply layer normalization after FLA output before residual addition to stabilize training dynamics
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Multiple experiments with gating mechanisms failed with errors. Layer normalization on the FLA pathway is a simpler architectural change that can stabilize gradient flow and prevent output magnitude explosion. This is a standard technique in transformer architectures that should improve convergence without introducing additional complexity.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v3/runs/autoresearch/stream_0/n16/iter_298_fla_output_layernorm
+
