@@ -35,3 +35,13 @@
 **Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_000_baseline', '16', '25000']' timed out after 7199.99997029081 seconds
 
 
+## Iter 1 — kept — EM: 0.2512 (N=16)
+**Hypothesis:** Increase n_head from 4 to 8 to improve multi-association tracking capacity while keeping state_size constant at 32
+**Wall time:** 120.0 min
+**Result:** EM=0.2512 vs prev best=-1.0000
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_001_increase_n_head_to_8', '16', '25000']' timed out after 7199.9999805500265 seconds
+**Rationale:** With state_size fixed at 32, increasing n_head from 4 to 8 reduces head_dim from 8 to 4, providing more parallel attention heads. This should improve the model's ability to track multiple key-value associations simultaneously in the retrieval task, as each head can specialize in different association patterns.
+
+

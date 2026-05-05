@@ -3,13 +3,13 @@
 max_steps: 25000  # MUST BE UNDER 25000
 eval_steps: 500
 logging_steps: 500
-warmup_steps: 5000
+warmup_steps: 10000
 early_stopping_patience: 20
 
 # Model architecture parameters
-n_layer: 4  # MUST BE UNDER 4
+n_layer: 4  # DO NOT INCREASE - MUST BE 4 OR FEWER
 n_head: 4
-n_embd: 128  # MUST BE UNDER 128
+n_embd: 128  # DO NOT INCREASE - MUST BE 128 OR FEWER
 
 # Task parameters
 n_keys: 2
@@ -20,10 +20,10 @@ pairs_per_segment: 1
 base_model: llama
 batch_size: 64 # DO NOT CHANGE THIS VALUE
 em_threshold: 0.95
-learning_rate: 5e-4
+learning_rate: 2e-4  # DO NOT CHANGE - already tuned to best value
 
 # RMM-specific parameters (passed as uppercase env vars to the run script)
 fla_layer: GatedDeltaNet
-state_size: 64    # num_heads * head_dim # MUST BE UNDER 64
+state_size: 32    # num_heads * head_dim # DO NOT INCREASE - MUST BE 32 OR FEWER
 expand_v: 4.0
-conv_kernel: 4 # MUST BE UNDER 4
+conv_kernel: 2 # DO NOT INCREASE - MUST BE 2 OR FEWER
