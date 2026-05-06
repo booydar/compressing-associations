@@ -604,3 +604,13 @@
 **Rationale:** Stream 3's iter 6 achieved EM=0.3518 with n_head=8 (head_dim=4), demonstrating that more parallel heads improve associative retrieval. Stream 2 showed expand_v=6.0 achieved EM=0.283 alone. Combining n_head=8 with expand_v=6.0 should yield synergistic improvements by providing both more parallel tracking pathways and more value projection capacity per head.
 
 
+## Iter 11 — reverted — EM: 0.0126 (N=16)
+**Hypothesis:** Reduce conv_kernel from 2 to 1 to eliminate convolutional bias and force GatedDeltaNet to rely purely on recurrent state for association storage
+**Wall time:** 120.0 min
+**Result:** EM=0.0126 vs prev best=0.4134
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_011_conv_kernel_one_pure_recurrence', '16', '25000']' timed out after 7199.999974160921 seconds
+**Rationale:** Previous experiments showed that increasing architectural capacity (n_head, expand_v, state_size) did not improve EM accuracy. Setting conv_kernel=1 removes the convolutional component entirely, testing whether pure recurrence without local context smoothing better preserves exact key-value associations. This is a structural change that complements the hyperparameter tuning already attempted.
+
+
