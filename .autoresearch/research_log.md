@@ -390,3 +390,62 @@
 **Rationale:** Previous attempts with n_head=8 and n_head=2 both failed, but those were with state_size=48. With state_size constrained to 32, reducing to 2 heads gives head_dim=16, doubling the dimensionality per head. Larger head_dim improves the attention mechanism's ability to learn precise key-value associations in the FLA layer.
 
 
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Increase n_layer from 4 to 6 to provide deeper recurrent processing for learning key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_009_deeper_6layer
+
+
+## Iter 9 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to complement n_head=8 with more value projection capacity per head
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_007_n_head_8_with_expand_v_6
+
+
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to give the GatedDeltaNet layer more capacity to store associative mappings
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_010_expand_v_to_6_0
+
+
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_008_fix_broken_base
+
+
+## Iter 8 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_008_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_009_fix_broken_base
+
+
+## Iter 9 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_009_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_010_fix_broken_base
+
+
+## Iter 9 — reverted — EM: 0.0080 (N=16)
+**Hypothesis:** Increase n_layer from 4 to 6 to provide deeper recurrent processing for learning key-value associations
+**Wall time:** 120.0 min
+**Result:** EM=0.0080 vs prev best=0.7412
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_009_deeper_6layer', '16', '25000']' timed out after 7199.999977289932 seconds
+**Rationale:** Width parameters (n_head=2, head_dim=16) have been optimized, yielding EM=0.7412. Increasing depth while maintaining the successful narrow-wide configuration should allow the model to build more complex associative mappings through additional recurrent transformations.
+
+
