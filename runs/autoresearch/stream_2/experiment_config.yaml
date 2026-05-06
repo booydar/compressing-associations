@@ -8,7 +8,7 @@ early_stopping_patience: 20
 
 # Model architecture parameters
 n_layer: 4  # DO NOT INCREASE - MUST BE 4 OR FEWER
-n_head: 4
+n_head: 2
 n_embd: 128  # DO NOT INCREASE - MUST BE 128 OR FEWER
 
 # Task parameters
