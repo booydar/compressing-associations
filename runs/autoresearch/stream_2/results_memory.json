@@ -1,0 +1,35 @@
+{
+  "current_best": {
+    "variant": "none",
+    "em": -1.0,
+    "n_level": 4
+  },
+  "n_level": 4,
+  "experiments": [
+    {
+      "id": 0,
+      "iter_tag": "iter_000_baseline",
+      "description": "[Stream 2] baseline \u2014 exact copy of v2",
+      "hypothesis": null,
+      "em_score": 0.9952,
+      "prev_best": -1.0,
+      "verdict": "baseline",
+      "status": "completed",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_2/n2/iter_000_baseline",
+      "wall_time_min": 27.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778099876.4627953,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_2/artifacts/iter_000_baseline",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.9976
+    }
+  ]
+}
