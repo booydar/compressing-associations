@@ -94,8 +94,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         fla_output = fla_out[0]
         # fla_out[2] is the (possibly same) Cache object; re-assign defensively
         # in case the FLA layer ever returns a new Cache instance.
-        if fla_out[2] is not None:
-            self.cache = fla_out[2]
+        self.cache = fla_out[2]
 
         # 3. Residual
         hidden_states = hidden_states + fla_output
