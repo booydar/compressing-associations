@@ -99,3 +99,33 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 5 | failed | N=16
+- Hypothesis: Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved EM=0.4274 with state_size=48 and expand_v=6.0, demonstrating this combination significantly outperforms baseline. Stream 0's current best (EM=0.0224) uses the default state_size=32 and expand_v=4.0. Applying the proven configuration from stream 2 should yield comparable improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_005_state_48_expand_v_6
+
+## Iter 7 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: Previous experiments show that increasing expand_v from 4.0 to 6.0 improved EM from 0.2072 to 0.283. With state_size at its maximum of 32, further increasing expand_v should give the GatedDeltaNet layer more hidden capacity to compress and retrieve associative mappings. This follows the pattern that architectural capacity improvements help on this task.
+- exp_path: 
+
+## Iter 6 | failed | N=16
+- Hypothesis: Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved EM=0.4274 with state_size=48 and expand_v=6.0, demonstrating this combination significantly outperforms baseline. Stream 0's current best (EM=0.0224) uses the default state_size=32 and expand_v=4.0. Applying the proven configuration from stream 2 should yield comparable improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_006_state_48_expand_v_6
+

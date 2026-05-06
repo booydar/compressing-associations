@@ -299,3 +299,47 @@
 **Rationale:** With state_size=48 and expand_v=6.0 achieving the best EM=0.4274, reducing n_head from 4 to 2 increases head_dim from 12 to 24. Wider heads may better capture complex associative patterns than multiple narrow heads, as each head has more capacity to store key-value mappings. This complements the successful state_size increase by optimizing the head configuration.
 
 
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_005_state_48_expand_v_6
+
+
+## Iter 5 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_005_state_48_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 7 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Reduce head_dim from 8 to 4 to force tighter compression in the FLA layer, improving recall of learned associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_006_head_dim_compression_test
+
+
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_006_state_48_expand_v_6
+
+
+## Iter 6 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_006_state_48_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 6 — reverted — EM: 0.0232 (N=16)
+**Hypothesis:** Increase state_size from 32 to 48 to provide more recurrent memory capacity while keeping n_head=4
+**Wall time:** 120.0 min
+**Result:** EM=0.0232 vs prev best=0.4374
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_006_increase_state_size_to_48', '16', '25000']' timed out after 7199.9999648800585 seconds
+**Rationale:** Stream 2 achieved EM=0.4274 with state_size=48 and expand_v=6.0, demonstrating that increased memory capacity improves performance. Stream 1's current best (EM=0.4374) came from fixing a base issue. Increasing state_size to 48 in stream 1 provides more recurrent memory (num_heads * head_dim) for storing key-value associations across segments, complementing the working architecture.
+
+
