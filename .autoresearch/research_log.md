@@ -483,3 +483,13 @@
 **Rationale:** Stream 3 iter 6 achieved EM=0.3518 with n_head=8 (head_dim=4), showing that more parallel heads improve performance. However, with smaller head_dim, each head has less capacity. Stream 2 showed expand_v=6.0 improved EM to 0.283. Combining n_head=8 with expand_v=6.0 should give each of the 8 heads more representational capacity, potentially exceeding iter 6's result.
 
 
+## Iter 10 — reverted — EM: 0.2102 (N=16)
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to give the GatedDeltaNet layer more capacity to store associative mappings
+**Wall time:** 120.0 min
+**Result:** EM=0.2102 vs prev best=0.4374
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_010_expand_v_to_6_0', '16', '25000']' timed out after 7199.999976149993 seconds
+**Rationale:** Stream 2 achieved EM=0.283 with expand_v=6.0, demonstrating that expanding the value projection dimension improves associative retrieval. Stream 1 baseline uses expand_v=4.0. This single-parameter change increases FLA layer capacity without modifying state_size constraints.
+
+
