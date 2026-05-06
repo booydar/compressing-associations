@@ -123,6 +123,8 @@ class RecurrentMemoryCell(nn.Module):
     @staticmethod
     def _get_transformer_layers(base_model: nn.Module):
         if hasattr(base_model, "model"):
+            if hasattr(base_model.model, "decoder"):
+                return base_model.model.decoder.layers
             return base_model.model.layers
         elif hasattr(base_model, "transformer"):
             return base_model.transformer.h

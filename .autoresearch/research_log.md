@@ -239,3 +239,28 @@
 **Rationale:** With state_size at 32 and expand_v at 6.0, increasing the number of attention heads will allow the model to learn more diverse associative mappings in parallel. Each head can specialize in different key-value pair patterns, improving overall retrieval accuracy on the associative task.
 
 
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_004_fix_broken_base
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_005_fix_broken_base
+
+
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Reduce n_head from 4 to 2 to increase head_dim from 8 to 24 while keeping state_size at 48
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_006_n_head_2_state_48
+
+
+## Iter 5 — kept — EM: 0.4374 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.4374 vs prev best=0.2512
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_005_fix_broken_base', '16', '25000']' timed out after 7199.999967749929 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+
