@@ -289,3 +289,13 @@
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 6 — reverted — EM: 0.0642 (N=16)
+**Hypothesis:** Reduce n_head from 4 to 2 to increase head_dim from 8 to 24 while keeping state_size at 48
+**Wall time:** 120.0 min
+**Result:** EM=0.0642 vs prev best=0.4274
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_006_n_head_2_state_48', '16', '25000']' timed out after 7199.999979960965 seconds
+**Rationale:** With state_size=48 and expand_v=6.0 achieving the best EM=0.4274, reducing n_head from 4 to 2 increases head_dim from 12 to 24. Wider heads may better capture complex associative patterns than multiple narrow heads, as each head has more capacity to store key-value mappings. This complements the successful state_size increase by optimizing the head configuration.
+
+
