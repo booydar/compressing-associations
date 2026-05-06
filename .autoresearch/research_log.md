@@ -704,3 +704,13 @@
 **Rationale:** Stream 2 achieved EM=0.4274 with expand_v=6.0 and state_size=48, demonstrating that increased value projection capacity improves associative retrieval. Stream 1's current config uses expand_v=4.0. Increasing expand_v expands the value dimension without changing state_size, giving the FLA layer more capacity to store associative mappings.
 
 
+## Iter 9 — kept — EM: 0.5798 (N=16)
+**Hypothesis:** Increase state_size from 32 to 48 while keeping n_head=8 to combine tighter compression with more total memory capacity
+**Wall time:** 120.0 min
+**Result:** EM=0.5798 vs prev best=0.3518
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_009_state_48_n_head_8', '16', '25000']' timed out after 7199.999970240984 seconds
+**Rationale:** Stream 3's iter 6 achieved EM=0.3518 with n_head=8 (head_dim=4), showing that tighter compression helps. Stream 2's best (EM=0.4274) used state_size=48 with expand_v=6.0. Increasing state_size to 48 while keeping n_head=8 gives head_dim=6, balancing compression benefits with more total recurrent memory for storing associations.
+
+
