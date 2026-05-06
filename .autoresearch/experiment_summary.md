@@ -89,3 +89,13 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 4 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+- Rationale: (none)
+- exp_path: 
+

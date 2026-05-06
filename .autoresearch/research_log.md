@@ -214,3 +214,28 @@
 **Rationale:** All previous experiments have kept n_layer=4 fixed. Increasing to 8 layers provides more sequential transformation depth, allowing the model to progressively refine associative mappings through multiple non-linear layers. This complements the capacity-focused changes (n_head, expand_v) by adding representational depth rather than width.
 
 
+## Iter 4 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: [Errno 7] Argument list too long: 'opencode'
+**Recovery status:** not_attempted
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Increase n_head from 4 to 8 to provide more parallel attention pathways for learning key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_005_increase_n_head_to_8
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_005_fix_broken_base
+
+
+## Iter 5 — reverted — EM: 0.0148 (N=16)
+**Hypothesis:** Increase n_head from 4 to 8 to provide more parallel attention pathways for learning key-value associations
+**Wall time:** 120.0 min
+**Result:** EM=0.0148 vs prev best=0.4274
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_005_increase_n_head_to_8', '16', '25000']' timed out after 7199.9999810601585 seconds
+**Rationale:** With state_size at 32 and expand_v at 6.0, increasing the number of attention heads will allow the model to learn more diverse associative mappings in parallel. Each head can specialize in different key-value pair patterns, improving overall retrieval accuracy on the associative task.
+
+
