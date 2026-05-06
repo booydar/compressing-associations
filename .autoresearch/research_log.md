@@ -264,3 +264,18 @@
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 48 to provide more recurrent memory capacity while keeping n_head=4
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_006_increase_state_size_to_48
+
+
+## Iter 4 — kept — EM: 0.0224 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.0224 vs prev best=0.2006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_004_fix_broken_base', '16', '25000']' timed out after 7199.999964570161 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

@@ -196,7 +196,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
             cell_outputs.append(cell_out)
 
         labels_mask = None
-        if "labels_mask" in segments[0]:
+        if segments and "labels_mask" in segments[0]:
             labels_mask = torch.cat([seg["labels_mask"] for seg in segments], dim=1)
 
         out = self.process_outputs(
@@ -211,11 +211,15 @@ class RecurrentMemoryWrapperBase(nn.Module):
 
     def process_outputs(self, cell_outputs, **kwargs):
         out = CausalLMOutputWithCrossAttentions()
-        full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
-        full_hidden_states = tuple([
-            torch.cat(layer_hs, dim=1)
-            for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
-        ])
+        if not cell_outputs:
+            full_logits = torch.empty(0, 0, 0)
+            full_hidden_states = ()
+        else:
+            full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
+            full_hidden_states = tuple([
+                torch.cat(layer_hs, dim=1)
+                for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
+            ])
 
         labels = kwargs.get("labels")
         if labels is not None:
