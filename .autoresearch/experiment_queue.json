@@ -1,14 +1,5 @@
 {
-  "queue": [
-    {
-      "stream_id": "1",
-      "hypothesis": "Reduce conv_kernel from 2 to 1 to eliminate convolutional bias and force GatedDeltaNet to rely purely on recurrent state for association storage",
-      "target_component": ".autoresearch/experiment_config.yaml",
-      "rationale": "Previous experiments showed that increasing architectural capacity (n_head, expand_v, state_size) did not improve EM accuracy. Setting conv_kernel=1 removes the convolutional component entirely, testing whether pure recurrence without local context smoothing better preserves exact key-value associations. This is a structural change that complements the hyperparameter tuning already attempted.",
-      "instruction": "Change the conv_kernel value from 2 to 1 in the RMM-specific parameters section of the experiment config",
-      "run_name": "conv_kernel_one_pure_recurrence"
-    }
-  ],
+  "queue": [],
   "last_directions_hash": "1608252d6743b10c08c005ae8479ba6b",
   "last_updated": "2026-05-06T14:20:45.364015"
 }
