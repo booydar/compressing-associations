@@ -209,3 +209,13 @@
 - Rationale: Stream 2 achieved the best EM=0.7412 with n_head=2 and expand_v=6.0. The previous state_size=48 experiment (iter 2) showed strong results (EM=0.4274) before n_head was optimized. Combining state_size=48 with n_head=2 gives head_dim=24, maximizing per-head capacity for associative storage.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_011_state_48_n_head_2
 
+## Iter 12 | failed | N=16
+- Hypothesis: Reduce warmup_steps from 10000 to 5000 to allow more training at full learning rate
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: With warmup_steps=10000 out of max_steps=25000, 40% of training occurs during warmup. Reducing to 5000 (20% of steps) gives 80% of training at full learning rate, potentially improving convergence. This is a low-risk hyperparameter adjustment that complements the successful n_head=2, expand_v=6.0 configuration.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_012_reduce_warmup_to_5000
+
