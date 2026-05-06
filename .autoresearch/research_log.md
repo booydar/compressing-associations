@@ -449,3 +449,37 @@
 **Rationale:** Width parameters (n_head=2, head_dim=16) have been optimized, yielding EM=0.7412. Increasing depth while maintaining the successful narrow-wide configuration should allow the model to build more complex associative mappings through additional recurrent transformations.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Reduce expand_v from 6.0 to 4.0 to encourage more efficient use of latent space and prevent over-parameterization that may hurt generalization
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_010_reduce_expand_v_to_4
+
+
+## Iter 10 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_010_reduce_expand_v_to_4
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 48 to provide more recurrent memory capacity while keeping n_head=2 for wider heads
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_011_state_48_n_head_2
+
+
+## Iter 11 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_011_state_48_n_head_2
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 7 — reverted — EM: 0.0694 (N=16)
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to complement n_head=8 with more value projection capacity per head
+**Wall time:** 120.0 min
+**Result:** EM=0.0694 vs prev best=0.3518
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_007_n_head_8_with_expand_v_6', '16', '25000']' timed out after 7199.999973790022 seconds
+**Rationale:** Stream 3 iter 6 achieved EM=0.3518 with n_head=8 (head_dim=4), showing that more parallel heads improve performance. However, with smaller head_dim, each head has less capacity. Stream 2 showed expand_v=6.0 improved EM to 0.283. Combining n_head=8 with expand_v=6.0 should give each of the 8 heads more representational capacity, potentially exceeding iter 6's result.
+
+

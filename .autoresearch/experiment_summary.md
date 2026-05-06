@@ -189,3 +189,23 @@
 - Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_009_fix_broken_base
 
+## Iter 10 | failed | N=16
+- Hypothesis: Reduce expand_v from 6.0 to 4.0 to encourage more efficient use of latent space and prevent over-parameterization that may hurt generalization
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous experiments increased expand_v to 6.0, but the best result (EM=0.7412) came with n_head=2 and the default expand_v. Reducing expand_v may force the model to learn tighter, more robust key-value bindings rather than relying on excessive capacity. This tests whether the current high expand_v is actually harming performance through overfitting.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_010_reduce_expand_v_to_4
+
+## Iter 11 | failed | N=16
+- Hypothesis: Increase state_size from 32 to 48 to provide more recurrent memory capacity while keeping n_head=2 for wider heads
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved the best EM=0.7412 with n_head=2 and expand_v=6.0. The previous state_size=48 experiment (iter 2) showed strong results (EM=0.4274) before n_head was optimized. Combining state_size=48 with n_head=2 gives head_dim=24, maximizing per-head capacity for associative storage.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_011_state_48_n_head_2
+
