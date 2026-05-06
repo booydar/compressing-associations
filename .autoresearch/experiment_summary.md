@@ -329,3 +329,63 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 12 | failed | N=16
+- Hypothesis: Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+- Target: experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved EM=0.4274 with state_size=48 and expand_v=6.0, demonstrating this combination significantly outperforms baseline configurations. Stream 0's current best (EM=0.0224) uses the default state_size=32 and expand_v=4.0. Applying the proven configuration from stream 2 should yield comparable improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_012_state_48_expand_v_6
+
+## Iter 13 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: Previous experiments tried expand_v=6.0 but failed due to experiment script errors. A more conservative increase to 5.0 may provide additional capacity while staying within stable operating range. This targets the FLA layer's expansion factor which directly controls hidden dimension scaling for value projections.
+- exp_path: 
+
+## Iter 14 | failed | N=16
+- Hypothesis: Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved the best EM=0.7412 with n_head=2 and expand_v=6.0, demonstrating that wider heads with expanded value projections outperform the default configuration. Stream 0's current best (EM=0.0224 after fixing base issues) uses n_head=4 and expand_v=4.0. Applying the proven configuration from stream 2 should yield significant improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_014_n_head_2_expand_v_6
+
+## Iter 15 | failed | N=16
+- Hypothesis: Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved the best EM=0.7412 with n_head=2 and expand_v=6.0, demonstrating that wider heads with expanded value projections significantly outperform the default configuration. Stream 0's current best (EM=0.0224) uses n_head=4 and expand_v=4.0. Applying this proven configuration should yield substantial improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_015_n_head_2_expand_v_6
+
+## Iter 16 | failed | N=16
+- Hypothesis: Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Stream 2 achieved the best EM=0.7412 with n_head=2 and expand_v=6.0, demonstrating that wider heads with expanded value projections significantly outperform the default configuration. Stream 0's current configuration uses n_head=4 and expand_v=4.0. Applying this proven configuration should yield substantial improvements in associative retrieval performance.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_016_n_head_2_expand_v_6
+
+## Iter 17 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_0/modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_017_fix_broken_base
+

@@ -614,3 +614,93 @@
 **Rationale:** Previous experiments showed that increasing architectural capacity (n_head, expand_v, state_size) did not improve EM accuracy. Setting conv_kernel=1 removes the convolutional component entirely, testing whether pure recurrence without local context smoothing better preserves exact key-value associations. This is a structural change that complements the hyperparameter tuning already attempted.
 
 
+## Iter 22 — RUNNING — N=16
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to provide more value projection capacity for learning key-value associations
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_022_expand_v_to_6_0
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Increase state_size from 32 to 48 while keeping n_head=8 to combine tighter compression with more total memory capacity
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_3/n16/iter_009_state_48_n_head_8
+
+
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Apply state_size=48 with expand_v=6.0 configuration that achieved EM=0.4274 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_012_state_48_expand_v_6
+
+
+## Iter 12 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_012_state_48_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 13 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_014_n_head_2_expand_v_6
+
+
+## Iter 14 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_014_n_head_2_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_015_n_head_2_expand_v_6
+
+
+## Iter 15 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_015_n_head_2_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_2/n16/iter_013_fix_broken_base
+
+
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Apply n_head=2 with expand_v=6.0 configuration that achieved EM=0.7412 in stream_2
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_016_n_head_2_expand_v_6
+
+
+## Iter 16 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_016_n_head_2_expand_v_6
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_017_fix_broken_base
+
+
+## Iter 17 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_0/n16/iter_017_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 22 — reverted — EM: 0.0504 (N=16)
+**Hypothesis:** Increase expand_v from 4.0 to 6.0 to provide more value projection capacity for learning key-value associations
+**Wall time:** 120.0 min
+**Result:** EM=0.0504 vs prev best=0.4374
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v4/runs/autoresearch/stream_1/n16/iter_022_expand_v_to_6_0', '16', '25000']' timed out after 7199.99997326103 seconds
+**Rationale:** Stream 2 achieved EM=0.4274 with expand_v=6.0 and state_size=48, demonstrating that increased value projection capacity improves associative retrieval. Stream 1's current config uses expand_v=4.0. Increasing expand_v expands the value dimension without changing state_size, giving the FLA layer more capacity to store associative mappings.
+
+
