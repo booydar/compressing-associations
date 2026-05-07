@@ -6,7 +6,6 @@ from torch.nn import CrossEntropyLoss
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
-import fla.layers
 from fla.models.utils import Cache
 
 
@@ -19,8 +18,9 @@ class RecurrentMemoryConfig(PretrainedConfig):
         base_model_config=None,
         from_pretrained=None,
         fla_layer_name="GatedDeltaNet",
-        num_heads=4,
-        head_dim=8,
+        num_heads=1,
+        head_dim=32,
+        state_size=None,
         expand_v=2.0,
         conv_size=4,
         max_n_segments=10,
@@ -36,7 +36,11 @@ class RecurrentMemoryConfig(PretrainedConfig):
         self.from_pretrained = from_pretrained
         self.fla_layer_name = fla_layer_name
         self.num_heads = num_heads
-        self.head_dim = head_dim
+        self.state_size = state_size
+        if state_size is not None:
+            self.head_dim = state_size // num_heads
+        else:
+            self.head_dim = head_dim
         self.expand_v = expand_v
         self.conv_size = conv_size
         self.max_n_segments = max_n_segments
@@ -54,6 +58,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         return {
             "num_heads": self.num_heads,
             "head_dim": self.head_dim,
+            "state_size": self.state_size,
             "expand_v": self.expand_v,
             "conv_size": self.conv_size,
         }
@@ -96,8 +101,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # in case the FLA layer ever returns a new Cache instance.
         self.cache = fla_out[2]
 
-        # 3. Residual
-        hidden_states = hidden_states + fla_output
+        # 3. Residual with learnable gate
+        hidden_states = hidden_states + self.gate * fla_output
 
         # 4. Propagate remaining outputs from the base layer (KV cache, attentions…)
         if isinstance(output, tuple):
@@ -138,30 +143,25 @@ class RecurrentMemoryCell(nn.Module):
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
 
-        layer_cls = getattr(fla.layers, fla_layer_name)
-        sig = inspect.signature(layer_cls.__init__)
-        # Keep only kwargs that the FLA layer actually accepts, excluding the
-        # positional args we supply ourselves.
-        excluded = {"self", "hidden_size", "layer_idx"}
-        filtered_kwargs = {
-            k: v for k, v in fla_layer_kwargs.items()
-            if k in sig.parameters and k not in excluded
-        }
-
         transformer_layers = self._get_transformer_layers(base_model)
 
+        # Use GRU-based layer instead of FLA layer
+        state_size = fla_layer_kwargs.get("state_size", hidden_size)
+        num_heads = fla_layer_kwargs.get("num_heads", 1)
+        head_dim = fla_layer_kwargs.get("head_dim", 32)
+        
         for i, layer in enumerate(transformer_layers):
-            fla_layer = layer_cls(
+            # Create GRU recurrent layer
+            gru_layer = GRURecurrentLayer(
                 hidden_size=hidden_size,
-                # layer_idx=0 per wrapper: each wrapper owns its own Cache(),
-                # so slot 0 is the only slot ever used in each Cache.
-                layer_idx=0,
-                **filtered_kwargs,
+                state_size=state_size,
+                num_heads=num_heads,
+                head_dim=head_dim,
             ).to(dtype=model_dtype, device=model_device)
 
             wrapped = RecurrentMemoryLayerWrapper(
                 layer.to(dtype=model_dtype, device=model_device),
-                fla_layer,
+                gru_layer,
             )
             transformer_layers[i] = wrapped
 

@@ -20,3 +20,13 @@
 - Rationale: Multiplicative dynamics often preserve signal integrity better than additive updates in low-dimensional recurrent states.
 - exp_path: 
 
+## Iter 1 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Rationale: LRU architectures utilize diagonal state matrices that can capture different time scales more efficiently than standard delta networks.
+- exp_path: 
+
