@@ -1,7 +1,6 @@
 import inspect
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
 
 from transformers import PreTrainedModel, PretrainedConfig
@@ -79,6 +78,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         self.base_layer = base_layer
         self.fla_layer = fla_layer
         self.fla_norm = nn.RMSNorm(fla_layer.hidden_size, eps=1e-5)
+        self.fla_proj = nn.Linear(fla_layer.hidden_size, fla_layer.hidden_size, bias=False)
+        nn.init.zeros_(self.fla_proj.weight)
         # Cache is always a valid Cache object — never None — so that
         # update_layer_cache (called inside fla_layer.forward) always writes state.
         self.cache = Cache()
@@ -103,8 +104,9 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # in case the FLA layer ever returns a new Cache instance.
         self.cache = fla_out[2]
 
-        # 3. Residual
-        hidden_states = hidden_states + fla_output
+        # 3. Projection and residual
+        fla_output_proj = self.fla_proj(fla_output)
+        hidden_states = hidden_states + fla_output_proj
 
         # 4. Propagate remaining outputs from the base layer (KV cache, attentions…)
         if isinstance(output, tuple):

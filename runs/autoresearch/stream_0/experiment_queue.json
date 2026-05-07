@@ -1,5 +1,33 @@
 {
-  "queue": [],
+  "queue": [
+    {
+      "hypothesis": "Adding a parallel low-rank memory bank alongside GDN will increase effective memory capacity without exceeding state_size=32.",
+      "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+      "rationale": "The memory capacity bottleneck in GDN can be addressed by adding a separate low-rank memory pathway that complements the existing recurrent state, effectively doubling usable capacity within the constraint.",
+      "instruction": "In the GatedDeltaNet class, add a new nn.Linear projection layer with output_dim=32 that stores a parallel low-rank memory vector. Update the forward pass to concatenate the GDN output with this memory vector before returning.",
+      "run_name": "parallel_low_rank_memory",
+      "source": "human_directions",
+      "created_at": "2026-05-07T21:06:37.315391"
+    },
+    {
+      "hypothesis": "Splitting the GDN state into multiple independent heads with separate decay parameters will improve memory precision and capacity.",
+      "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+      "rationale": "Multi-head decomposition of the recurrent state allows each head to specialize in different memory timescales, effectively increasing representational capacity without increasing state_size.",
+      "instruction": "Modify the GatedDeltaNet class to accept num_heads parameter (default 4). Split the state_size dimension equally across heads, with each head having its own learnable decay parameter. Update forward pass to process each head independently and concatenate outputs.",
+      "run_name": "multi_head_gdn_split",
+      "source": "human_directions",
+      "created_at": "2026-05-07T21:06:37.315433"
+    },
+    {
+      "hypothesis": "Replacing GatedDeltaNet with Mamba-style selective SSM will provide better memory precision within state_size=32 constraint.",
+      "target_component": "modeling_rmt/huggingface_rmm_v2.py",
+      "rationale": "Mamba's selective state space mechanism allows input-dependent memory retention, which should achieve higher effective capacity than GDN's fixed decay within the same state_size budget.",
+      "instruction": "Replace the GatedDeltaNet layer with a Mamba-style SSM implementation. Create a new class SelectiveSSM that computes input-dependent state transitions using learned projection matrices. Ensure output dimension remains compatible with existing residual connections.",
+      "run_name": "mamba_selective_ssm",
+      "source": "human_directions",
+      "created_at": "2026-05-07T21:06:37.315440"
+    }
+  ],
   "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-07T17:21:08.236419"
+  "last_updated": "2026-05-07T21:06:37.325757"
 }

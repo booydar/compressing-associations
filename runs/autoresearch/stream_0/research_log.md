@@ -139,3 +139,23 @@ Started: 2026-05-07 11:48
 **Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
 
 
+## Iter 10 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Adding a learned output projection after the FLA layer before gating will better align the recurrent memory representation with the residual stream dimensionality.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_011_fla_output_projection_v2
+
+
+## Iter 11 — kept — EM: 0.8034 (N=16)
+**Hypothesis:** Adding a learned output projection after the FLA layer before gating will better align the recurrent memory representation with the residual stream dimensionality.
+**Wall time:** 120.0 min
+**Result:** EM=0.8034 vs prev best=0.7708
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_011_fla_output_projection_v2', '16', '25000']' timed out after 7199.9999687199015 seconds
+**Rationale:** Current EM (0.7708) lags behind token accuracy (0.8768), indicating suboptimal memory utilization. A learned projection layer can transform the FLA output into a space more compatible with the residual stream, improving how recurrent memory signals are integrated. Previous attempt (iter 3) failed due to implementation error, not hypothesis invalidity.
+
+
