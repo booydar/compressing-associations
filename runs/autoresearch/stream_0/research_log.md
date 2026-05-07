@@ -52,3 +52,90 @@ Started: 2026-05-07 11:48
 **Rationale:** The gap between token accuracy (0.4842) and EM (0.069) suggests the model struggles to consistently use its recurrent state. A learnable gate can modulate the FLA output before the residual addition, enabling the model to learn when to rely on memory vs. direct transformer processing.
 
 
+## Iter 3 — RUNNING — N=16
+**Hypothesis:** Adding a learned output projection after the FLA layer will allow the model to transform the recurrent memory signal into a representation better suited for the residual stream.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_003_fla_output_projection
+
+
+## Iter 3 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_003_fla_output_projection
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Adding layer normalization before the learnable gate will stabilize the recurrent memory signal and improve gradient flow through the residual connection.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_004_norm_before_gate
+
+
+## Iter 4 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_004_norm_before_gate
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Adding a learnable bias initialization to the FLA gate will enable better warm-start of recurrent memory dynamics.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_005_fla_gate_bias_init
+
+
+## Iter 5 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_005_fla_gate_bias_init
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_006_fix_broken_base
+
+
+## Iter 6 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_006_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_007_fix_broken_base
+
+
+## Iter 7 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_007_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 8 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_008_fix_broken_base
+
+
+## Iter 8 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_008_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_009_fix_broken_base
+
+
+## Iter 9 — kept — EM: 0.7708 (N=16)
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**Wall time:** 120.0 min
+**Result:** EM=0.7708 vs prev best=0.4828
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_009_fix_broken_base', '16', '25000']' timed out after 7199.999970690114 seconds
+**Rationale:** The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+
+

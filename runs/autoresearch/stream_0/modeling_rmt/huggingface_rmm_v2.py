@@ -1,11 +1,13 @@
 import inspect
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
 
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
+import fla.layers
 from fla.models.utils import Cache
 
 
@@ -101,8 +103,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # in case the FLA layer ever returns a new Cache instance.
         self.cache = fla_out[2]
 
-        # 3. Residual with learnable gate
-        hidden_states = hidden_states + self.gate * fla_output
+        # 3. Residual
+        hidden_states = hidden_states + fla_output
 
         # 4. Propagate remaining outputs from the base layer (KV cache, attentions…)
         if isinstance(output, tuple):
@@ -143,25 +145,30 @@ class RecurrentMemoryCell(nn.Module):
         model_dtype = next(base_model.parameters()).dtype
         model_device = next(base_model.parameters()).device
 
+        layer_cls = getattr(fla.layers, fla_layer_name)
+        sig = inspect.signature(layer_cls.__init__)
+        # Keep only kwargs that the FLA layer actually accepts, excluding the
+        # positional args we supply ourselves.
+        excluded = {"self", "hidden_size", "layer_idx"}
+        filtered_kwargs = {
+            k: v for k, v in fla_layer_kwargs.items()
+            if k in sig.parameters and k not in excluded
+        }
+
         transformer_layers = self._get_transformer_layers(base_model)
 
-        # Use GRU-based layer instead of FLA layer
-        state_size = fla_layer_kwargs.get("state_size", hidden_size)
-        num_heads = fla_layer_kwargs.get("num_heads", 1)
-        head_dim = fla_layer_kwargs.get("head_dim", 32)
-        
         for i, layer in enumerate(transformer_layers):
-            # Create GRU recurrent layer
-            gru_layer = GRURecurrentLayer(
+            fla_layer = layer_cls(
                 hidden_size=hidden_size,
-                state_size=state_size,
-                num_heads=num_heads,
-                head_dim=head_dim,
+                # layer_idx=0 per wrapper: each wrapper owns its own Cache(),
+                # so slot 0 is the only slot ever used in each Cache.
+                layer_idx=0,
+                **filtered_kwargs,
             ).to(dtype=model_dtype, device=model_device)
 
             wrapped = RecurrentMemoryLayerWrapper(
                 layer.to(dtype=model_dtype, device=model_device),
-                gru_layer,
+                fla_layer,
             )
             transformer_layers[i] = wrapped
 
