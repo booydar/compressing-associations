@@ -110,3 +110,53 @@ Started: 2026-05-07 12:21
 **Rationale:** The baseline achieved EM=0.7868 but many architectural experiments failed with executor errors. A conservative learning rate reduction is a low-risk hyperparameter change that may improve optimization stability without requiring architectural modifications.
 
 
+## Iter 11 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_011/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Splitting the state_size=32 into two channels with different update dynamics (one fast-decaying, one slow-decaying) will improve memory capacity for different timescales.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_012_multi_channel_decay
+
+
+## Iter 12 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_012_multi_channel_decay
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 13 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_013/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 14 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_014/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 15 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: opencode did not append a hypothesis for stream 15. stdout: I'll read the reference files to understand the current state and propose a hypothesis for the next experiment iteration.
+Now let me read the experiment config and results memory to understand the current state.
+Now let me read the conventions file to understand the coding standards:
+Now I have enou
+**Recovery status:** not_attempted
+
+
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Reducing expand_v from 6.0 to 2.0 will reduce over-parameterization and allow the model to learn tighter key-value associations within state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_016_reduce_expand_v_to_default
+
+
+## Iter 16 — reverted — EM: 0.4800 (N=16)
+**Hypothesis:** Reducing expand_v from 6.0 to 2.0 will reduce over-parameterization and allow the model to learn tighter key-value associations within state_size=32.
+**Wall time:** 120.0 min
+**Result:** EM=0.4800 vs prev best=0.7868
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_016_reduce_expand_v_to_default', '16', '25000']' timed out after 7199.999973141123 seconds
+**Rationale:** The current expand_v=6.0 expands the value projection dimension significantly, which may cause over-parameterization and unstable gradients. The conventions mention expand_v default is 2.0. Many previous architectural experiments failed; returning to a conservative, well-tested value may stabilize training and improve convergence on the associative retrieval task.
+
+
