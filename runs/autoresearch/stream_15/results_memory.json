@@ -1,0 +1,35 @@
+{
+  "current_best": {
+    "variant": "iter_000_baseline",
+    "em": 0.7868,
+    "n_level": 16
+  },
+  "n_level": 16,
+  "experiments": [
+    {
+      "id": 0,
+      "iter_tag": "iter_000_baseline",
+      "description": "[Stream 15] baseline \u2014 exact copy of v2",
+      "hypothesis": null,
+      "em_score": 0.7868,
+      "prev_best": -1.0,
+      "verdict": "baseline",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_000_baseline",
+      "wall_time_min": 120.0,
+      "metric_step": 9000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_000_baseline', '16', '25000']' timed out after 7199.999973851023 seconds",
+      "started_at": 1778145697.8850226,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_000_baseline",
+      "summary_logged": false,
+      "stream_id": "15",
+      "token_accuracy": 0.8815
+    }
+  ]
+}
