@@ -100,3 +100,13 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 12 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Rationale: The memory capacity bottleneck in GDN can be addressed by adding a separate low-rank memory pathway that complements the existing recurrent state, effectively doubling usable capacity within the constraint.
+- exp_path: 
+

@@ -159,3 +159,23 @@ Started: 2026-05-07 11:48
 **Rationale:** Current EM (0.7708) lags behind token accuracy (0.8768), indicating suboptimal memory utilization. A learned projection layer can transform the FLA output into a space more compatible with the residual stream, improving how recurrent memory signals are integrated. Previous attempt (iter 3) failed due to implementation error, not hypothesis invalidity.
 
 
+## Iter 12 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Splitting the GDN state into multiple independent heads with separate decay parameters will improve memory precision and capacity.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_013_multi_head_gdn_split
+
+
+## Iter 13 — reverted — EM: 0.0712 (N=16)
+**Hypothesis:** Splitting the GDN state into multiple independent heads with separate decay parameters will improve memory precision and capacity.
+**Wall time:** 120.0 min
+**Result:** EM=0.0712 vs prev best=0.8034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_013_multi_head_gdn_split', '16', '25000']' timed out after 7199.99996857997 seconds
+**Rationale:** Multi-head decomposition of the recurrent state allows each head to specialize in different memory timescales, effectively increasing representational capacity without increasing state_size.
+
+
