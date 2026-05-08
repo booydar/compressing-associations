@@ -1,15 +1,5 @@
 {
-  "queue": [
-    {
-      "hypothesis": "Replacing GatedDeltaNet with Mamba-style selective SSM will provide better memory precision within state_size=32 constraint.",
-      "target_component": "modeling_rmt/huggingface_rmm_v2.py",
-      "rationale": "Mamba's selective state space mechanism allows input-dependent memory retention, which should achieve higher effective capacity than GDN's fixed decay within the same state_size budget.",
-      "instruction": "Replace the GatedDeltaNet layer with a Mamba-style SSM implementation. Create a new class SelectiveSSM that computes input-dependent state transitions using learned projection matrices. Ensure output dimension remains compatible with existing residual connections.",
-      "run_name": "mamba_selective_ssm",
-      "source": "human_directions",
-      "created_at": "2026-05-07T21:06:37.315440"
-    }
-  ],
+  "queue": [],
   "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-08T00:17:08.310667"
+  "last_updated": "2026-05-08T06:24:10.243282"
 }

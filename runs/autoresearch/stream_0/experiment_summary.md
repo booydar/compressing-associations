@@ -110,3 +110,33 @@
 - Rationale: The memory capacity bottleneck in GDN can be addressed by adding a separate low-rank memory pathway that complements the existing recurrent state, effectively doubling usable capacity within the constraint.
 - exp_path: 
 
+## Iter 14 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Rationale: Mamba's selective state space mechanism allows input-dependent memory retention, which should achieve higher effective capacity than GDN's fixed decay within the same state_size budget.
+- exp_path: 
+
+## Iter 15 | failed | N=16
+- Hypothesis: FAILED: planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Target: (none)
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Rationale: (none)
+- exp_path: 
+
+## Iter 16 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+- Rationale: The gap between token accuracy (0.8954) and EM (0.8034) indicates the model struggles to consistently retain information across segments. GatedDeltaNet uses fixed decay parameters; adding an initialized forget gate allows the model to start training with better memory retention control, similar to LSTM forget gate initialization strategies.
+- exp_path: 
+

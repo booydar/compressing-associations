@@ -179,3 +179,33 @@ Started: 2026-05-07 11:48
 **Rationale:** Multi-head decomposition of the recurrent state allows each head to specialize in different memory timescales, effectively increasing representational capacity without increasing state_size.
 
 
+## Iter 14 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 15 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 16 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Adding a residual gate that modulates the transformer input before the FLA layer will enable better memory-write timing control.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_017_input_gate_before_fla
+
+
+## Iter 17 — reverted — EM: 0.6724 (N=16)
+**Hypothesis:** Adding a residual gate that modulates the transformer input before the FLA layer will enable better memory-write timing control.
+**Wall time:** 120.0 min
+**Result:** EM=0.6724 vs prev best=0.8034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_0/n16/iter_017_input_gate_before_fla', '16', '25000']' timed out after 7199.999971900135 seconds
+**Rationale:** Current best EM (0.8034) still lags behind token accuracy (0.8954), indicating memory retention issues. The FLA layer currently processes the full transformer output without any input-side gating. Adding an input gate allows the model to control what information enters the recurrent memory computation, improving write timing and reducing interference between stored associations.
+
+
