@@ -190,3 +190,35 @@ Now I have enou
 **Rationale:** The baseline achieved EM=0.7868 but many architectural experiments failed. The current warmup_steps=10000 is 40% of max_steps=25000, which may be insufficient for the recurrent memory parameters to stabilize. Increasing warmup to 60% of training allows slower, more stable adaptation of the GDN decay and gating parameters.
 
 
+## Iter 21 — RUNNING — N=16
+**Hypothesis:** Increasing conv_kernel from 2 to 4 will improve local context modeling in the GDN layer, helping capture short-range patterns in key-value pairs within state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_021_increased_conv_kernel_local_context
+
+
+## Iter 21 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_021_increased_conv_kernel_local_context
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 22 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_022/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Adding a residual skip connection around the GDN layer will preserve information flow and improve gradient stability during associative retrieval training.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_023_residual_gdn_connection
+
+
+## Iter 23 — reverted — EM: 0.6714 (N=16)
+**Hypothesis:** Adding a residual skip connection around the GDN layer will preserve information flow and improve gradient stability during associative retrieval training.
+**Wall time:** 120.0 min
+**Result:** EM=0.6714 vs prev best=0.7868
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_023_residual_gdn_connection', '16', '25000']' timed out after 7199.9999717101455 seconds
+**Rationale:** Direction 3-4 emphasize capacity and precision bottlenecks in GDN. A residual connection allows the network to learn identity mappings when beneficial, preventing information degradation through the memory layer.
+
+

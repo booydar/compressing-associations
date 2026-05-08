@@ -176,3 +176,23 @@ Now I have enou
 - Rationale: (none)
 - exp_path: 
 
+## Iter 21 | failed | N=16
+- Hypothesis: Increasing conv_kernel from 2 to 4 will improve local context modeling in the GDN layer, helping capture short-range patterns in key-value pairs within state_size=32.
+- Target: .autoresearch/experiment_config.yaml
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The baseline with expand_v=6.0 achieved the best EM=0.7868. Many architectural changes failed. The conv_kernel is currently 2, which may be too small to capture local dependencies in the input sequence. Increasing to 4 (the maximum allowed) provides a larger receptive field for the short convolution in GDN without changing the recurrent state capacity.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_021_increased_conv_kernel_local_context
+
+## Iter 22 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_022/executor_prompt.txt']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v2.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_022/executor_prompt.txt']' timed out after 900 seconds
+- Rationale: Direction 4-5 identify memory capacity as the bottleneck and call for GDN alternatives. Multi-head memory parallels attention mechanisms, distributing information across heads rather than expanding state_size.
+- exp_path: 
+
