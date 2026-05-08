@@ -160,3 +160,33 @@ Now I have enou
 **Rationale:** The current expand_v=6.0 expands the value projection dimension significantly, which may cause over-parameterization and unstable gradients. The conventions mention expand_v default is 2.0. Many previous architectural experiments failed; returning to a conservative, well-tested value may stabilize training and improve convergence on the associative retrieval task.
 
 
+## Iter 17 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_017/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 18 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_018/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 19 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/artifacts/iter_019/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Increasing warmup_steps from 10000 to 15000 will allow more stable convergence of the recurrent memory weights on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_020_increased_warmup_memory_stability
+
+
+## Iter 20 — reverted — EM: 0.7576 (N=16)
+**Hypothesis:** Increasing warmup_steps from 10000 to 15000 will allow more stable convergence of the recurrent memory weights on the associative retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.7576 vs prev best=0.7868
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn-autor-v5/runs/autoresearch/stream_15/n16/iter_020_increased_warmup_memory_stability', '16', '25000']' timed out after 7199.9999713911675 seconds
+**Rationale:** The baseline achieved EM=0.7868 but many architectural experiments failed. The current warmup_steps=10000 is 40% of max_steps=25000, which may be insufficient for the recurrent memory parameters to stabilize. Increasing warmup to 60% of training allows slower, more stable adaptation of the GDN decay and gating parameters.
+
+
