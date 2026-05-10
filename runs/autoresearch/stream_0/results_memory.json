@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_000_baseline",
-    "em": 0.0004,
+    "variant": "iter_001",
+    "em": 0.0006,
     "n_level": 16
   },
   "n_level": 16,
@@ -30,6 +30,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0186
+    },
+    {
+      "id": 1,
+      "iter_tag": "iter_001",
+      "description": "Replacing the GatedDeltaNet layer with standard Linear Attention will improve memory precision within the state_size=32 constraint.",
+      "hypothesis": {
+        "hypothesis": "Replacing the GatedDeltaNet layer with standard Linear Attention will improve memory precision within the state_size=32 constraint.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "GatedDeltaNet may suffer from precision loss during state updates. Linear Attention uses kernel approximations that might preserve information better at lower state capacities.",
+        "instruction": "Replace the GatedDeltaNet class definition in modeling_rmt/huggingface_rmm_v5.py with a LinearAttention class that uses feature maps for memory retrieval instead of delta gating.",
+        "run_name": "replace_gdn_with_linear_attn"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0004,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_001_replace_gdn_with_linear_attn",
+      "wall_time_min": 107.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778431062.859709,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_001",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0219
     }
   ]
 }

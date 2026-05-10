@@ -326,7 +326,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         base_model_name="NousResearch/Llama-3.2-1B",
         base_model_config=None,
         from_pretrained=None,
-        fla_layer_name="GatedDeltaNet",
+        fla_layer_name="LinearAttention",
         num_heads=1,
         head_dim=32,
         expand_v=2.0,
