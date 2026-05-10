@@ -49,3 +49,16 @@ Started: 2026-05-10 18:42
 **Rationale:** With state_size constrained to 32, the value projection bottleneck limits information flow. Increasing expand_v doubles the intermediate value dimension, allowing richer state representations without violating the state_size constraint.
 
 
+## Iter 5 — RUNNING — N=16
+**Hypothesis:** Adding layer normalization to GDN state update computations will improve memory precision at state_size=32
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_005_gdn_layer_norm
+
+
+## Iter 5 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Adding layer normalization to GDN state update computations will improve memory precision at state_size=32
+**Wall time:** 63.2 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Direction 4 identifies precision loss in GDN layer as bottleneck; normalization can stabilize state representations without increasing state_size
+
+

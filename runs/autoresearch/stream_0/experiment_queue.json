@@ -1,5 +1,24 @@
 {
-  "queue": [],
-  "last_directions_hash": "d02bc0cc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-10T21:54:24.705237"
+  "queue": [
+    {
+      "hypothesis": "Residual connections around GDN layer will preserve information flow and improve memory retention within state_size=32",
+      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+      "rationale": "Architecture change to improve capacity without violating state_size constraint; different from failed head-splitting approach in iter 2",
+      "instruction": "Add skip connection from GDN layer input to output in huggingface_rmm_v5.py GatedDeltaNet class",
+      "run_name": "gdn_residual_connection",
+      "source": "human_directions",
+      "created_at": "2026-05-10T22:59:37.195348"
+    },
+    {
+      "hypothesis": "Replacing GatedDeltaNet with S4-style state space model will achieve higher memory capacity within state_size=32",
+      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+      "rationale": "Direction 5 explicitly requests exploring alternatives to GDN; S4 offers different memory mechanisms than Linear Attention (iter 1)",
+      "instruction": "Implement S4 state space model as alternative to GatedDeltaNet in huggingface_rmm_v5.py",
+      "run_name": "gdn_s4_alternative",
+      "source": "human_directions",
+      "created_at": "2026-05-10T22:59:37.195352"
+    }
+  ],
+  "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
+  "last_updated": "2026-05-10T22:59:37.282898"
 }

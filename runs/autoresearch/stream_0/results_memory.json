@@ -153,6 +153,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0185
+    },
+    {
+      "id": 5,
+      "iter_tag": "iter_005",
+      "description": "Adding layer normalization to GDN state update computations will improve memory precision at state_size=32",
+      "hypothesis": {
+        "hypothesis": "Adding layer normalization to GDN state update computations will improve memory precision at state_size=32",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Direction 4 identifies precision loss in GDN layer as bottleneck; normalization can stabilize state representations without increasing state_size",
+        "instruction": "Insert LayerNorm before the state update operation in the GatedDeltaNet forward method in huggingface_rmm_v5.py",
+        "run_name": "gdn_layer_norm"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0006,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_005_gdn_layer_norm",
+      "wall_time_min": 63.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778443653.1606429,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_005",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0198
     }
   ]
 }
