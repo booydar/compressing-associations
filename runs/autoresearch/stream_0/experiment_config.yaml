@@ -6,24 +6,30 @@ logging_steps: 500
 warmup_steps: 10000
 early_stopping_patience: 20
 
-# Model architecture parameters
+# Model architecture parameters (v5 / run_rmm_on_kv_retrieval-v5.py)
 n_layer: 4  # DO NOT INCREASE - MUST BE 4 OR FEWER
-n_head: 2
+n_head: 4
 n_embd: 128  # DO NOT INCREASE - MUST BE 128 OR FEWER
 
 # Task parameters
 n_keys: 2
 n_values: 2
-pairs_per_segment: 1
+# v5: launcher maps this to token chunks via tokens_per_segment = pairs_per_segment * (n_keys + n_values + 4)
+pairs_per_segment: 4
 
 # Training parameters
 base_model: llama
 batch_size: 64 # DO NOT CHANGE THIS VALUE
 em_threshold: 0.95
-learning_rate: 2e-4  # DO NOT CHANGE - already tuned to best value
+learning_rate: 3e-4
 
-# RMM-specific parameters (passed as uppercase env vars to the run script)
+# RMM v5 memory path (see scripts/assoc-comp-rmm/run_rmm_v5_on_kv_retrieval-ca.sh)
+num_memory_vectors: 1
+write_mode: cross_attn
+read_mode: cross_attn
+
+# RMM / GDN parameters (passed as uppercase env vars to the run script)
 fla_layer: GatedDeltaNet
 state_size: 32    # num_heads * head_dim # DO NOT INCREASE - MUST BE 32 OR FEWER
-expand_v: 6.0
-conv_kernel: 2 # DO NOT INCREASE - MUST BE 2 OR FEWER
+expand_v: 2.0
+conv_kernel: 4
