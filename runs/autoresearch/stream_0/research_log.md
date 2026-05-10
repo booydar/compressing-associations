@@ -62,3 +62,16 @@ Started: 2026-05-10 18:42
 **Rationale:** Direction 4 identifies precision loss in GDN layer as bottleneck; normalization can stabilize state representations without increasing state_size
 
 
+## Iter 6 — RUNNING — N=16
+**Hypothesis:** Residual connections around GDN layer will preserve information flow and improve memory retention within state_size=32
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_006_gdn_residual_connection
+
+
+## Iter 6 — kept — EM: 0.0024 (N=16)
+**Hypothesis:** Residual connections around GDN layer will preserve information flow and improve memory retention within state_size=32
+**Wall time:** 104.3 min
+**Result:** EM=0.0024 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** Architecture change to improve capacity without violating state_size constraint; different from failed head-splitting approach in iter 2
+
+

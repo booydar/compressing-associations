@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_001",
-    "em": 0.0006,
+    "variant": "iter_006",
+    "em": 0.0024,
     "n_level": 16
   },
   "n_level": 16,
@@ -184,6 +184,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0198
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "Residual connections around GDN layer will preserve information flow and improve memory retention within state_size=32",
+      "hypothesis": {
+        "hypothesis": "Residual connections around GDN layer will preserve information flow and improve memory retention within state_size=32",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Architecture change to improve capacity without violating state_size constraint; different from failed head-splitting approach in iter 2",
+        "instruction": "Add skip connection from GDN layer input to output in huggingface_rmm_v5.py GatedDeltaNet class",
+        "run_name": "gdn_residual_connection"
+      },
+      "em_score": 0.0024,
+      "prev_best": 0.0006,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_006_gdn_residual_connection",
+      "wall_time_min": 104.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778447674.1431775,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_006",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0493
     }
   ]
 }

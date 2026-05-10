@@ -11,6 +11,21 @@ import fla.layers
 from fla.models.utils import Cache
 
 
+class GatedDeltaNetWithSkip(nn.Module):
+    """GatedDeltaNet with skip connection from input to output."""
+
+    def __init__(self, original_gdn: nn.Module):
+        super().__init__()
+        self.gdn = original_gdn
+
+    def forward(self, hidden_states, *args, **kwargs):
+        output = self.gdn(hidden_states, *args, **kwargs)
+        out_tensor = output[0] if isinstance(output, tuple) else output
+        if isinstance(output, tuple):
+            return (hidden_states + out_tensor,) + output[1:]
+        return hidden_states + out_tensor
+
+
 class LlamaCrossAttention(nn.Module):
     """Cross-attention: Q from from_states, K/V from to_states. No causal mask, no RoPE."""
 
@@ -445,6 +460,7 @@ class RecurrentMemoryCell(nn.Module):
                 layer_idx=0,
                 **filtered_kwargs,
             ).to(dtype=model_dtype, device=model_device)
+            fla_layer = GatedDeltaNetWithSkip(fla_layer)
 
             wrapped = RecurrentMemoryLayerWrapper(
                 base_layer=layer.to(dtype=model_dtype, device=model_device),
