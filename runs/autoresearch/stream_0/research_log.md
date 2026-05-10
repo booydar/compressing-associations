@@ -26,3 +26,26 @@ Started: 2026-05-10 18:42
 **Rationale:** GatedDeltaNet may suffer from precision loss during state updates. Linear Attention uses kernel approximations that might preserve information better at lower state capacities.
 
 
+## Iter 2 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 3 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 4 — RUNNING — N=16
+**Hypothesis:** Increasing expand_v from 2.0 to 4.0 will improve memory capacity by expanding the value projection dimension in GDN.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_004_increase_expand_v_to_4
+
+
+## Iter 4 — reverted — EM: 0.0002 (N=16)
+**Hypothesis:** Increasing expand_v from 2.0 to 4.0 will improve memory capacity by expanding the value projection dimension in GDN.
+**Wall time:** 61.2 min
+**Result:** EM=0.0002 vs prev best=0.0006
+**Metric source:** all_results
+**Rationale:** With state_size constrained to 32, the value projection bottleneck limits information flow. Increasing expand_v doubles the intermediate value dimension, allowing richer state representations without violating the state_size constraint.
+
+
