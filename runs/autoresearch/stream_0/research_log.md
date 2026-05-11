@@ -121,3 +121,16 @@ Started: 2026-05-10 18:42
 **Rationale:** Fixed decay may limit capacity utilization; learnable decay allows the model to adaptively control memory retention per dimension within the state_size constraint.
 
 
+## Iter 11 — RUNNING — N=16
+**Hypothesis:** Implementing a hybrid GDN + lightweight attention mechanism will improve memory precision by combining state-space efficiency with attention-based retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_011_gdn_hybrid_attention
+
+
+## Iter 11 — reverted — EM: 0.0024 (N=16)
+**Hypothesis:** Implementing a hybrid GDN + lightweight attention mechanism will improve memory precision by combining state-space efficiency with attention-based retrieval.
+**Wall time:** 116.0 min
+**Result:** EM=0.0024 vs prev best=0.0032
+**Metric source:** all_results
+**Rationale:** Pure SSM approaches (iter 7, 8) failed; combining GDN with a small attention head (e.g., 4 heads, 16 dim each) may provide better capacity utilization within state_size=32.
+
+

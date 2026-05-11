@@ -1,15 +1,6 @@
 {
   "queue": [
     {
-      "hypothesis": "Implementing a hybrid GDN + lightweight attention mechanism will improve memory precision by combining state-space efficiency with attention-based retrieval.",
-      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
-      "rationale": "Pure SSM approaches (iter 7, 8) failed; combining GDN with a small attention head (e.g., 4 heads, 16 dim each) may provide better capacity utilization within state_size=32.",
-      "instruction": "Add a small multi-head attention module (4 heads, 16 embedding dim per head) after the GDN state update. Concatenate GDN output with attention output before the final projection. Ensure total parameter increase is under 10% of baseline.",
-      "run_name": "gdn_hybrid_attention",
-      "source": "human_directions",
-      "created_at": "2026-05-11T06:24:53.507571"
-    },
-    {
       "hypothesis": "Adding orthogonal state rotation before GDN update will improve memory precision by decorrelating state dimensions within the state_size=32 constraint.",
       "target_component": "modeling_rmt/huggingface_rmm_v5.py",
       "rationale": "State dimension correlation may waste capacity; orthogonal rotation can spread information more evenly across state dimensions without violating the hard state_size limit.",
@@ -20,5 +11,5 @@
     }
   ],
   "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-11T06:24:53.516434"
+  "last_updated": "2026-05-11T08:14:08.356474"
 }

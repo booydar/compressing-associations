@@ -340,6 +340,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0503
+    },
+    {
+      "id": 11,
+      "iter_tag": "iter_011",
+      "description": "Implementing a hybrid GDN + lightweight attention mechanism will improve memory precision by combining state-space efficiency with attention-based retrieval.",
+      "hypothesis": {
+        "hypothesis": "Implementing a hybrid GDN + lightweight attention mechanism will improve memory precision by combining state-space efficiency with attention-based retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Pure SSM approaches (iter 7, 8) failed; combining GDN with a small attention head (e.g., 4 heads, 16 dim each) may provide better capacity utilization within state_size=32.",
+        "instruction": "Add a small multi-head attention module (4 heads, 16 embedding dim per head) after the GDN state update. Concatenate GDN output with attention output before the final projection. Ensure total parameter increase is under 10% of baseline.",
+        "run_name": "gdn_hybrid_attention"
+      },
+      "em_score": 0.0024,
+      "prev_best": 0.0032,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_011_gdn_hybrid_attention",
+      "wall_time_min": 116.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778476562.6306927,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_011",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0589
     }
   ]
 }
