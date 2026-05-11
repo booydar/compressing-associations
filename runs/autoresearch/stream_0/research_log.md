@@ -108,3 +108,16 @@ Started: 2026-05-10 18:42
 **Rationale:** S4 achieved the best EM (0.0032) with num_memory_vectors=1. Increasing the number of memory vectors provides more capacity to store compressed segment representations through the MemoryWriter/MemoryReader mechanism, which is orthogonal to the FLA state_size constraint.
 
 
+## Iter 10 — RUNNING — N=16
+**Hypothesis:** Adding learnable decay rates per state dimension in GDN will improve memory retention without increasing state_size beyond 32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_010_learnable_decay_per_dim
+
+
+## Iter 10 — reverted — EM: 0.0030 (N=16)
+**Hypothesis:** Adding learnable decay rates per state dimension in GDN will improve memory retention without increasing state_size beyond 32.
+**Wall time:** 104.9 min
+**Result:** EM=0.0030 vs prev best=0.0032
+**Metric source:** all_results
+**Rationale:** Fixed decay may limit capacity utilization; learnable decay allows the model to adaptively control memory retention per dimension within the state_size constraint.
+
+

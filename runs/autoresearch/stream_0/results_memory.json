@@ -309,6 +309,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0419
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "Adding learnable decay rates per state dimension in GDN will improve memory retention without increasing state_size beyond 32.",
+      "hypothesis": {
+        "hypothesis": "Adding learnable decay rates per state dimension in GDN will improve memory retention without increasing state_size beyond 32.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Fixed decay may limit capacity utilization; learnable decay allows the model to adaptively control memory retention per dimension within the state_size constraint.",
+        "instruction": "In the GatedDeltaNet layer class, add a learnable parameter tensor of shape (state_size,) for per-dimension decay rates. Initialize with log(0.5) and apply sigmoid to ensure valid decay values. Modify the state update equation to use these learned decay rates instead of a single scalar decay.",
+        "run_name": "learnable_decay_per_dim"
+      },
+      "em_score": 0.003,
+      "prev_best": 0.0032,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_010_learnable_decay_per_dim",
+      "wall_time_min": 104.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778470151.4880323,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_010",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0503
     }
   ]
 }
