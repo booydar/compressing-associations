@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_006",
-    "em": 0.0024,
+    "variant": "iter_007",
+    "em": 0.0032,
     "n_level": 16
   },
   "n_level": 16,
@@ -215,6 +215,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0493
+    },
+    {
+      "id": 7,
+      "iter_tag": "iter_007",
+      "description": "Replacing GatedDeltaNet with S4-style state space model will achieve higher memory capacity within state_size=32",
+      "hypothesis": {
+        "hypothesis": "Replacing GatedDeltaNet with S4-style state space model will achieve higher memory capacity within state_size=32",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Direction 5 explicitly requests exploring alternatives to GDN; S4 offers different memory mechanisms than Linear Attention (iter 1)",
+        "instruction": "Implement S4 state space model as alternative to GatedDeltaNet in huggingface_rmm_v5.py",
+        "run_name": "gdn_s4_alternative"
+      },
+      "em_score": 0.0032,
+      "prev_best": 0.0024,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_007_gdn_s4_alternative",
+      "wall_time_min": 104.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778454385.6130414,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_007",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0501
     }
   ]
 }

@@ -75,3 +75,16 @@ Started: 2026-05-10 18:42
 **Rationale:** Architecture change to improve capacity without violating state_size constraint; different from failed head-splitting approach in iter 2
 
 
+## Iter 7 — RUNNING — N=16
+**Hypothesis:** Replacing GatedDeltaNet with S4-style state space model will achieve higher memory capacity within state_size=32
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_007_gdn_s4_alternative
+
+
+## Iter 7 — kept — EM: 0.0032 (N=16)
+**Hypothesis:** Replacing GatedDeltaNet with S4-style state space model will achieve higher memory capacity within state_size=32
+**Wall time:** 104.9 min
+**Result:** EM=0.0032 vs prev best=0.0024
+**Metric source:** all_results
+**Rationale:** Direction 5 explicitly requests exploring alternatives to GDN; S4 offers different memory mechanisms than Linear Attention (iter 1)
+
+

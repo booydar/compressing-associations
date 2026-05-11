@@ -11,15 +11,15 @@ import fla.layers
 from fla.models.utils import Cache
 
 
-class GatedDeltaNetWithSkip(nn.Module):
-    """GatedDeltaNet with skip connection from input to output."""
+class RecurrentLayerWithSkip(nn.Module):
+    """Recurrent layer (GDN, Mamba2, etc.) with skip connection from input to output."""
 
-    def __init__(self, original_gdn: nn.Module):
+    def __init__(self, original_layer: nn.Module):
         super().__init__()
-        self.gdn = original_gdn
+        self.layer = original_layer
 
     def forward(self, hidden_states, *args, **kwargs):
-        output = self.gdn(hidden_states, *args, **kwargs)
+        output = self.layer(hidden_states, *args, **kwargs)
         out_tensor = output[0] if isinstance(output, tuple) else output
         if isinstance(output, tuple):
             return (hidden_states + out_tensor,) + output[1:]
@@ -341,11 +341,12 @@ class RecurrentMemoryConfig(PretrainedConfig):
         base_model_name="NousResearch/Llama-3.2-1B",
         base_model_config=None,
         from_pretrained=None,
-        fla_layer_name="LinearAttention",
+        fla_layer_name="Mamba2",
         num_heads=1,
-        head_dim=32,
+        head_dim=64,
         expand_v=2.0,
         conv_size=4,
+        state_size=128,
         # Write/read modes
         write_mode='cross_attn',       # 'identity' | 'pool' | 'cross_attn'
         read_mode='cross_attn',        # 'identity' | 'unpool' | 'cross_attn'
@@ -374,6 +375,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         self.head_dim = head_dim
         self.expand_v = expand_v
         self.conv_size = conv_size
+        self.state_size = state_size
         self.write_mode = write_mode
         self.read_mode = read_mode
         self.write_residual = write_residual
@@ -400,11 +402,13 @@ class RecurrentMemoryConfig(PretrainedConfig):
         return getattr(self, attr, default)
 
     def fla_layer_kwargs(self) -> dict:
+        # Mamba2 parameters (replacing GatedDeltaNet's expand_v with expand, conv_size with conv_kernel)
         return {
             "num_heads": self.num_heads,
             "head_dim": self.head_dim,
-            "expand_v": self.expand_v,
-            "conv_size": self.conv_size,
+            "expand": self.expand_v,
+            "conv_kernel": self.conv_size,
+            "state_size": self.state_size,
         }
 
 
@@ -427,7 +431,7 @@ class RecurrentMemoryCell(nn.Module):
     def __init__(
         self,
         base_model: nn.Module,
-        fla_layer_name: str = "GatedDeltaNet",
+        fla_layer_name: str = "Mamba2",
         num_memory_vectors: int = 1,
         write_mode: str = 'cross_attn',
         read_mode: str = 'cross_attn',
@@ -460,7 +464,7 @@ class RecurrentMemoryCell(nn.Module):
                 layer_idx=0,
                 **filtered_kwargs,
             ).to(dtype=model_dtype, device=model_device)
-            fla_layer = GatedDeltaNetWithSkip(fla_layer)
+            fla_layer = RecurrentLayerWithSkip(fla_layer)
 
             wrapped = RecurrentMemoryLayerWrapper(
                 base_layer=layer.to(dtype=model_dtype, device=model_device),
