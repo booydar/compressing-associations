@@ -207,3 +207,59 @@ Started: 2026-05-10 18:42
 **Rationale:** Separating state updates into fast (short-term) and slow (long-term) pathways allows the model to maintain both immediate context and persistent memory within the same state_size budget
 
 
+## Iter 17 — RUNNING — N=16
+**Hypothesis:** Adding content-adaptive decay modulation to the dual-state mechanism will improve memory retention by dynamically adjusting decay rates based on input significance.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_017_adaptive_decay_modulation
+
+
+## Iter 17 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_017_adaptive_decay_modulation
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 18 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_018/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Implementing mixed-precision state storage with higher precision for critical dimensions will improve memory precision within the state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_019_mixed_precision_state
+
+
+## Iter 19 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_019_mixed_precision_state
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Adding a gated memory write mechanism that controls when information enters the state will improve retention by reducing interference from irrelevant inputs.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_020_gated_memory_write
+
+
+## Iter 20 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_020_gated_memory_write
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 21 — RUNNING — N=16
+**Hypothesis:** Adding a multiplicative interaction between fast and slow states will improve memory capacity by enabling non-linear state combinations within the state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_021_dual_state_multiplicative_interaction
+
+
+## Iter 21 — reverted — EM: 0.0022 (N=16)
+**Hypothesis:** Adding a multiplicative interaction between fast and slow states will improve memory capacity by enabling non-linear state combinations within the state_size=32 constraint.
+**Wall time:** 120.0 min
+**Result:** EM=0.0022 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_021_dual_state_multiplicative_interaction', '16', '25000']' timed out after 7199.999989409931 seconds
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses a linear weighted combination of fast and slow states. A multiplicative interaction (element-wise product followed by projection) can capture higher-order correlations between timescales without increasing state_size, providing richer memory representations.
+
+
