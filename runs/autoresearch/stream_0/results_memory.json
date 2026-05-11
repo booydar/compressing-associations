@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_012",
-    "em": 0.0034,
+    "variant": "iter_016",
+    "em": 0.0036,
     "n_level": 16
   },
   "n_level": 16,
@@ -466,6 +466,68 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0538
+    },
+    {
+      "id": 15,
+      "iter_tag": "iter_015",
+      "description": "Implementing low-rank state factorization in GDN will increase effective memory capacity without exceeding state_size=32 constraint",
+      "hypothesis": {
+        "hypothesis": "Implementing low-rank state factorization in GDN will increase effective memory capacity without exceeding state_size=32 constraint",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Factorizing the state into lower-dimensional components allows storing more information per state dimension through multiplicative interactions, addressing the memory capacity bottleneck",
+        "instruction": "In huggingface_rmm_v5.py, modify the GatedDeltaNet forward pass to factorize state into two matrices (state_rank x state_size) and (state_size x state_rank) with a learned projection, where state_rank < state_size",
+        "run_name": "low_rank_state_factorization"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0034,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_015_low_rank_state_factorization",
+      "wall_time_min": 73.9,
+      "metric_step": 4000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778507375.5571651,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_015",
+      "summary_logged": true,
+      "stream_id": "0",
+      "token_accuracy": 0.016
+    },
+    {
+      "id": 16,
+      "iter_tag": "iter_016",
+      "description": "Implementing dual-path state update with fast and slow temporal pathways will improve memory retention across different time scales",
+      "hypothesis": {
+        "hypothesis": "Implementing dual-path state update with fast and slow temporal pathways will improve memory retention across different time scales",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Separating state updates into fast (short-term) and slow (long-term) pathways allows the model to maintain both immediate context and persistent memory within the same state_size budget",
+        "instruction": "In huggingface_rmm_v5.py, modify GatedDeltaNet to maintain two separate state vectors (fast_state and slow_state) with different decay rates and a gating mechanism to combine their outputs",
+        "run_name": "dual_path_state_temporal"
+      },
+      "em_score": 0.0036,
+      "prev_best": 0.0034,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_016_dual_path_state_temporal",
+      "wall_time_min": 120.0,
+      "metric_step": 22500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_016_dual_path_state_temporal', '16', '25000']' timed out after 7199.999975760002 seconds",
+      "started_at": 1778512013.788935,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_016",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0488
     }
   ]
 }

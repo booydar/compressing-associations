@@ -179,3 +179,31 @@ Started: 2026-05-10 18:42
 **Rationale:** The global orthogonal rotation (iter_012) achieved the best EM (0.0034) by decorrelating state dimensions. However, a single 32x32 rotation may be suboptimal for capturing head-specific correlation patterns. With n_head=4 and head_dim=8 (state_size=32), applying separate 8x8 orthogonal rotations per head allows more flexible decorrelation while maintaining the same total state capacity.
 
 
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Implementing low-rank state factorization in GDN will increase effective memory capacity without exceeding state_size=32 constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_015_low_rank_state_factorization
+
+
+## Iter 15 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Implementing low-rank state factorization in GDN will increase effective memory capacity without exceeding state_size=32 constraint
+**Wall time:** 73.9 min
+**Result:** EM=0.0006 vs prev best=0.0034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+
+
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Implementing dual-path state update with fast and slow temporal pathways will improve memory retention across different time scales
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_016_dual_path_state_temporal
+
+
+## Iter 16 — kept — EM: 0.0036 (N=16)
+**Hypothesis:** Implementing dual-path state update with fast and slow temporal pathways will improve memory retention across different time scales
+**Wall time:** 120.0 min
+**Result:** EM=0.0036 vs prev best=0.0034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_016_dual_path_state_temporal', '16', '25000']' timed out after 7199.999975760002 seconds
+**Rationale:** Separating state updates into fast (short-term) and slow (long-term) pathways allows the model to maintain both immediate context and persistent memory within the same state_size budget
+
+

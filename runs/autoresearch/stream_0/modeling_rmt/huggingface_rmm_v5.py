@@ -267,6 +267,9 @@ class RecurrentMemoryLayerWrapper(nn.Module):
     fla_layer with cached state but DO NOT update the cache. Requires
     write_value_dim == model_hidden_size.
     Constraint: identity write must be paired with identity read.
+    
+    Dual-state mechanism: maintains fast_state (short-term) and slow_state 
+    (long-term) with separate decay rates. Gate combines outputs from both.
     """
 
     def __init__(
@@ -328,6 +331,13 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # Orthogonal rotation for state dimension correlation (32x32)
         self.state_size = fla_layer.state_size if hasattr(fla_layer, 'state_size') else 128
         self.orthogonal_rotation = OrthogonalRotation(state_size=self.state_size)
+        
+        # Dual-state mechanism: fast_state (short-term) and slow_state (long-term)
+        self.fast_decay = nn.Parameter(torch.ones(self.state_size) * 0.9)
+        self.slow_decay = nn.Parameter(torch.ones(self.state_size) * 0.99)
+        self.gate_weight = nn.Parameter(torch.tensor(0.5))
+        self.fast_state = None
+        self.slow_state = None
 
     def _gdn_readonly(self, normed_tokens, attention_mask):
         """Run fla_layer with cached state but discard any state update."""
@@ -348,6 +358,33 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         layer._seen_tokens = saved_seen
         return fla_out[0]
 
+    def _update_dual_state(self, fla_input, attention_mask):
+        """Update fast and slow state vectors with different decay rates."""
+        batch_size = fla_input.shape[0]
+        
+        # Initialize states if needed
+        if self.fast_state is None:
+            self.fast_state = torch.zeros(
+                batch_size, self.state_size, device=fla_input.device, dtype=fla_input.dtype
+            )
+        if self.slow_state is None:
+            self.slow_state = torch.zeros(
+                batch_size, self.state_size, device=fla_input.device, dtype=fla_input.dtype
+            )
+        
+        # Decay previous states
+        fast_decay = self.fast_decay.unsqueeze(0).expand(batch_size, -1)
+        slow_decay = self.slow_decay.unsqueeze(0).expand(batch_size, -1)
+        
+        self.fast_state = fast_decay * self.fast_state + (1 - fast_decay) * fla_input
+        self.slow_state = slow_decay * self.slow_state + (1 - slow_decay) * fla_input
+        
+        # Combine states with gating mechanism
+        gate = torch.sigmoid(self.gate_weight)
+        combined_state = gate * self.fast_state + (1 - gate) * self.slow_state
+        
+        return combined_state
+    
     def forward(self, hidden_states: torch.Tensor, *args, **kwargs):
         attention_mask = kwargs.get('attention_mask')
 
@@ -370,6 +407,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             fla_input = self.fla_norm(hidden_states)
             # Apply orthogonal rotation before GDN
             fla_input_rotated = self.orthogonal_rotation(fla_input)
+            
+            # Update dual-state mechanism
+            dual_state_input = fla_input_rotated.mean(dim=1)  # Aggregate sequence dimension
+            combined_state = self._update_dual_state(dual_state_input, attention_mask)
+            
             fla_out = self.fla_layer(
                 fla_input_rotated,
                 attention_mask=attention_mask,
@@ -384,6 +426,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             write_vecs = self.memory_writer(self.write_norm(hidden_states))   # (B, M, d_v)
             # Apply orthogonal rotation to write_vecs before GDN
             write_vecs_rotated = self.orthogonal_rotation(write_vecs)
+            
+            # Update dual-state mechanism
+            dual_state_input = write_vecs_rotated.mean(dim=1)  # Aggregate memory dimension
+            combined_state = self._update_dual_state(dual_state_input, attention_mask)
+            
             fla_out = self.fla_layer(
                 write_vecs_rotated,
                 attention_mask=None,
@@ -408,6 +455,8 @@ class RecurrentMemoryLayerWrapper(nn.Module):
     def reset_memory(self):
         self.cache = Cache()
         self.last_write_output = None
+        self.fast_state = None
+        self.slow_state = None
 
 
 class RecurrentMemoryConfig(PretrainedConfig):
