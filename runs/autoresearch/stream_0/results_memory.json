@@ -434,6 +434,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0451
+    },
+    {
+      "id": 14,
+      "iter_tag": "iter_014",
+      "description": "Adding per-head orthogonal rotation will improve memory precision by allowing independent decorrelation patterns for each state dimension head within the state_size=32 constraint.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding per-head orthogonal rotation will improve memory precision by allowing independent decorrelation patterns for each state dimension head within the state_size=32 constraint.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The global orthogonal rotation (iter_012) achieved the best EM (0.0034) by decorrelating state dimensions. However, a single 32x32 rotation may be suboptimal for capturing head-specific correlation patterns. With n_head=4 and head_dim=8 (state_size=32), applying separate 8x8 orthogonal rotations per head allows more flexible decorrelation while maintaining the same total state capacity.",
+        "instruction": "Modify the OrthogonalRotation class in huggingface_rmm_v5.py to support per-head rotation: (1) Add a 'num_heads' parameter to __init__ and 'head_dim' parameter. (2) Initialize a separate skew-symmetric matrix for each head instead of one global matrix. (3) In the forward method, split the input by heads, apply the corresponding head-specific rotation to each, then concatenate. (4) Update RecurrentMemoryLayerWrapper to pass num_heads and head_dim to OrthogonalRotation. (5) Initialize each head's skew matrix with smaller std (0.01/sqrt(head_dim)) for stability.",
+        "run_name": "per_head_orthogonal_rotation"
+      },
+      "em_score": 0.0034,
+      "prev_best": 0.0034,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_014_per_head_orthogonal_rotation",
+      "wall_time_min": 120.0,
+      "metric_step": 19000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_014_per_head_orthogonal_rotation', '16', '25000']' timed out after 7199.999985249946 seconds",
+      "started_at": 1778499449.037029,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_014",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0538
     }
   ]
 }

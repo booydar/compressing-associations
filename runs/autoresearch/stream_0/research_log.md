@@ -164,3 +164,18 @@ Started: 2026-05-10 18:42
 **Rationale:** The orthogonal rotation in iter_012 improved EM to 0.0034 by decorrelating state dimensions. Adding a scalar gate (initialized near 0) allows the model to learn when rotation helps vs. when identity pass-through is better, providing adaptive control without increasing state_size.
 
 
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Adding per-head orthogonal rotation will improve memory precision by allowing independent decorrelation patterns for each state dimension head within the state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_014_per_head_orthogonal_rotation
+
+
+## Iter 14 — reverted — EM: 0.0034 (N=16)
+**Hypothesis:** Adding per-head orthogonal rotation will improve memory precision by allowing independent decorrelation patterns for each state dimension head within the state_size=32 constraint.
+**Wall time:** 120.0 min
+**Result:** EM=0.0034 vs prev best=0.0034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_014_per_head_orthogonal_rotation', '16', '25000']' timed out after 7199.999985249946 seconds
+**Rationale:** The global orthogonal rotation (iter_012) achieved the best EM (0.0034) by decorrelating state dimensions. However, a single 32x32 rotation may be suboptimal for capturing head-specific correlation patterns. With n_head=4 and head_dim=8 (state_size=32), applying separate 8x8 orthogonal rotations per head allows more flexible decorrelation while maintaining the same total state capacity.
+
+
