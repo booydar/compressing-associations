@@ -3,12 +3,77 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
+import math
 
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
 import fla.layers
 from fla.models.utils import Cache
+
+
+class OrthogonalRotation(nn.Module):
+    """Learnable orthogonal rotation matrix with skew-symmetric initialization.
+    
+    Uses QR decomposition to enforce orthogonality during forward pass.
+    Applied as: state_rotated = Q @ state, with inverse = Q^T @ state_rotated.
+    """
+    
+    def __init__(self, state_size: int = 32):
+        super().__init__()
+        self.state_size = state_size
+        # Initialize with skew-symmetric matrix: A = -A^T
+        # Then Q = expm(A) is orthogonal by construction
+        # Skew-symmetric init: fill upper triangle and negate for lower
+        skew_init = torch.zeros(state_size, state_size)
+        for i in range(state_size):
+            for j in range(i + 1, state_size):
+                skew_init[i, j] = torch.randn(1) * 0.01
+                skew_init[j, i] = -skew_init[i, j]
+        self.skew_matrix = nn.Parameter(skew_init)
+        
+    def _orthogonalize(self, A: torch.Tensor) -> torch.Tensor:
+        """Convert any matrix to orthogonal via QR decomposition."""
+        Q, R = torch.linalg.qr(A)
+        # Ensure det(Q) = 1 for proper rotation (not reflection)
+        # by adjusting signs of Q columns based on diagonal of R
+        d = torch.diag(R)
+        signs = torch.sign(d)
+        Q = Q * signs.unsqueeze(0)
+        return Q
+    
+    def forward(self, x: torch.Tensor, inverse: bool = False) -> torch.Tensor:
+        """Apply orthogonal rotation.
+        
+        Args:
+            x: Input tensor of shape (..., state_size) or (state_size,)
+            inverse: If True, apply Q^T instead of Q
+        
+        Returns:
+            Rotated tensor of same shape as input
+        """
+        # Compute orthogonal matrix from skew-symmetric via matrix exponential
+        # For numerical stability, use QR of (I + A) instead of expm(A)
+        I = torch.eye(self.state_size, device=self.skew_matrix.device, dtype=self.skew_matrix.dtype)
+        A = self.skew_matrix
+        Q = self._orthogonalize(I + A)
+        
+        if inverse:
+            Q = Q.t()
+        
+        # Apply rotation: x @ Q or Q @ x depending on dimensions
+        if x.dim() == 1:
+            # (state_size,) -> (state_size,)
+            return torch.matmul(Q, x)
+        elif x.dim() == 2:
+            # (batch, state_size) or (state_size, batch)
+            if x.shape[1] == self.state_size:
+                return torch.matmul(x, Q)
+            else:
+                return torch.matmul(Q, x)
+        else:
+            # (..., state_size) - apply on last dimension
+            return torch.matmul(x, Q)
 
 
 class RecurrentLayerWithSkip(nn.Module):
@@ -259,6 +324,10 @@ class RecurrentMemoryLayerWrapper(nn.Module):
 
         self.cache = Cache()
         self.last_write_output: torch.Tensor | None = None   # (B, M, d_v)
+        
+        # Orthogonal rotation for state dimension correlation (32x32)
+        self.state_size = fla_layer.state_size if hasattr(fla_layer, 'state_size') else 128
+        self.orthogonal_rotation = OrthogonalRotation(state_size=self.state_size)
 
     def _gdn_readonly(self, normed_tokens, attention_mask):
         """Run fla_layer with cached state but discard any state update."""
@@ -299,23 +368,31 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # 3. WRITE
         if self.write_mode == 'identity':
             fla_input = self.fla_norm(hidden_states)
+            # Apply orthogonal rotation before GDN
+            fla_input_rotated = self.orthogonal_rotation(fla_input)
             fla_out = self.fla_layer(
-                fla_input,
+                fla_input_rotated,
                 attention_mask=attention_mask,
                 past_key_values=self.cache,
                 use_cache=True,
             )
-            hidden_states = hidden_states + fla_out[0]
+            # Apply inverse rotation to GDN output
+            fla_out_rotated = self.orthogonal_rotation(fla_out[0], inverse=True)
+            hidden_states = hidden_states + fla_out_rotated
             self.cache = fla_out[2]
         else:
             write_vecs = self.memory_writer(self.write_norm(hidden_states))   # (B, M, d_v)
+            # Apply orthogonal rotation to write_vecs before GDN
+            write_vecs_rotated = self.orthogonal_rotation(write_vecs)
             fla_out = self.fla_layer(
-                write_vecs,
+                write_vecs_rotated,
                 attention_mask=None,
                 past_key_values=self.cache,
                 use_cache=True,
             )
-            self.last_write_output = fla_out[0]   # (B, M, d_v) — stored at full d_v
+            # Apply inverse rotation to GDN output
+            fla_out_rotated = self.orthogonal_rotation(fla_out[0], inverse=True)
+            self.last_write_output = fla_out_rotated   # (B, M, d_v) — stored at full d_v
             self.cache = fla_out[2]
 
             # 4. (v5) write_residual: feed fresh memory back into current tokens.

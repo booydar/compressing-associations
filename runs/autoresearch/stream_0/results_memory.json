@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_007",
-    "em": 0.0032,
+    "variant": "iter_012",
+    "em": 0.0034,
     "n_level": 16
   },
   "n_level": 16,
@@ -371,6 +371,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0589
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Adding orthogonal state rotation before GDN update will improve memory precision by decorrelating state dimensions within the state_size=32 constraint.",
+      "hypothesis": {
+        "hypothesis": "Adding orthogonal state rotation before GDN update will improve memory precision by decorrelating state dimensions within the state_size=32 constraint.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "State dimension correlation may waste capacity; orthogonal rotation can spread information more evenly across state dimensions without violating the hard state_size limit.",
+        "instruction": "Add a learnable orthogonal matrix (32x32) as a linear transformation applied to the state before the GDN update and its inverse after. Use a skew-symmetric initialization and enforce orthogonality via expm or QR decomposition during forward pass.",
+        "run_name": "orthogonal_state_rotation"
+      },
+      "em_score": 0.0034,
+      "prev_best": 0.0032,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_012_orthogonal_state_rotation",
+      "wall_time_min": 120.0,
+      "metric_step": 22500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_012_orthogonal_state_rotation', '16', '25000']' timed out after 7199.9999901200645 seconds",
+      "started_at": 1778483803.645513,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_012",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0469
     }
   ]
 }

@@ -134,3 +134,18 @@ Started: 2026-05-10 18:42
 **Rationale:** Pure SSM approaches (iter 7, 8) failed; combining GDN with a small attention head (e.g., 4 heads, 16 dim each) may provide better capacity utilization within state_size=32.
 
 
+## Iter 12 — RUNNING — N=16
+**Hypothesis:** Adding orthogonal state rotation before GDN update will improve memory precision by decorrelating state dimensions within the state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_012_orthogonal_state_rotation
+
+
+## Iter 12 — kept — EM: 0.0034 (N=16)
+**Hypothesis:** Adding orthogonal state rotation before GDN update will improve memory precision by decorrelating state dimensions within the state_size=32 constraint.
+**Wall time:** 120.0 min
+**Result:** EM=0.0034 vs prev best=0.0032
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_012_orthogonal_state_rotation', '16', '25000']' timed out after 7199.9999901200645 seconds
+**Rationale:** State dimension correlation may waste capacity; orthogonal rotation can spread information more evenly across state dimensions without violating the hard state_size limit.
+
+
