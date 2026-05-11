@@ -402,6 +402,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0469
+    },
+    {
+      "id": 13,
+      "iter_tag": "iter_013",
+      "description": "Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation based on input context.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation based on input context.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The orthogonal rotation in iter_012 improved EM to 0.0034 by decorrelating state dimensions. Adding a scalar gate (initialized near 0) allows the model to learn when rotation helps vs. when identity pass-through is better, providing adaptive control without increasing state_size.",
+        "instruction": "In the OrthogonalRotation class in huggingface_rmm_v5.py, add a learnable scalar parameter 'gate' initialized to log(1.0) (or 0.0). In the forward method, interpolate between the rotated output and the original input: output = gate * rotated + (1 - gate) * original, where gate is sigmoid-gated to [0,1]. Apply this gating in both the write path (before GDN) and inverse path (after GDN).",
+        "run_name": "gated_orthogonal_rotation"
+      },
+      "em_score": 0.0026,
+      "prev_best": 0.0034,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_013_gated_orthogonal_rotation",
+      "wall_time_min": 120.0,
+      "metric_step": 17000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_013_gated_orthogonal_rotation', '16', '25000']' timed out after 7199.999983880902 seconds",
+      "started_at": 1778491558.343678,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_013",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0451
     }
   ]
 }

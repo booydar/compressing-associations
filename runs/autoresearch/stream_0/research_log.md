@@ -149,3 +149,18 @@ Started: 2026-05-10 18:42
 **Rationale:** State dimension correlation may waste capacity; orthogonal rotation can spread information more evenly across state dimensions without violating the hard state_size limit.
 
 
+## Iter 13 — RUNNING — N=16
+**Hypothesis:** Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation based on input context.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_013_gated_orthogonal_rotation
+
+
+## Iter 13 — reverted — EM: 0.0026 (N=16)
+**Hypothesis:** Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation based on input context.
+**Wall time:** 120.0 min
+**Result:** EM=0.0026 vs prev best=0.0034
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_013_gated_orthogonal_rotation', '16', '25000']' timed out after 7199.999983880902 seconds
+**Rationale:** The orthogonal rotation in iter_012 improved EM to 0.0034 by decorrelating state dimensions. Adding a scalar gate (initialized near 0) allows the model to learn when rotation helps vs. when identity pass-through is better, providing adaptive control without increasing state_size.
+
+
