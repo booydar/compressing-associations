@@ -88,3 +88,23 @@ Started: 2026-05-10 18:42
 **Rationale:** Direction 5 explicitly requests exploring alternatives to GDN; S4 offers different memory mechanisms than Linear Attention (iter 1)
 
 
+## Iter 8 — FAILED — N=16
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 9 — RUNNING — N=16
+**Hypothesis:** Increasing num_memory_vectors from 1 to 4 will provide more compressed memory slots for storing segment-level representations, improving associative retrieval without violating the state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_009_increase_memory_vectors_to_4
+
+
+## Iter 9 — reverted — EM: 0.0022 (N=16)
+**Hypothesis:** Increasing num_memory_vectors from 1 to 4 will provide more compressed memory slots for storing segment-level representations, improving associative retrieval without violating the state_size=32 constraint.
+**Wall time:** 120.0 min
+**Result:** EM=0.0022 vs prev best=0.0032
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_009_increase_memory_vectors_to_4', '16', '25000']' timed out after 7199.999991389923 seconds
+**Rationale:** S4 achieved the best EM (0.0032) with num_memory_vectors=1. Increasing the number of memory vectors provides more capacity to store compressed segment representations through the MemoryWriter/MemoryReader mechanism, which is orthogonal to the FLA state_size constraint.
+
+
