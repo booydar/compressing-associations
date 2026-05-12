@@ -293,3 +293,30 @@ Started: 2026-05-10 18:42
 **Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses fixed learned decay parameters. Sinusoidal modulation inspired by positional encodings allows the model to capture periodic temporal patterns in memory decay, providing a richer inductive bias for associative retrieval without increasing state complexity or causing the failures seen in iter_17/19/20.
 
 
+## Iter 24 — RUNNING — N=16
+**Hypothesis:** Replacing GatedDeltaNet with S4-style diagonal state space model will improve memory precision and capacity within state_size=32 constraint through better gradient flow and selective retention
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_024_s4_alternative_gdn
+
+
+## Iter 24 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_024_s4_alternative_gdn
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 25 — RUNNING — N=16
+**Hypothesis:** Implementing linear attention with compression mechanism as GDN alternative will reduce memory interference while maintaining retrieval precision within state_size=32
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_025_linear_attention_compression
+
+
+## Iter 25 — reverted — EM: 0.0032 (N=16)
+**Hypothesis:** Implementing linear attention with compression mechanism as GDN alternative will reduce memory interference while maintaining retrieval precision within state_size=32
+**Wall time:** 120.0 min
+**Result:** EM=0.0032 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_025_linear_attention_compression', '16', '25000']' timed out after 7199.999986950075 seconds
+**Rationale:** Linear attention with compression provides a fundamentally different memory architecture than GDN, avoiding the bottlenecks in GDN's gating mechanism while respecting the state_size constraint.
+
+

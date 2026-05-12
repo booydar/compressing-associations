@@ -80,3 +80,13 @@
 - Rationale: Direction 3 requires GDN architecture changes. A write gate provides a different mechanism than the decay modulation (iter 17) and dual-path (iter 16) approaches, focusing on input filtering rather than state transformation.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_020_gated_memory_write
 
+## Iter 24 | failed | N=16
+- Hypothesis: Replacing GatedDeltaNet with S4-style diagonal state space model will improve memory precision and capacity within state_size=32 constraint through better gradient flow and selective retention
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Human direction explicitly calls for exploring alternatives to GDN layer. S4 models offer proven memory efficiency through diagonal state matrices and selective mechanisms without increasing state_size.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_024_s4_alternative_gdn
+
