@@ -399,3 +399,13 @@ Started: 2026-05-10 18:42
 **exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing
 
 
+## Iter 33 — reverted — EM: 0.0032 (N=16)
+**Hypothesis:** Adding exponential moving average smoothing to the slow state in the dual-state mechanism will create more stable long-term memory representations, reducing noise in memory retention within state_size=32.
+**Wall time:** 120.0 min
+**Result:** EM=0.0032 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing', '16', '25000']' timed out after 7199.999990100041 seconds
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses separate fast and slow decay rates but updates both with the same input. Adding EMA smoothing to the slow state creates a hierarchical memory where the slow state tracks a moving average of the fast state rather than raw input, providing more stable long-term representations without increasing complexity or causing the failures seen in content-adaptive approaches (iter_17, 19, 20).
+
+

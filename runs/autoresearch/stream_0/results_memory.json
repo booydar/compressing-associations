@@ -1034,24 +1034,25 @@
         "instruction": "In the _update_dual_state method of RecurrentMemoryLayerWrapper in huggingface_rmm_v5.py: (1) After computing fast_state, add an EMA update to slow_state: slow_state = beta * slow_state + (1 - beta) * fast_state, where beta is a learnable parameter initialized to 0.95. (2) Keep the existing slow decay mechanism but apply it to the EMA-smoothed slow_state instead of raw input. (3) The final combined_state should still use the existing gate_weight to blend fast_state and the EMA-smoothed slow_state.",
         "run_name": "dual_state_ema_smoothing"
       },
-      "em_score": null,
+      "em_score": 0.0032,
       "prev_best": 0.0036,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "reverted",
+      "status": "completed",
       "n_level": 16,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
-      "is_partial": false,
-      "recovery_status": "pending",
+      "wall_time_min": 120.0,
+      "metric_step": 22500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
       "needs_retry": false,
       "retry_of": null,
-      "run_error": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing', '16', '25000']' timed out after 7199.999990100041 seconds",
       "started_at": 1778599346.6232872,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_033",
       "summary_logged": false,
-      "stream_id": "0"
+      "stream_id": "0",
+      "token_accuracy": 0.0483
     }
   ]
 }
