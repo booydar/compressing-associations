@@ -3,12 +3,13 @@
 
 ## Directory Layout
 ```
-compressing-associations/
+compressing-associations-gdn/
   modeling_rmt/
-    huggingface_rmm_v2.py    — agent-editable model file (modified each iteration)
-  run_rmm_on_kv_retrieval-v2.py  — training script (do not modify)
+    huggingface_rmm_v5.py    — agent-editable model file (modified each iteration)
+  run_rmm_on_kv_retrieval-v5.py  — training script (do not modify)
   scripts/
-    run_autoresearch_exp.sh  — short-run launcher for autoresearch
+    run_autoresearch_exp.sh  — short-run launcher for autoresearch (v5-aware)
+    assoc-comp-rmm/run_rmm_v5_on_kv_retrieval-ca.sh  — full multi-seed sweep (manual)
   data/
     N2-K2V2-V62_1M/          — N=2 dataset
     N4-K2V2-V62_1M/          — N=4 dataset (generated on first use)
@@ -20,10 +21,11 @@ compressing-associations/
   .autoresearch/             — autoresearch infrastructure (this folder)
 ```
 
-## Model File: huggingface_rmm_v2.py
+## Model File: huggingface_rmm_v5.py
 
 ### Key Classes
 - `RecurrentMemoryConfig(PretrainedConfig)` — model config, inherits from HF
+- `MemoryWriter` / `MemoryReader` — v5 write/read paths (identity / pool+cross-attn / unpool, etc.)
 - `RecurrentMemoryLayerWrapper(nn.Module)` — wraps one transformer layer with an FLA recurrent layer (residual)
 - `RecurrentMemoryCell(nn.Module)` — replaces all transformer decoder layers with RecurrentMemoryLayerWrapper
 - `RecurrentMemoryWrapperBase(nn.Module)` — processes segments sequentially, recurrent state flows across segments
@@ -55,6 +57,10 @@ Recurrent state (`FLACache`) persists across segments within one sample and rese
 | n_keys       | key length in characters             | 2             |
 | n_values     | value length in characters           | 2             |
 | n_pairs      | total KV pairs = N-level             | 2             |
+| tokens_per_segment | context chunk size in tokens (v5) | derived from pairs_per_segment × (n_keys + n_values + 4) in `run_autoresearch_exp.sh` |
+| num_memory_vectors | memory bank width M (v5)        | 1             |
+| write_mode   | v5 memory write path               | cross_attn    |
+| read_mode    | v5 memory read path                | cross_attn    |
 
 ### Evaluation
 - Primary metric: `eval_exact_match` — fraction of samples where all value tokens are correct
@@ -65,7 +71,7 @@ Recurrent state (`FLACache`) persists across segments within one sample and rese
 - Do not modify `RecurrentMemoryBase.from_pretrained()` (HF loading infrastructure)
 - Do not change class names or constructor signatures of `RecurrentMemoryBase`, `RecurrentMemoryConfig`
   (the trainer instantiates these by name)
-- Do not add new CLI arguments without also updating `run_rmm_on_kv_retrieval-v2.py`
+- Do not add new CLI arguments without also updating `run_rmm_on_kv_retrieval-v5.py` and `scripts/run_autoresearch_exp.sh`
 
 ## Naming Conventions
 - New helper classes: PascalCase, suffix with purpose (e.g. `RecurrentGate`, `LayerSkip`)

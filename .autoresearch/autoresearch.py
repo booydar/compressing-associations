@@ -8,7 +8,7 @@ Requirements:
     pip install anthropic openai pyyaml python-dotenv
 
 The loop:
-  iter 0  : baseline — run v3 (exact copy of v2), record EM
+  iter 0  : baseline — run RMM v5 trainer, record EM
   iter 1+ : planner → hypothesis → executor → new model → run → eval
             if EM improved: keep, else revert
   Each iteration appends to results_memory.json and research_log.md.
@@ -55,16 +55,21 @@ from executor import execute, execute_with_trace_full, _validate_yaml
 # Shared files (common across all streams)
 SHARED_MODEL_FILE = None  # set in main() from config["model_file"]
 SHARED_PROGRAM_MD = AUTORESEARCH_DIR / "program.md"
-RESEARCH_LOG = AUTORESEARCH_DIR / "research_log.md"
-MEMORY_FILE = AUTORESEARCH_DIR / "results_memory.json"
+RESEARCH_LOG = None
+MEMORY_FILE = None
 CONFIG_FILE = AUTORESEARCH_DIR / "config.yaml"
 SHARED_EXPERIMENT_CONFIG_FILE = AUTORESEARCH_DIR / "experiment_config.yaml"
-HUMAN_DIRECTIONS_FILE = AUTORESEARCH_DIR / "human_directions.md"
-EXPERIMENT_QUEUE_FILE = AUTORESEARCH_DIR / "experiment_queue.json"
+HUMAN_DIRECTIONS_FILE = None
+EXPERIMENT_QUEUE_FILE = None
 CONVENTIONS_FILE = AUTORESEARCH_DIR / "conventions.md"
-SUMMARY_FILE = AUTORESEARCH_DIR / "experiment_summary.md"
+SUMMARY_FILE = None
 SHARED_ARTIFACTS_DIR = AUTORESEARCH_DIR / "artifacts"
-RUN_SCRIPT = REPO_ROOT / "scripts" / "run_autoresearch_exp.sh"
+try:
+    _init_cfg = yaml.safe_load(CONFIG_FILE.read_text())
+    _run_script_rel = _init_cfg.get("run_script", "scripts/run_autoresearch_exp.sh")
+except Exception:
+    _run_script_rel = "scripts/run_autoresearch_exp.sh"
+RUN_SCRIPT = (REPO_ROOT / _run_script_rel).resolve()
 
 # Stream-specific paths (set during initialization)
 STREAM_DIR = None
@@ -203,93 +208,25 @@ def _load_dotenv(path: Path) -> None:
 def load_memory() -> dict:
     if MEMORY_FILE.exists():
         return _read_memory_locked()
+    # Fresh stream — inherit n_level from shared memory so we do not restart from n_start
+    # Fresh stream - inherit n_level from shared memory so we do not restart from n_start
+    inherited_n = None
+    shared_mem = AUTORESEARCH_DIR / "results_memory.json"
+    if shared_mem.exists():
+        try:
+            inherited_n = json.load(open(shared_mem)).get("n_level")
+        except Exception:
+            pass
     return {
         "current_best": {"variant": "none", "em": -1.0, "n_level": 0},
-        "n_level": None,
+        "n_level": inherited_n,
         "experiments": [],
     }
 
 
 def _merge_memory_for_save(our_memory: dict) -> dict:
-    """Merge our in-memory state with on-disk state from other streams.
-
-    Entries belonging to our stream (matching stream_id) overwrite the file.
-    Entries from other streams are preserved. Entries without stream_id
-    (pre-migration) are preserved as-is.
-    """
-    if not MEMORY_FILE.exists():
-        return our_memory
-
-    try:
-        on_disk = _read_memory_locked()
-    except (FileNotFoundError, json.JSONDecodeError):
-        return our_memory
-
-    # Build lookup: (stream_id, id) -> entry for both our memory and on-disk
-    # For entries without stream_id, use exp_path to infer ownership
-    our_stream = STREAM_ID
-
-    def _entry_key(e):
-        sid = e.get("stream_id")
-        if sid is not None:
-            return (sid, e["id"])
-        # Pre-migration entry: infer from exp_path or mark as unowned
-        exp_path = e.get("exp_path", "")
-        if f"stream_{our_stream}" in exp_path:
-            return (our_stream, e["id"])
-        return ("__unowned__" + str(e.get("started_at", 0)), e["id"])
-
-    on_disk_map = {(_entry_key(e), i): e for i, e in enumerate(on_disk.get("experiments", []))}
-    our_map = {_entry_key(e): e for e in our_memory.get("experiments", [])}
-
-    # Start with on-disk entries from other streams
-    merged_experiments = []
-    for (key, orig_idx), entry in sorted(on_disk_map.items(), key=lambda x: x[0][1]):
-        if key in our_map:
-            # Our stream's entry overrides
-            merged_experiments.append(our_map[key])
-        else:
-            # Other stream's entry preserved as-is
-            merged_experiments.append(entry)
-
-    # Append our entries that don't exist in on-disk (new experiments)
-    for key, entry in our_map.items():
-        if key not in {k for k, _ in on_disk_map.keys()}:
-            merged_experiments.append(entry)
-
-    # Merge current_best: take the entry with highest EM across all streams
-    all_entries = merged_experiments
-    best_em = -1.0
-    best_variant = "none"
-    best_n = our_memory.get("n_level", 0)
-    for e in all_entries:
-        em = e.get("em_score")
-        if isinstance(em, (int, float)) and em > best_em:
-            best_em = em
-            best_variant = e.get("iter_tag", f"iter_{e['id']:03d}")
-            best_n = e.get("n_level", best_n)
-
-    # Use the n_level from our memory (it may have advanced via threshold)
-    merged = {
-        "current_best": {
-            "variant": our_memory["current_best"]["variant"],
-            "em": our_memory["current_best"]["em"],
-            "n_level": our_memory["current_best"]["n_level"],
-        },
-        "n_level": our_memory["n_level"],
-        "experiments": merged_experiments,
-    }
-
-    # If our current_best isn't the global best, check on_disk's current_best
-    if on_disk["current_best"]["em"] > merged["current_best"]["em"]:
-        merged["current_best"] = on_disk["current_best"]
-        # n_level may also need to come from on_disk if it advanced
-        if on_disk["n_level"] > merged["n_level"]:
-            merged["n_level"] = on_disk["n_level"]
-
-    return merged
-
-
+    """Per-stream memory file — no cross-stream merge needed."""
+    return our_memory
 def save_memory(memory: dict) -> None:
     merged = _merge_memory_for_save(memory)
     _write_memory_locked(merged)
@@ -302,7 +239,7 @@ def load_program_md() -> str:
 def update_program_md(n_level: int, current_best_em: float, best_variant: str, understanding: str = "") -> None:
     exp_cfg = load_experiment_config()
     _cfg = yaml.safe_load(CONFIG_FILE.read_text())
-    model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+    model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
     model_filename = Path(model_file).name
     content = f"""# Research Program (Stream {STREAM_ID})
 
@@ -772,6 +709,17 @@ def _detect_broken_base(memory: dict, k: int = 3) -> str | None:
 def run_experiment(exp_path_rel: str, n_pairs: int, exp_cfg: dict) -> None:
     """Run single experiment. For sweeps, use _run_sweep() instead."""
     env = os.environ.copy()
+
+    # Give this stream's model file priority over the global modeling_rmt package.
+    # STREAM_MODEL_FILE is already at STREAM_DIR/modeling_rmt/<name> — just ensure
+    # __init__.py exists and prepend STREAM_DIR to PYTHONPATH.
+    stream_mod_dir = STREAM_DIR / "modeling_rmt"
+    stream_mod_dir.mkdir(parents=True, exist_ok=True)
+    init_file = stream_mod_dir / "__init__.py"
+    if not init_file.exists():
+        init_file.write_text("")
+    existing_pp = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = str(STREAM_DIR) + (":" + existing_pp if existing_pp else "")
     
     learning_rate = exp_cfg.get("learning_rate")
     if learning_rate is None:
@@ -782,7 +730,7 @@ def run_experiment(exp_path_rel: str, n_pairs: int, exp_cfg: dict) -> None:
 
     # Pass main script from config so the shell wrapper stays agnostic
     _cfg = yaml.safe_load(CONFIG_FILE.read_text())
-    env["MAIN_SCRIPT"] = _cfg.get("main_script", "run_rmm_on_kv_retrieval-v2.py")
+    env["MAIN_SCRIPT"] = _cfg.get("main_script", "run_rmm_on_kv_retrieval-v5.py")
 
     # Standard short-name mappings used by the shell script
     env.update({
@@ -891,7 +839,7 @@ def _find_next_stream_id() -> str:
     
     return str(max(existing) + 1) if existing else "0"
 
-def _init_stream(stream_id: str | None = None, model_file_rel: str = "modeling_rmt/huggingface_rmm_v2.py") -> str:
+def _init_stream(stream_id: str | None = None, model_file_rel: str = "modeling_rmt/huggingface_rmm_v5.py") -> str:
     """Initialize stream directory structure and return stream ID."""
     global STREAM_DIR, STREAM_MODEL_FILE, STREAM_CONFIG_FILE, STREAM_PROGRAM_MD
     global STREAM_ARTIFACTS_DIR, STREAM_RUNS_DIR, STREAM_ID
@@ -909,6 +857,13 @@ def _init_stream(stream_id: str | None = None, model_file_rel: str = "modeling_r
     STREAM_CONFIG_FILE = STREAM_DIR / "experiment_config.yaml"
     STREAM_PROGRAM_MD = STREAM_DIR / "program.md"
     STREAM_ARTIFACTS_DIR = STREAM_DIR / "artifacts"
+    # Per-stream shared files (fully isolated — no cross-stream sharing)
+    global RESEARCH_LOG, MEMORY_FILE, SUMMARY_FILE, HUMAN_DIRECTIONS_FILE, EXPERIMENT_QUEUE_FILE
+    RESEARCH_LOG          = STREAM_DIR / "research_log.md"
+    MEMORY_FILE           = STREAM_DIR / "results_memory.json"
+    SUMMARY_FILE          = STREAM_DIR / "experiment_summary.md"
+    HUMAN_DIRECTIONS_FILE = STREAM_DIR / "human_directions.md"
+    EXPERIMENT_QUEUE_FILE = STREAM_DIR / "experiment_queue.json"
     
     # Create directory structure
     STREAM_DIR.mkdir(parents=True, exist_ok=True)
@@ -926,6 +881,12 @@ def _init_stream(stream_id: str | None = None, model_file_rel: str = "modeling_r
         import shutil
         shutil.copy2(SHARED_EXPERIMENT_CONFIG_FILE, STREAM_CONFIG_FILE)
         print(f"[stream {STREAM_ID}] copied config file to {STREAM_CONFIG_FILE}")
+
+    _shared_hd = AUTORESEARCH_DIR / "human_directions.md"
+    if not HUMAN_DIRECTIONS_FILE.exists() and _shared_hd.exists():
+        import shutil
+        shutil.copy2(_shared_hd, HUMAN_DIRECTIONS_FILE)
+        print(f"[stream {STREAM_ID}] copied human_directions.md to stream dir")
     
     print(f"[stream {STREAM_ID}] initialized at {STREAM_DIR}")
     return STREAM_ID
@@ -1049,10 +1010,10 @@ def main() -> None:
     # Load config first so we can pass model_file_rel to _init_stream
     cfg = load_config()
     global SHARED_MODEL_FILE
-    SHARED_MODEL_FILE = REPO_ROOT / cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+    SHARED_MODEL_FILE = REPO_ROOT / cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
 
     # Initialize stream
-    _init_stream(_STREAM_ID_ARG, model_file_rel=cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py"))
+    _init_stream(_STREAM_ID_ARG, model_file_rel=cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py"))
 
     _ensure_cursor_bridge(cfg)
     exp_cfg = load_experiment_config()
@@ -1124,7 +1085,7 @@ def main() -> None:
 N_EXECUTOR_RETRIES = 4
 
 
-def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False):
+def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False, artifact_dir=None):
     """Run executor with validation retries. Returns (new_content, trace) or raises RuntimeError."""
     last_error = None
     last_trace = None
@@ -1133,7 +1094,7 @@ def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=Fal
     for attempt in range(1, N_EXECUTOR_RETRIES + 1):
         print(f"[executor] applying {label} change (attempt {attempt}/{N_EXECUTOR_RETRIES})...")
         try:
-            result = execute_with_trace_full(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=is_yaml)
+            result = execute_with_trace_full(hypothesis, current_content, executor_cfg, error_context=last_error, is_yaml=is_yaml, artifact_dir=artifact_dir)
             new_content, trace = result if isinstance(result, tuple) else (result, {})
         except Exception as e:
             last_error = f"Executor error: {e}"
@@ -1187,7 +1148,7 @@ def _run_iter(
 
     if is_baseline:
         print(f"[stream {STREAM_ID}] [iter 0] Running baseline (no changes to model file)")
-        description = f"[Stream {STREAM_ID}] baseline — exact copy of v2"
+        description = f"[Stream {STREAM_ID}] baseline — RMM v5 default stack"
     else:
         recovered_pending, unresolved_pending = _reconcile_running_entries(memory, exp_cfg)
         if recovered_pending or unresolved_pending:
@@ -1258,7 +1219,7 @@ def _run_iter(
                     planner_error = None
                     for attempt in range(1, N_PLANNER_RETRIES + 1):
                         try:
-                            hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error, iter_tag=iter_tag)
+                            hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error, iter_tag=iter_tag, artifact_dir=_artifact_dir(iter_tag))
                             break
                         except Exception as e:
                             planner_error = str(e)
@@ -1281,7 +1242,7 @@ def _run_iter(
             try:
                 new_content, executor_trace = _execute_with_retries(
                     hypothesis, current_content, executor_cfg, is_yaml=is_config_change,
-                )
+                    artifact_dir=_artifact_dir(iter_tag))
             except RuntimeError as e:
                 _record_failed_iter(memory, iter_id, n_level, current_best_em, str(e), hypothesis, planner_trace=planner_trace, executor_trace=executor_trace)
                 save_memory(memory)

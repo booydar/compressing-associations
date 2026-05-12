@@ -26,8 +26,8 @@ CONVENTIONS_FILE = AUTORESEARCH_DIR / "conventions.md"
 # Model file and trainer script come from config so executor is script-agnostic
 import yaml as _yaml
 _cfg = _yaml.safe_load((AUTORESEARCH_DIR / "config.yaml").read_text())
-MODEL_FILE = REPO_ROOT / _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
-TRAINER_FILE = REPO_ROOT / _cfg.get("main_script", "run_rmm_on_kv_retrieval-v5.py")
+MODEL_FILE = REPO_ROOT / _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+TRAINER_FILE = REPO_ROOT / _cfg.get("main_script", "run_rmm_on_kv_retrieval-v2.py")
 
 
 class ExecutorResponseError(RuntimeError):
@@ -42,7 +42,6 @@ def execute(
     provider_cfg: dict,
     error_context: str | None = None,
     is_yaml: bool = False,
-    artifact_dir: "Path | None" = None,
 ) -> str:
     result = execute_with_trace_full(
         hypothesis,
@@ -50,7 +49,6 @@ def execute(
         provider_cfg,
         error_context=error_context,
         is_yaml=is_yaml,
-        artifact_dir=artifact_dir,
     )
     return result[0] if isinstance(result, tuple) else result
 
@@ -61,7 +59,6 @@ def execute_with_trace_full(
     provider_cfg: dict,
     error_context: str | None = None,
     is_yaml: bool = False,
-    artifact_dir: "Path | None" = None,
 ) -> tuple[str, dict]:
     """
     Call the executor LLM (via opencode) to apply the hypothesis change to the file.
@@ -113,34 +110,13 @@ def execute_with_trace_full(
             env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
 
         print(f"[executor] Calling opencode with model: {model_name}")
-        if artifact_dir:
-            adir = Path(artifact_dir)
-            adir.mkdir(parents=True, exist_ok=True)
-            prompt_file = adir / "executor_prompt.txt"
-            prompt_file.write_text(prompt)
-        else:
-            import tempfile as _tf
-            _tmp = _tf.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
-            _tmp.write(prompt)
-            _tmp.close()
-            prompt_file = Path(_tmp.name)
-        try:
-            result = subprocess.run(
-                ["opencode", "run", "-m", model_name,
-                 "Apply the change described in the attached instructions file exactly. Do not ask questions.",
-                 "-f", str(prompt_file)],
-                capture_output=True,
-                text=True,
-                env=env,
-                cwd=REPO_ROOT,
-                timeout=900,
-            )
-        finally:
-            if not artifact_dir:
-                prompt_file.unlink(missing_ok=True)
-        if artifact_dir:
-            output_file = adir / "executor_output.txt"
-            output_file.write_text(f"returncode: {result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}")
+        result = subprocess.run(
+            ["opencode", "run", "-m", model_name, prompt],
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=REPO_ROOT,
+        )
 
         trace = {
             "hypothesis": hypothesis,

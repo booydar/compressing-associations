@@ -26,13 +26,27 @@ from llm_client import call_llm, _build_base_url
 
 AUTORESEARCH_DIR = Path(os.path.dirname(__file__))
 REPO_ROOT = AUTORESEARCH_DIR.parent
-HUMAN_DIRECTIONS_FILE = AUTORESEARCH_DIR / "human_directions.md"
-EXPERIMENT_QUEUE_FILE = AUTORESEARCH_DIR / "experiment_queue.json"
-SUMMARY_FILE = AUTORESEARCH_DIR / "experiment_summary.md"
 CONVENTIONS_FILE = AUTORESEARCH_DIR / "conventions.md"
-RESEARCH_LOG = AUTORESEARCH_DIR / "research_log.md"
-MEMORY_FILE = AUTORESEARCH_DIR / "results_memory.json"
-QUEUE_LOCK_FILE = AUTORESEARCH_DIR / "queue.lock"
+
+
+def get_queue_file() -> Path:
+    return get_stream_dir() / "experiment_queue.json"
+
+
+def get_human_directions_file() -> Path:
+    return get_stream_dir() / "human_directions.md"
+
+
+def get_summary_file() -> Path:
+    return get_stream_dir() / "experiment_summary.md"
+
+
+def get_memory_file() -> Path:
+    return get_stream_dir() / "results_memory.json"
+
+
+def get_research_log() -> Path:
+    return get_stream_dir() / "research_log.md"
 
 # Stream-specific paths (read dynamically via environment)
 def get_stream_dir():
@@ -42,7 +56,7 @@ def get_stream_dir():
 def get_model_file():
     cfg_path = AUTORESEARCH_DIR / "config.yaml"
     _cfg = yaml.safe_load(cfg_path.read_text())
-    model_rel = Path(_cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py"))
+    model_rel = Path(_cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py"))
     return get_stream_dir() / model_rel.parent / model_rel.name
 
 def get_config_file():
@@ -166,11 +180,11 @@ def build_planner_context_file(iter_tag: str) -> Path:
         "## Important Files (use these paths to read content)",
         f"- Model: {get_model_file()}",
         f"- Experiment Config: {get_config_file()}",
-        f"- Experiment Queue: {EXPERIMENT_QUEUE_FILE}",
+        f"- Experiment Queue: {get_queue_file()}",
         f"- Conventions: {CONVENTIONS_FILE}",
-        f"- Research Log: {RESEARCH_LOG}",
-        f"- Results Memory: {MEMORY_FILE}",
-        f"- Experiment Summary: {SUMMARY_FILE}",
+        f"- Research Log: {get_research_log()}",
+        f"- Results Memory: {get_memory_file()}",
+        f"- Experiment Summary: {get_summary_file()}",
         "",
         "## Key Hyperparameters (from experiment_config.yaml)",
     ]
@@ -221,11 +235,11 @@ def build_planner_messages(
     file_refs = f"""## Important Files
 - Model code: {get_model_file()}
 - Experiment config: {get_config_file()}
-- Experiment queue: {EXPERIMENT_QUEUE_FILE}
+- Experiment queue: {get_queue_file()}
 - Conventions: {CONVENTIONS_FILE}
-- Research log: {RESEARCH_LOG}
-- Results memory: {MEMORY_FILE}
-- Experiment summary: {SUMMARY_FILE}
+- Research log: {get_research_log()}
+- Results memory: {get_memory_file()}
+- Experiment summary: {get_summary_file()}
 """
 
     user_content = f"""{file_refs}
@@ -253,7 +267,7 @@ The experiment queue is empty — propose the next change to try based on the ex
 
     # Format system prompt with stream ID and model file from config
     _cfg = yaml.safe_load((AUTORESEARCH_DIR / "config.yaml").read_text())
-    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
     formatted_system_prompt = SYSTEM_PROMPT.format(stream_id=get_stream_id(), model_file=_model_file)
     
     return [
@@ -285,12 +299,12 @@ def plan_with_trace(
     return hypothesis, trace
 
 
-def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None) -> dict:
+def plan(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None, artifact_dir=None) -> dict:
     result = plan_with_trace(program_md, recent_experiments, provider_cfg, error_context=error_context, iter_tag=iter_tag)
     return result[0] if isinstance(result, tuple) else result
 
 
-def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None) -> tuple[dict, dict]:
+def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provider_cfg: dict, error_context: str | None = None, iter_tag: str | None = None, artifact_dir=None) -> tuple[dict, dict]:
     """
     Call the planner via opencode CLI and return both parsed hypothesis and full trace data for logging.
     Retries once on failure with error context. Saves error trace to artifacts on final failure.
@@ -305,6 +319,7 @@ def plan_with_trace_full(program_md: str, recent_experiments: list[dict], provid
                 messages, provider_cfg, context_file,
                 error_context=last_error,
                 recent_experiments=recent_experiments,
+                artifact_dir=artifact_dir,
             )
             trace = {
                 "messages": messages,
@@ -353,7 +368,7 @@ def parse_human_directions(
         "Extract the experiment plans from the human directions above."
     )
     _cfg = yaml.safe_load((AUTORESEARCH_DIR / "config.yaml").read_text())
-    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
     formatted_director_prompt = DIRECTOR_SYSTEM_PROMPT.format(model_file=_model_file)
     messages = [
         {"role": "system", "content": formatted_director_prompt},
@@ -387,7 +402,7 @@ def _build_planner_prompt(
     """Build a single prompt string for opencode that instructs it to append a hypothesis to the queue file."""
     stream_id = get_stream_id()
     _cfg = yaml.safe_load((AUTORESEARCH_DIR / "config.yaml").read_text())
-    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v2.py")
+    _model_file = _cfg.get("model_file", "modeling_rmt/huggingface_rmm_v5.py")
 
     error_section = ""
     if error_context:
@@ -399,7 +414,7 @@ def _build_planner_prompt(
 
     # Show the current queue file content so the model knows what it looks like
     try:
-        current_queue = EXPERIMENT_QUEUE_FILE.read_text().strip()
+        current_queue = get_queue_file().read_text().strip()
     except Exception:
         current_queue = '{"queue": [], "last_directions_hash": null, "last_updated": null}'
 
@@ -407,7 +422,7 @@ def _build_planner_prompt(
         f"## MANDATORY ACTION — DO THIS FIRST AND LAST\n"
         f"\n"
         f"You MUST use your file-edit tool to modify this file:\n"
-        f"  {EXPERIMENT_QUEUE_FILE}\n"
+        f"  {get_queue_file()}\n"
         f"\n"
         f"Add ONE new entry to the \"queue\" array. The entry MUST have this exact shape:\n"
         f"{{\n"
@@ -436,8 +451,8 @@ def _build_planner_prompt(
         f"- Model code: {get_model_file()}\n"
         f"- Experiment config: {get_config_file()}\n"
         f"- Conventions: {CONVENTIONS_FILE}\n"
-        f"- Results memory: {MEMORY_FILE}\n"
-        f"- Experiment summary: {SUMMARY_FILE}\n"
+        f"- Results memory: {get_memory_file()}\n"
+        f"- Experiment summary: {get_summary_file()}\n"
         f"\n"
         f"## Recent Experiment History (last 10, most recent last)\n"
         f"{history_text}\n"
@@ -457,7 +472,7 @@ def _build_planner_prompt(
         f"- Prefer changes with clear theoretical motivation.\n"
         f"\n"
         f"## REMINDER\n"
-        f"After reading the reference files, edit {EXPERIMENT_QUEUE_FILE} with your entry for stream {stream_id}. That is your only action.\n"
+        f"After reading the reference files, edit {get_queue_file()} with your entry for stream {stream_id}. That is your only action.\n"
     )
 
 
@@ -465,99 +480,88 @@ def _run_opencode_and_enqueue(
     prompt: str,
     provider_cfg: dict,
     stream_id: str,
+    artifact_dir=None,
 ) -> dict:
     """
-    Run opencode to append a hypothesis to the shared experiment queue file.
-    Uses exclusive file locking to prevent conflicts between streams.
-    Returns the hypothesis dict (popped from queue by stream_id).
+    Run opencode to append a hypothesis to the per-stream experiment queue file.
+    Returns the hypothesis dict (popped from queue after opencode writes it).
     """
-    queue_file = EXPERIMENT_QUEUE_FILE
+    queue_file = get_queue_file()
     queue_file.parent.mkdir(parents=True, exist_ok=True)
 
-    # Ensure queue file exists with valid structure
     if not queue_file.exists():
         queue_file.write_text(json.dumps({"queue": [], "last_directions_hash": None, "last_updated": None}, indent=2))
 
-    # Backup current queue for recovery
-    backup_fd, backup_path = tempfile.mkstemp(suffix=".queue_backup", dir=str(AUTORESEARCH_DIR))
-    os.close(backup_fd)
+    model_name = provider_cfg.get("model", "")
+    provider = provider_cfg.get("provider", "")
+    print(f"[planner] Calling opencode with model: {model_name}")
+
+    env = os.environ.copy()
+    if provider in ("local", "cursor"):
+        env["OPENAI_BASE_URL"] = _build_base_url(provider_cfg)
+        env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
+    elif provider == "anthropic":
+        env["ANTHROPIC_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
+    elif provider == "openai":
+        env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
+
+    if artifact_dir:
+        from pathlib import Path as _Path
+        adir = _Path(artifact_dir)
+        adir.mkdir(parents=True, exist_ok=True)
+        prompt_file = adir / "planner_prompt.txt"
+        prompt_file.write_text(prompt)
+        print(f"[planner] wrote prompt to {prompt_file}")
+    else:
+        import tempfile as _tf
+        _tmp = _tf.NamedTemporaryFile(mode='w', suffix='.txt', delete=False)
+        _tmp.write(prompt)
+        _tmp.close()
+        prompt_file = _Path(_tmp.name)
     try:
-        with open(queue_file, "r") as f_in:
-            with open(backup_path, "w") as f_out:
-                f_out.write(f_in.read())
-
-        # Acquire exclusive lock (blocks other streams)
-        lock_fd = open(QUEUE_LOCK_FILE, "w")
-        fcntl.flock(lock_fd.fileno(), fcntl.LOCK_EX)
-        try:
-            model_name = provider_cfg.get("model", "")
-            provider = provider_cfg.get("provider", "")
-            print(f"[planner] Calling opencode with model: {model_name}")
-
-            # Set up environment
-            env = os.environ.copy()
-            if provider in ("local", "cursor"):
-                env["OPENAI_BASE_URL"] = _build_base_url(provider_cfg)
-                env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "no-key") or "no-key"
-            elif provider == "anthropic":
-                env["ANTHROPIC_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
-            elif provider == "openai":
-                env["OPENAI_API_KEY"] = os.environ.get(provider_cfg.get("api_key_env", ""), "")
-
-            result = subprocess.run(
-                ["opencode", "run", "-m", model_name, prompt],
-                capture_output=True,
-                text=True,
-                env=env,
-                cwd=REPO_ROOT,
-                timeout=900,
-            )
-
-            if result.returncode != 0:
-                # Restore queue from backup
-                with open(backup_path, "r") as f_in:
-                    with open(queue_file, "w") as f_out:
-                        f_out.write(f_in.read())
-                raise RuntimeError(
-                    f"opencode failed (rc={result.returncode}): {result.stderr[:500]}"
-                )
-
-            # Read back queue and find our entry
-            with open(queue_file, "r") as f:
-                queue_data = json.load(f)
-
-            hypothesis = None
-            for i, entry in enumerate(queue_data.get("queue", [])):
-                if entry.get("stream_id") == stream_id:
-                    hypothesis = queue_data["queue"].pop(i)
-                    break
-
-            if hypothesis is None:
-                # Restore queue from backup
-                with open(backup_path, "r") as f_in:
-                    with open(queue_file, "w") as f_out:
-                        f_out.write(f_in.read())
-                raise RuntimeError(
-                    f"opencode did not append a hypothesis for stream {stream_id}. "
-                    f"stdout: {result.stdout[:300]}"
-                )
-
-            # Save updated queue
-            queue_data["last_updated"] = datetime.now().isoformat()
-            queue_file.write_text(json.dumps(queue_data, indent=2))
-
-        finally:
-            fcntl.flock(lock_fd.fileno(), fcntl.LOCK_UN)
-            lock_fd.close()
-
+        result = subprocess.run(
+            ["opencode", "run", "-m", model_name,
+             "Follow the research instructions in the attached file exactly.",
+             "-f", str(prompt_file)],
+            capture_output=True,
+            text=True,
+            env=env,
+            cwd=REPO_ROOT,
+            timeout=900,
+        )
     finally:
-        # Clean up backup
-        if os.path.exists(backup_path):
-            try:
-                os.remove(backup_path)
-            except OSError:
-                pass
+        if not artifact_dir:
+            from pathlib import Path as _P2
+            _P2(str(prompt_file)).unlink(missing_ok=True)
+    if artifact_dir:
+        output_file = adir / "planner_output.txt"
+        output_file.write_text(f"returncode: {result.returncode}\nstdout:\n{result.stdout}\nstderr:\n{result.stderr}")
+        print(f"[planner] wrote output to {output_file}")
 
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"opencode failed (rc={result.returncode}): {result.stderr[:500]}"
+        )
+
+    try:
+        queue_data = json.loads(queue_file.read_text())
+    except json.JSONDecodeError as e:
+        raise RuntimeError(f"queue file is not valid JSON after opencode run: {e}")
+
+    hypothesis = None
+    for i, entry in enumerate(queue_data.get("queue", [])):
+        if entry.get("stream_id") == stream_id:
+            hypothesis = queue_data["queue"].pop(i)
+            break
+
+    if hypothesis is None:
+        raise RuntimeError(
+            f"opencode did not append a hypothesis for stream {stream_id}. "
+            f"stdout: {result.stdout[:300]}"
+        )
+
+    queue_data["last_updated"] = datetime.now().isoformat()
+    queue_file.write_text(json.dumps(queue_data, indent=2))
     return hypothesis
 
 
@@ -567,6 +571,7 @@ def _call_opencode_planner(
     context_file: Path | None = None,
     error_context: str | None = None,
     recent_experiments: list[dict] | None = None,
+    artifact_dir=None,
 ) -> dict:
     """
     Call opencode CLI for planning. Appends hypothesis to shared experiment queue,
@@ -598,7 +603,7 @@ def _call_opencode_planner(
         messages, history_text, config_text, conventions_text, error_context,
     )
 
-    return _run_opencode_and_enqueue(prompt, provider_cfg, stream_id)
+    return _run_opencode_and_enqueue(prompt, provider_cfg, stream_id, artifact_dir=artifact_dir)
 
 
 def _format_history(experiments: list[dict]) -> str:
@@ -627,10 +632,10 @@ def _format_history(experiments: list[dict]) -> str:
 
 def _load_human_directions() -> tuple[str, str | None]:
     """Load human directions file and return a compact view plus latest pending item."""
-    if not HUMAN_DIRECTIONS_FILE.exists():
+    if not get_human_directions_file().exists():
         return "(no human directions file found)", None
 
-    content = HUMAN_DIRECTIONS_FILE.read_text()
+    content = get_human_directions_file().read_text()
     items = [
         match.groupdict()
         for match in HUMAN_DIRECTION_ITEM_RE.finditer(content)
@@ -668,10 +673,10 @@ def _truncate_text(text: str, max_chars: int | None) -> str:
 
 
 def _load_summary_tail() -> str:
-    if not SUMMARY_FILE.exists():
+    if not get_summary_file().exists():
         return "(no experiment summary yet)"
 
-    summary = SUMMARY_FILE.read_text().strip()
+    summary = get_summary_file().read_text().strip()
     if not summary:
         return "(no experiment summary yet)"
     if len(summary) <= MAX_SUMMARY_CHARS:

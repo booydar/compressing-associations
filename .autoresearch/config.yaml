@@ -4,8 +4,11 @@
 # ── Experiment identity ───────────────────────────────────────────────────────
 # model_file   : repo-relative path to the model file the executor edits
 # main_script  : repo-relative path to the Python training script
-model_file: modeling_rmt/huggingface_rmm_v2.py
-main_script: run_rmm_on_kv_retrieval-v2.py
+# run_script   : repo-relative launcher used by autoresearch.py (single run; env + accelerate)
+# Full multi-seed sweep (manual): scripts/assoc-comp-rmm/run_rmm_v5_on_kv_retrieval-ca.sh
+model_file: modeling_rmt/huggingface_rmm_v5.py
+main_script: run_rmm_on_kv_retrieval-v5.py
+run_script: scripts/run_autoresearch_exp.sh
 
 llm:
 
@@ -62,4 +65,4 @@ cursor_bridge:
   host: 127.0.0.1
   port: 8765
   auto_start: false   # set true once bridge is built and you want it auto-launched
-  workspace: /Users/bulatov/Desktop/lab/autoresearch
+  workspace: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn
