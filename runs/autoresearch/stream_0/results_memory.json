@@ -1053,6 +1053,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0483
+    },
+    {
+      "id": 34,
+      "iter_tag": "iter_034",
+      "description": "Adding learnable per-dimension beta parameters to the dual-state EMA mechanism will enable adaptive slow-state tracking that adjusts smoothing strength based on dimension-specific memory requirements.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding learnable per-dimension beta parameters to the dual-state EMA mechanism will enable adaptive slow-state tracking that adjusts smoothing strength based on dimension-specific memory requirements.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The dual-state mechanism (iter_016, EM=0.0036) uses a fixed beta=0.95 for slow-state EMA smoothing. Making beta learnable and per-dimension allows the model to adaptively control how quickly each state dimension tracks the fast state, providing finer-grained control over long-term memory formation without increasing state_size beyond 32.",
+        "instruction": "In the _update_dual_state method of RecurrentMemoryLayerWrapper in huggingface_rmm_v5.py: (1) Replace the scalar self.beta = nn.Parameter(torch.tensor(0.95)) with a per-dimension parameter: self.beta = nn.Parameter(torch.ones(self.state_size) * 0.95). (2) In the slow state update line, use broadcasting: self.slow_state = self.beta.unsqueeze(0) * self.slow_state + (1 - self.beta.unsqueeze(0)) * self.fast_state. (3) Clamp beta values to [0.9, 0.999] using softplus or sigmoid scaling to ensure valid EMA coefficients.",
+        "run_name": "learnable_beta_per_dim_dual_state"
+      },
+      "em_score": 0.0032,
+      "prev_best": 0.0036,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_034_learnable_beta_per_dim_dual_state",
+      "wall_time_min": 120.0,
+      "metric_step": 22000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_034_learnable_beta_per_dim_dual_state', '16', '25000']' timed out after 7199.999988120981 seconds",
+      "started_at": 1778607437.1253517,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_034",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0473
     }
   ]
 }

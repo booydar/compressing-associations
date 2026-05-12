@@ -409,3 +409,18 @@ Started: 2026-05-10 18:42
 **Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses separate fast and slow decay rates but updates both with the same input. Adding EMA smoothing to the slow state creates a hierarchical memory where the slow state tracks a moving average of the fast state rather than raw input, providing more stable long-term representations without increasing complexity or causing the failures seen in content-adaptive approaches (iter_17, 19, 20).
 
 
+## Iter 34 — RUNNING — N=16
+**Hypothesis:** Adding learnable per-dimension beta parameters to the dual-state EMA mechanism will enable adaptive slow-state tracking that adjusts smoothing strength based on dimension-specific memory requirements.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_034_learnable_beta_per_dim_dual_state
+
+
+## Iter 34 — reverted — EM: 0.0032 (N=16)
+**Hypothesis:** Adding learnable per-dimension beta parameters to the dual-state EMA mechanism will enable adaptive slow-state tracking that adjusts smoothing strength based on dimension-specific memory requirements.
+**Wall time:** 120.0 min
+**Result:** EM=0.0032 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_034_learnable_beta_per_dim_dual_state', '16', '25000']' timed out after 7199.999988120981 seconds
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses a fixed beta=0.95 for slow-state EMA smoothing. Making beta learnable and per-dimension allows the model to adaptively control how quickly each state dimension tracks the fast state, providing finer-grained control over long-term memory formation without increasing state_size beyond 32.
+
+
