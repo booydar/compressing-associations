@@ -340,3 +340,45 @@ Started: 2026-05-10 18:42
 **Rationale:** The orthogonal rotation (iter_012) achieved EM=0.0034 by decorrelating state dimensions. However, fixed rotation may not always help. A scalar gate initialized near 0 allows the model to learn adaptive mixing between rotated and original states, similar to successful gating in dual-state mechanism (iter_016, EM=0.0036).
 
 
+## Iter 28 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_028/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 29 — RUNNING — N=16
+**Hypothesis:** Implementing sparse memory activation within GDN will reduce interference and improve precision by only updating relevant state dimensions per timestep.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_029_sparse_memory_activation
+
+
+## Iter 29 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_029_sparse_memory_activation
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 30 — RUNNING — N=16
+**Hypothesis:** Adding a memory compression bottleneck layer before GDN state storage will enable higher information density within state_size=32 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_030_compression_bottleneck_layer
+
+
+## Iter 30 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_030_compression_bottleneck_layer
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 31 — RUNNING — N=16
+**Hypothesis:** Adding learnable decay offset parameters to the dual-state mechanism will enable fine-grained per-dimension decay tuning, improving memory retention without the instability of content-adaptive modulation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_031_dual_state_learnable_decay_offset
+
+
+## Iter 31 — reverted — EM: 0.0028 (N=16)
+**Hypothesis:** Adding learnable decay offset parameters to the dual-state mechanism will enable fine-grained per-dimension decay tuning, improving memory retention without the instability of content-adaptive modulation.
+**Wall time:** 108.1 min
+**Result:** EM=0.0028 vs prev best=0.0036
+**Metric source:** all_results
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses fixed learned decay parameters. Iter_17's content-adaptive decay modulation failed with script errors, suggesting complexity issues. A simpler learnable offset approach adds per-dimension bias terms to base decay rates, allowing dimension-specific tuning while maintaining training stability. This is orthogonal to the orthogonal rotation (iter_012, EM=0.0034) which decorrelates states but doesn't tune decay dynamics.
+
+

@@ -100,3 +100,33 @@
 - Rationale: Cross-attention provides content-addressable memory retrieval that avoids GDN's sequential state update bottlenecks, addressing the precision and capacity issues while staying within state_size constraints.
 - exp_path: 
 
+## Iter 28 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_028/executor_prompt.txt']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_028/executor_prompt.txt']' timed out after 900 seconds
+- Rationale: Recent experiments tried multiplicative interactions and dual states but failed. Orthogonal subspace decomposition is a different approach that could improve capacity by using state dimensions more efficiently.
+- exp_path: 
+
+## Iter 29 | failed | N=16
+- Hypothesis: Implementing sparse memory activation within GDN will reduce interference and improve precision by only updating relevant state dimensions per timestep.
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous gated memory write experiments failed, but sparse activation is architecturally different - it uses top-k selection instead of soft gating, which may reduce gradient instability while maintaining precision.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_029_sparse_memory_activation
+
+## Iter 30 | failed | N=16
+- Hypothesis: Adding a memory compression bottleneck layer before GDN state storage will enable higher information density within state_size=32 constraint.
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Previous alternatives to GDN (S4, linear attention) failed. This approach keeps GDN but adds a compression layer before state storage, which is a different architectural modification that may improve information density.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_030_compression_bottleneck_layer
+
