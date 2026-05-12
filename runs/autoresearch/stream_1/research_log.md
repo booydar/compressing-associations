@@ -331,3 +331,47 @@ Started: 2026-05-11 18:04
 **Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006). Adding num_memory_vectors=2 explicitly matches the 2 key-value pairs to store, providing dedicated memory slots for each association while maintaining the efficient state_size=16 constraint.
 
 
+## Iter 30 — RUNNING — N=16
+**Hypothesis:** Implementing multi-head memory slots with separate query/key/value projections within state_size=32 increases effective memory capacity through parallel memory channels
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_030_multihead_memory_slots
+
+
+## Iter 30 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_030_multihead_memory_slots
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 31 — RUNNING — N=16
+**Hypothesis:** Replacing GDN state update with learned attention-based memory read/write mechanism improves memory precision within state_size=32 constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_031_attention_memory_gating
+
+
+## Iter 31 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_031_attention_memory_gating
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 32 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_032/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 33 — RUNNING — N=16
+**Hypothesis:** Enabling write_residual=True with GatedDeltaNet allows immediate feedback from compressed memory to tokens, improving 2-pair KV retrieval within state_size=16 constraint.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_033_enable_write_residual_gdn
+
+
+## Iter 33 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Enabling write_residual=True with GatedDeltaNet allows immediate feedback from compressed memory to tokens, improving 2-pair KV retrieval within state_size=16 constraint.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_033_enable_write_residual_gdn', '16', '25000']' timed out after 7199.999991099816 seconds
+**Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006 baseline). This feature enables intra-segment memory feedback without increasing state_size. Adding it to the current best config (state_size=16, GatedDeltaNet) tests if immediate memory feedback helps the simple 2-pair task.
+
+

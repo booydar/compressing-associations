@@ -260,3 +260,33 @@
 - Rationale: (none)
 - exp_path: 
 
+## Iter 30 | failed | N=16
+- Hypothesis: Implementing multi-head memory slots with separate query/key/value projections within state_size=32 increases effective memory capacity through parallel memory channels
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Direction 5 explicitly requests exploring GDN alternatives; multi-head memory channels provide architectural capacity increase without violating state_size=32 constraint
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_030_multihead_memory_slots
+
+## Iter 31 | failed | N=16
+- Hypothesis: Replacing GDN state update with learned attention-based memory read/write mechanism improves memory precision within state_size=32 constraint
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Direction 5 requests GDN alternatives; attention-based memory operations differ from linear attention (iter 22) by using learned read/write gates for memory selection
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_031_attention_memory_gating
+
+## Iter 32 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_032/executor_prompt.txt']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_032/executor_prompt.txt']' timed out after 900 seconds
+- Rationale: Direction 4 requires architectural solutions for capacity bottleneck; compression/expansion allows richer memory encoding within fixed state_size constraint
+- exp_path: 
+
