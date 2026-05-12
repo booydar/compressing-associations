@@ -263,3 +263,18 @@ Started: 2026-05-10 18:42
 **Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses a linear weighted combination of fast and slow states. A multiplicative interaction (element-wise product followed by projection) can capture higher-order correlations between timescales without increasing state_size, providing richer memory representations.
 
 
+## Iter 22 — RUNNING — N=16
+**Hypothesis:** Adding a residual connection from the original GDN output to the dual-state combined output will improve memory precision by preserving the base GDN computation while benefiting from multi-timescale state tracking.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_022_dual_state_residual_gdn
+
+
+## Iter 22 — reverted — EM: 0.0032 (N=16)
+**Hypothesis:** Adding a residual connection from the original GDN output to the dual-state combined output will improve memory precision by preserving the base GDN computation while benefiting from multi-timescale state tracking.
+**Wall time:** 120.0 min
+**Result:** EM=0.0032 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_022_dual_state_residual_gdn', '16', '25000']' timed out after 7199.99998882995 seconds
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) combines fast and slow states through a learned gate, but this linear combination may discard useful information from the original GDN state update. Adding a residual connection ensures the base GDN computation is preserved, similar to how iter_006's residual connection improved EM from 0.0006 to 0.0024.
+
+
