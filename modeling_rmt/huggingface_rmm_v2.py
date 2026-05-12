@@ -21,6 +21,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         fla_layer_name="GatedDeltaNet",
         num_heads=1,
         head_dim=32,
+        state_size=None,
         expand_v=2.0,
         conv_size=4,
         max_n_segments=10,
@@ -36,7 +37,11 @@ class RecurrentMemoryConfig(PretrainedConfig):
         self.from_pretrained = from_pretrained
         self.fla_layer_name = fla_layer_name
         self.num_heads = num_heads
-        self.head_dim = head_dim
+        self.state_size = state_size
+        if state_size is not None:
+            self.head_dim = state_size // num_heads
+        else:
+            self.head_dim = head_dim
         self.expand_v = expand_v
         self.conv_size = conv_size
         self.max_n_segments = max_n_segments
@@ -196,7 +201,7 @@ class RecurrentMemoryWrapperBase(nn.Module):
             cell_outputs.append(cell_out)
 
         labels_mask = None
-        if "labels_mask" in segments[0]:
+        if segments and "labels_mask" in segments[0]:
             labels_mask = torch.cat([seg["labels_mask"] for seg in segments], dim=1)
 
         out = self.process_outputs(
@@ -211,11 +216,15 @@ class RecurrentMemoryWrapperBase(nn.Module):
 
     def process_outputs(self, cell_outputs, **kwargs):
         out = CausalLMOutputWithCrossAttentions()
-        full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
-        full_hidden_states = tuple([
-            torch.cat(layer_hs, dim=1)
-            for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
-        ])
+        if not cell_outputs:
+            full_logits = torch.empty(0, 0, 0)
+            full_hidden_states = ()
+        else:
+            full_logits = torch.cat([o.logits for o in cell_outputs], dim=1)
+            full_hidden_states = tuple([
+                torch.cat(layer_hs, dim=1)
+                for layer_hs in zip(*[o.hidden_states for o in cell_outputs])
+            ])
 
         labels = kwargs.get("labels")
         if labels is not None:

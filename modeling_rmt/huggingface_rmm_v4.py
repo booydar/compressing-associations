@@ -3,28 +3,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.nn import CrossEntropyLoss
-import math
 
 from transformers import PreTrainedModel, PretrainedConfig
 from transformers.modeling_outputs import CausalLMOutputWithCrossAttentions
 
 import fla.layers
 from fla.models.utils import Cache
-
-
-class RecurrentLayerWithSkip(nn.Module):
-    """Recurrent layer (GDN, Mamba2, etc.) with skip connection from input to output."""
-
-    def __init__(self, original_layer: nn.Module):
-        super().__init__()
-        self.layer = original_layer
-
-    def forward(self, hidden_states, *args, **kwargs):
-        output = self.layer(hidden_states, *args, **kwargs)
-        out_tensor = output[0] if isinstance(output, tuple) else output
-        if isinstance(output, tuple):
-            return (hidden_states + out_tensor,) + output[1:]
-        return hidden_states + out_tensor
 
 
 class LlamaCrossAttention(nn.Module):
@@ -104,9 +88,7 @@ class MemoryWriter(nn.Module):
         self.scaling = hidden_size ** -0.5
 
         self.write_queries = nn.Parameter(torch.zeros(num_vectors, hidden_size))
-        # v5: scale-correct init so logits ~ N(0,1) after Q·K^T/√d at init,
-        # avoiding the near-uniform softmax that std=0.02 produces.
-        nn.init.normal_(self.write_queries, std=hidden_size ** -0.5)
+        nn.init.normal_(self.write_queries, std=0.02)
 
         self.k_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
         self.v_proj = nn.Linear(hidden_size, self.write_value_dim, bias=bias)
@@ -194,18 +176,10 @@ class RecurrentMemoryLayerWrapper(nn.Module):
       3. WRITE – compress tokens → GDN → store memory at full d_v.
                  In identity mode the GDN processes all T tokens directly and
                  its output is residual-added immediately (no stored memory).
-      4. (v5) WRITE-RESIDUAL – if write_residual=True and read_mode != identity,
-                 enrich post-write tokens from this segment's fresh memory.
 
     Symmetric mode pairs: identity/identity, pool/unpool, cross_attn/cross_attn.
     Asymmetric pairs (pool/cross_attn, cross_attn/unpool) also work.
-    v5 read_mode 'gdn_readout': skip MemoryReader entirely; pass tokens through
-    fla_layer with cached state but DO NOT update the cache. Requires
-    write_value_dim == model_hidden_size.
     Constraint: identity write must be paired with identity read.
-    
-    Dual-state mechanism: maintains fast_state (short-term) and slow_state 
-    (long-term) with separate decay rates. Gate combines outputs from both.
     """
 
     def __init__(
@@ -218,28 +192,18 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         read_mode: str = 'cross_attn',
         write_value_dim: int | None = None,
         num_memory_heads: int = 1,
-        write_residual: bool = False,
     ):
         super().__init__()
         if write_mode == 'identity' and read_mode != 'identity':
             raise ValueError("identity write_mode must be paired with identity read_mode")
 
-        write_value_dim_resolved = write_value_dim or model_hidden_size
-        if read_mode == 'identity' and write_value_dim_resolved != model_hidden_size:
-            raise ValueError(
-                "read_mode='identity' requires write_value_dim == model_hidden_size "
-                f"(got write_value_dim={write_value_dim_resolved}, hidden={model_hidden_size})"
-            )
-        # if read_mode == 'identity' and write_mode == 'identity':
-        #     raise ValueError("read_mode='identity' is incompatible with write_mode='identity'")
-
         self.base_layer = base_layer
         self.fla_layer = fla_layer
         self.write_mode = write_mode
         self.read_mode = read_mode
-        self.write_residual = write_residual
 
-        self.write_value_dim = write_value_dim_resolved
+        write_value_dim = write_value_dim or model_hidden_size
+        self.write_value_dim = write_value_dim
 
         self.write_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)
         self.read_norm  = nn.RMSNorm(model_hidden_size, eps=1e-5)
@@ -251,12 +215,12 @@ class RecurrentMemoryLayerWrapper(nn.Module):
                 hidden_size=model_hidden_size,
                 num_vectors=num_memory_vectors,
                 mode=write_mode,
-                write_value_dim=self.write_value_dim,
+                write_value_dim=write_value_dim,
             )
-            if read_mode in ('unpool', 'cross_attn'):
+            if read_mode != 'identity':
                 self.memory_reader = MemoryReader(
                     hidden_size=model_hidden_size,
-                    write_value_dim=self.write_value_dim,
+                    write_value_dim=write_value_dim,
                     mode=read_mode,
                     num_heads=num_memory_heads,
                 )
@@ -264,34 +228,9 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         self.cache = Cache()
         self.last_write_output: torch.Tensor | None = None   # (B, M, d_v)
 
-    def _gdn_readonly(self, normed_tokens, attention_mask):
-        """Run fla_layer with cached state but discard any state update."""
-        if len(self.cache.layers) == 0:
-            # No prior state — readout is undefined. Return zeros.
-            return torch.zeros_like(normed_tokens)
-        layer = self.cache.layers[0]
-        saved_state = layer.state if layer.state is None else dict(layer.state)
-        saved_seen = layer._seen_tokens
-        fla_out = self.fla_layer(
-            normed_tokens,
-            attention_mask=attention_mask,
-            past_key_values=self.cache,
-            use_cache=True,
-        )
-        # Restore state to discard the write that happened during readout
-        layer.state = saved_state
-        layer._seen_tokens = saved_seen
-        return fla_out[0]
-    
     def forward(self, hidden_states: torch.Tensor, *args, **kwargs):
-        attention_mask = kwargs.get('attention_mask')
-
         # 1. READ
-        if self.read_mode == 'identity':
-            hidden_states = hidden_states + self._gdn_readonly(
-                self.read_norm(hidden_states), attention_mask
-            )
-        elif self.read_mode in ('unpool', 'cross_attn') and self.last_write_output is not None:
+        if self.read_mode != 'identity' and self.last_write_output is not None:
             hidden_states = hidden_states + self.memory_reader(
                 self.read_norm(hidden_states), self.last_write_output
             )
@@ -303,10 +242,9 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # 3. WRITE
         if self.write_mode == 'identity':
             fla_input = self.fla_norm(hidden_states)
-            
             fla_out = self.fla_layer(
                 fla_input,
-                attention_mask=attention_mask,
+                attention_mask=kwargs.get('attention_mask'),
                 past_key_values=self.cache,
                 use_cache=True,
             )
@@ -314,7 +252,6 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             self.cache = fla_out[2]
         else:
             write_vecs = self.memory_writer(self.write_norm(hidden_states))   # (B, M, d_v)
-            
             fla_out = self.fla_layer(
                 write_vecs,
                 attention_mask=None,
@@ -323,12 +260,6 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             )
             self.last_write_output = fla_out[0]   # (B, M, d_v) — stored at full d_v
             self.cache = fla_out[2]
-
-            # 4. (v5) write_residual: feed fresh memory back into current tokens.
-            if self.write_residual and self.read_mode in ('unpool', 'cross_attn'):
-                hidden_states = hidden_states + self.memory_reader(
-                    self.read_norm(hidden_states), self.last_write_output
-                )
 
         if isinstance(output, tuple):
             return (hidden_states,) + output[1:]
@@ -347,16 +278,14 @@ class RecurrentMemoryConfig(PretrainedConfig):
         base_model_name="NousResearch/Llama-3.2-1B",
         base_model_config=None,
         from_pretrained=None,
-        fla_layer_name="Mamba2",
+        fla_layer_name="GatedDeltaNet",
         num_heads=1,
-        head_dim=64,
+        head_dim=32,
         expand_v=2.0,
         conv_size=4,
-        state_size=32,
         # Write/read modes
         write_mode='cross_attn',       # 'identity' | 'pool' | 'cross_attn'
         read_mode='cross_attn',        # 'identity' | 'unpool' | 'cross_attn'
-        write_residual=False,          # v5: intra-segment residual after WRITE
         # Memory dimensions
         num_memory_vectors=1,          # M — number of memory vectors
         write_value_dim=None,          # d_v — memory dim; None = same as model hidden_size
@@ -381,10 +310,8 @@ class RecurrentMemoryConfig(PretrainedConfig):
         self.head_dim = head_dim
         self.expand_v = expand_v
         self.conv_size = conv_size
-        self.state_size = state_size
         self.write_mode = write_mode
         self.read_mode = read_mode
-        self.write_residual = write_residual
         # Resolve aliases
         self.num_memory_vectors = num_write_vectors if num_write_vectors is not None else num_memory_vectors
         self.write_value_dim = write_value_dim
@@ -408,14 +335,11 @@ class RecurrentMemoryConfig(PretrainedConfig):
         return getattr(self, attr, default)
 
     def fla_layer_kwargs(self) -> dict:
-        # Map config parameters to fla_layer expected names
-        # Note: expand_v -> expand for Mamba2 compatibility
         return {
-            "num_heads": getattr(self, 'num_heads', 4),
-            "head_dim": getattr(self, 'head_dim', 64),
-            "state_size": getattr(self, 'state_size', 32),
-            "expand": getattr(self, 'expand_v', 2.0),
-            "conv_size": getattr(self, 'conv_size', 4),
+            "num_heads": self.num_heads,
+            "head_dim": self.head_dim,
+            "expand_v": self.expand_v,
+            "conv_size": self.conv_size,
         }
 
 
@@ -438,13 +362,12 @@ class RecurrentMemoryCell(nn.Module):
     def __init__(
         self,
         base_model: nn.Module,
-        fla_layer_name: str = "Mamba2",
+        fla_layer_name: str = "GatedDeltaNet",
         num_memory_vectors: int = 1,
         write_mode: str = 'cross_attn',
         read_mode: str = 'cross_attn',
         write_value_dim: int | None = None,
         num_memory_heads: int = 1,
-        write_residual: bool = False,
         **fla_layer_kwargs,
     ):
         super().__init__()
@@ -471,7 +394,6 @@ class RecurrentMemoryCell(nn.Module):
                 layer_idx=0,
                 **filtered_kwargs,
             ).to(dtype=model_dtype, device=model_device)
-            fla_layer = RecurrentLayerWithSkip(fla_layer)
 
             wrapped = RecurrentMemoryLayerWrapper(
                 base_layer=layer.to(dtype=model_dtype, device=model_device),
@@ -482,7 +404,6 @@ class RecurrentMemoryCell(nn.Module):
                 read_mode=read_mode,
                 write_value_dim=write_value_dim,
                 num_memory_heads=num_memory_heads,
-                write_residual=write_residual,
             )
             transformer_layers[i] = wrapped
 
@@ -595,7 +516,6 @@ class RecurrentMemoryBase(PreTrainedModel):
             read_mode=config.read_mode,
             write_value_dim=config.write_value_dim,
             num_memory_heads=config.num_memory_heads,
-            write_residual=config.write_residual,
             **config.fla_layer_kwargs(),
         )
         self.rmt = RecurrentMemoryWrapperBase(

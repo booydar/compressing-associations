@@ -27,6 +27,39 @@ class RecurrentLayerWithSkip(nn.Module):
         return hidden_states + out_tensor
 
 
+class GatedDeltaNetWithCompression(nn.Module):
+    """GatedDeltaNet with compression/expansion bottleneck for capacity efficiency.
+    
+    Applies compression (state_size=32 → 16) before state update and expansion 
+    (state_size=16 → 32) after, with GELU activation. Maintains state_size=32 
+    at layer boundaries.
+    """
+
+    def __init__(self, base_gdn_layer: nn.Module, compression_dim: int = 16):
+        super().__init__()
+        self.base_layer = base_gdn_layer
+        self.hidden_size = base_gdn_layer.hidden_size
+        self.compression_dim = compression_dim
+        
+        self.compression_layer = nn.Linear(self.hidden_size, compression_dim, bias=False)
+        self.expansion_layer = nn.Linear(compression_dim, self.hidden_size, bias=False)
+        self.activation = nn.GELU()
+
+    def forward(self, hidden_states, *args, **kwargs):
+        compressed = self.compression_layer(hidden_states)
+        compressed = self.activation(compressed)
+        
+        expanded = self.expansion_layer(compressed)
+        expanded = self.activation(expanded)
+        
+        output = self.base_layer(expanded, *args, **kwargs)
+        out_tensor = output[0] if isinstance(output, tuple) else output
+        
+        if isinstance(output, tuple):
+            return (hidden_states + out_tensor,) + output[1:]
+        return hidden_states + out_tensor
+
+
 class LlamaCrossAttention(nn.Module):
     """Cross-attention: Q from from_states, K/V from to_states. No causal mask, no RoPE."""
 
@@ -408,14 +441,11 @@ class RecurrentMemoryConfig(PretrainedConfig):
         return getattr(self, attr, default)
 
     def fla_layer_kwargs(self) -> dict:
-        # Map config parameters to fla_layer expected names
-        # Note: expand_v -> expand for Mamba2 compatibility
+        # SLA (Sliding Linear Attention) parameters
         return {
-            "num_heads": getattr(self, 'num_heads', 4),
-            "head_dim": getattr(self, 'head_dim', 64),
-            "state_size": getattr(self, 'state_size', 32),
-            "expand": getattr(self, 'expand_v', 2.0),
-            "conv_size": getattr(self, 'conv_size', 4),
+            "num_heads": 4,
+            "head_dim": 8,
+            "state_size": 32,
         }
 
 
