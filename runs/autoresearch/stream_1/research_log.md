@@ -246,3 +246,88 @@ Started: 2026-05-11 18:04
 **Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006). Adding num_memory_vectors=2 explicitly matches the 2 key-value pairs to store, providing dedicated memory slots for each association while maintaining the efficient state_size=16 constraint.
 
 
+## Iter 22 — RUNNING — N=16
+**Hypothesis:** Replacing GatedDeltaNet with linear attention mechanism maintains state_size=32 while improving memory precision through different inductive bias
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_022_linear_attention_alternative
+
+
+## Iter 22 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_022_linear_attention_alternative
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Adding residual skip connection to GDN state update path improves gradient flow and memory retention within state_size=32 constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_023_gdn_state_residual
+
+
+## Iter 23 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_023_gdn_state_residual
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 24 — RUNNING — N=16
+**Hypothesis:** Implementing quantized memory slots within state_size=32 increases effective memory capacity through discrete memory encoding
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_024_quantized_memory_slots
+
+
+## Iter 24 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_024_quantized_memory_slots
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 25 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+
+
+## Iter 25 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_025_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 26 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+
+
+## Iter 26 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_026_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 27 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_027/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 28 — FAILED — N=16
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_028/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 29 — RUNNING — N=16
+**Hypothesis:** Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with explicit memory capacity for the 2-pair KV retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_029_write_residual_with_memory_vectors
+
+
+## Iter 29 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with explicit memory capacity for the 2-pair KV retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_029_write_residual_with_memory_vectors', '16', '25000']' timed out after 7199.999988550087 seconds
+**Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006). Adding num_memory_vectors=2 explicitly matches the 2 key-value pairs to store, providing dedicated memory slots for each association while maintaining the efficient state_size=16 constraint.
+
+

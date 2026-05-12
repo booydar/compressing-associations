@@ -1,5 +1,33 @@
 {
-  "queue": [],
-  "last_directions_hash": "d02bc0cc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-12T06:39:03.624186"
+  "queue": [
+    {
+      "hypothesis": "Implementing multi-head memory slots with separate query/key/value projections within state_size=32 increases effective memory capacity through parallel memory channels",
+      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+      "rationale": "Direction 5 explicitly requests exploring GDN alternatives; multi-head memory channels provide architectural capacity increase without violating state_size=32 constraint",
+      "instruction": "Modify GatedDeltaNet class to add num_heads parameter (default 2). Split state_size by num_heads for separate memory projections. Add head-specific query/key/value projections in forward pass. Ensure total state_size across all heads remains 32.",
+      "run_name": "multihead_memory_slots",
+      "source": "human_directions",
+      "created_at": "2026-05-12T11:24:10.776378"
+    },
+    {
+      "hypothesis": "Replacing GDN state update with learned attention-based memory read/write mechanism improves memory precision within state_size=32 constraint",
+      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+      "rationale": "Direction 5 requests GDN alternatives; attention-based memory operations differ from linear attention (iter 22) by using learned read/write gates for memory selection",
+      "instruction": "Replace GDN state update formula with attention mechanism. Add learnable read_gate and write_gate parameters (sigmoid). Compute memory updates as weighted sum of previous state and new values based on gates. Keep state_size at 32.",
+      "run_name": "attention_memory_gating",
+      "source": "human_directions",
+      "created_at": "2026-05-12T11:24:10.776394"
+    },
+    {
+      "hypothesis": "Adding memory compression/expansion layers before/after GDN state update increases effective capacity without changing state_size=32",
+      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+      "rationale": "Direction 4 requires architectural solutions for capacity bottleneck; compression/expansion allows richer memory encoding within fixed state_size constraint",
+      "instruction": "Add two linear layers to GatedDeltaNet: compression_layer (state_size=32 to state_size=16) before state update, expansion_layer (state_size=16 to state_size=32) after. Both layers with GELU activation. Maintain state_size=32 at layer boundaries.",
+      "run_name": "memory_compression_expansion",
+      "source": "human_directions",
+      "created_at": "2026-05-12T11:24:10.776397"
+    }
+  ],
+  "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
+  "last_updated": "2026-05-12T11:24:10.786219"
 }
