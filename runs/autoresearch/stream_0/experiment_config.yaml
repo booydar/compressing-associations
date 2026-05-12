@@ -32,6 +32,7 @@ read_mode: unpool
 write_residual: false
 # write_value_dim is the GDN hidden width — UNLOCKED capacity knob (state_size still <=32).
 # Defaults to n_embd if unset. Planner may set 128/192/256/384.
+write_value_dim: 512
 
 # RMM / GDN parameters
 fla_layer: GatedDeltaNet

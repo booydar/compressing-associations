@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_000_baseline",
-    "em": 0.8534,
+    "variant": "iter_001",
+    "em": 0.9122,
     "n_level": 2
   },
   "n_level": 2,
@@ -30,6 +30,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.9238
+    },
+    {
+      "id": 1,
+      "iter_tag": "iter_001",
+      "description": "Increasing write_value_dim to 512 significantly boosts memory capacity for KV retrieval without violating state_size constraints.",
+      "hypothesis": {
+        "hypothesis": "Increasing write_value_dim to 512 significantly boosts memory capacity for KV retrieval without violating state_size constraints.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Directions identify write_value_dim as the single biggest miss in v5p design and explicitly unlock it for sweeping up to 512.",
+        "instruction": "Set write_value_dim to 512 in experiment_config.yaml and ensure N=2 for the KV retrieval task.",
+        "run_name": "write_value_dim_512_n2"
+      },
+      "em_score": 0.9122,
+      "prev_best": 0.8534,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n2/iter_001_write_value_dim_512_n2",
+      "wall_time_min": 57.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778624813.827955,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_001",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.9522
     }
   ]
 }
