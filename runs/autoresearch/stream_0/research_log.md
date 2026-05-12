@@ -320,3 +320,23 @@ Started: 2026-05-10 18:42
 **Rationale:** Linear attention with compression provides a fundamentally different memory architecture than GDN, avoiding the bottlenecks in GDN's gating mechanism while respecting the state_size constraint.
 
 
+## Iter 26 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 27 — RUNNING — N=16
+**Hypothesis:** Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation that learns when rotation helps versus when identity pass-through is better.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_027_gated_orthogonal_rotation_v2
+
+
+## Iter 27 — reverted — EM: 0.0034 (N=16)
+**Hypothesis:** Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation that learns when rotation helps versus when identity pass-through is better.
+**Wall time:** 120.0 min
+**Result:** EM=0.0034 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_027_gated_orthogonal_rotation_v2', '16', '25000']' timed out after 7199.999989680015 seconds
+**Rationale:** The orthogonal rotation (iter_012) achieved EM=0.0034 by decorrelating state dimensions. However, fixed rotation may not always help. A scalar gate initialized near 0 allows the model to learn adaptive mixing between rotated and original states, similar to successful gating in dual-state mechanism (iter_016, EM=0.0036).
+
+

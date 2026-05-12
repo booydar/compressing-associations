@@ -806,6 +806,68 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0496
+    },
+    {
+      "id": 26,
+      "iter_tag": "iter_026",
+      "description": "FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026/executor_prompt.txt']' timed out after 900 seconds",
+      "hypothesis": {
+        "hypothesis": "Adding cross-attention memory module as alternative to GDN will enable content-based retrieval without increasing state_size beyond 32 by using external memory bank",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "Cross-attention provides content-addressable memory retrieval that avoids GDN's sequential state update bottlenecks, addressing the precision and capacity issues while staying within state_size constraints.",
+        "instruction": "In huggingface_rmm_v5.py, add a cross-attention memory module that replaces GatedDeltaNet. Create a learnable memory bank of size state_size=32 with embedding dimension n_embd=128, and implement cross-attention queries from input tokens to retrieve from this memory bank.",
+        "run_name": "cross_attention_memory"
+      },
+      "em_score": null,
+      "prev_best": 0.0036,
+      "verdict": "failed",
+      "status": "failed",
+      "n_level": 16,
+      "exp_path": "",
+      "wall_time_min": 0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "not_attempted",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026/executor_prompt.txt']' timed out after 900 seconds",
+      "started_at": 1778571717.531554,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026",
+      "summary_logged": true,
+      "stream_id": "0"
+    },
+    {
+      "id": 27,
+      "iter_tag": "iter_027",
+      "description": "Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation that learns when rotation helps versus when identity pass-through is better.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding a learnable gate to control orthogonal rotation strength will allow adaptive state transformation that learns when rotation helps versus when identity pass-through is better.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The orthogonal rotation (iter_012) achieved EM=0.0034 by decorrelating state dimensions. However, fixed rotation may not always help. A scalar gate initialized near 0 allows the model to learn adaptive mixing between rotated and original states, similar to successful gating in dual-state mechanism (iter_016, EM=0.0036).",
+        "instruction": "In the OrthogonalRotation class in huggingface_rmm_v5.py: (1) Add a learnable scalar parameter 'rotation_gate' initialized to -2.0 (sigmoid(-2) \u2248 0.12, small initial rotation). (2) In the forward method, compute gate_value = sigmoid(rotation_gate). (3) Interpolate between rotated and original: output = gate_value * rotated_state + (1 - gate_value) * original_state. (4) Apply this gating in both the forward (write) and inverse (read) paths. This provides adaptive control over rotation strength without increasing state_size.",
+        "run_name": "gated_orthogonal_rotation_v2"
+      },
+      "em_score": 0.0034,
+      "prev_best": 0.0036,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_027_gated_orthogonal_rotation_v2",
+      "wall_time_min": 120.0,
+      "metric_step": 19500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_027_gated_orthogonal_rotation_v2', '16', '25000']' timed out after 7199.999989680015 seconds",
+      "started_at": 1778575556.9381409,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_027",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0473
     }
   ]
 }

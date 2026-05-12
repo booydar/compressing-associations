@@ -90,3 +90,13 @@
 - Rationale: Human direction explicitly calls for exploring alternatives to GDN layer. S4 models offer proven memory efficiency through diagonal state matrices and selective mechanisms without increasing state_size.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_024_s4_alternative_gdn
 
+## Iter 26 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026/executor_prompt.txt']' timed out after 900 seconds
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026/executor_prompt.txt']' timed out after 900 seconds
+- Rationale: Cross-attention provides content-addressable memory retrieval that avoids GDN's sequential state update bottlenecks, addressing the precision and capacity issues while staying within state_size constraints.
+- exp_path: 
+
