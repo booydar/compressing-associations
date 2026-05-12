@@ -638,6 +638,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.0138
+    },
+    {
+      "id": 21,
+      "iter_tag": "iter_021",
+      "description": "Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with sufficient memory capacity for the 2-pair KV retrieval task.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with sufficient memory capacity for the 2-pair KV retrieval task.",
+        "target_component": "experiment_config.yaml",
+        "rationale": "iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006). Adding num_memory_vectors=2 explicitly matches the 2 key-value pairs to store, providing dedicated memory slots for each association while maintaining the efficient state_size=16 constraint.",
+        "instruction": "In experiment_config.yaml, add two parameters to the RMM-specific parameters section: (1) write_residual: true, (2) num_memory_vectors: 2. Keep all existing parameters unchanged (fla_layer: GatedDeltaNet, state_size: 16, expand_v: 4.0, conv_kernel: 2).",
+        "run_name": "write_residual_with_explicit_memory_vectors"
+      },
+      "em_score": 0.0006,
+      "prev_best": 0.0006,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_021_write_residual_with_explicit_memory_vectors",
+      "wall_time_min": 120.0,
+      "metric_step": 1500,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_021_write_residual_with_explicit_memory_vectors', '16', '25000']' timed out after 7199.999991350109 seconds",
+      "started_at": 1778557593.2313063,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_021",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.0151
     }
   ]
 }

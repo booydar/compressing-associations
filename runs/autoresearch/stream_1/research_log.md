@@ -231,3 +231,18 @@ Started: 2026-05-11 18:04
 **Rationale:** The v5 architecture supports write_residual mode but it was never tested. For a simple 2-pair KV retrieval task, immediate feedback from compressed memory to current tokens could strengthen the association between keys and values without increasing state_size.
 
 
+## Iter 21 — RUNNING — N=16
+**Hypothesis:** Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with sufficient memory capacity for the 2-pair KV retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_021_write_residual_with_explicit_memory_vectors
+
+
+## Iter 21 — reverted — EM: 0.0006 (N=16)
+**Hypothesis:** Enabling write_residual=True with num_memory_vectors=2 combines intra-segment memory feedback with sufficient memory capacity for the 2-pair KV retrieval task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0006 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_021_write_residual_with_explicit_memory_vectors', '16', '25000']' timed out after 7199.999991350109 seconds
+**Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006). Adding num_memory_vectors=2 explicitly matches the 2 key-value pairs to store, providing dedicated memory slots for each association while maintaining the efficient state_size=16 constraint.
+
+
