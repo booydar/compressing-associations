@@ -1,41 +1,5 @@
 {
-  "queue": [
-    {
-      "stream_id": "1",
-      "hypothesis": "Increasing head_dim from 8 to 16 while reducing num_heads from 4 to 2 maintains state_size=32 but changes the inductive bias toward wider per-head representations.",
-      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
-      "rationale": "The current configuration uses 4 heads x 8 dim = 32 state_size. For a simple 2-pair retrieval task, fewer but wider heads may better capture each key-value association as a unified representation rather than splitting it across multiple narrow heads.",
-      "instruction": "In modeling_rmt/huggingface_rmm_v5.py, in the RecurrentMemoryConfig.fla_layer_kwargs() method, change num_heads from 4 to 2 and head_dim from 8 to 16. This maintains state_size=32 (2*16=32) but changes the architecture to 2 wider heads instead of 4 narrower heads.",
-      "run_name": "wider_heads_fewer_heads"
-    },
-    {
-      "hypothesis": "Splitting state_size=32 across 4 parallel GDN heads increases effective memory capacity through parallel memory streams",
-      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
-      "rationale": "Multi-head decomposition can achieve capacity similar to state_size=64 without violating the hard constraint, by distributing information across parallel state channels",
-      "instruction": "Modify GatedDeltaNet layer to accept num_heads parameter (default 4), split state_size=32 across heads (each head gets state_size//num_heads), and implement parallel state updates with head-wise gating before final concatenation",
-      "run_name": "multihead_gdn_decomposition",
-      "source": "human_directions",
-      "created_at": "2026-05-12T00:04:16.242238"
-    },
-    {
-      "hypothesis": "Using float32 accumulation for state updates while maintaining float16 storage improves memory precision without increasing state_size",
-      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
-      "rationale": "The bottleneck mentions precision issues in GDN layer; higher precision accumulation during updates can preserve more information in the same state_size budget",
-      "instruction": "Add accumulation_dtype parameter to GatedDeltaNet, cast state tensors to float32 during update operations, then cast back to model dtype for storage and output",
-      "run_name": "float32_accumulation_precision",
-      "source": "human_directions",
-      "created_at": "2026-05-12T00:04:16.242261"
-    },
-    {
-      "hypothesis": "Replacing fixed GDN gates with learned attention-based gating improves information retention within state_size=32 constraint",
-      "target_component": "modeling_rmt/huggingface_rmm_v5.py",
-      "rationale": "Fixed gates may discard useful information prematurely; learned gating can dynamically decide what to store based on input context, effectively increasing usable capacity",
-      "instruction": "Replace fixed gate parameters in GatedDeltaNet with a small learnable attention module that takes query from current state and key from input to produce adaptive gate values",
-      "run_name": "learned_attention_gating",
-      "source": "human_directions",
-      "created_at": "2026-05-12T00:04:16.242265"
-    }
-  ],
+  "queue": [],
   "last_directions_hash": "d02bc0acc60e9ed90d4a06906ef20856",
-  "last_updated": "2026-05-12T00:04:16.251478"
+  "last_updated": "2026-05-12T04:21:03.313298"
 }

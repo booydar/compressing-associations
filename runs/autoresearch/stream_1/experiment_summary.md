@@ -130,3 +130,63 @@
 - Rationale: All 12 previous iterations failed with exit code 1 due to an indentation bug in huggingface_rmm_v5.py. After fixing the syntax error, the model runs but includes experimental features (dual-state mechanism, orthogonal rotation) that may introduce bugs. Removing these untested features will establish a clean baseline.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_012_remove_broken_features_baseline
 
+## Iter 14 | failed | N=16
+- Hypothesis: Increasing head_dim from 8 to 16 while reducing num_heads from 4 to 2 maintains state_size=32 but changes the inductive bias toward wider per-head representations.
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The current configuration uses 4 heads x 8 dim = 32 state_size. For a simple 2-pair retrieval task, fewer but wider heads may better capture each key-value association as a unified representation rather than splitting it across multiple narrow heads.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_014_wider_heads_fewer_heads
+
+## Iter 15 | failed | N=16
+- Hypothesis: Splitting state_size=32 across 4 parallel GDN heads increases effective memory capacity through parallel memory streams
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Multi-head decomposition can achieve capacity similar to state_size=64 without violating the hard constraint, by distributing information across parallel state channels
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_015_multihead_gdn_decomposition
+
+## Iter 16 | failed | N=16
+- Hypothesis: Using float32 accumulation for state updates while maintaining float16 storage improves memory precision without increasing state_size
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The bottleneck mentions precision issues in GDN layer; higher precision accumulation during updates can preserve more information in the same state_size budget
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_016_float32_accumulation_precision
+
+## Iter 17 | failed | N=16
+- Hypothesis: FAILED: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_017/executor_prompt.txt']' timed out after 900 seconds
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_017/executor_prompt.txt']' timed out after 900 seconds
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: 
+
+## Iter 18 | failed | N=16
+- Hypothesis: Replacing fixed GDN gates with learned attention-based gating improves information retention within state_size=32 constraint
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Fixed gates may discard useful information prematurely; learned gating can dynamically decide what to store based on input context, effectively increasing usable capacity
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_018_learned_attention_gating
+
+## Iter 19 | failed | N=16
+- Hypothesis: Aligning fla_layer state_size parameter (32) with experiment_config state_size (16) fixes configuration mismatch causing experiment crashes.
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The model file's fla_layer_kwargs() returns state_size=32 while experiment_config.yaml specifies state_size=16. This mismatch likely causes runtime errors. Updating the model's default to match the config will ensure consistency and allow experiments to run successfully.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_019_fix_state_size_config_mismatch
+

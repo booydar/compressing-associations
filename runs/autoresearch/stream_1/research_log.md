@@ -151,3 +151,83 @@ Started: 2026-05-11 18:04
 **Rationale:** With only 2 key-value pairs to store, state_size=32 may be too permissive, preventing the model from learning effective compression. Reducing to 16 (4 heads x 4 dim) creates tighter constraints that may improve generalization on this simple task.
 
 
+## Iter 14 — RUNNING — N=16
+**Hypothesis:** Increasing head_dim from 8 to 16 while reducing num_heads from 4 to 2 maintains state_size=32 but changes the inductive bias toward wider per-head representations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_014_wider_heads_fewer_heads
+
+
+## Iter 14 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_014_wider_heads_fewer_heads
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 15 — RUNNING — N=16
+**Hypothesis:** Splitting state_size=32 across 4 parallel GDN heads increases effective memory capacity through parallel memory streams
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_015_multihead_gdn_decomposition
+
+
+## Iter 15 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_015_multihead_gdn_decomposition
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 16 — RUNNING — N=16
+**Hypothesis:** Using float32 accumulation for state updates while maintaining float16 storage improves memory precision without increasing state_size
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_016_float32_accumulation_precision
+
+
+## Iter 16 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_016_float32_accumulation_precision
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 17 — FAILED — N=16
+**Error:** executor failed after 4 attempts: Executor error: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Apply the change described in the attached instructions file exactly. Do not ask questions.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_017/executor_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 18 — RUNNING — N=16
+**Hypothesis:** Replacing fixed GDN gates with learned attention-based gating improves information retention within state_size=32 constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_018_learned_attention_gating
+
+
+## Iter 18 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_018_learned_attention_gating
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 19 — RUNNING — N=16
+**Hypothesis:** Aligning fla_layer state_size parameter (32) with experiment_config state_size (16) fixes configuration mismatch causing experiment crashes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_019_fix_state_size_config_mismatch
+
+
+## Iter 19 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_019_fix_state_size_config_mismatch
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 20 — RUNNING — N=16
+**Hypothesis:** Enabling write_residual=True allows fresh memory to feed back into tokens within the same segment, improving associative retrieval for the 2-pair task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_020_enable_write_residual
+
+
+## Iter 20 — reverted — EM: 0.0004 (N=16)
+**Hypothesis:** Enabling write_residual=True allows fresh memory to feed back into tokens within the same segment, improving associative retrieval for the 2-pair task.
+**Wall time:** 120.0 min
+**Result:** EM=0.0004 vs prev best=0.0006
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_020_enable_write_residual', '16', '25000']' timed out after 7199.999990310054 seconds
+**Rationale:** The v5 architecture supports write_residual mode but it was never tested. For a simple 2-pair KV retrieval task, immediate feedback from compressed memory to current tokens could strengthen the association between keys and values without increasing state_size.
+
+
