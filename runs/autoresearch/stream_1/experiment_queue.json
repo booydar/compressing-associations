@@ -1,15 +1,6 @@
 {
   "queue": [
     {
-      "hypothesis": "Setting num_memory_vectors to 4 with cross_attn write_mode will maximize write throughput for pool-1tps regime.",
-      "target_component": ".autoresearch/experiment_config.yaml",
-      "rationale": "M>1 is the only way to multiply write throughput when tokens_per_segment=1 and cross_attn is required for M>1 to work.",
-      "instruction": "Update .autoresearch/experiment_config.yaml to set num_memory_vectors=4, write_mode=cross_attn, write_value_dim=256, N=2, learning_rate=1e-4. Keep state_size=32, n_layer=4, n_embd=128.",
-      "run_name": "mem_vecs_4_cross_n2",
-      "source": "human_directions",
-      "created_at": "2026-05-13T00:29:06.384945"
-    },
-    {
       "hypothesis": "Splitting state_size into two parallel GDN paths of width 16 increases effective non-linearity while respecting state_size <= 32 constraint.",
       "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
       "rationale": "Directions explicitly encourage multi-stream GDN edits to push architecture hard without violating hard locks on state_size.",
@@ -20,5 +11,5 @@
     }
   ],
   "last_directions_hash": "0189f232c368b95be0389601cb68c6e9",
-  "last_updated": "2026-05-13T00:29:06.394197"
+  "last_updated": "2026-05-13T01:28:55.683864"
 }
