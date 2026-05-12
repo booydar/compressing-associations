@@ -335,6 +335,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         # Dual-state mechanism: fast_state (short-term) and slow_state (long-term)
         self.fast_decay = nn.Parameter(torch.ones(self.state_size) * 0.9)
         self.slow_decay = nn.Parameter(torch.ones(self.state_size) * 0.99)
+        self.beta = nn.Parameter(torch.tensor(0.95))
         self.gate_weight = nn.Parameter(torch.tensor(0.5))
         self.fast_state = None
         self.slow_state = None
@@ -376,8 +377,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         fast_decay = self.fast_decay.unsqueeze(0).expand(batch_size, -1)
         slow_decay = self.slow_decay.unsqueeze(0).expand(batch_size, -1)
         
+        # Update fast state
         self.fast_state = fast_decay * self.fast_state + (1 - fast_decay) * fla_input
-        self.slow_state = slow_decay * self.slow_state + (1 - slow_decay) * fla_input
+        
+        # EMA smoothing: slow state tracks a moving average of the fast state
+        self.slow_state = self.beta * self.slow_state + (1 - self.beta) * self.fast_state
         
         # Combine states with gating mechanism
         gate = torch.sigmoid(self.gate_weight)

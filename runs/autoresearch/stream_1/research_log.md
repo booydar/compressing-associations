@@ -375,3 +375,63 @@ Started: 2026-05-11 18:04
 **Rationale:** iter_020 showed EM=0.0004 with write_residual=True (better than iter_013's 0.0006 baseline). This feature enables intra-segment memory feedback without increasing state_size. Adding it to the current best config (state_size=16, GatedDeltaNet) tests if immediate memory feedback helps the simple 2-pair task.
 
 
+## Iter 34 — RUNNING — N=16
+**Hypothesis:** Implementing dual-rate state updates (fast short-term and slow long-term streams) within state_size=32 enables better memory capacity retention
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_034_dual_rate_state_32
+
+
+## Iter 34 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_034_dual_rate_state_32
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 35 — RUNNING — N=16
+**Hypothesis:** Replacing GatedDeltaNet with linear attention + explicit memory bank improves memory precision within state_size=32 constraint
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_035_linear_attn_memory_bank
+
+
+## Iter 35 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_035_linear_attn_memory_bank
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 36 — RUNNING — N=16
+**Hypothesis:** Adding learned memory addressing with sparse routing within state_size=32 enables selective storage and retrieval without capacity increase
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_036_sparse_memory_routing
+
+
+## Iter 36 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_036_sparse_memory_routing
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 37 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_037_fix_broken_base
+
+
+## Iter 37 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_037_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 38 — RUNNING — N=16
+**Hypothesis:** Fix broken base: experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_038_fix_broken_base
+
+
+## Iter 38 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_038_fix_broken_base
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+

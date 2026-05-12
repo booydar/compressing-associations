@@ -130,3 +130,13 @@
 - Rationale: Previous alternatives to GDN (S4, linear attention) failed. This approach keeps GDN but adds a compression layer before state storage, which is a different architectural modification that may improve information density.
 - exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_030_compression_bottleneck_layer
 
+## Iter 32 | failed | N=16
+- Hypothesis: Adding per-head decay parameters to the dual-state mechanism will enable each attention head to learn specialized temporal dynamics, improving memory retention for different pattern types within state_size=32.
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The dual-state mechanism (iter_016, EM=0.0036) uses shared decay parameters across all 32 state dimensions. With n_head=4 and head_dim=8, each head could benefit from independent decay rates to capture head-specific temporal patterns. This is a targeted refinement of the successful dual-state approach, unlike the failed content-adaptive modulation (iter_17) that introduced instability through input-dependent decay.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_032_per_head_decay_dual_state
+

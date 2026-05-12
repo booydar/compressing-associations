@@ -990,6 +990,68 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0516
+    },
+    {
+      "id": 32,
+      "iter_tag": "iter_032",
+      "description": "Adding per-head decay parameters to the dual-state mechanism will enable each attention head to learn specialized temporal dynamics, improving memory retention for different pattern types within state_size=32.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding per-head decay parameters to the dual-state mechanism will enable each attention head to learn specialized temporal dynamics, improving memory retention for different pattern types within state_size=32.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The dual-state mechanism (iter_016, EM=0.0036) uses shared decay parameters across all 32 state dimensions. With n_head=4 and head_dim=8, each head could benefit from independent decay rates to capture head-specific temporal patterns. This is a targeted refinement of the successful dual-state approach, unlike the failed content-adaptive modulation (iter_17) that introduced instability through input-dependent decay.",
+        "instruction": "In huggingface_rmm_v5.py, modify the dual-state mechanism in RecurrentMemoryLayerWrapper: (1) Change self.fast_decay and self.slow_decay from 1D tensors of shape (state_size,) to 2D tensors of shape (num_heads, head_dim) where num_heads=4 and head_dim=8. (2) Update _update_dual_state to reshape fla_input to (batch, num_heads, head_dim) before applying per-head decay. (3) Initialize per-head decay with the same values (0.9 for fast, 0.99 for slow) but broadcast across heads. (4) Ensure the decay parameters are properly registered as nn.Parameters and persist correctly during training.",
+        "run_name": "per_head_decay_dual_state"
+      },
+      "em_score": null,
+      "prev_best": 0.0036,
+      "verdict": "failed",
+      "status": "failed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_032_per_head_decay_dual_state",
+      "wall_time_min": 0.3,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "unresolved",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Experiment script exited with code 1",
+      "started_at": 1778597967.09503,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_032",
+      "summary_logged": true,
+      "stream_id": "0"
+    },
+    {
+      "id": 33,
+      "iter_tag": "iter_033",
+      "description": "Adding exponential moving average smoothing to the slow state in the dual-state mechanism will create more stable long-term memory representations, reducing noise in memory retention within state_size=32.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding exponential moving average smoothing to the slow state in the dual-state mechanism will create more stable long-term memory representations, reducing noise in memory retention within state_size=32.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The dual-state mechanism (iter_016, EM=0.0036) uses separate fast and slow decay rates but updates both with the same input. Adding EMA smoothing to the slow state creates a hierarchical memory where the slow state tracks a moving average of the fast state rather than raw input, providing more stable long-term representations without increasing complexity or causing the failures seen in content-adaptive approaches (iter_17, 19, 20).",
+        "instruction": "In the _update_dual_state method of RecurrentMemoryLayerWrapper in huggingface_rmm_v5.py: (1) After computing fast_state, add an EMA update to slow_state: slow_state = beta * slow_state + (1 - beta) * fast_state, where beta is a learnable parameter initialized to 0.95. (2) Keep the existing slow decay mechanism but apply it to the EMA-smoothed slow_state instead of raw input. (3) The final combined_state should still use the existing gate_weight to blend fast_state and the EMA-smoothed slow_state.",
+        "run_name": "dual_state_ema_smoothing"
+      },
+      "em_score": null,
+      "prev_best": 0.0036,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778599346.6232872,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_033",
+      "summary_logged": false,
+      "stream_id": "0"
     }
   ]
 }

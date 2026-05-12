@@ -1,5 +1,0 @@
-1. The following parameters are already set to their best-known values — DO NOT change them: learning_rate (2e-4), warmup_steps (10000), expand_v (4.0), conv_kernel (2), n_layer (4), n_embd (128), batch_size (64). Proposing ANY change to these is an automatic failure.
-2. Do not increase state_size above 32. This is a hard constraint. The constraint exists intentionally — find architectural ways to improve capacity without increasing state_size.
-3. Focus exclusively on ARCHITECTURE CHANGES to the GatedDeltaNet layer and its integration. Hyperparameter changes (except those explicitly unlocked) will be rejected.
-4. The key bottleneck is memory capacity and precision in the GDN layer. state_size=64 would give EM≈0.87 but is forbidden — find architectural equivalents that achieve similar capacity within the state_size=32 constraint.
-5. EXPLORE ALTERNATIVES TO GatedDeltaNet Layer!

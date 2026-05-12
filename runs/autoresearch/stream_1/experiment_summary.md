@@ -290,3 +290,53 @@
 - Rationale: Direction 4 requires architectural solutions for capacity bottleneck; compression/expansion allows richer memory encoding within fixed state_size constraint
 - exp_path: 
 
+## Iter 34 | failed | N=16
+- Hypothesis: Implementing dual-rate state updates (fast short-term and slow long-term streams) within state_size=32 enables better memory capacity retention
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Recent multi-head approaches failed; separating temporal scales within state_size=32 may achieve similar capacity gains without parallel channels
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_034_dual_rate_state_32
+
+## Iter 35 | failed | N=16
+- Hypothesis: Replacing GatedDeltaNet with linear attention + explicit memory bank improves memory precision within state_size=32 constraint
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Human direction explicitly requests exploring GDN alternatives; linear attention with separate memory bank differs from failed attention-based read/write mechanisms
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_035_linear_attn_memory_bank
+
+## Iter 36 | failed | N=16
+- Hypothesis: Adding learned memory addressing with sparse routing within state_size=32 enables selective storage and retrieval without capacity increase
+- Target: modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: Different from compression/expansion layers; sparse routing allows dynamic memory allocation within fixed state_size=32 budget
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_036_sparse_memory_routing
+
+## Iter 37 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_037_fix_broken_base
+
+## Iter 38 | failed | N=16
+- Hypothesis: Fix broken base: experiment error: Experiment script exited with code 1
+- Target: runs/autoresearch/stream_1/modeling_rmt/huggingface_rmm_v5.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: experiment error: Experiment script exited with code 1
+- Rationale: The committed HEAD crashes at runtime with the same error on every iteration. Fix the root cause before any other change.
+- exp_path: /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n16/iter_038_fix_broken_base
+

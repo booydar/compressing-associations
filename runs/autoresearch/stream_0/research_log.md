@@ -382,3 +382,20 @@ Started: 2026-05-10 18:42
 **Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses fixed learned decay parameters. Iter_17's content-adaptive decay modulation failed with script errors, suggesting complexity issues. A simpler learnable offset approach adds per-dimension bias terms to base decay rates, allowing dimension-specific tuning while maintaining training stability. This is orthogonal to the orthogonal rotation (iter_012, EM=0.0034) which decorrelates states but doesn't tune decay dynamics.
 
 
+## Iter 32 — RUNNING — N=16
+**Hypothesis:** Adding per-head decay parameters to the dual-state mechanism will enable each attention head to learn specialized temporal dynamics, improving memory retention for different pattern types within state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_032_per_head_decay_dual_state
+
+
+## Iter 32 — FAILED — N=16
+**Error:** experiment error: Experiment script exited with code 1
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_032_per_head_decay_dual_state
+**Recovery status:** unresolved
+**Next action:** planner will propose new change based on error.
+
+
+## Iter 33 — RUNNING — N=16
+**Hypothesis:** Adding exponential moving average smoothing to the slow state in the dual-state mechanism will create more stable long-term memory representations, reducing noise in memory retention within state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_033_dual_state_ema_smoothing
+
+
