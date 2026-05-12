@@ -713,6 +713,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.0477
+    },
+    {
+      "id": 23,
+      "iter_tag": "iter_023",
+      "description": "Adding sinusoidal temporal modulation to dual-state decay rates will enable the model to learn oscillatory memory patterns that improve associative retrieval within state_size=32.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding sinusoidal temporal modulation to dual-state decay rates will enable the model to learn oscillatory memory patterns that improve associative retrieval within state_size=32.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5.py",
+        "rationale": "The dual-state mechanism (iter_016, EM=0.0036) uses fixed learned decay parameters. Sinusoidal modulation inspired by positional encodings allows the model to capture periodic temporal patterns in memory decay, providing a richer inductive bias for associative retrieval without increasing state complexity or causing the failures seen in iter_17/19/20.",
+        "instruction": "In the _update_dual_state method of RecurrentMemoryLayerWrapper in huggingface_rmm_v5.py: (1) Add a new learnable parameter 'temporal_freq' of shape (state_size,) initialized to small random values (std=0.01). (2) Compute a sinusoidal modulation: mod = torch.sin(temporal_freq * time_step + phase), where time_step increments during forward passes and phase is another learnable parameter. (3) Apply modulation to decay: effective_decay = base_decay * (1 + 0.1 * mod), clamped to [0.5, 0.995]. (4) Track time_step as a buffer that resets with memory reset.",
+        "run_name": "sinusoidal_temporal_decay"
+      },
+      "em_score": 0.0034,
+      "prev_best": 0.0036,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 16,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_023_sinusoidal_temporal_decay",
+      "wall_time_min": 120.0,
+      "metric_step": 22000,
+      "metric_source": "trainer_state",
+      "is_partial": true,
+      "recovery_status": "recovered",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": "experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_023_sinusoidal_temporal_decay', '16', '25000']' timed out after 7199.999987410149 seconds",
+      "started_at": 1778549598.6524372,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_023",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.0466
     }
   ]
 }

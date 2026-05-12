@@ -278,3 +278,18 @@ Started: 2026-05-10 18:42
 **Rationale:** The dual-state mechanism (iter_016, EM=0.0036) combines fast and slow states through a learned gate, but this linear combination may discard useful information from the original GDN state update. Adding a residual connection ensures the base GDN computation is preserved, similar to how iter_006's residual connection improved EM from 0.0006 to 0.0024.
 
 
+## Iter 23 — RUNNING — N=16
+**Hypothesis:** Adding sinusoidal temporal modulation to dual-state decay rates will enable the model to learn oscillatory memory patterns that improve associative retrieval within state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_023_sinusoidal_temporal_decay
+
+
+## Iter 23 — reverted — EM: 0.0034 (N=16)
+**Hypothesis:** Adding sinusoidal temporal modulation to dual-state decay rates will enable the model to learn oscillatory memory patterns that improve associative retrieval within state_size=32.
+**Wall time:** 120.0 min
+**Result:** EM=0.0034 vs prev best=0.0036
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+**Run error:** experiment error: Command '['bash', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/scripts/run_autoresearch_exp.sh', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n16/iter_023_sinusoidal_temporal_decay', '16', '25000']' timed out after 7199.999987410149 seconds
+**Rationale:** The dual-state mechanism (iter_016, EM=0.0036) uses fixed learned decay parameters. Sinusoidal modulation inspired by positional encodings allows the model to capture periodic temporal patterns in memory decay, providing a richer inductive bias for associative retrieval without increasing state complexity or causing the failures seen in iter_17/19/20.
+
+
