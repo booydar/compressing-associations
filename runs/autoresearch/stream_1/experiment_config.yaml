@@ -30,7 +30,7 @@ N: 2
 num_memory_vectors: 4
 write_mode: cross_attn
 read_mode: unpool
-write_residual: false
+write_residual: true
 # write_value_dim is the GDN hidden width — UNLOCKED capacity knob (state_size still <=32).
 # Defaults to n_embd if unset. Planner may set 128/192/256/384.
 write_value_dim: 256
