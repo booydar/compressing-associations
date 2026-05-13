@@ -147,3 +147,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** With warmup_steps=10000 out of max_steps=25000, the model only reaches full LR at step 10000, leaving only 15000 steps at full strength. All 7 N=4 attempts have failed, suggesting insufficient training signal. Reducing warmup to 500 steps gives 24500 steps at full LR=3e-4, a 6.3x increase in effective training time at full learning rate. Combined with conv_kernel=2 to reduce temporal over-mixing across memory vectors at tokens_per_segment=1, this addresses both training dynamics and architectural over-smoothing.
 
 
+## Iter 11 — RUNNING — N=4
+**Hypothesis:** Reducing conv_kernel from 4 to 2 prevents the GDN's convolution from blurring all M=4 memory vectors together at tokens_per_segment=1, preserving slot-specific information critical for N=4 retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_011_conv2_isolated_n4
+
+
+## Iter 11 — reverted — EM: 0.1346 (N=4)
+**Hypothesis:** Reducing conv_kernel from 4 to 2 prevents the GDN's convolution from blurring all M=4 memory vectors together at tokens_per_segment=1, preserving slot-specific information critical for N=4 retrieval.
+**Wall time:** 70.6 min
+**Result:** EM=0.1346 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** At tokens_per_segment=1, the GDN processes M=4 memory vectors sequentially and conv_kernel=4 means each vector's convolution window spans all 4 vectors, destroying slot identity. Iter_010 bundled conv_kernel=2 with warmup_steps=500 and failed, so the conv_kernel effect was confounded. Isolating conv_kernel=2 alone tests whether temporal over-mixing is a primary failure mode for N=4.
+
+

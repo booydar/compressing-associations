@@ -345,6 +345,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.275
+    },
+    {
+      "id": 11,
+      "iter_tag": "iter_011",
+      "description": "Reducing conv_kernel from 4 to 2 prevents the GDN's convolution from blurring all M=4 memory vectors together at tokens_per_segment=1, preserving slot-specific information critical for N=4 retrieval.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Reducing conv_kernel from 4 to 2 prevents the GDN's convolution from blurring all M=4 memory vectors together at tokens_per_segment=1, preserving slot-specific information critical for N=4 retrieval.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "At tokens_per_segment=1, the GDN processes M=4 memory vectors sequentially and conv_kernel=4 means each vector's convolution window spans all 4 vectors, destroying slot identity. Iter_010 bundled conv_kernel=2 with warmup_steps=500 and failed, so the conv_kernel effect was confounded. Isolating conv_kernel=2 alone tests whether temporal over-mixing is a primary failure mode for N=4.",
+        "instruction": "In experiment_config.yaml, set conv_kernel to 2. Keep all other parameters unchanged: n_keys=4, n_values=4, tokens_per_segment=1, write_value_dim=512, num_memory_vectors=4, write_mode=cross_attn, read_mode=cross_attn, write_residual=false, warmup_steps=10000, learning_rate=3e-4, state_size=32, expand_v=2.0.",
+        "run_name": "conv2_isolated_n4"
+      },
+      "em_score": 0.1346,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_011_conv2_isolated_n4",
+      "wall_time_min": 70.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778705760.4668202,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_011",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3897
     }
   ]
 }
