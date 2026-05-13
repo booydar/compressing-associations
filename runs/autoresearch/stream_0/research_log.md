@@ -126,3 +126,24 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_009_cross_attn_read_4heads_n4
 
 
+## Iter 9 — reverted — EM: 0.1830 (N=4)
+**Hypothesis:** Switching read_mode to cross_attn with multiple heads improves memory retrieval precision by allowing tokens to selectively attend to relevant memory vectors.
+**Wall time:** 754.5 min
+**Result:** EM=0.1830 vs prev best=0.2188
+**Metric source:** trainer_state
+**Recovery:** checkpoint fallback used because final results were missing.
+
+
+## Iter 10 — RUNNING — N=4
+**Hypothesis:** Reducing warmup_steps from 10000 to 500 allows the model to train at full learning rate for 98% of the budget instead of 60%, which is critical for converging on the harder N=4 task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_010_warmup500_conv2_n4
+
+
+## Iter 10 — reverted — EM: 0.0814 (N=4)
+**Hypothesis:** Reducing warmup_steps from 10000 to 500 allows the model to train at full learning rate for 98% of the budget instead of 60%, which is critical for converging on the harder N=4 task.
+**Wall time:** 45.6 min
+**Result:** EM=0.0814 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** With warmup_steps=10000 out of max_steps=25000, the model only reaches full LR at step 10000, leaving only 15000 steps at full strength. All 7 N=4 attempts have failed, suggesting insufficient training signal. Reducing warmup to 500 steps gives 24500 steps at full LR=3e-4, a 6.3x increase in effective training time at full learning rate. Combined with conv_kernel=2 to reduce temporal over-mixing across memory vectors at tokens_per_segment=1, this addresses both training dynamics and architectural over-smoothing.
+
+
