@@ -237,7 +237,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
     def __init__(self, base_layer, fla_layer, model_hidden_size,
                  num_memory_vectors=1, write_mode='cross_attn', read_mode='cross_attn',
                  write_value_dim=None, num_memory_heads=1, write_residual=False,
-                 use_orthogonal_rotation=False):
+                 use_orthogonal_rotation=False, use_multi_stream_gdn=False):
         super().__init__()
         if write_mode == 'identity' and read_mode != 'identity':
             raise ValueError("identity write_mode must be paired with identity read_mode")
@@ -246,15 +246,33 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             raise ValueError("read_mode='identity' requires write_value_dim == model_hidden_size")
 
         self.base_layer = base_layer
-        self.fla_layer = fla_layer
         self.write_mode = write_mode
         self.read_mode = read_mode
         self.write_residual = write_residual
         self.num_memory_vectors = num_memory_vectors
         self.write_value_dim = write_value_dim_resolved
+        self.use_multi_stream_gdn = use_multi_stream_gdn
 
         self.write_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)
         self.read_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)
+
+        if use_multi_stream_gdn:
+            self.fla_layer_stream1 = fla_layer
+            self.fla_layer_stream2 = type(fla_layer)(
+                hidden_size=fla_layer.hidden_size,
+                layer_idx=fla_layer.layer_idx,
+                num_heads=fla_layer.num_heads,
+                head_dim=fla_layer.head_dim,
+                expand=fla_layer.expand,
+                conv_kernel=fla_layer.conv_kernel,
+                state_size=16,
+            )
+            self.fla_layer = None
+            self.cache1 = Cache()
+            self.cache2 = Cache()
+        else:
+            self.fla_layer = fla_layer
+            self.cache = Cache()
 
         if write_mode == 'identity':
             self.fla_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)
@@ -269,7 +287,6 @@ class RecurrentMemoryLayerWrapper(nn.Module):
                     mode=read_mode, num_heads=num_memory_heads,
                 )
 
-        self.cache = Cache()
         self.last_write_output: torch.Tensor | None = None
 
         self.state_size = fla_layer.state_size if hasattr(fla_layer, 'state_size') else 128
@@ -286,6 +303,17 @@ class RecurrentMemoryLayerWrapper(nn.Module):
 
     # ───── recurrent helpers (faithful v5) ─────
     def _gdn_recurrent(self, x, attention_mask):
+        if self.use_multi_stream_gdn:
+            out1 = self.fla_layer_stream1(
+                x, attention_mask=attention_mask,
+                past_key_values=self.cache1, use_cache=True,
+            )
+            out2 = self.fla_layer_stream2(
+                x, attention_mask=attention_mask,
+                past_key_values=self.cache2, use_cache=True,
+            )
+            fla_out = torch.cat([out1[0], out2[0]], dim=-1)
+            return fla_out, (out1[2], out2[2])
         fla_out = self.fla_layer(
             x, attention_mask=attention_mask,
             past_key_values=self.cache, use_cache=True,
@@ -318,14 +346,17 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             fla_out, new_cache = self._gdn_recurrent(x_rot, attention_mask)
             fla_out = self.orthogonal_rotation(fla_out, inverse=True)
             hidden_states = hidden_states + fla_out
-            self.cache = new_cache
+            self.cache = new_cache if not self.use_multi_stream_gdn else None
         else:
             write_vecs = self.memory_writer(self.write_norm(hidden_states))
             write_vecs_rot = self.orthogonal_rotation(write_vecs)
             fla_out, new_cache = self._gdn_recurrent(write_vecs_rot, attention_mask=None)
             fla_out = self.orthogonal_rotation(fla_out, inverse=True)
             self.last_write_output = fla_out
-            self.cache = new_cache
+            if not self.use_multi_stream_gdn:
+                self.cache = new_cache
+            else:
+                self.cache1, self.cache2 = new_cache[0], new_cache[1]
             if self.write_residual and self.read_mode in ('unpool', 'cross_attn'):
                 hidden_states = hidden_states + self.memory_reader(
                     self.read_norm(hidden_states), self.last_write_output
@@ -349,15 +380,27 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         B, L, d = hidden_states.shape
         assert L == S * T, f"parallel pass: got L={L}, expected S*T={S*T}"
 
-        # ── WRITE (or identity full-token stream) ──
+       # ── WRITE (or identity full-token stream) ──
         if self.write_mode == 'identity':
             x = self.fla_norm(hidden_states)                       # (B, S*T, d)
             x_rot = self.orthogonal_rotation(x)
-            fo = self.fla_layer(
-                x_rot, attention_mask=None,
-                past_key_values=self.cache, use_cache=True,
-            )
-            fla_out, new_cache = fo[0], fo[2]
+            if self.use_multi_stream_gdn:
+                fo1 = self.fla_layer_stream1(
+                    x_rot, attention_mask=None,
+                    past_key_values=self.cache1, use_cache=True,
+                )
+                fo2 = self.fla_layer_stream2(
+                    x_rot, attention_mask=None,
+                    past_key_values=self.cache2, use_cache=True,
+                )
+                fla_out = torch.cat([fo1[0], fo2[0]], dim=-1)
+                new_cache = (fo1[2], fo2[2])
+            else:
+                fo = self.fla_layer(
+                    x_rot, attention_mask=None,
+                    past_key_values=self.cache, use_cache=True,
+                )
+                fla_out, new_cache = fo[0], fo[2]
             fla_out = self.orthogonal_rotation(fla_out, inverse=True)
             # Apply base_layer with block-diag causal mask
             # (no read in identity mode — symmetry forces read_mode='identity')
@@ -365,8 +408,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             kwargs2['attention_mask'] = self._p_attn_mask
             output = self.base_layer(hidden_states + fla_out, *args, **kwargs2)
             hidden_states = output[0] if isinstance(output, tuple) else output
-            self.cache = new_cache
-            # Stash last memory: identity has no last_write_output (read is via GDN
+            if not self.use_multi_stream_gdn:
+                self.cache = new_cache
+            else:
+                self.cache1, self.cache2 = new_cache[0], new_cache[1]
+            # Stash last_memory: identity has no last_write_output (read is via GDN
             # readout in v5's gdn_readout mode, not used here)
             self.last_write_output = None
         else:
@@ -374,13 +420,28 @@ class RecurrentMemoryLayerWrapper(nn.Module):
                 self.write_norm(hidden_states), S, T, M
             )                                                       # (B, S*M, d_v)
             write_vecs_rot = self.orthogonal_rotation(write_vecs)
-            fo = self.fla_layer(
-                write_vecs_rot, attention_mask=None,
-                past_key_values=self.cache, use_cache=True,
-            )
-            mem, new_cache = fo[0], fo[2]
+            if self.use_multi_stream_gdn:
+                fo1 = self.fla_layer_stream1(
+                    write_vecs_rot, attention_mask=None,
+                    past_key_values=self.cache1, use_cache=True,
+                )
+                fo2 = self.fla_layer_stream2(
+                    write_vecs_rot, attention_mask=None,
+                    past_key_values=self.cache2, use_cache=True,
+                )
+                mem = torch.cat([fo1[0], fo2[0]], dim=-1)
+                new_cache = (fo1[2], fo2[2])
+            else:
+                fo = self.fla_layer(
+                    write_vecs_rot, attention_mask=None,
+                    past_key_values=self.cache, use_cache=True,
+                )
+                mem, new_cache = fo[0], fo[2]
             mem = self.orthogonal_rotation(mem, inverse=True)       # (B, S*M, d_v)
-            self.cache = new_cache
+            if not self.use_multi_stream_gdn:
+                self.cache = new_cache
+            else:
+                self.cache1, self.cache2 = new_cache[0], new_cache[1]
             # last_write_output for the qt (recurrent) segment = final segment's mem block
             self.last_write_output = mem[:, -M:, :].contiguous()
 
@@ -421,7 +482,11 @@ class RecurrentMemoryLayerWrapper(nn.Module):
         return hidden_states
 
     def reset_memory(self):
-        self.cache = Cache()
+        if self.use_multi_stream_gdn:
+            self.cache1 = Cache()
+            self.cache2 = Cache()
+        else:
+            self.cache = Cache()
         self.last_write_output = None
 
 
@@ -537,6 +602,7 @@ class RecurrentMemoryCell(nn.Module):
         filtered_kwargs = {k: v for k, v in fla_layer_kwargs.items()
                            if k in sig.parameters and k not in excluded}
 
+        state_size = fla_layer_kwargs.get('state_size', 128)
         transformer_layers = self._get_transformer_layers(base_model)
         for i, layer in enumerate(transformer_layers):
             fla_layer = layer_cls(
@@ -550,6 +616,7 @@ class RecurrentMemoryCell(nn.Module):
                 read_mode=read_mode, write_value_dim=write_value_dim,
                 num_memory_heads=num_memory_heads, write_residual=write_residual,
                 use_orthogonal_rotation=use_orthogonal_rotation,
+                use_multi_stream_gdn=state_size == 32,
             )
             transformer_layers[i] = wrapped
 

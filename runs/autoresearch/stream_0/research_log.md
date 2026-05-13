@@ -56,3 +56,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** Directions explicitly encourage re-introducing smarter OrthogonalRotation with full state-mixing matrix to push architecture HARD.
 
 
+## Iter 4 — RUNNING — N=4
+**Hypothesis:** Two parallel GDN paths of state_size 16 increase effective width while strictly respecting the state_size <= 32 hard lock.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_004_multi_stream_gdn_n2
+
+
+## Iter 4 — kept — EM: 0.0798 (N=4)
+**Hypothesis:** Two parallel GDN paths of state_size 16 increase effective width while strictly respecting the state_size <= 32 hard lock.
+**Wall time:** 45.4 min
+**Result:** EM=0.0798 vs prev best=0.0766
+**Metric source:** all_results
+**Rationale:** Directions suggest multi-stream GDN as a bold architecture edit to increase capacity without breaking state_size constraints.
+
+
