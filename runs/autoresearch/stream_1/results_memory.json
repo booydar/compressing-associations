@@ -313,6 +313,37 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.5706
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "Increasing expand_v to 3.0 will improve EM by expanding GDN hidden capacity from 64 to 96 while maintaining state_size=32 bottleneck.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Increasing expand_v to 3.0 will improve EM by expanding GDN hidden capacity from 64 to 96 while maintaining state_size=32 bottleneck.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "iter_002 achieved EM=0.9922 with cross_attn+unpool at N=2, M=4, write_value_dim=256. Current expand_v=2.0 gives GDN hidden=64. The state_size=32 is the bottleneck, but expand_v controls the intermediate GDN width. Increasing to 3.0 (hidden=96) could improve representational capacity before the bottleneck without violating state_size constraint.",
+        "instruction": "Update .autoresearch/experiment_config.yaml to set expand_v=3.0. Keep N=2, num_memory_vectors=4, write_mode=cross_attn, read_mode=unpool, write_value_dim=256, write_residual=false, state_size=32, n_layer=4, n_embd=128, learning_rate=1e-4, tokens_per_segment=1, fla_layer=GatedDeltaNet.",
+        "run_name": "expand_v_3_0_n2"
+      },
+      "em_score": null,
+      "prev_best": 0.228,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_010_expand_v_3_0_n2",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778658509.9440198,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_010",
+      "summary_logged": false,
+      "stream_id": "1"
     }
   ]
 }

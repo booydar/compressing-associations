@@ -28,8 +28,9 @@ learning_rate: 3e-4
 # RMM v5p1 memory path (pool writer + unpool reader; pool-1tps regime)
 num_memory_vectors: 4
 write_mode: cross_attn
-read_mode: unpool
+read_mode: cross_attn
 write_residual: false
+num_memory_heads: 4
 # write_value_dim is the GDN hidden width — UNLOCKED capacity knob (state_size still <=32).
 # Defaults to n_embd if unset. Planner may set 128/192/256/384.
 write_value_dim: 512

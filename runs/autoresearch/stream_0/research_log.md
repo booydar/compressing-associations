@@ -121,3 +121,8 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** Iter 6 achieved EM=0.989 with N=2, write_value_dim=512, num_memory_vectors=4. At N=4, memory pressure increases. Halving memory vectors while keeping write_value_dim high may reduce interference between memory slots and recover performance.
 
 
+## Iter 9 — RUNNING — N=4
+**Hypothesis:** Switching read_mode to cross_attn with multiple heads improves memory retrieval precision by allowing tokens to selectively attend to relevant memory vectors.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_009_cross_attn_read_4heads_n4
+
+

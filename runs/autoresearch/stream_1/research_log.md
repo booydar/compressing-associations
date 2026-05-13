@@ -145,3 +145,8 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The orthogonal rotation feature (OrthogonalRotation class) implements a learnable QR-based transform around GDN. It was designed to add a learnable transform unrelated to state size/capacity. With the proven cross_attn+unpool configuration at N=2, M=4, write_value_dim=256, adding orthogonal rotation could regularize the memory writes and improve generalization.
 
 
+## Iter 10 — RUNNING — N=4
+**Hypothesis:** Increasing expand_v to 3.0 will improve EM by expanding GDN hidden capacity from 64 to 96 while maintaining state_size=32 bottleneck.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_010_expand_v_3_0_n2
+
+

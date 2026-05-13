@@ -1,0 +1,11 @@
+{
+    "epoch": 1.6,
+    "eval_exact_match": 0.228,
+    "eval_exact_match_None": NaN,
+    "eval_loss": 0.4350001811981201,
+    "eval_runtime": 7.4351,
+    "eval_samples_per_second": 672.487,
+    "eval_steps_per_second": 10.625,
+    "eval_token_accuracy": 0.5869,
+    "patience": 0
+}

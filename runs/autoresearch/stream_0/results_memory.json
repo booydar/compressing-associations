@@ -281,6 +281,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2826
+    },
+    {
+      "id": 9,
+      "iter_tag": "iter_009",
+      "description": "Switching read_mode to cross_attn with multiple heads improves memory retrieval precision by allowing tokens to selectively attend to relevant memory vectors.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Switching read_mode to cross_attn with multiple heads improves memory retrieval precision by allowing tokens to selectively attend to relevant memory vectors.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All N=4 experiments collapsed while N=2 achieved EM=0.989. The unpool read mode uses simple softmax attention without learned query projections. Cross-attention with multiple heads could provide more expressive memory readout, enabling better discrimination between memory slots during retrieval.",
+        "instruction": "Change read_mode from 'unpool' to 'cross_attn' in experiment_config.yaml. Set num_memory_heads to 4 to enable multi-head memory attention. Keep all other parameters unchanged (num_memory_vectors=4, write_value_dim=512, write_mode=cross_attn, write_residual=false).",
+        "run_name": "cross_attn_read_4heads_n4"
+      },
+      "em_score": null,
+      "prev_best": 0.2188,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_009_cross_attn_read_4heads_n4",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778657101.6300201,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_009",
+      "summary_logged": false,
+      "stream_id": "0"
     }
   ]
 }

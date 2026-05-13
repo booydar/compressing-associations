@@ -38,5 +38,5 @@ write_value_dim: 256
 # RMM / GDN parameters
 fla_layer: GatedDeltaNet
 state_size: 32   # MUST BE 32 OR FEWER
-expand_v: 2.0
+expand_v: 3.0
 conv_kernel: 4
