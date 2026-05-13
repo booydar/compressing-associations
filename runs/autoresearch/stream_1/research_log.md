@@ -80,3 +80,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** write_residual is implemented in the model but never tested. It adds post-attn memory enrichment which could push EM beyond 0.9922 by allowing tokens to read their own layer's write output.
 
 
+## Iter 5 — RUNNING — N=4
+**Hypothesis:** Increasing num_memory_vectors to 8 will further improve EM by expanding memory bank capacity while maintaining the successful cross_attn+unpool read-write pairing.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_005_mem_vecs_8_cross_n2
+
+
+## Iter 5 — kept — EM: 0.1544 (N=4)
+**Hypothesis:** Increasing num_memory_vectors to 8 will further improve EM by expanding memory bank capacity while maintaining the successful cross_attn+unpool read-write pairing.
+**Wall time:** 70.2 min
+**Result:** EM=0.1544 vs prev best=0.0760
+**Metric source:** all_results
+**Rationale:** iter_002 with N=2, num_memory_vectors=4 achieved EM=0.9922. write_residual=true (iter_004) caused severe degradation to 0.076. Increasing M from 4 to 8 expands memory capacity without changing the successful architecture. write_residual should remain false.
+
+

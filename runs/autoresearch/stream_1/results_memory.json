@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_004",
-    "em": 0.076,
+    "variant": "iter_005",
+    "em": 0.1544,
     "n_level": 4
   },
   "n_level": 4,
@@ -153,6 +153,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.2795
+    },
+    {
+      "id": 5,
+      "iter_tag": "iter_005",
+      "description": "Increasing num_memory_vectors to 8 will further improve EM by expanding memory bank capacity while maintaining the successful cross_attn+unpool read-write pairing.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Increasing num_memory_vectors to 8 will further improve EM by expanding memory bank capacity while maintaining the successful cross_attn+unpool read-write pairing.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "iter_002 with N=2, num_memory_vectors=4 achieved EM=0.9922. write_residual=true (iter_004) caused severe degradation to 0.076. Increasing M from 4 to 8 expands memory capacity without changing the successful architecture. write_residual should remain false.",
+        "instruction": "Update .autoresearch/experiment_config.yaml to set num_memory_vectors=8, write_residual=false. Keep num_memory_vectors=8, write_mode=cross_attn, read_mode=unpool, write_value_dim=256, N=2, state_size=32, n_layer=4, n_embd=128, learning_rate=1e-4.",
+        "run_name": "mem_vecs_8_cross_n2"
+      },
+      "em_score": 0.1544,
+      "prev_best": 0.076,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_005_mem_vecs_8_cross_n2",
+      "wall_time_min": 70.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778633750.4580493,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_005",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.4323
     }
   ]
 }
