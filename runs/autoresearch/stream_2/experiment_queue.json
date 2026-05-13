@@ -1,0 +1,60 @@
+{
+  "queue": [
+    {
+      "hypothesis": "Setting num_memory_vectors to 4 and switching write_mode to cross_attn will multiply write throughput per segment while maintaining parallel-prefill compatibility.",
+      "target_component": ".autoresearch/experiment_config.yaml",
+      "rationale": "With tokens_per_segment locked at 1, increasing M is the only viable path to scale write capacity. cross_attn is required to structurally support M>1 writes.",
+      "instruction": "Update `num_memory_vectors` to `4` and change `write_mode` to `cross_attn` in the experiment config file.",
+      "run_name": "memvec_4_crosswrite",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822455"
+    },
+    {
+      "hypothesis": "Splitting the GDN recurrent state into two parallel streams of width 16 each will improve gradient flow and state utilization compared to a single width-32 stream.",
+      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+      "rationale": "Multi-stream GDN is encouraged to preserve the state_size <= 32 constraint while potentially improving effective capacity through independent pathway dynamics and reduced interference.",
+      "instruction": "Refactor the GDN layer in `huggingface_rmm_v5p1.py` to instantiate two parallel `GatedDeltaNet` modules with `state_size=16` each, concatenate their hidden outputs along the feature dimension, and sum their recurrent states before passing to the next layer.",
+      "run_name": "dual_stream_gdn_16",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822458"
+    },
+    {
+      "hypothesis": "Replacing the last-dim-only rotation with a full state-mixing orthogonal matrix will enhance long-range dependency tracking across the GDN state.",
+      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+      "rationale": "Re-introducing a smarter OrthogonalRotation is explicitly called out to improve state mixing beyond the current restricted implementation.",
+      "instruction": "In `huggingface_rmm_v5p1.py`, modify the orthogonal rotation module to apply a full `(state_size, state_size)` orthogonal matrix multiplication to the entire state tensor instead of only rotating the last dimension.",
+      "run_name": "full_orthogonal_rotation",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822460"
+    },
+    {
+      "hypothesis": "Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.",
+      "target_component": ".autoresearch/experiment_config.yaml",
+      "rationale": "The directions suggest trying write_residual=true as a low-cost architectural shortcut to boost EM by adding a second read pathway for the current segment.",
+      "instruction": "Set `write_residual` to `true` in the experiment config file.",
+      "run_name": "write_residual_on",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822463"
+    },
+    {
+      "hypothesis": "Reordering the parallel path to READ\u2192ATTN\u2192WRITE will allow the attention mechanism to attend to already-updated memory, improving contextual alignment.",
+      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+      "rationale": "Layer-order experiments are encouraged to probe information flow dynamics; shifting reads before writes tests whether pre-updated memory yields better attention queries.",
+      "instruction": "Modify the forward pass in `huggingface_rmm_v5p1.py` to reorder the parallel-prefill blocks from the current WRITE\u2192GDN\u2192READ\u2192ATTN sequence to READ\u2192ATTN\u2192WRITE, updating residual connections and tensor shapes accordingly.",
+      "run_name": "read_attn_write_order",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822472"
+    },
+    {
+      "hypothesis": "Increasing expand_v to 2.0 and conv_kernel to 4 will broaden the receptive field of value projections, aiding pattern generalization for associative retrieval.",
+      "target_component": ".autoresearch/experiment_config.yaml",
+      "rationale": "These are listed as unlocked knobs to sweep; testing expanded dimensions and larger conv kernels probes representational capacity limits without altering core recurrence.",
+      "instruction": "Set `expand_v` to `2.0` and `conv_kernel` to `4` in the experiment config file.",
+      "run_name": "expandv_2_conv4",
+      "source": "human_directions",
+      "created_at": "2026-05-13T23:47:33.822475"
+    }
+  ],
+  "last_directions_hash": "0189f232c368b95be0389601cb68c6e9",
+  "last_updated": "2026-05-13T23:47:33.832909"
+}

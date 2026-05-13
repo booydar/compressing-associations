@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "none",
-    "em": -1.0,
+    "variant": "iter_001",
+    "em": 0.1872,
     "n_level": 4
   },
   "n_level": 4,
@@ -30,6 +30,37 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.9959
+    },
+    {
+      "id": 1,
+      "iter_tag": "iter_001",
+      "description": "Increasing write_value_dim to 256 will expand the effective memory capacity per write vector without violating the state_size constraint.",
+      "hypothesis": {
+        "hypothesis": "Increasing write_value_dim to 256 will expand the effective memory capacity per write vector without violating the state_size constraint.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The directions explicitly flag write_value_dim as the primary intended capacity knob and current biggest miss. Scaling it tests the throughput vs. capacity trade-off in the pool-1tps regime.",
+        "instruction": "Set the `write_value_dim` parameter to `256` in the experiment config file.",
+        "run_name": "wvdim_256_sweep"
+      },
+      "em_score": 0.1872,
+      "prev_best": -1.0,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_001_wvdim_256_sweep",
+      "wall_time_min": 71.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778705310.6622934,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_001",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.4835
     }
   ]
 }
