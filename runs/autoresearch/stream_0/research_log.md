@@ -95,3 +95,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** The N=2 configuration achieved EM=0.989 (iter_002) while all N=4 experiments collapsed to EM<0.22. Reverting to N=2 validates the baseline before exploring N=4 fixes.
 
 
+## Iter 7 — RUNNING — N=4
+**Hypothesis:** Enabling write_residual=true with N=4 allows memory readout to augment rather than replace token states, potentially recovering signal loss in deeper memory chains.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_007_write_residual_n4
+
+
+## Iter 7 — reverted — EM: 0.0054 (N=4)
+**Hypothesis:** Enabling write_residual=true with N=4 allows memory readout to augment rather than replace token states, potentially recovering signal loss in deeper memory chains.
+**Wall time:** 55.7 min
+**Result:** EM=0.0054 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** All N=4 experiments collapsed (EM<0.22) while N=2 achieved EM=0.989. The write_residual flag has never been tested; it adds memory readout as a residual to post-attention tokens, potentially preserving both memory signal and original representation needed for N=4 retrieval.
+
+

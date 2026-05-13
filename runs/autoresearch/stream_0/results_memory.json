@@ -217,6 +217,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2774
+    },
+    {
+      "id": 7,
+      "iter_tag": "iter_007",
+      "description": "Enabling write_residual=true with N=4 allows memory readout to augment rather than replace token states, potentially recovering signal loss in deeper memory chains.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Enabling write_residual=true with N=4 allows memory readout to augment rather than replace token states, potentially recovering signal loss in deeper memory chains.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All N=4 experiments collapsed (EM<0.22) while N=2 achieved EM=0.989. The write_residual flag has never been tested; it adds memory readout as a residual to post-attention tokens, potentially preserving both memory signal and original representation needed for N=4 retrieval.",
+        "instruction": "Set write_residual to true in experiment_config.yaml and set n_keys/n_values to 4 with tokens_per_segment to 1 for the N=4 task.",
+        "run_name": "write_residual_n4"
+      },
+      "em_score": 0.0054,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_007_write_residual_n4",
+      "wall_time_min": 55.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778649752.8956766,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_007",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2747
     }
   ]
 }
