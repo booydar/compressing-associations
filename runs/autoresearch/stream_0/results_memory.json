@@ -249,6 +249,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2747
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "Reducing num_memory_vectors to 2 with write_value_dim=512 concentrates memory capacity into fewer slots, improving signal-to-noise for KV retrieval at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Reducing num_memory_vectors to 2 with write_value_dim=512 concentrates memory capacity into fewer slots, improving signal-to-noise for KV retrieval at N=4.",
+        "target_component": "experiment_config.yaml",
+        "rationale": "Iter 6 achieved EM=0.989 with N=2, write_value_dim=512, num_memory_vectors=4. At N=4, memory pressure increases. Halving memory vectors while keeping write_value_dim high may reduce interference between memory slots and recover performance.",
+        "instruction": "Change num_memory_vectors from 4 to 2 in experiment_config.yaml. Keep write_value_dim at 512, write_mode at cross_attn, read_mode at unpool, write_residual at false.",
+        "run_name": "nmem2_write512_n4"
+      },
+      "em_score": 0.0858,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_008_nmem2_write512_n4",
+      "wall_time_min": 47.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778653720.232519,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_008",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2826
     }
   ]
 }

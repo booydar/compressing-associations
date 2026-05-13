@@ -108,3 +108,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** All N=4 experiments collapsed (EM<0.22) while N=2 achieved EM=0.989. The write_residual flag has never been tested; it adds memory readout as a residual to post-attention tokens, potentially preserving both memory signal and original representation needed for N=4 retrieval.
 
 
+## Iter 8 — RUNNING — N=4
+**Hypothesis:** Reducing num_memory_vectors to 2 with write_value_dim=512 concentrates memory capacity into fewer slots, improving signal-to-noise for KV retrieval at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_008_nmem2_write512_n4
+
+
+## Iter 8 — reverted — EM: 0.0858 (N=4)
+**Hypothesis:** Reducing num_memory_vectors to 2 with write_value_dim=512 concentrates memory capacity into fewer slots, improving signal-to-noise for KV retrieval at N=4.
+**Wall time:** 47.5 min
+**Result:** EM=0.0858 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** Iter 6 achieved EM=0.989 with N=2, write_value_dim=512, num_memory_vectors=4. At N=4, memory pressure increases. Halving memory vectors while keeping write_value_dim high may reduce interference between memory slots and recover performance.
+
+
