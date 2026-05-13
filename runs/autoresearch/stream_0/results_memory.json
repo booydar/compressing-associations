@@ -1,10 +1,10 @@
 {
   "current_best": {
-    "variant": "iter_001",
-    "em": 0.9122,
-    "n_level": 2
+    "variant": "none",
+    "em": -1.0,
+    "n_level": 4
   },
-  "n_level": 2,
+  "n_level": 4,
   "experiments": [
     {
       "id": 0,
@@ -61,6 +61,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.9522
+    },
+    {
+      "id": 2,
+      "iter_tag": "iter_002",
+      "description": "Increasing num_memory_vectors to 4 with cross_attn write mode multiplies write throughput effectively at 1 token per segment.",
+      "hypothesis": {
+        "hypothesis": "Increasing num_memory_vectors to 4 with cross_attn write mode multiplies write throughput effectively at 1 token per segment.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Directions state M>1 is the only way to multiply write throughput at tps=1 and requires cross_attn mode verification.",
+        "instruction": "Set num_memory_vectors to 4 and write_mode to cross_attn in experiment_config.yaml, keeping N=2.",
+        "run_name": "mem_vectors_4_cross_n2"
+      },
+      "em_score": 0.989,
+      "prev_best": 0.9122,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 2,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n2/iter_002_mem_vectors_4_cross_n2",
+      "wall_time_min": 56.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778628279.4183874,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_002",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.9944
     }
   ]
 }

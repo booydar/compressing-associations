@@ -26,3 +26,20 @@ Started: 2026-05-13 00:25
 **Rationale:** Directions identify write_value_dim as the single biggest miss in v5p design and explicitly unlock it for sweeping up to 512.
 
 
+## Iter 2 — RUNNING — N=2
+**Hypothesis:** Increasing num_memory_vectors to 4 with cross_attn write mode multiplies write throughput effectively at 1 token per segment.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n2/iter_002_mem_vectors_4_cross_n2
+
+
+## Iter 2 — kept — EM: 0.9890 (N=2)
+**Hypothesis:** Increasing num_memory_vectors to 4 with cross_attn write mode multiplies write throughput effectively at 1 token per segment.
+**Wall time:** 56.6 min
+**Result:** EM=0.9890 vs prev best=0.9122
+**Metric source:** all_results
+**Rationale:** Directions state M>1 is the only way to multiply write throughput at tps=1 and requires cross_attn mode verification.
+
+
+## >>> N-level advanced to N=4 <<<
+Previous N achieved EM=0.9890 >= threshold 0.95.
+
+

@@ -26,8 +26,8 @@ em_threshold: 0.95
 learning_rate: 3e-4
 
 # RMM v5p1 memory path (pool writer + unpool reader; pool-1tps regime)
-num_memory_vectors: 1
-write_mode: pool
+num_memory_vectors: 4
+write_mode: cross_attn
 read_mode: unpool
 write_residual: false
 # write_value_dim is the GDN hidden width — UNLOCKED capacity knob (state_size still <=32).
