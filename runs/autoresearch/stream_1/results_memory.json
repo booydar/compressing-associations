@@ -281,6 +281,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.4726
+    },
+    {
+      "id": 9,
+      "iter_tag": "iter_009",
+      "description": "Enabling use_orthogonal_rotation=true will improve EM by adding a learnable orthogonal transform that regularizes GDN hidden states without changing state_size.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Enabling use_orthogonal_rotation=true will improve EM by adding a learnable orthogonal transform that regularizes GDN hidden states without changing state_size.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The orthogonal rotation feature (OrthogonalRotation class) implements a learnable QR-based transform around GDN. It was designed to add a learnable transform unrelated to state size/capacity. With the proven cross_attn+unpool configuration at N=2, M=4, write_value_dim=256, adding orthogonal rotation could regularize the memory writes and improve generalization.",
+        "instruction": "Update .autoresearch/experiment_config.yaml to set use_orthogonal_rotation=true. Keep N=2, num_memory_vectors=4, write_mode=cross_attn, read_mode=unpool, write_value_dim=256, write_residual=false, state_size=32, n_layer=4, n_embd=128, learning_rate=1e-4, tokens_per_segment=1, fla_layer=GatedDeltaNet.",
+        "run_name": "ortho_rotation_true_n2"
+      },
+      "em_score": 0.2198,
+      "prev_best": 0.228,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_009_ortho_rotation_true_n2",
+      "wall_time_min": 68.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778653904.8730106,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_009",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.5706
     }
   ]
 }

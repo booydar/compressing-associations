@@ -132,3 +132,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader. The pool writer is more direct than cross_attn and may provide more stable gradients. Since the unpool reader already handles memory retrieval flexibly, simplifying the writer could reduce variance without losing capacity.
 
 
+## Iter 9 — RUNNING — N=4
+**Hypothesis:** Enabling use_orthogonal_rotation=true will improve EM by adding a learnable orthogonal transform that regularizes GDN hidden states without changing state_size.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_009_ortho_rotation_true_n2
+
+
+## Iter 9 — reverted — EM: 0.2198 (N=4)
+**Hypothesis:** Enabling use_orthogonal_rotation=true will improve EM by adding a learnable orthogonal transform that regularizes GDN hidden states without changing state_size.
+**Wall time:** 68.5 min
+**Result:** EM=0.2198 vs prev best=0.2280
+**Metric source:** all_results
+**Rationale:** The orthogonal rotation feature (OrthogonalRotation class) implements a learnable QR-based transform around GDN. It was designed to add a learnable transform unrelated to state size/capacity. With the proven cross_attn+unpool configuration at N=2, M=4, write_value_dim=256, adding orthogonal rotation could regularize the memory writes and improve generalization.
+
+
