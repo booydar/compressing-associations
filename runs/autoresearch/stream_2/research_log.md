@@ -30,3 +30,16 @@ Previous N achieved EM=0.9918 >= threshold 0.95.
 **Rationale:** The directions explicitly flag write_value_dim as the primary intended capacity knob and current biggest miss. Scaling it tests the throughput vs. capacity trade-off in the pool-1tps regime.
 
 
+## Iter 2 — RUNNING — N=4
+**Hypothesis:** Setting num_memory_vectors to 4 and switching write_mode to cross_attn will multiply write throughput per segment while maintaining parallel-prefill compatibility.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_002_memvec_4_crosswrite
+
+
+## Iter 2 — reverted — EM: 0.1522 (N=4)
+**Hypothesis:** Setting num_memory_vectors to 4 and switching write_mode to cross_attn will multiply write throughput per segment while maintaining parallel-prefill compatibility.
+**Wall time:** 71.2 min
+**Result:** EM=0.1522 vs prev best=0.1872
+**Metric source:** all_results
+**Rationale:** With tokens_per_segment locked at 1, increasing M is the only viable path to scale write capacity. cross_attn is required to structurally support M>1 writes.
+
+

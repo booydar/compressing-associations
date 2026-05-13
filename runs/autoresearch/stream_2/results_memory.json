@@ -61,6 +61,37 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.4835
+    },
+    {
+      "id": 2,
+      "iter_tag": "iter_002",
+      "description": "Setting num_memory_vectors to 4 and switching write_mode to cross_attn will multiply write throughput per segment while maintaining parallel-prefill compatibility.",
+      "hypothesis": {
+        "hypothesis": "Setting num_memory_vectors to 4 and switching write_mode to cross_attn will multiply write throughput per segment while maintaining parallel-prefill compatibility.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "With tokens_per_segment locked at 1, increasing M is the only viable path to scale write capacity. cross_attn is required to structurally support M>1 writes.",
+        "instruction": "Update `num_memory_vectors` to `4` and change `write_mode` to `cross_attn` in the experiment config file.",
+        "run_name": "memvec_4_crosswrite"
+      },
+      "em_score": 0.1522,
+      "prev_best": 0.1872,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_002_memvec_4_crosswrite",
+      "wall_time_min": 71.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778709652.3477867,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_002",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.4237
     }
   ]
 }
