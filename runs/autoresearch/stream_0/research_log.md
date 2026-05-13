@@ -160,3 +160,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** At tokens_per_segment=1, the GDN processes M=4 memory vectors sequentially and conv_kernel=4 means each vector's convolution window spans all 4 vectors, destroying slot identity. Iter_010 bundled conv_kernel=2 with warmup_steps=500 and failed, so the conv_kernel effect was confounded. Isolating conv_kernel=2 alone tests whether temporal over-mixing is a primary failure mode for N=4.
 
 
+## Iter 12 — RUNNING — N=4
+**Hypothesis:** Reducing expand_v from 2.0 to 1.0 shrinks the GDN's internal hidden dimension from 1024 to 512, providing regularization that prevents overfitting on the limited N=4 training signal.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_012_expand1_regularized_n4
+
+
+## Iter 12 — reverted — EM: 0.1504 (N=4)
+**Hypothesis:** Reducing expand_v from 2.0 to 1.0 shrinks the GDN's internal hidden dimension from 1024 to 512, providing regularization that prevents overfitting on the limited N=4 training signal.
+**Wall time:** 54.9 min
+**Result:** EM=0.1504 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** All N=4 experiments have collapsed (EM<0.22) while the GDN processes only 12 vectors per layer (S=3 context segments x M=4 memory vectors). With expand_v=2.0 and write_value_dim=512, the GDN's internal hidden dimension is 1024—8x the number of input vectors. This massive expansion creates a severely over-parameterized model that memorizes rather than generalizes. Reducing expand_v to 1.0 matches the GDN's hidden dimension to the input width (512), providing effective regularization while preserving full state_size=32 capacity for memory storage.
+
+

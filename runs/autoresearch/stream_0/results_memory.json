@@ -377,6 +377,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3897
+    },
+    {
+      "id": 12,
+      "iter_tag": "iter_012",
+      "description": "Reducing expand_v from 2.0 to 1.0 shrinks the GDN's internal hidden dimension from 1024 to 512, providing regularization that prevents overfitting on the limited N=4 training signal.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Reducing expand_v from 2.0 to 1.0 shrinks the GDN's internal hidden dimension from 1024 to 512, providing regularization that prevents overfitting on the limited N=4 training signal.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "All N=4 experiments have collapsed (EM<0.22) while the GDN processes only 12 vectors per layer (S=3 context segments x M=4 memory vectors). With expand_v=2.0 and write_value_dim=512, the GDN's internal hidden dimension is 1024\u20148x the number of input vectors. This massive expansion creates a severely over-parameterized model that memorizes rather than generalizes. Reducing expand_v to 1.0 matches the GDN's hidden dimension to the input width (512), providing effective regularization while preserving full state_size=32 capacity for memory storage.",
+        "instruction": "In experiment_config.yaml, set expand_v to 1.0. Keep all other parameters unchanged: n_keys=4, n_values=4, tokens_per_segment=1, write_value_dim=512, num_memory_vectors=4, write_mode=cross_attn, read_mode=cross_attn, write_residual=false, conv_kernel=4, state_size=32, learning_rate=3e-4, warmup_steps=10000.",
+        "run_name": "expand1_regularized_n4"
+      },
+      "em_score": 0.1504,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_012_expand1_regularized_n4",
+      "wall_time_min": 54.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778710544.6630294,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_012",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3956
     }
   ]
 }
