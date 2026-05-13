@@ -185,6 +185,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.5411
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "Reverting to N=2 recovers the near-perfect EM=0.989 achieved with write_value_dim=512 and num_memory_vectors=4, isolating the N-level as the collapse point.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Reverting to N=2 recovers the near-perfect EM=0.989 achieved with write_value_dim=512 and num_memory_vectors=4, isolating the N-level as the collapse point.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The N=2 configuration achieved EM=0.989 (iter_002) while all N=4 experiments collapsed to EM<0.22. Reverting to N=2 validates the baseline before exploring N=4 fixes.",
+        "instruction": "Set n_keys to 2, n_values to 2, and tokens_per_segment to 1 in experiment_config.yaml to run the N=2 associative retrieval task.",
+        "run_name": "revert_n2_verify_baseline"
+      },
+      "em_score": 0.0764,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_006_revert_n2_verify_baseline",
+      "wall_time_min": 49.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778646089.5321858,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_006",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2774
     }
   ]
 }

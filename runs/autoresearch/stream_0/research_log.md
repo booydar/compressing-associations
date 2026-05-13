@@ -82,3 +82,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** Directions suggest sweeping learning rates up to 3e-4 and emphasize boldness over safe micro-tweaks.
 
 
+## Iter 6 — RUNNING — N=4
+**Hypothesis:** Reverting to N=2 recovers the near-perfect EM=0.989 achieved with write_value_dim=512 and num_memory_vectors=4, isolating the N-level as the collapse point.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_006_revert_n2_verify_baseline
+
+
+## Iter 6 — reverted — EM: 0.0764 (N=4)
+**Hypothesis:** Reverting to N=2 recovers the near-perfect EM=0.989 achieved with write_value_dim=512 and num_memory_vectors=4, isolating the N-level as the collapse point.
+**Wall time:** 49.7 min
+**Result:** EM=0.0764 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** The N=2 configuration achieved EM=0.989 (iter_002) while all N=4 experiments collapsed to EM<0.22. Reverting to N=2 validates the baseline before exploring N=4 fixes.
+
+
