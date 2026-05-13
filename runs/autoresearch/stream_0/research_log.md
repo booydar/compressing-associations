@@ -43,3 +43,16 @@ Started: 2026-05-13 00:25
 Previous N achieved EM=0.9890 >= threshold 0.95.
 
 
+## Iter 3 — RUNNING — N=4
+**Hypothesis:** Re-introducing full OrthogonalRotation matrix improves state mixing compared to the current last-dim only implementation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_003_ortho_rotation_full_n2
+
+
+## Iter 3 — kept — EM: 0.0766 (N=4)
+**Hypothesis:** Re-introducing full OrthogonalRotation matrix improves state mixing compared to the current last-dim only implementation.
+**Wall time:** 66.5 min
+**Result:** EM=0.0766 vs prev best=-1.0000
+**Metric source:** all_results
+**Rationale:** Directions explicitly encourage re-introducing smarter OrthogonalRotation with full state-mixing matrix to push architecture HARD.
+
+

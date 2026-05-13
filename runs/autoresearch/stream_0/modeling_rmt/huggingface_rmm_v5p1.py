@@ -39,25 +39,26 @@ class OrthogonalRotation(nn.Module):
     def __init__(self, state_size: int = 32):
         super().__init__()
         self.state_size = state_size
-        skew_init = torch.zeros(state_size, state_size)
-        for i in range(state_size):
-            for j in range(i + 1, state_size):
-                skew_init[i, j] = torch.randn(1) * 0.01
-                skew_init[j, i] = -skew_init[i, j]
-        self.skew_matrix = nn.Parameter(skew_init)
-
-    def _orthogonalize(self, A: torch.Tensor) -> torch.Tensor:
-        Q, R = torch.linalg.qr(A)
+        # Full state-mixing matrix: orthogonal Q of shape (state_size, state_size)
+        # Initialized via QR of random matrix for better mixing
+        random_init = torch.randn(state_size, state_size) * 0.01
+        Q, R = torch.linalg.qr(random_init)
         d = torch.diag(R)
         signs = torch.sign(d)
-        return Q * signs.unsqueeze(0)
+        self.register_buffer('Q', Q * signs.unsqueeze(0))
 
     def forward(self, x: torch.Tensor, inverse: bool = False) -> torch.Tensor:
-        I = torch.eye(self.state_size, device=self.skew_matrix.device, dtype=self.skew_matrix.dtype)
-        Q = self._orthogonalize(I + self.skew_matrix)
+        """Apply full state-mixing orthogonal rotation.
+        
+        Supports arbitrary input shapes where the last dimension equals state_size.
+        For inverse, use Q^T since Q is orthogonal.
+        """
         if inverse:
-            Q = Q.t()
-        return torch.matmul(x, Q)
+            Q = self.Q.t()
+        else:
+            Q = self.Q
+        # Use einsum for proper broadcasting over all leading dimensions
+        return torch.einsum('...i,ij->...j', x, Q)
 
 
 class _IdentityRotation(nn.Module):

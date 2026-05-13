@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "none",
-    "em": -1.0,
+    "variant": "iter_003",
+    "em": 0.0766,
     "n_level": 4
   },
   "n_level": 4,
@@ -92,6 +92,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.9944
+    },
+    {
+      "id": 3,
+      "iter_tag": "iter_003",
+      "description": "Re-introducing full OrthogonalRotation matrix improves state mixing compared to the current last-dim only implementation.",
+      "hypothesis": {
+        "hypothesis": "Re-introducing full OrthogonalRotation matrix improves state mixing compared to the current last-dim only implementation.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "Directions explicitly encourage re-introducing smarter OrthogonalRotation with full state-mixing matrix to push architecture HARD.",
+        "instruction": "Modify OrthogonalRotation class in huggingface_rmm_v5p1.py to use a full state-mixing matrix instead of restricting to last dimension.",
+        "run_name": "ortho_rotation_full_n2"
+      },
+      "em_score": 0.0766,
+      "prev_best": -1.0,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_003_ortho_rotation_full_n2",
+      "wall_time_min": 66.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778631853.083029,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_003",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2793
     }
   ]
 }
