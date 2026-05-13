@@ -6,8 +6,8 @@
 # main_script  : repo-relative path to the Python training script
 # run_script   : repo-relative launcher used by autoresearch.py (single run; env + accelerate)
 # Full multi-seed sweep (manual): scripts/assoc-comp-rmm/run_rmm_v5_on_kv_retrieval-ca.sh
-model_file: modeling_rmt/huggingface_rmm_v5.py
-main_script: run_rmm_on_kv_retrieval-v5.py
+model_file: modeling_rmt/huggingface_rmm_v5p1.py
+main_script: run_rmm_on_kv_retrieval-v5p1.py
 run_script: scripts/run_autoresearch_exp.sh
 
 llm:

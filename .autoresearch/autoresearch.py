@@ -458,16 +458,7 @@ def _finalize_running_entry(
     current_best_em = memory["current_best"]["em"]
     is_baseline = entry["id"] == 0 and not entry.get("hypothesis")
 
-    is_fix_base = (entry.get("hypothesis") or {}).get("_fix_base", False)
     if em > current_best_em:
-        verdict = "kept"
-        memory["current_best"] = {
-            "variant": entry.get("iter_tag", f"iter_{entry['id']:03d}"),
-            "em": em,
-            "n_level": entry["n_level"],
-        }
-    elif is_fix_base:
-        # Keep the fix unconditionally — a broken HEAD is worse than any EM regression
         verdict = "kept"
         memory["current_best"] = {
             "variant": entry.get("iter_tag", f"iter_{entry['id']:03d}"),
@@ -687,22 +678,49 @@ def _get_single_value(param_value):
     return param_value
 
 
-def _detect_broken_base(memory: dict, k: int = 3) -> str | None:
-    """Return the common run_error if the last k completed/failed iters all failed with the same error.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
 
-    This detects the case where the committed HEAD itself is broken: every iteration
-    starts from the same bad base, fails identically, reverts to HEAD, and loops forever.
-    """
-    recent = [
-        e for e in memory["experiments"]
-        if e.get("stream_id", STREAM_ID) == STREAM_ID
-        and e.get("status") in ("completed", "failed", "unresolved")
-    ][-k:]
-    if len(recent) < k:
-        return None
-    errors = [e.get("run_error") or "" for e in recent]
-    if all(errors) and len(set(errors)) == 1:
-        return errors[0]
+
+def _read_log_tail(log_path: Path, max_chars: int = 4000) -> str:
+    """Return a cleaned tail of train.log. Prefer the last Python traceback block;
+    strip ANSI escapes and tqdm carriage-return spam."""
+    try:
+        # newline="" disables universal-newlines so we can collapse tqdm \r-progress ourselves.
+        with open(log_path, "r", errors="replace", newline="") as f:
+            raw = f.read()
+    except Exception as e:
+        return f"(could not read {log_path}: {e})"
+
+    # Collapse \r-progress lines: split on \n only, then keep last segment after \r per line.
+    # (str.splitlines() also splits on \r, which would defeat the dedup.)
+    cleaned_lines = []
+    for line in raw.split("\n"):
+        if "\r" in line:
+            line = line.split("\r")[-1]
+        line = _ANSI_RE.sub("", line)
+        if line.strip():
+            cleaned_lines.append(line)
+    cleaned = "\n".join(cleaned_lines)
+
+    # If there is a traceback, anchor on the last one
+    tb_idx = cleaned.rfind("Traceback (most recent call last):")
+    if tb_idx >= 0:
+        cleaned = cleaned[tb_idx:]
+
+    if len(cleaned) > max_chars:
+        cleaned = "... [truncated] ...\n" + cleaned[-max_chars:]
+    return cleaned
+
+
+def _last_failed_run_error(memory: dict) -> str | None:
+    """Return run_error of the most recent failed iter for this stream, or None."""
+    for e in reversed(memory.get("experiments", [])):
+        if e.get("stream_id", STREAM_ID) != STREAM_ID:
+            continue
+        if e.get("status") in ("failed", "unresolved") and e.get("run_error"):
+            return e["run_error"]
+        if e.get("status") == "completed":
+            return None
     return None
 
 
@@ -766,9 +784,37 @@ def run_experiment(exp_path_rel: str, n_pairs: int, exp_cfg: dict) -> None:
     stream_exp_path = str(STREAM_RUNS_DIR / exp_path_rel)
     cmd = ["bash", str(RUN_SCRIPT), stream_exp_path, str(n_pairs), str(max_steps)]
     print(f"[run] {' '.join(cmd)}")
-    result = subprocess.run(cmd, cwd=REPO_ROOT, env=env, timeout=EXPERIMENT_TIMEOUT_SEC)
-    if result.returncode != 0:
-        raise RuntimeError(f"Experiment script exited with code {result.returncode}")
+
+    log_path = Path(stream_exp_path) / "train.log"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+
+    proc = subprocess.Popen(
+        cmd, cwd=REPO_ROOT, env=env,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+        bufsize=1, text=True,
+    )
+    try:
+        with open(log_path, "w") as logf:
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                sys.stdout.flush()
+                logf.write(line)
+        rc = proc.wait(timeout=EXPERIMENT_TIMEOUT_SEC)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        proc.wait()
+        tail = _read_log_tail(log_path)
+        raise RuntimeError(
+            f"Experiment script timed out after {EXPERIMENT_TIMEOUT_SEC}s\n"
+            f"--- train.log tail ({log_path}) ---\n{tail}"
+        )
+    if rc != 0:
+        tail = _read_log_tail(log_path)
+        raise RuntimeError(
+            f"Experiment script exited with code {rc}\n"
+            f"--- train.log tail ({log_path}) ---\n{tail}"
+        )
 
 
 def _run_sweep(exp_path_rel: str, n_pairs: int, exp_cfg: dict, sweep_param: str, sweep_values: list, subfolder_prefix: str) -> float:
@@ -1085,9 +1131,11 @@ def main() -> None:
 N_EXECUTOR_RETRIES = 4
 
 
-def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False, artifact_dir=None):
-    """Run executor with validation retries. Returns (new_content, trace) or raises RuntimeError."""
-    last_error = None
+def _execute_with_retries(hypothesis, current_content, executor_cfg, is_yaml=False, artifact_dir=None, seed_error_ctx=None):
+    """Run executor with validation retries. Returns (new_content, trace) or raises RuntimeError.
+    seed_error_ctx, if provided, is passed as error_context on the first attempt so the executor
+    can see the previous iteration's training-time failure."""
+    last_error = seed_error_ctx
     last_trace = None
     label = "config" if is_yaml else "code"
 
@@ -1180,57 +1228,37 @@ def _run_iter(
         # ── Queue / Planner ──
         planner_trace = None
         if retry_candidate is None:
-            # Check if the committed HEAD itself is broken (same error repeated k times)
-            broken_error = _detect_broken_base(memory)
-            if broken_error:
-                print(f"[broken-base] same error repeated 3x — synthesizing fix-base hypothesis")
-                hypothesis = {
-                    "hypothesis": f"Fix broken base: {broken_error[:120]}",
-                    "target_component": str(STREAM_MODEL_FILE.relative_to(REPO_ROOT)),
-                    "rationale": (
-                        "The committed HEAD crashes at runtime with the same error on every "
-                        "iteration. Fix the root cause before any other change."
-                    ),
-                    "instruction": (
-                        f"The model file at HEAD crashes at runtime with this error:\n{broken_error}\n"
-                        "Find and fix the root cause. Do NOT introduce new features."
-                    ),
-                    "run_name": "fix_broken_base",
-                    "_fix_base": True,
-                }
-                description = hypothesis["hypothesis"]
+            _maybe_enqueue_human_directions(planner_cfg, memory)
+            queue_data = load_experiment_queue()
+
+            if queue_data["queue"]:
+                hypothesis = queue_data["queue"].pop(0)
+                for meta_key in ("source", "created_at"):
+                    hypothesis.pop(meta_key, None)
+                save_experiment_queue(queue_data)
+                description = hypothesis.get("hypothesis", f"iter {iter_id}")
+                print(f"[queue] dequeued: {description} (remaining: {len(queue_data['queue'])})")
             else:
-                _maybe_enqueue_human_directions(planner_cfg, memory)
-                queue_data = load_experiment_queue()
+                print("[planner] queue empty — generating hypothesis...")
+                program_md = load_program_md()
+                recent = [entry for entry in memory["experiments"] if entry.get("status") != "running"][-10:]
 
-                if queue_data["queue"]:
-                    hypothesis = queue_data["queue"].pop(0)
-                    for meta_key in ("source", "created_at"):
-                        hypothesis.pop(meta_key, None)
-                    save_experiment_queue(queue_data)
-                    description = hypothesis.get("hypothesis", f"iter {iter_id}")
-                    print(f"[queue] dequeued: {description} (remaining: {len(queue_data['queue'])})")
+                N_PLANNER_RETRIES = 2
+                planner_error = None
+                for attempt in range(1, N_PLANNER_RETRIES + 1):
+                    try:
+                        hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error, iter_tag=iter_tag, artifact_dir=_artifact_dir(iter_tag))
+                        break
+                    except Exception as e:
+                        planner_error = str(e)
+                        print(f"[planner] ERROR (attempt {attempt}/{N_PLANNER_RETRIES}): {e}")
                 else:
-                    print("[planner] queue empty — generating hypothesis...")
-                    program_md = load_program_md()
-                    recent = [entry for entry in memory["experiments"] if entry.get("status") != "running"][-10:]
+                    _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner failed after {N_PLANNER_RETRIES} attempts: {planner_error}", planner_trace=planner_trace)
+                    save_memory(memory)
+                    return
 
-                    N_PLANNER_RETRIES = 2
-                    planner_error = None
-                    for attempt in range(1, N_PLANNER_RETRIES + 1):
-                        try:
-                            hypothesis, planner_trace = plan_with_trace_full(program_md, recent, planner_cfg, error_context=planner_error, iter_tag=iter_tag, artifact_dir=_artifact_dir(iter_tag))
-                            break
-                        except Exception as e:
-                            planner_error = str(e)
-                            print(f"[planner] ERROR (attempt {attempt}/{N_PLANNER_RETRIES}): {e}")
-                    else:
-                        _record_failed_iter(memory, iter_id, n_level, current_best_em, f"planner failed after {N_PLANNER_RETRIES} attempts: {planner_error}", planner_trace=planner_trace)
-                        save_memory(memory)
-                        return
-
-                    print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
-                    description = hypothesis.get("hypothesis", f"iter {iter_id}")
+                print(f"[planner] hypothesis: {hypothesis.get('hypothesis', '')}")
+                description = hypothesis.get("hypothesis", f"iter {iter_id}")
 
         executor_trace = None
         if hypothesis is not None:
@@ -1239,10 +1267,20 @@ def _run_iter(
             target_file = STREAM_CONFIG_FILE if is_config_change else STREAM_MODEL_FILE
             current_content = target_file.read_text()
 
+            prior_run_error = _last_failed_run_error(memory)
+            seed_error_ctx = None
+            if prior_run_error and not is_config_change:
+                seed_error_ctx = (
+                    "The previous iteration's training run failed with the following error. "
+                    "Take this into account when applying the change; if your edit must avoid "
+                    "the same failure, adjust accordingly.\n\n"
+                    f"{prior_run_error}"
+                )
+
             try:
                 new_content, executor_trace = _execute_with_retries(
                     hypothesis, current_content, executor_cfg, is_yaml=is_config_change,
-                    artifact_dir=_artifact_dir(iter_tag))
+                    artifact_dir=_artifact_dir(iter_tag), seed_error_ctx=seed_error_ctx)
             except RuntimeError as e:
                 _record_failed_iter(memory, iter_id, n_level, current_best_em, str(e), hypothesis, planner_trace=planner_trace, executor_trace=executor_trace)
                 save_memory(memory)

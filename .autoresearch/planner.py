@@ -86,6 +86,9 @@ HUMAN_DIRECTION_ITEM_RE = re.compile(
     re.MULTILINE,
 )
 
+# NOTE: SYSTEM_PROMPT is only used for trace logging in build_planner_messages.
+# The prompt actually sent to opencode is built by _build_planner_prompt below.
+# Keep the two in sync if you change research rules — _build_planner_prompt is the source of truth.
 SYSTEM_PROMPT = """\
 You are a research scientist specialising in recurrent neural memory architectures.
 Your task is to propose ONE concrete change to improve the model's
@@ -623,11 +626,22 @@ def _format_history(experiments: list[dict]) -> str:
             + (f"\n  hypothesis: {hyp_str}" if hyp_str else "")
         )
         if run_error:
-            # Extract key info from error messages for better readability
-            error_preview = run_error[:200] if run_error else ""
+            error_preview = _summarize_run_error(run_error, max_chars=1500)
             line += f"\n  **Error:** {error_preview}"
         lines.append(line)
     return "\n".join(lines)
+
+
+def _summarize_run_error(run_error: str, max_chars: int = 1500) -> str:
+    """Anchor on the last Python traceback if present; keep the most informative tail."""
+    if not run_error:
+        return ""
+    tb_idx = run_error.rfind("Traceback (most recent call last):")
+    text = run_error[tb_idx:] if tb_idx >= 0 else run_error
+    text = text.strip()
+    if len(text) <= max_chars:
+        return text
+    return "... [truncated] ...\n" + text[-max_chars:]
 
 
 def _load_human_directions() -> tuple[str, str | None]:
@@ -670,18 +684,6 @@ def _truncate_text(text: str, max_chars: int | None) -> str:
         + "\n\n... [truncated for context budget] ...\n\n"
         + text[-keep_tail:]
     )
-
-
-def _load_summary_tail() -> str:
-    if not get_summary_file().exists():
-        return "(no experiment summary yet)"
-
-    summary = get_summary_file().read_text().strip()
-    if not summary:
-        return "(no experiment summary yet)"
-    if len(summary) <= MAX_SUMMARY_CHARS:
-        return summary
-    return "(truncated to recent summary entries)\n" + summary[-MAX_SUMMARY_CHARS:]
 
 
 def _extract_json_candidates(raw: str) -> list[dict]:

@@ -1,28 +1,29 @@
-# Research Program
+# Research Program — v5p1
 
 ## Objective
-Maximize exact-match (EM) on associative retrieval task using RMM v5 with GatedDeltaNet (GDN) and the v5 memory path.
-Target: EM ≥ 0.99 at N=16.
+Maximize EM on KV associative retrieval using RMM **v5p1** (parallel-prefill, ortho rotation off) in the pool-1tps regime. Climb N: N=2 → N=4 → N=8 as EM ≥ 0.95 at each level.
 
-## Constraints
-- Target files: modeling_rmt/huggingface_rmm_v5.py (architecture) or .autoresearch/experiment_config.yaml (unlocked hyperparameters only)
-- No parameter count explosion (~50% max increase without strong justification)
-- Max experiment length: 25000 steps
-- Hard-frozen parameters: align with `.autoresearch/experiment_config.yaml` (e.g. n_layer=4, n_embd≤128, batch_size=64, state_size≤32); trainer: `run_rmm_on_kv_retrieval-v5.py`
+## Target files
+- Architecture: `modeling_rmt/huggingface_rmm_v5p1.py`
+- Trainer: `run_rmm_on_kv_retrieval-v5p1.py`
+- Hyperparameters: `.autoresearch/experiment_config.yaml`
 
-## Allowed Changes
-- **Architecture**: Any modification to modeling_rmt/huggingface_rmm_v5.py (GDN layer internals, gating, attention, memory read/write paths)
-- **Unlocked hyperparameters**: early_stopping_patience, eval_steps, logging_steps only
+## Constraints (hard)
+- `state_size ≤ 32`, `n_layer = 4`, `n_embd = 128`, `n_head = 4`, `batch_size = 64`, `warmup_steps = 10000`, `tokens_per_segment = 1`, `max_steps ≤ 25000`.
+- Parameter count: ≤ 50% increase without strong justification.
 
-## Current State
-- N-level: 16
-- Current best EM: 0.0 (fresh start — baseline not yet run)
+## Unlocked levers (push hard here)
+- `write_value_dim` (GDN hidden width — NOT bound to state_size; main capacity knob).
+- `num_memory_vectors` (M), `write_mode`, `read_mode`, `num_memory_heads`, `write_residual`.
+- `expand_v`, `conv_kernel`, `learning_rate`.
+- Any architecture edit to `huggingface_rmm_v5p1.py`: multi-stream GDN, layer-order surgery, full-matrix orthogonal rotation, drop the recurrent qt fallback.
+
+## Current state
+- N-level: 2
+- Current best EM: 0.0 (fresh)
 - Best variant: none yet
 
 ## Current Understanding
-- expand_v=4.0 is critical: in prior runs this single change took EM from 0.02 → 0.36
-- warmup_steps=10000 improves training stability vs 5000
-- conv_kernel=2 (vs 4) improves memory precision
-- state_size=64 achieved EM=0.87 in a prior run but violates the hard constraint (must stay ≤32)
-- The bottleneck is GDN capacity within the state_size=32 constraint
-- Architectural ideas worth exploring: multi-head improvements, gating mechanisms inside GDN, better key/value projection, auxiliary memory channels
+- Manual v5p1 with M=1, pool/unpool, lr=3e-4 at N=2 was already climbing (EM 0→0.015 by step 1500/200k). The base is healthy.
+- The pool-1tps regime turns the model into "per-token write into GDN with M slots and a learnable extractor." The two biggest underused axes are `write_value_dim` and `M`.
+- See `knowledge/RESEARCH_DIRECTION.md` for paper-level framing — capacity bottleneck is the headline claim; this stream supplies the validation numbers.

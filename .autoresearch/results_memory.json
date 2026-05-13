@@ -1,9 +1,9 @@
 {
   "current_best": {
     "variant": "iter_-1",
-    "em": 0.7412,
-    "n_level": 16
+    "em": 0.0,
+    "n_level": 2
   },
-  "n_level": 16,
+  "n_level": 2,
   "experiments": []
 }

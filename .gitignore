@@ -182,6 +182,7 @@ runs-rmt/
 runs-rebuttal/
 runs-rebuttal-default/
 runs-rmm*
+runs-baselines/
 *artifacts/
 *checkpoint-*
 *.lock
