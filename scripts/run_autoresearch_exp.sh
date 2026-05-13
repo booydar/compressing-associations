@@ -33,7 +33,7 @@ LR=${LR:-1e-4}
 PAIRS_PER_SEGMENT=${PAIRS_PER_SEGMENT:-$N_PAIRS}
 
 # v5 adjusts effective batch / grad acc like run_rmm_v5_on_kv_retrieval-ca.sh
-if [[ "$MAIN_SCRIPT" == *"run_rmm_on_kv_retrieval-v5.py"* ]]; then
+if [[ "$MAIN_SCRIPT" == *"run_rmm_on_kv_retrieval-v5"* ]]; then
   TOKENS_PER_SEGMENT=${TOKENS_PER_SEGMENT:-$(( PAIRS_PER_SEGMENT * (K + V + 4) ))}
   TBS=${TOTAL_BATCH_SIZE:-$((PER_DEVICE_BATCH_SIZE * NP))}
   GRAD_ACC_STEPS=$(( TBS / (PER_DEVICE_BATCH_SIZE * NP) ))
@@ -78,7 +78,7 @@ if [[ "$MAIN_SCRIPT" == *"run_rmm_on_kv_retrieval-v5.py"* ]]; then
 fi
 echo "==============================="
 
-if [[ "$MAIN_SCRIPT" == *"run_rmm_on_kv_retrieval-v5.py"* ]]; then
+if [[ "$MAIN_SCRIPT" == *"run_rmm_on_kv_retrieval-v5"* ]]; then
   accelerate launch \
     --main_process_port 0 \
     --num_processes $NP \
