@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_004",
-    "em": 0.0798,
+    "variant": "iter_005",
+    "em": 0.2188,
     "n_level": 4
   },
   "n_level": 4,
@@ -154,6 +154,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2756
+    },
+    {
+      "id": 5,
+      "iter_tag": "iter_005",
+      "description": "A higher learning rate of 3e-4 accelerates convergence on the N=2 task compared to standard baselines.",
+      "hypothesis": {
+        "hypothesis": "A higher learning rate of 3e-4 accelerates convergence on the N=2 task compared to standard baselines.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "Directions suggest sweeping learning rates up to 3e-4 and emphasize boldness over safe micro-tweaks.",
+        "instruction": "Set learning_rate to 3e-4 in experiment_config.yaml and ensure N=2 is configured for the retrieval task.",
+        "run_name": "lr_3e4_bold_n2"
+      },
+      "em_score": 0.2188,
+      "prev_best": 0.0798,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_005_lr_3e4_bold_n2",
+      "wall_time_min": 68.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778639089.0280838,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_005",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.5411
     }
   ]
 }

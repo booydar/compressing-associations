@@ -69,3 +69,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** Directions suggest multi-stream GDN as a bold architecture edit to increase capacity without breaking state_size constraints.
 
 
+## Iter 5 — RUNNING — N=4
+**Hypothesis:** A higher learning rate of 3e-4 accelerates convergence on the N=2 task compared to standard baselines.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_005_lr_3e4_bold_n2
+
+
+## Iter 5 — kept — EM: 0.2188 (N=4)
+**Hypothesis:** A higher learning rate of 3e-4 accelerates convergence on the N=2 task compared to standard baselines.
+**Wall time:** 68.6 min
+**Result:** EM=0.2188 vs prev best=0.0798
+**Metric source:** all_results
+**Rationale:** Directions suggest sweeping learning rates up to 3e-4 and emphasize boldness over safe micro-tweaks.
+
+
