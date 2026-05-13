@@ -106,3 +106,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** iter_002 with N=2, num_memory_vectors=4 achieved EM=0.9922. Both N=4 experiments (iter_004, iter_005) severely degraded to EM<0.16. The current config has num_memory_vectors=8 which was only tested at N=4. Returning to the proven N=2, M=4 configuration with write_value_dim=256 should recover peak performance.
 
 
+## Iter 7 — RUNNING — N=4
+**Hypothesis:** Changing read_mode from unpool to cross_attn will improve EM by giving the reader learnable attention heads matching the writer's cross_attn mechanism.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_007_cross_attn_reader_heads4_n2
+
+
+## Iter 7 — reverted — EM: 0.0808 (N=4)
+**Hypothesis:** Changing read_mode from unpool to cross_attn will improve EM by giving the reader learnable attention heads matching the writer's cross_attn mechanism.
+**Wall time:** 46.1 min
+**Result:** EM=0.0808 vs prev best=0.2280
+**Metric source:** all_results
+**Rationale:** iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader at N=2, M=4. The unpool reader uses fixed attention while cross_attn uses learned multi-head attention. Matching the reader to the writer's attention mechanism could extract more signal from memory states. N=2 is critical based on historical performance.
+
+

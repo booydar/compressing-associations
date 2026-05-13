@@ -217,6 +217,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.5869
+    },
+    {
+      "id": 7,
+      "iter_tag": "iter_007",
+      "description": "Changing read_mode from unpool to cross_attn will improve EM by giving the reader learnable attention heads matching the writer's cross_attn mechanism.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Changing read_mode from unpool to cross_attn will improve EM by giving the reader learnable attention heads matching the writer's cross_attn mechanism.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader at N=2, M=4. The unpool reader uses fixed attention while cross_attn uses learned multi-head attention. Matching the reader to the writer's attention mechanism could extract more signal from memory states. N=2 is critical based on historical performance.",
+        "instruction": "Update .autoresearch/experiment_config.yaml to set read_mode=cross_attn, num_memory_heads=4, N=2, num_memory_vectors=4, write_value_dim=256, write_mode=cross_attn, write_residual=false. Keep state_size=32, n_layer=4, n_embd=128, learning_rate=1e-4, tokens_per_segment=1, fla_layer=GatedDeltaNet.",
+        "run_name": "cross_attn_reader_heads4_n2"
+      },
+      "em_score": 0.0808,
+      "prev_best": 0.228,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_007_cross_attn_reader_heads4_n2",
+      "wall_time_min": 46.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778646092.3620315,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_007",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.2778
     }
   ]
 }
