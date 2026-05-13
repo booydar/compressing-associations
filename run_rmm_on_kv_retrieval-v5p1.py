@@ -67,6 +67,13 @@ def collate_fn(batch):
         target_ids = encode(target)
         qt_ids     = query_ids + target_ids
         context_ids_full = encode(context)
+        # Drop trailing '|' segment-terminator so context length is a multiple
+        # of tokens_per_segment (v5p1 requires uniform context segments). The
+        # '|' is re-attached as the leading token of the query.
+        sep_id = encode('|')
+        if len(sep_id) == 1 and context_ids_full and context_ids_full[-1] == sep_id[0]:
+            context_ids_full = context_ids_full[:-1]
+            qt_ids = sep_id + qt_ids
         context_chunks = split_token_ids_into_segments(
             context_ids_full, tokens_per_segment=args.tokens_per_segment
         )

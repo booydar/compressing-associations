@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 
 import torch
+from torch.nn.utils.rnn import pad_sequence
+
 import numpy as np
 from typing import Dict, Optional
 from dataclasses import dataclass, field
@@ -29,6 +31,16 @@ logger = logging.getLogger('')
 
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
+def split_context_into_segments(context, pairs_per_segment=None):
+    if pairs_per_segment is None:
+        return [context]
+    clean_context = context[1:-2].strip()
+    pairs = [f"!{p}!" for p in clean_context.split("!!")]
+
+    segments = [pairs[i:i + pairs_per_segment] for i in range(0, len(pairs), pairs_per_segment)]
+    segments = [''.join(s) for s in segments]
+    return segments
+
 
 def collate_fn(batch):
     """
@@ -37,35 +49,43 @@ def collate_fn(batch):
     - Second segment: query + target
     Pads segments across the batch to the same length.
     """
-    from torch.nn.utils.rnn import pad_sequence
-    import torch
-
-    # Helper to encode a string to ids
     def encode(text):
         return tokenizer.encode(text, add_special_tokens=False)
 
-    # Prepare segments for each sample
     segments_batch = []
-    for sample in batch:
+    for idx, sample in enumerate(batch):
         context = sample['context']
-        query = sample['query']
-        target = sample['target']
-
-        # Segment 1: context
-        context_ids = encode(context)
-        # Segment 2: query + target
+        
+        perform_memory_task = torch.rand(1) < args.memory_task_freq
+        if perform_memory_task and args.memory_task == "reconstruct":
+            query = '!?'
+            target = '!?' + context[2:-2]
+        elif perform_memory_task and args.memory_task == "continue":
+            # print(f"[collate_fn] ", args.memory_key_size, args.memory_value_size, len(context))
+            query_start_ind = torch.randint(0, len(context) - args.memory_key_size - args.memory_value_size - 4, (1,))
+            query = '!?' + context[query_start_ind:query_start_ind + args.memory_key_size]
+            target = '!?' + context[query_start_ind + args.memory_key_size:query_start_ind + args.memory_key_size + args.memory_value_size]
+        else:
+            query = sample['query']
+            target = sample['target']
+        
         query_ids = encode(query)
         target_ids = encode(target)
         qt_ids = query_ids + target_ids
+        context_pairs = split_context_into_segments(context, pairs_per_segment=args.pairs_per_segment)
 
-        # Each segment: dict with input_ids, attention_mask, labels, labels_mask
-        # For context segment, no loss (labels = -100)
-        seg1 = {
-            'input_ids': torch.tensor(context_ids, dtype=torch.long),
-            'attention_mask': torch.ones(len(context_ids), dtype=torch.long),
-            'labels': torch.full((len(context_ids),), -100, dtype=torch.long),
-            'labels_mask': torch.zeros(len(context_ids), dtype=torch.bool)
-        }
+        segments = []
+        for context_pair in context_pairs:
+            context_ids = encode(context_pair)
+            # print(f"[collate_fn][DEBUG] context_ids: {context_ids}")
+            seg = {
+                'input_ids': torch.tensor(context_ids, dtype=torch.long),
+                'attention_mask': torch.ones(len(context_ids), dtype=torch.long),
+                'labels': torch.full((len(context_ids),), -100, dtype=torch.long),
+                'labels_mask': torch.zeros(len(context_ids), dtype=torch.bool)
+            }
+            segments.append(seg)
+
         # For query+target segment, loss only on target tokens
         qt_input_ids = torch.tensor(qt_ids, dtype=torch.long)
         qt_attention_mask = torch.ones(len(qt_ids), dtype=torch.long)
@@ -77,17 +97,17 @@ def collate_fn(batch):
             labels_mask[-len(target_ids) - 1:] = True
         else:
             labels_mask = torch.zeros(len(qt_ids), dtype=torch.bool)
-        seg2 = {
+        segments.append({
             'input_ids': qt_input_ids,
             'attention_mask': qt_attention_mask,
             'labels': labels,
-            'labels_mask': labels_mask
-        }
-        segments_batch.append([seg1, seg2])
+            'labels_mask': labels_mask,
+        })
+        segments_batch.append(segments)
 
     # Pad segments across the batch
     batch_segments = []
-    num_segments = 2
+    num_segments = len(segments_batch[0])
     id_pad_value = tokenizer.pad_token_id if hasattr(tokenizer, "pad_token_id") and tokenizer.pad_token_id is not None else 0
     for i in range(num_segments):
         input_ids = [s[i]['input_ids'] for s in segments_batch]
@@ -108,30 +128,18 @@ def collate_fn(batch):
         }
         batch_segments.append(batch_segment)
 
-    # Concatenate all labels for the batch (for loss computation)
     full_labels = torch.cat([s['labels'] for s in batch_segments], dim=1)
+
     return {"segments": batch_segments, "labels": full_labels}
 
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     # Shift logits and labels for next-token prediction
     predictions, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
-    # print all inputs
-    # print("[compute_metrics_fn] inputs:", inputs)
-    # print("[compute_metrics_fn] labels:", labels)
-    # print("[compute_metrics_fn] predictions:", predictions)
-    # print("[compute_metrics_fn] eval_pred:", eval_pred)
     # logits, inner_loop_stats = predictions
-
     logits = predictions
-    print("[compute_metrics_fn] logits type:", type(logits))
-    print("[compute_metrics_fn] logits len:", len(logits))
+    # ARMT can return a tuple (logits, ...) when extra outputs are emitted.
     if isinstance(logits, (list, tuple)):
-        for i, l in enumerate(logits):
-            print(f"[compute_metrics_fn] logits[{i}] type: {type(l)}, shape: {getattr(l, 'shape', None)}")
-    else:
-        print("[compute_metrics_fn] logits shape:", getattr(logits, 'shape', None))
-    print("[compute_metrics_fn] labels type:", type(labels), "shape:", getattr(labels, 'shape', None))
-    print("[compute_metrics_fn] inputs type:", type(inputs), "shape:", getattr(inputs, 'shape', None))
+        logits = logits[0]
     logits = logits[..., :-1, :]
     labels = labels[..., 1:]
     preds = np.argmax(logits, axis=-1)
@@ -148,15 +156,24 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     accuracy = (masked_predictions == masked_labels).mean()
 
     # get exact_match per-sample accuracy, ignore masked tokens
-    # predictions.shape = (batch_size, seq_len)
-    exact_match = np.mean([
+    decoded_labels = [tokenizer.decode(label[label != -100], skip_special_tokens=True).replace(' ', '') for label in labels]
+    memory_task_mask = [decoded_labels[i][:2] == '!?' for i in range(len(decoded_labels))]
+
+    exact_match_memory_task = np.mean([
         np.all(pred[mask[i]] == lab[mask[i]])
         for i, (pred, lab) in enumerate(zip(preds, labels))
-        if np.any(mask[i])  # Skip samples that are all masked
+        if np.any(mask[i]) and memory_task_mask[i]
     ])
 
-    for pred, label, inp in zip(preds[:5], labels[:5],
-                                         inputs[:5]):
+    exact_match_base = np.mean([
+        np.all(pred[mask[i]] == lab[mask[i]])
+        for i, (pred, lab) in enumerate(zip(preds, labels))
+        if np.any(mask[i]) and not memory_task_mask[i]
+    ])
+
+    n_samples = 5
+    for pred, label, inp in zip(preds[:n_samples], labels[:n_samples],
+                                         inputs[:n_samples]):
         mask = (label != -100)
         pred = pred[mask]
         inp[inp == -100] = 0
@@ -166,11 +183,13 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
         print('t:', tokenizer.decode(label, skip_special_tokens=True).replace(' ', ''))
         print('-' * 50)
 
-    return {
+    res = {
         "token_accuracy": float(accuracy),
-        "exact_match": float(exact_match),
+        # "exact_match": float(exact_match),
+        "exact_match_base": float(exact_match_base),
     }
-
+    res[f"exact_match_{args.memory_task}"] = float(exact_match_memory_task)
+    return res
 
 class StopOnMetricValue(TrainerCallback):
     def __init__(self, metric_name: str, value: float, higher_is_better: bool = True):
@@ -235,8 +254,19 @@ class ExperimentArgs:
     n_ctrl_tokens: Optional[int] = field(default=0)
     use_mem_proj: Optional[bool] = field(default=False)
     mem_proj_mode: Optional[str] = field(default="none")
-    d_mem: Optional[int] = field(default=128)
+    memory_task_freq: Optional[float] = field(default=0.0)
+    memory_task: Optional[str] = field(default=None)
+    memory_key_size: Optional[int] = field(default=4)
+    memory_value_size: Optional[int] = field(default=4)
+    model_cpt: Optional[str] = field(default=None)
+    pairs_per_segment: Optional[int] = field(default=None)
+    n_pairs: Optional[int] = field(default=None)
+    n_keys: Optional[int] = field(default=None)
+    n_values: Optional[int] = field(default=None)
+    # ARMT-specific
+    d_mem: Optional[int] = field(default=32)
     correction: Optional[bool] = field(default=True)
+
 
 if __name__ == '__main__':
     parser = HfArgumentParser(ExperimentArgs)
@@ -287,7 +317,6 @@ if __name__ == '__main__':
 
     config.torch_dtype = "float32"  # weights in float32, at training precision is controlled by accelerate
     config.vocab_size = tokenizer.vocab_size
-    print(f'[config] vocab size: {config.vocab_size}')
     config.pad_token_id = tokenizer.convert_tokens_to_ids('[PAD]')
     config.bos_token_id = tokenizer.convert_tokens_to_ids('[BOS]')
     config.eos_token_id = tokenizer.convert_tokens_to_ids('[EOS]')
@@ -298,8 +327,8 @@ if __name__ == '__main__':
     #                    inner_clip_value=args.inner_clip_value, inner_clip_norm=args.inner_clip_norm,
     #                    use_mem_proj=args.use_mem_proj, mem_proj_mode=args.mem_proj_mode,
     #                    use_write_head=args.use_write_head)
-    # Load model class dynamically
-    # Load RMT as in debug_rmt.ipynb
+    # Load ARMT (same segmentation path as RMT v3-gen: collator emits `segments`
+    # list, which AssociativeRecurrentWrapperv2 consumes directly).
     from modeling_armt.huggingface import ARMTForCausalLMv2, ARMTConfig
 
     rmt_config = ARMTConfig()
@@ -316,10 +345,138 @@ if __name__ == '__main__':
     model = ARMTForCausalLMv2(rmt_config)
     model.main_input_name = 'labels'
 
+    if args.model_cpt and args.model_cpt != 'None':
+        # cpt = torch.load(args.model_cpt, map_location='cpu', weights_only=False)
+        # model.load_state_dict(cpt, strict=False)
+        # logger.info(f'Loaded RMT state dict from: {args.model_cpt}')
+        # if "safetensors" in args.model_cpt:
+        #     print(model)
+        #     from safetensors.torch import load_model
+        #     load_model(model, args.model_cpt, device="cuda:0")
+        # else:
+        #     if ".bin" in args.model_cpt:
+        #         model_cpt = args.model_cpt
+        #     elif "model_best" in os.listdir(args.model_cpt):
+        #         model_cpt = os.path.join(args.model_cpt, "model_best", "pytorch_model.bin")
+        #     else:
+        #         dir_files = os.listdir(args.model_cpt)
+        #         print(f"Looking for a checkpoint in {args.model_cpt}: \n{dir_files}")
+        #         checkpoint_dir = [el for el in dir_files if "checkpoint-" in el][0]
+        #         model_cpt = os.path.join(args.model_cpt, checkpoint_dir, "pytorch_model.bin")
+        #         if not os.path.exists(model_cpt):
+        #             model_cpt = os.path.join(args.model_cpt, checkpoint_dir, "model.safetensors")
+        #             from safetensors.torch import load_model
+        #             load_model(model, args.model_cpt, device="cuda:0")
+                                        
+        #     cpt = torch.load(model_cpt, map_location='cpu')
+        import os
+
+        # Determine if model_cpt is a file or a directory
+        model_cpt_path = args.model_cpt
+        use_safetensors = False
+
+        # If input is a directory, check its contents
+        if os.path.isdir(model_cpt_path):
+            dir_files = os.listdir(model_cpt_path)
+
+            # Prefer model_best
+            if "model_best" in dir_files:
+                candidate = os.path.join(model_cpt_path, "model_best", "pytorch_model.bin")
+                if os.path.exists(candidate):
+                    model_cpt_path = candidate
+                else:
+                    # Try safetensors in model_best
+                    candidate_st = os.path.join(model_cpt_path, "model_best", "model.safetensors")
+                    if os.path.exists(candidate_st):
+                        model_cpt_path = candidate_st
+                        use_safetensors = True
+                    else:
+                        raise FileNotFoundError(f"No .bin or .safetensors found in '{os.path.join(model_cpt_path, 'model_best')}'")
+            # Otherwise look for checkpoint- directories
+            else:
+                checkpoints = [el for el in dir_files if el.startswith("checkpoint-")]
+                if not checkpoints:
+                    raise FileNotFoundError(f"No checkpoint- directory found in '{model_cpt_path}'")
+                checkpoint_dir = os.path.join(model_cpt_path, sorted(checkpoints)[-1])
+                # Prefer bin first
+                candidate = os.path.join(checkpoint_dir, "pytorch_model.bin")
+                if os.path.exists(candidate):
+                    model_cpt_path = candidate
+                else:
+                    # Try safetensors
+                    candidate_st = os.path.join(checkpoint_dir, "model.safetensors")
+                    if os.path.exists(candidate_st):
+                        model_cpt_path = candidate_st
+                        use_safetensors = True
+                    else:
+                        raise FileNotFoundError(f"No .bin or .safetensors found in '{checkpoint_dir}'")
+
+        # If input is a file, check the extension
+        elif os.path.isfile(model_cpt_path):
+            if model_cpt_path.endswith(".safetensors"):
+                use_safetensors = True
+            elif model_cpt_path.endswith(".bin"):
+                use_safetensors = False
+            else:
+                raise ValueError(f"Unknown model checkpoint file type: {model_cpt_path}")
+        else:
+            raise FileNotFoundError(f"Checkpoint path does not exist: {model_cpt_path}")
+
+        # Actually load the checkpoint
+        if use_safetensors:
+            from safetensors.torch import load_model
+            load_model(model, model_cpt_path, device="cuda:0")
+        else:
+            cpt = torch.load(model_cpt_path, map_location='cpu')
+            # Allow possible mismatch in keys (strict=False) for flexibility
+            model.load_state_dict(cpt, strict=False)
+        print(f"Loaded model checkpoint from {model_cpt_path}")
+
     logger.info(f'model config: {model.config}')
     logger.info(f'model: {model}')
 
-    dataset = datasets.load_dataset(f"yurakuratov/{args.data_path}")
+    # Try to load existing dataset, otherwise generate it
+    # data_path = "/workspace-SR006.nfs2/bulatov/rmt/data/associative_retrieval"
+    # dataset_name = f"N{args.n_pairs}-K{args.n_keys}V{args.n_values}-V62_1M"
+    # data_path = f"/workspace-SR006.nfs2/bulatov/rmt/data/associative_retrieval/{dataset_name}"
+    data_path = args.data_path
+    try:
+        logger.info(f'Attempting to load dataset from: {data_path}')
+        dataset = datasets.load_from_disk(data_path)
+        logger.info(f'Successfully loaded existing dataset from {data_path}')
+    except Exception as e:
+        logger.info(f'Could not load dataset from {data_path}: {e}')
+        logger.info(f'Generating new dataset with n_pairs={args.n_pairs}, n_keys={args.n_keys}, n_values={args.n_values}')
+        from kv_dataset_utils import generate_sequence
+        
+        # Generate samples with all fields needed for collate_fn
+        logger.info('Generating raw samples...')
+        raw_samples = [
+            generate_sequence(num_kv_pairs=args.n_pairs,
+                              n_segments=1,
+                              min_segment_len = 0,
+                              max_segment_len = 0,
+                              k_length=args.n_keys, v_length=args.n_values)
+            for _ in range(1_005_000)
+        ]
+        
+        # Convert to HuggingFace dataset format with context, query, target fields
+        import datasets as ds
+        dataset_dict = {
+            'context': [s['context'] for s in raw_samples],
+            'query': [s['query'] for s in raw_samples],
+            'target': [s['target'] for s in raw_samples],
+        }
+        dataset = ds.Dataset.from_dict(dataset_dict)
+        dataset = dataset.train_test_split(test_size=5_000, seed=args.seed)
+        # Ensure test set is called "valid" (for legacy code compatibility)
+        if "test" in dataset:
+            dataset = datasets.DatasetDict({
+                "train": dataset["train"],
+                "valid": dataset["test"],
+            })
+        dataset.save_to_disk(data_path)
+        logger.info(f'Successfully generated dataset with {len(dataset["train"])} train samples and {len(dataset["valid"])} validation samples')
 
     # Target sequence looks like: "XXXX!|"
     # Let's not count ! and | in the accuracy calculation
@@ -366,7 +523,7 @@ if __name__ == '__main__':
         include_for_metrics=['inputs'],
         # include_for_metrics=['segments', 'labels'],
         # include_for_metrics=['input_ids', 'labels', 'labels_mask'],
-        save_total_limit=3,
+        save_total_limit=1,
         dataloader_num_workers=4,
         dataloader_pin_memory=True,
         seed=args.seed,
@@ -381,7 +538,8 @@ if __name__ == '__main__':
         data_collator=collate_fn,
         compute_metrics=compute_metrics,
         callbacks=[EarlyStoppingCallback(early_stopping_patience=args.early_stopping_patience),
-                   StopOnMetricValue(metric_name='exact_match', value=1.0, higher_is_better=True),
+                   StopOnMetricValue(metric_name='exact_match', value=0.99, higher_is_better=True),
+                   StopOnMetricValue(metric_name='exact_match_base', value=0.99, higher_is_better=True),
                    ],
     )
     # Train the model
