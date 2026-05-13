@@ -249,6 +249,38 @@
       "summary_logged": false,
       "stream_id": "1",
       "token_accuracy": 0.2778
+    },
+    {
+      "id": 8,
+      "iter_tag": "iter_008",
+      "description": "Switching write_mode from cross_attn to pool will improve EM stability by simplifying the write mechanism while the unpool reader provides sufficient flexibility.",
+      "hypothesis": {
+        "stream_id": "1",
+        "hypothesis": "Switching write_mode from cross_attn to pool will improve EM stability by simplifying the write mechanism while the unpool reader provides sufficient flexibility.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader. The pool writer is more direct than cross_attn and may provide more stable gradients. Since the unpool reader already handles memory retrieval flexibly, simplifying the writer could reduce variance without losing capacity.",
+        "instruction": "Update .autoresearch/experiment_config.yaml to set write_mode=pool. Keep read_mode=unpool, num_memory_vectors=4, write_value_dim=256, N=2, state_size=32, n_layer=4, n_embd=128, learning_rate=1e-4, tokens_per_segment=1, fla_layer=GatedDeltaNet, write_residual=false.",
+        "run_name": "pool_writer_unpool_reader_n2"
+      },
+      "em_score": 0.1768,
+      "prev_best": 0.228,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_008_pool_writer_unpool_reader_n2",
+      "wall_time_min": 65.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778649570.6347191,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/artifacts/iter_008",
+      "summary_logged": false,
+      "stream_id": "1",
+      "token_accuracy": 0.4726
     }
   ]
 }

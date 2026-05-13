@@ -119,3 +119,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader at N=2, M=4. The unpool reader uses fixed attention while cross_attn uses learned multi-head attention. Matching the reader to the writer's attention mechanism could extract more signal from memory states. N=2 is critical based on historical performance.
 
 
+## Iter 8 — RUNNING — N=4
+**Hypothesis:** Switching write_mode from cross_attn to pool will improve EM stability by simplifying the write mechanism while the unpool reader provides sufficient flexibility.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_1/n4/iter_008_pool_writer_unpool_reader_n2
+
+
+## Iter 8 — reverted — EM: 0.1768 (N=4)
+**Hypothesis:** Switching write_mode from cross_attn to pool will improve EM stability by simplifying the write mechanism while the unpool reader provides sufficient flexibility.
+**Wall time:** 65.7 min
+**Result:** EM=0.1768 vs prev best=0.2280
+**Metric source:** all_results
+**Rationale:** iter_002 achieved EM=0.9922 with cross_attn writer + unpool reader. The pool writer is more direct than cross_attn and may provide more stable gradients. Since the unpool reader already handles memory retrieval flexibly, simplifying the writer could reduce variance without losing capacity.
+
+
