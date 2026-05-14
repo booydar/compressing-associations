@@ -158,3 +158,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The current RecurrentLayerWithSkip always computes hidden_states + out_tensor, forcing the GDN contribution to be fully additive at every layer. For associative retrieval, some layers may benefit from suppressing the recurrent signal when the memory path already provides sufficient information. A per-layer gate initialized near 1.0 preserves the default behavior while allowing learned adaptation.
 
 
+## Iter 11 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm to memory states before the reader's key/value projections will normalize the attention scale between token queries and memory keys, producing better-calibrated attention distributions.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_011_mem_norm_in_reader
+
+
+## Iter 11 — reverted — EM: 0.1454 (N=4)
+**Hypothesis:** Adding RMSNorm to memory states before the reader's key/value projections will normalize the attention scale between token queries and memory keys, producing better-calibrated attention distributions.
+**Wall time:** 58.8 min
+**Result:** EM=0.1454 vs prev best=0.2116
+**Metric source:** all_results
+**Rationale:** The reader path normalizes token states with read_norm but leaves memory states unnormalized, creating an attention scale mismatch. Normalizing memory states will ensure well-calibrated softmax attention between queries and keys, improving retrieval discrimination across memory slots.
+
+

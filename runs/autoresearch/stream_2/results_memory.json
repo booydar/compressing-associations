@@ -342,6 +342,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.532
+    },
+    {
+      "id": 11,
+      "iter_tag": "iter_011",
+      "description": "Adding RMSNorm to memory states before the reader's key/value projections will normalize the attention scale between token queries and memory keys, producing better-calibrated attention distributions.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding RMSNorm to memory states before the reader's key/value projections will normalize the attention scale between token queries and memory keys, producing better-calibrated attention distributions.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The reader path normalizes token states with read_norm but leaves memory states unnormalized, creating an attention scale mismatch. Normalizing memory states will ensure well-calibrated softmax attention between queries and keys, improving retrieval discrimination across memory slots.",
+        "instruction": "In RecurrentMemoryLayerWrapper.__init__, add self.mem_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5) after the self.read_norm line. In _forward_recurrent, wrap self.last_write_output with self.mem_norm() in both memory_reader calls (the READ step and the write_residual step). In _forward_parallel, apply self.mem_norm to mem_shifted before the memory_reader.parallel() call, and to mem in the write_residual path.",
+        "run_name": "mem_norm_in_reader"
+      },
+      "em_score": 0.1454,
+      "prev_best": 0.2116,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_011_mem_norm_in_reader",
+      "wall_time_min": 58.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778746831.641847,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_011",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3888
     }
   ]
 }
