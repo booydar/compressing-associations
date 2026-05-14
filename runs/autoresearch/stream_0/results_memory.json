@@ -853,6 +853,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3972
+    },
+    {
+      "id": 27,
+      "iter_tag": "iter_027",
+      "description": "Removing the MemoryWriter's redundant out_proj in cross_attn mode eliminates an unnecessary 512\u2192512 bottleneck, letting v_proj learn GDN-optimized representations directly and improving EM at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Removing the MemoryWriter's redundant out_proj in cross_attn mode eliminates an unnecessary 512\u2192512 bottleneck, letting v_proj learn GDN-optimized representations directly and improving EM at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The MemoryWriter already projects via v_proj to write_value_dim=512. The out_proj is a square 512\u2192512 linear layer that adds 262K params per layer with no dimensionality change. Removing it reduces parameters, shortens the compute path, and allows v_proj to produce representations directly optimized for the GDN's consumption rather than going through an intermediate transform. This is architecturally simpler than the recent normalization/temperature changes that caused failures.",
+        "instruction": "In huggingface_rmm_v5p1.py, remove the self.out_proj layer from the MemoryWriter. Specifically: (1) In __init__, under the 'if mode == cross_attn' block, delete the line 'self.out_proj = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)'. (2) In the forward() method, under the 'if self.mode == cross_attn' block at line 148-149, delete the line 'out = self.out_proj(out)'. (3) In the parallel() method, under the 'if self.mode == cross_attn' block at line 168-169, delete the line 'out = self.out_proj(out}'.",
+        "run_name": "writer_remove_out_proj"
+      },
+      "em_score": 0.1472,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_027_writer_remove_out_proj",
+      "wall_time_min": 72.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778766727.9854183,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_027",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3936
     }
   ]
 }

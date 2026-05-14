@@ -358,3 +358,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** With state_size=32, the GDN struggles to maintain 4 distinct memory slots as recurrent processing overwrites earlier slot information. The reader achieves token_acc=0.5693 but EM=0.3194, meaning it retrieves ~2-3 of 4 tokens but not all simultaneously. Per-slot biases act as persistent identity markers that survive GDN processing, analogous to positional encodings in transformers, helping the reader's cross-attention distinguish which memory vector corresponds to which KV pair.
 
 
+## Iter 27 — RUNNING — N=4
+**Hypothesis:** Removing the MemoryWriter's redundant out_proj in cross_attn mode eliminates an unnecessary 512→512 bottleneck, letting v_proj learn GDN-optimized representations directly and improving EM at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_027_writer_remove_out_proj
+
+
+## Iter 27 — reverted — EM: 0.1472 (N=4)
+**Hypothesis:** Removing the MemoryWriter's redundant out_proj in cross_attn mode eliminates an unnecessary 512→512 bottleneck, letting v_proj learn GDN-optimized representations directly and improving EM at N=4.
+**Wall time:** 72.9 min
+**Result:** EM=0.1472 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The MemoryWriter already projects via v_proj to write_value_dim=512. The out_proj is a square 512→512 linear layer that adds 262K params per layer with no dimensionality change. Removing it reduces parameters, shortens the compute path, and allows v_proj to produce representations directly optimized for the GDN's consumption rather than going through an intermediate transform. This is architecturally simpler than the recent normalization/temperature changes that caused failures.
+
+
