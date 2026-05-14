@@ -318,3 +318,11 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_021_reader_slot_pos_embed
 
 
+## Iter 21 — reverted — EM: 0.3364 (N=4)
+**Hypothesis:** Adding matching slot positional embeddings to the memory reader's key projections will give each memory slot a distinct identity during retrieval, complementing the writer's slot_pos_embed and improving slot disambiguation.
+**Wall time:** 73.9 min
+**Result:** EM=0.3364 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The writer's slot_pos_embed (iter_020, EM=0.518) was the single largest improvement, giving each slot a unique query identity. But the reader has no corresponding slot signal — it retrieves purely by content matching. Adding per-slot positional embeddings to the reader's keys means the model can leverage slot identity at retrieval time, improving disambiguation when content overlap between slots is high. Unlike previous failed attempts (iter_14-16), this adds only a small nn.Parameter with no new Linear layers.
+
+

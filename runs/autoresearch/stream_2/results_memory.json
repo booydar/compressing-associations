@@ -672,24 +672,25 @@
         "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryReader class: (1) In __init__, add 'from transformers.configuration_utils import CAN_BE_MISSING' is NOT needed. Instead, after 'self.scaling = hidden_size ** -0.5', add: 'self.num_vectors = num_heads if mode == \"cross_attn\" else 4' \u2014 but actually, pass num_vectors as a constructor arg. Add 'num_vectors' parameter to __init__ signature (default=4). Then add: 'self.slot_pos_embed_reader = nn.Parameter(torch.zeros(num_vectors, write_value_dim))' and 'nn.init.normal_(self.slot_pos_embed_reader, std=write_value_dim ** -0.5)'. (2) In forward() under the unpool branch, after 'k = self.k_proj(memory_states)', add: 'k = k + self.slot_pos_embed_reader.unsqueeze(0)' \u2014 this broadcasts (M, d_v) over batch. (3) In parallel() under the unpool branch, after 'k = self.k_proj(mem)' which produces (B, S, M, d), add: 'k = k + self.slot_pos_embed_reader.view(1, 1, M, -1)'. (4) In RecurrentMemoryLayerWrapper.__init__, when creating MemoryReader, pass 'num_vectors=num_memory_vectors' to the constructor. This is the only change to make.",
         "run_name": "reader_slot_pos_embed"
       },
-      "em_score": null,
+      "em_score": 0.3364,
       "prev_best": 0.518,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "reverted",
+      "status": "completed",
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_021_reader_slot_pos_embed",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
+      "wall_time_min": 73.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
       "is_partial": false,
-      "recovery_status": "pending",
+      "recovery_status": "final",
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
       "started_at": 1778781899.4196827,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_021",
       "summary_logged": false,
-      "stream_id": "2"
+      "stream_id": "2",
+      "token_accuracy": 0.5115
     }
   ]
 }
