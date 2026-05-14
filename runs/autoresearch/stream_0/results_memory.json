@@ -821,6 +821,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3912
+    },
+    {
+      "id": 26,
+      "iter_tag": "iter_026",
+      "description": "Adding learnable per-slot bias vectors to the MemoryWriter gives the GDN persistent identity markers for each memory slot, improving state distinguishability and EM accuracy at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding learnable per-slot bias vectors to the MemoryWriter gives the GDN persistent identity markers for each memory slot, improving state distinguishability and EM accuracy at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "With state_size=32, the GDN struggles to maintain 4 distinct memory slots as recurrent processing overwrites earlier slot information. The reader achieves token_acc=0.5693 but EM=0.3194, meaning it retrieves ~2-3 of 4 tokens but not all simultaneously. Per-slot biases act as persistent identity markers that survive GDN processing, analogous to positional encodings in transformers, helping the reader's cross-attention distinguish which memory vector corresponds to which KV pair.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after 'self.out_proj = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)' inside the cross_attn block, add: 'self.slot_bias = nn.Parameter(torch.zeros(num_vectors, self.write_value_dim))'; 'nn.init.trunc_normal_(self.slot_bias, std=0.02)'. (2) In forward(), after 'out = self.out_proj(out)', add: 'out = out + self.slot_bias.unsqueeze(0)'. (3) In parallel(), after 'out = self.out_proj(out)', add: 'out = out.view(B, S, M, self.write_value_dim) + self.slot_bias.unsqueeze(0).unsqueeze(0)'; then change the following 'return out.reshape(B, S * M, self.write_value_dim)' to 'return out.view(B, S * M, self.write_value_dim)'.",
+        "run_name": "writer_slot_bias_n4"
+      },
+      "em_score": 0.1522,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_026_writer_slot_bias_n4",
+      "wall_time_min": 51.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778763319.4794438,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_026",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3972
     }
   ]
 }

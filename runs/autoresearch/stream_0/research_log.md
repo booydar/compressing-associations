@@ -345,3 +345,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The GDN processes 512-dim memory vectors but can only maintain 32 dims of state (64:1 compression ratio). With write_value_dim=256 the compression is 32:1, giving each retained dimension stronger signal. The reader's value projection (512->128) also becomes less lossy at 256->128. This avoids the architectural complexity that caused failures in iters 22-23.
 
 
+## Iter 26 — RUNNING — N=4
+**Hypothesis:** Adding learnable per-slot bias vectors to the MemoryWriter gives the GDN persistent identity markers for each memory slot, improving state distinguishability and EM accuracy at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_026_writer_slot_bias_n4
+
+
+## Iter 26 — reverted — EM: 0.1522 (N=4)
+**Hypothesis:** Adding learnable per-slot bias vectors to the MemoryWriter gives the GDN persistent identity markers for each memory slot, improving state distinguishability and EM accuracy at N=4.
+**Wall time:** 51.3 min
+**Result:** EM=0.1522 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** With state_size=32, the GDN struggles to maintain 4 distinct memory slots as recurrent processing overwrites earlier slot information. The reader achieves token_acc=0.5693 but EM=0.3194, meaning it retrieves ~2-3 of 4 tokens but not all simultaneously. Per-slot biases act as persistent identity markers that survive GDN processing, analogous to positional encodings in transformers, helping the reader's cross-attention distinguish which memory vector corresponds to which KV pair.
+
+
