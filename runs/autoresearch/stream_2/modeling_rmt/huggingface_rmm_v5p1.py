@@ -131,6 +131,8 @@ class MemoryWriter(nn.Module):
 
         self.write_queries = nn.Parameter(torch.zeros(num_vectors, hidden_size))
         nn.init.normal_(self.write_queries, std=hidden_size ** -0.5)
+        self.slot_pos_embed = nn.Parameter(torch.zeros(num_vectors, hidden_size))
+        nn.init.normal_(self.slot_pos_embed, std=hidden_size ** -0.5)
         self.k_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
         self.v_proj = nn.Linear(hidden_size, self.write_value_dim, bias=bias)
         if mode == 'cross_attn':
@@ -141,6 +143,7 @@ class MemoryWriter(nn.Module):
         """Recurrent path: (B, T, d) -> (B, M, d_v)"""
         B = hidden_states.shape[0]
         queries = self.write_queries.unsqueeze(0).expand(B, -1, -1)
+        queries = queries + self.slot_pos_embed.unsqueeze(0)
         if self.mode == 'cross_attn':
             queries = self.q_proj(queries)
         k = self.k_proj(hidden_states)
@@ -158,6 +161,7 @@ class MemoryWriter(nn.Module):
         d = self.hidden_size
         # (B, S, M, d) queries — same M learnable queries reused across S segments
         queries = self.write_queries.view(1, 1, M, d).expand(B, S, M, d)
+        queries = queries + self.slot_pos_embed.view(1, 1, M, d)
         if self.mode == 'cross_attn':
             queries = self.q_proj(queries)
         # Tokens reshaped per segment: (B, S, T, d)

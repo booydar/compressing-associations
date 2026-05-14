@@ -300,3 +300,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** With write_value_dim=256 >> n_embd=128, the reader projects from a richer memory space but its raw softmax-weighted output can have mismatched scale relative to hidden_states, destabilizing the residual addition. Normalizing the reader output before the residual ensures consistent signal magnitude, complementing the existing input-side read_norm. This is a minimal, safe change using only RMSNorm (no new Linear layers that caused iter_14-16 failures).
 
 
+## Iter 20 — RUNNING — N=4
+**Hypothesis:** Adding learnable positional embeddings per memory slot will give each slot a distinct identity signal, improving slot specialization and retrieval accuracy over content-only attention.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_020_slot_pos_embed
+
+
+## Iter 20 — kept — EM: 0.5180 (N=4)
+**Hypothesis:** Adding learnable positional embeddings per memory slot will give each slot a distinct identity signal, improving slot specialization and retrieval accuracy over content-only attention.
+**Wall time:** 76.3 min
+**Result:** EM=0.5180 vs prev best=0.2220
+**Metric source:** all_results
+**Rationale:** The MemoryWriter uses M=4 shared learnable queries that attend to segment tokens via content-only attention, so all slots lack structural identity and must learn to specialize purely through weight differentiation. Adding per-slot positional embeddings provides an explicit slot identity that complements content-based attention, helping the model distribute different KV associations across slots and improving retrieval discrimination. Unlike orthogonal init (iter_018, EM=0.206, reverted), positional embeddings are learnable throughout training and affect both write and read paths.
+
+

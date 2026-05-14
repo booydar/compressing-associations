@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_013",
-    "em": 0.222,
+    "variant": "iter_020",
+    "em": 0.518,
     "n_level": 4
   },
   "n_level": 4,
@@ -627,6 +627,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3916
+    },
+    {
+      "id": 20,
+      "iter_tag": "iter_020",
+      "description": "Adding learnable positional embeddings per memory slot will give each slot a distinct identity signal, improving slot specialization and retrieval accuracy over content-only attention.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding learnable positional embeddings per memory slot will give each slot a distinct identity signal, improving slot specialization and retrieval accuracy over content-only attention.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The MemoryWriter uses M=4 shared learnable queries that attend to segment tokens via content-only attention, so all slots lack structural identity and must learn to specialize purely through weight differentiation. Adding per-slot positional embeddings provides an explicit slot identity that complements content-based attention, helping the model distribute different KV associations across slots and improving retrieval discrimination. Unlike orthogonal init (iter_018, EM=0.206, reverted), positional embeddings are learnable throughout training and affect both write and read paths.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after the 'self.write_queries = nn.Parameter(...)' and init lines, add 'self.slot_pos_embed = nn.Parameter(torch.zeros(num_vectors, hidden_size))' and 'nn.init.normal_(self.slot_pos_embed, std=hidden_size ** -0.5)'. (2) In forward(), after computing 'queries = self.write_queries.unsqueeze(0).expand(B, -1, -1)', add 'queries = queries + self.slot_pos_embed.unsqueeze(0)'. (3) In parallel(), after computing 'queries = self.write_queries.view(1, 1, M, d).expand(B, S, M, d)', add 'queries = queries + self.slot_pos_embed.view(1, 1, M, d)'. This adds positional identity to each memory slot before the q_proj and attention computation. This is the only change to make.",
+        "run_name": "slot_pos_embed"
+      },
+      "em_score": 0.518,
+      "prev_best": 0.222,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_020_slot_pos_embed",
+      "wall_time_min": 76.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778776993.9024372,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_020",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.7204
     }
   ]
 }
