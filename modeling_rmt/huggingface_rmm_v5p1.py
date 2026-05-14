@@ -12,11 +12,12 @@ adds a learnable transform around GDN unrelated to state size / write
 mechanism) and breaks the S=1 reduction RMCA-GDN → GDN. Default off so the
 S=1 endpoint is clean; flag retained for ablation.
 
-Parallel-prefill semantics are unchanged from v5p:
+  Parallel-prefill semantics (v5p1 layer-order variant):
   * S context segments processed in one fwd via block-diag masked attention.
   * GDN runs once over all S*M write vectors.
-  * WRITE → GDN → READ → ATTN inside each layer (writes taken from PRE-attn
-    tokens — a one-step phase shift of v5's recurrent ATTN-then-WRITE order).
+  * READ → ATTN → WRITE inside each layer (reads taken from PRE-attn tokens,
+    writes taken from POST-attn tokens — tests whether pre-updated memory
+    yields better attention queries).
   * qt segment runs through the recurrent path, byte-identical to v5.
 """
 from __future__ import annotations
@@ -336,20 +337,28 @@ class RecurrentMemoryLayerWrapper(nn.Module):
 
     # ───── parallel-prefill path ─────
     def _forward_parallel(self, hidden_states, *args, **kwargs):
-        """Single-pass over S segments. Order: WRITE → GDN → READ → ATTN.
+        """Single-pass over S segments. Order: READ → ATTN → WRITE.
 
-        WRITE is taken from pre-attn tokens (vs v5 which writes from post-attn).
-        After this layer, READ at the *next* segment in the same layer is supplied
-        via mem_shifted, which is what the recurrent code does (modulo phase
-        shift). Cache + last_write_output are updated for the subsequent qt
+        READ uses previous layer's memory (repeated per segment); ATTN uses
+        block-diag causal mask; WRITE computes from post-attn tokens and GDN
+        compresses all S*M write vectors in one batched call.
+        Cache + last_write_output are updated for the subsequent qt
         (recurrent) segment.
         """
         S, T, M = self._p_S, self._p_T, self._p_M
         B, L, d = hidden_states.shape
         assert L == S * T, f"parallel pass: got L={L}, expected S*T={S*T}"
 
-        # ── WRITE (or identity full-token stream) ──
+        # ── identity write_mode (symmetry forces read_mode='identity') ──
         if self.write_mode == 'identity':
+            seg_outputs = []
+            prev_mem = None
+            for s in range(S):
+                start, end = s * T, (s + 1) * T
+                seg = hidden_states[:, start:end, :]               # (B, T, d)
+                seg_out = self.base_layer(seg, *args, **kwargs)[0]
+                seg_outputs.append(seg_out)
+            hidden_states = torch.cat(seg_outputs, dim=1)          # (B, S*T, d)
             x = self.fla_norm(hidden_states)                       # (B, S*T, d)
             x_rot = self.orthogonal_rotation(x)
             fo = self.fla_layer(
@@ -358,21 +367,47 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             )
             fla_out, new_cache = fo[0], fo[2]
             fla_out = self.orthogonal_rotation(fla_out, inverse=True)
-            # Apply base_layer with block-diag causal mask
-            # (no read in identity mode — symmetry forces read_mode='identity')
+            hidden_states = hidden_states + fla_out
+            self.cache = new_cache
+            self.last_write_output = None
+            output = self.base_layer(hidden_states, *args, **kwargs)
+            hidden_states = output[0] if isinstance(output, tuple) else output
+        else:
+            # ── READ (per-segment, from previous layer's memory) ──
+            prev_layer_mem = (
+                self.last_write_output.unsqueeze(1).expand(-1, S * M, -1)
+                if self.last_write_output is not None
+                else None
+            )
+            seg_tokens = []
+            if prev_layer_mem is not None and self.read_mode in ('unpool', 'cross_attn'):
+                for s in range(S):
+                    start, end = s * T, (s + 1) * T
+                    seg = hidden_states[:, start:end, :]           # (B, T, d)
+                    if s > 0:
+                        mem_block = prev_layer_mem[:, s * M:(s + 1) * M, :]
+                        read_out = self.memory_reader(
+                            self.read_norm(seg), mem_block
+                        )
+                        seg = seg + read_out
+                    seg_tokens.append(seg)
+                enriched = torch.cat(seg_tokens, dim=1)            # (B, S*T, d)
+            else:
+                enriched = hidden_states
+
+            # ── ATTN with block-diag causal mask ──
             kwargs2 = dict(kwargs)
             kwargs2['attention_mask'] = self._p_attn_mask
-            output = self.base_layer(hidden_states + fla_out, *args, **kwargs2)
-            hidden_states = output[0] if isinstance(output, tuple) else output
-            self.cache = new_cache
-            # Stash last memory: identity has no last_write_output (read is via GDN
-            # readout in v5's gdn_readout mode, not used here)
-            self.last_write_output = None
-        else:
+            output = self.base_layer(enriched, *args, **kwargs2)
+            post_attn = output[0] if isinstance(output, tuple) else output
+
+            # ── WRITE from post-attn tokens ──
             write_vecs = self.memory_writer.parallel(
-                self.write_norm(hidden_states), S, T, M
+                self.write_norm(post_attn), S, T, M
             )                                                       # (B, S*M, d_v)
             write_vecs_rot = self.orthogonal_rotation(write_vecs)
+
+            # ── GDN ──
             fo = self.fla_layer(
                 write_vecs_rot, attention_mask=None,
                 past_key_values=self.cache, use_cache=True,
@@ -380,40 +415,20 @@ class RecurrentMemoryLayerWrapper(nn.Module):
             mem, new_cache = fo[0], fo[2]
             mem = self.orthogonal_rotation(mem, inverse=True)       # (B, S*M, d_v)
             self.cache = new_cache
-            # last_write_output for the qt (recurrent) segment = final segment's mem block
             self.last_write_output = mem[:, -M:, :].contiguous()
 
-            # ── READ: shift memory by one segment ──
-            mem_shifted = torch.zeros_like(mem)
-            if S > 1:
-                mem_shifted[:, M:, :] = mem[:, :-M, :]
-            # segment 0 reads from zeros → softmax(0)=uniform over M zeros = 0 contribution
-            # for unpool (matmul with v of zeros = 0); cross_attn similar. OK.
-
-            read_out = self.memory_reader.parallel(
-                self.read_norm(hidden_states), mem_shifted, S, T, M
-            ) if self.read_mode in ('unpool', 'cross_attn') else 0
-            # Mask out segment 0's read contribution explicitly (zeros mem could be
-            # non-zero via v_proj bias; we use bias=False but be safe)
-            if isinstance(read_out, torch.Tensor):
-                seg_mask = torch.ones(S, device=hidden_states.device, dtype=hidden_states.dtype)
-                seg_mask[0] = 0.0
-                read_out = read_out.view(B, S, T, d) * seg_mask.view(1, S, 1, 1)
-                read_out = read_out.view(B, S * T, d)
-                hidden_states = hidden_states + read_out
-
-            # ── ATTN with block-diag causal mask ──
-            kwargs2 = dict(kwargs)
-            kwargs2['attention_mask'] = self._p_attn_mask
-            output = self.base_layer(hidden_states, *args, **kwargs2)
-            hidden_states = output[0] if isinstance(output, tuple) else output
-
-            # ── optional write_residual: post-attn tokens enriched from this layer's mem ──
+            # ── optional write_residual ──
             if self.write_residual and self.read_mode in ('unpool', 'cross_attn'):
-                # Use UN-shifted mem (each segment reads its own fresh block)
-                hidden_states = hidden_states + self.memory_reader.parallel(
-                    self.read_norm(hidden_states), mem, S, T, M
+                post_attn = post_attn + self.memory_reader.parallel(
+                    self.read_norm(post_attn), mem, S, T, M
                 )
+                if isinstance(output, tuple):
+                    output = (post_attn,) + output[1:]
+                else:
+                    output = post_attn
+                hidden_states = output[0] if isinstance(output, tuple) else output
+            else:
+                hidden_states = post_attn
 
         if isinstance(output, tuple):
             return (hidden_states,) + output[1:]
