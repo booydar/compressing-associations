@@ -184,6 +184,37 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3939
+    },
+    {
+      "id": 6,
+      "iter_tag": "iter_006",
+      "description": "Reordering the parallel path to READ\u2192ATTN\u2192WRITE will allow the attention mechanism to attend to already-updated memory, improving contextual alignment.",
+      "hypothesis": {
+        "hypothesis": "Reordering the parallel path to READ\u2192ATTN\u2192WRITE will allow the attention mechanism to attend to already-updated memory, improving contextual alignment.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "Layer-order experiments are encouraged to probe information flow dynamics; shifting reads before writes tests whether pre-updated memory yields better attention queries.",
+        "instruction": "Modify the forward pass in `huggingface_rmm_v5p1.py` to reorder the parallel-prefill blocks from the current WRITE\u2192GDN\u2192READ\u2192ATTN sequence to READ\u2192ATTN\u2192WRITE, updating residual connections and tensor shapes accordingly.",
+        "run_name": "read_attn_write_order"
+      },
+      "em_score": 0.1436,
+      "prev_best": 0.1872,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_006_read_attn_write_order",
+      "wall_time_min": 72.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778723438.6834712,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_006",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3936
     }
   ]
 }

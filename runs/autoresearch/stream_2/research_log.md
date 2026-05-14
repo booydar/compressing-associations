@@ -93,3 +93,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The directions suggest trying write_residual=true as a low-cost architectural shortcut to boost EM by adding a second read pathway for the current segment.
 
 
+## Iter 6 — RUNNING — N=4
+**Hypothesis:** Reordering the parallel path to READ→ATTN→WRITE will allow the attention mechanism to attend to already-updated memory, improving contextual alignment.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_006_read_attn_write_order
+
+
+## Iter 6 — reverted — EM: 0.1436 (N=4)
+**Hypothesis:** Reordering the parallel path to READ→ATTN→WRITE will allow the attention mechanism to attend to already-updated memory, improving contextual alignment.
+**Wall time:** 72.0 min
+**Result:** EM=0.1436 vs prev best=0.1872
+**Metric source:** all_results
+**Rationale:** Layer-order experiments are encouraged to probe information flow dynamics; shifting reads before writes tests whether pre-updated memory yields better attention queries.
+
+
