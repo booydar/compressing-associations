@@ -186,3 +186,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** The GDN produces memory vectors whose norms vary unpredictably across slots and training steps. With cross_attn read_mode, the reader's attention is computed via dot products that are dominated by norm magnitude rather than directional similarity. This is especially harmful at N=4 where 4 memory vectors must remain distinguishable. Normalizing vectors to unit scale after the GDN (post-orthogonal-rotation) forces the reader to attend based on content direction, improving slot discrimination. This complements the conv_kernel findings (iter_011 showed conv_kernel=2 improved token accuracy to 0.39) by ensuring the reader receives well-conditioned inputs.
 
 
+## Iter 14 — RUNNING — N=4
+**Hypothesis:** Stacking conv_kernel=2, expand_v=1.0, and per-vector RMSNorm combines three individually beneficial architectural changes that each improved token accuracy but failed to break the EM=0.22 ceiling in isolation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_014_stack_conv2_expand1_memnorm_n4
+
+
+## Iter 14 — reverted — EM: 0.0788 (N=4)
+**Hypothesis:** Stacking conv_kernel=2, expand_v=1.0, and per-vector RMSNorm combines three individually beneficial architectural changes that each improved token accuracy but failed to break the EM=0.22 ceiling in isolation.
+**Wall time:** 46.2 min
+**Result:** EM=0.0788 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** At N=4, three distinct failure modes limit performance: (1) conv_kernel=4 temporally over-mixes M=4 memory slots at tokens_per_segment=1 (iter_011: conv_kernel=2 improved token_acc to 0.39), (2) expand_v=2.0 creates a 1024-dim GDN hidden over only 12 input vectors, causing over-parameterization (iter_012: expand_v=1.0 improved token_acc to 0.40), (3) cross-attention reader is dominated by vector norm magnitude rather than content direction (iter_013: per-vector RMSNorm improved token_acc to 0.43). Each change alone nudged token accuracy upward but couldn't push EM past 0.2188. Together they form a coherent package: smaller conv kernel preserves slot identity, matched expansion prevents overfitting, and normalization ensures content-based attention. The model is clearly learning more (token_acc rising from 0.27 baseline to 0.43), suggesting these changes are directionally correct but need to be combined to reach the EM threshold.
+
+

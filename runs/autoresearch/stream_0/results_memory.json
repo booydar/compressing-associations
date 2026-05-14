@@ -441,6 +441,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.4302
+    },
+    {
+      "id": 14,
+      "iter_tag": "iter_014",
+      "description": "Stacking conv_kernel=2, expand_v=1.0, and per-vector RMSNorm combines three individually beneficial architectural changes that each improved token accuracy but failed to break the EM=0.22 ceiling in isolation.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Stacking conv_kernel=2, expand_v=1.0, and per-vector RMSNorm combines three individually beneficial architectural changes that each improved token accuracy but failed to break the EM=0.22 ceiling in isolation.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py | experiment_config.yaml",
+        "rationale": "At N=4, three distinct failure modes limit performance: (1) conv_kernel=4 temporally over-mixes M=4 memory slots at tokens_per_segment=1 (iter_011: conv_kernel=2 improved token_acc to 0.39), (2) expand_v=2.0 creates a 1024-dim GDN hidden over only 12 input vectors, causing over-parameterization (iter_012: expand_v=1.0 improved token_acc to 0.40), (3) cross-attention reader is dominated by vector norm magnitude rather than content direction (iter_013: per-vector RMSNorm improved token_acc to 0.43). Each change alone nudged token accuracy upward but couldn't push EM past 0.2188. Together they form a coherent package: smaller conv kernel preserves slot identity, matched expansion prevents overfitting, and normalization ensures content-based attention. The model is clearly learning more (token_acc rising from 0.27 baseline to 0.43), suggesting these changes are directionally correct but need to be combined to reach the EM threshold.",
+        "instruction": "Part 1 \u2014 experiment_config.yaml: Set conv_kernel to 2 and expand_v to 1.0. Keep all other parameters unchanged (n_keys=4, n_values=4, tokens_per_segment=1, write_value_dim=512, num_memory_vectors=4, write_mode=cross_attn, read_mode=cross_attn, write_residual=false, state_size=32, learning_rate=3e-4, warmup_steps=10000, num_memory_heads=4). Part 2 \u2014 huggingface_rmm_v5p1.py: Add per-vector RMSNorm to RecurrentMemoryLayerWrapper. (a) In __init__, after the existing norm lines, add: self.mem_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5). (b) In _forward_parallel, after the line 'mem = self.orthogonal_rotation(mem, inverse=True)', add: 'mem = self.mem_norm(mem)'. (c) In _forward_recurrent, in the non-identity write branch, after 'fla_out = self.orthogonal_rotation(fla_out, inverse=True)', add: 'fla_out = self.mem_norm(fla_out)'. This normalizes memory vectors after GDN processing so the reader's cross-attention operates on direction-normalized inputs.",
+        "run_name": "stack_conv2_expand1_memnorm_n4"
+      },
+      "em_score": 0.0788,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_014_stack_conv2_expand1_memnorm_n4",
+      "wall_time_min": 46.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778720240.3262281,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_014",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2775
     }
   ]
 }
