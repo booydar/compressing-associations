@@ -948,6 +948,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3873
+    },
+    {
+      "id": 30,
+      "iter_tag": "iter_030",
+      "description": "Adding RMSNorm before the GDN input in the cross_attn path stabilizes the 512-dim write vectors entering the recurrent layer, matching the normalization pattern used for write_norm and read_norm, and improving EM at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding RMSNorm before the GDN input in the cross_attn path stabilizes the 512-dim write vectors entering the recurrent layer, matching the normalization pattern used for write_norm and read_norm, and improving EM at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "In the RecurrentMemoryLayerWrapper, the write and read paths are both normalized via RMSNorm (write_norm, read_norm) before their respective modules. However, the GDN receives unnormalized 512-dim write vectors directly, creating an inconsistency. The identity path already normalizes via fla_norm before the GDN. Adding a gdn_norm (RMSNorm on write_value_dim) before the GDN in the cross_attn path should stabilize the recurrent processing of memory vectors and improve state tracking capacity.",
+        "instruction": "In huggingface_rmm_v5p1.py, inside RecurrentMemoryLayerWrapper.__init__, after the line 'self.read_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)', add a new RMSNorm for the GDN input: 'self.gdn_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5)'. Then in _forward_recurrent, find the line 'write_vecs_rot = self.orthogonal_rotation(write_vecs)' and replace it with 'write_vecs = self.gdn_norm(write_vecs)' followed by 'write_vecs_rot = self.orthogonal_rotation(write_vecs)'. Similarly in _forward_parallel, find 'write_vecs_rot = self.orthogonal_rotation(write_vecs)' inside the non-identity branch and replace it with 'write_vecs = self.gdn_norm(write_vecs)' followed by 'write_vecs_rot = self.orthogonal_rotation(write_vecs)'. There are two occurrences of this pattern in _forward_parallel (one in the main else branch around line 431, and the other is the same variable used after the GDN call \u2014 only normalize the input before rotation).",
+        "run_name": "gdn_input_norm"
+      },
+      "em_score": 0.084,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_030_gdn_input_norm",
+      "wall_time_min": 50.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778779416.5205095,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_030",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2831
     }
   ]
 }

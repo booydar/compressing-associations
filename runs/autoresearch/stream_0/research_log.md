@@ -389,3 +389,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** Currently the M=4 memory vectors are independent when the reader attends to them. Self-attention over slots allows each vector to incorporate information from all others, creating inter-slot relationships that improve discrimination between KV pairs. The GDN already processes all vectors sequentially; slot attention adds explicit cross-slot mixing at read time.
 
 
+## Iter 30 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm before the GDN input in the cross_attn path stabilizes the 512-dim write vectors entering the recurrent layer, matching the normalization pattern used for write_norm and read_norm, and improving EM at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_030_gdn_input_norm
+
+
+## Iter 30 — reverted — EM: 0.0840 (N=4)
+**Hypothesis:** Adding RMSNorm before the GDN input in the cross_attn path stabilizes the 512-dim write vectors entering the recurrent layer, matching the normalization pattern used for write_norm and read_norm, and improving EM at N=4.
+**Wall time:** 50.1 min
+**Result:** EM=0.0840 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** In the RecurrentMemoryLayerWrapper, the write and read paths are both normalized via RMSNorm (write_norm, read_norm) before their respective modules. However, the GDN receives unnormalized 512-dim write vectors directly, creating an inconsistency. The identity path already normalizes via fla_norm before the GDN. Adding a gdn_norm (RMSNorm on write_value_dim) before the GDN in the cross_attn path should stabilize the recurrent processing of memory vectors and improve state tracking capacity.
+
+
