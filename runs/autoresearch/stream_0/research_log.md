@@ -371,3 +371,21 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The MemoryWriter already projects via v_proj to write_value_dim=512. The out_proj is a square 512→512 linear layer that adds 262K params per layer with no dimensionality change. Removing it reduces parameters, shortens the compute path, and allows v_proj to produce representations directly optimized for the GDN's consumption rather than going through an intermediate transform. This is architecturally simpler than the recent normalization/temperature changes that caused failures.
 
 
+## Iter 28 — FAILED — N=4
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 29 — RUNNING — N=4
+**Hypothesis:** Adding self-attention over the M memory vectors before the reader's cross-attention lets memory slots interact and share information, making each slot a richer context for token-level retrieval at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_029_reader_memory_slot_attn
+
+
+## Iter 29 — reverted — EM: 0.1450 (N=4)
+**Hypothesis:** Adding self-attention over the M memory vectors before the reader's cross-attention lets memory slots interact and share information, making each slot a richer context for token-level retrieval at N=4.
+**Wall time:** 76.9 min
+**Result:** EM=0.1450 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** Currently the M=4 memory vectors are independent when the reader attends to them. Self-attention over slots allows each vector to incorporate information from all others, creating inter-slot relationships that improve discrimination between KV pairs. The GDN already processes all vectors sequentially; slot attention adds explicit cross-slot mixing at read time.
+
+

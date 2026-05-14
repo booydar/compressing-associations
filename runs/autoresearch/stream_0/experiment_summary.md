@@ -94,3 +94,13 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 - Rationale: The reader achieves token_acc=0.5693 but EM=0.3194, meaning partial retrieval works but simultaneous 4-pair retrieval is limited. The LlamaCrossAttention value projection compresses 512-dim memory vectors to only num_heads(4)*head_dim(32)=128 total dims, a severe 4x compression. Doubling head_dim to 64 gives v_proj output of 256 dims (50% of memory width), providing richer attended information for the FFN residual (iter_019) to process. The o_proj then learns to compress 256->128 for the residual, but the attention mechanism itself operates with more information.
 - exp_path: 
 
+## Iter 28 | failed | N=4
+- Hypothesis: FAILED: executor failed after 4 attempts: None
+- Target: modeling_rmt/huggingface_rmm_v5p1.py
+- EM: n/a
+- Success: No model improvement established.
+- Weaknesses: The experiment did not reach a valid kept result.
+- Failures: executor failed after 4 attempts: None
+- Rationale: The current reader FFN uses a fixed residual (iter 19, EM=0.3194). A fixed addition forces equal reliance on both paths. A learnable gate initialized at 0.5 lets the network discover optimal weighting per position, potentially retrieving all 4 KV pairs more consistently.
+- exp_path: 
+
