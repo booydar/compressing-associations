@@ -473,6 +473,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2775
+    },
+    {
+      "id": 15,
+      "iter_tag": "iter_015",
+      "description": "L2-normalizing Q and K in the reader's cross-attention makes attention purely angle-based, preventing norm-dominance collapse and enabling uniform retrieval across all M=4 memory slots at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "L2-normalizing Q and K in the reader's cross-attention makes attention purely angle-based, preventing norm-dominance collapse and enabling uniform retrieval across all M=4 memory slots at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "At N=4, token_acc reaches ~0.43 but EM stays near 0, meaning the reader retrieves some tokens but not all 4 KV pairs simultaneously. The cross-attention reader's softmax scores are dominated by vector norm magnitude rather than content direction, causing attention collapse onto 1-2 strong slots. L2 normalization of Q and K before the dot product removes magnitude effects, forcing the reader to distribute attention based on angular similarity alone. This should enable uniform retrieval across all M=4 memory vectors, converting partial token accuracy into full exact match.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify the LlamaCrossAttention.forward method to L2-normalize q and k before computing attention scores. After the existing projection lines (q = self.q_proj(...), k = self.k_proj(...), v = self.v_proj(...)), insert: q = F.normalize(q, p=2, dim=-1) and k = F.normalize(k, p=2, dim=-1). Then replace self.scaling = self.head_dim ** -0.5 with a fixed scaling of 1.0 (or remove scaling entirely since normalized vectors have dot products in [-1,1]). In experiment_config.yaml, set n_keys to 4, n_values to 4, and tokens_per_segment to 1 for the N=4 task.",
+        "run_name": "reader_l2_norm_n4"
+      },
+      "em_score": 0.1734,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_015_reader_l2_norm_n4",
+      "wall_time_min": 72.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778723440.801117,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_015",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.4321
     }
   ]
 }

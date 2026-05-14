@@ -199,3 +199,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** At N=4, three distinct failure modes limit performance: (1) conv_kernel=4 temporally over-mixes M=4 memory slots at tokens_per_segment=1 (iter_011: conv_kernel=2 improved token_acc to 0.39), (2) expand_v=2.0 creates a 1024-dim GDN hidden over only 12 input vectors, causing over-parameterization (iter_012: expand_v=1.0 improved token_acc to 0.40), (3) cross-attention reader is dominated by vector norm magnitude rather than content direction (iter_013: per-vector RMSNorm improved token_acc to 0.43). Each change alone nudged token accuracy upward but couldn't push EM past 0.2188. Together they form a coherent package: smaller conv kernel preserves slot identity, matched expansion prevents overfitting, and normalization ensures content-based attention. The model is clearly learning more (token_acc rising from 0.27 baseline to 0.43), suggesting these changes are directionally correct but need to be combined to reach the EM threshold.
 
 
+## Iter 15 — RUNNING — N=4
+**Hypothesis:** L2-normalizing Q and K in the reader's cross-attention makes attention purely angle-based, preventing norm-dominance collapse and enabling uniform retrieval across all M=4 memory slots at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_015_reader_l2_norm_n4
+
+
+## Iter 15 — reverted — EM: 0.1734 (N=4)
+**Hypothesis:** L2-normalizing Q and K in the reader's cross-attention makes attention purely angle-based, preventing norm-dominance collapse and enabling uniform retrieval across all M=4 memory slots at N=4.
+**Wall time:** 72.0 min
+**Result:** EM=0.1734 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** At N=4, token_acc reaches ~0.43 but EM stays near 0, meaning the reader retrieves some tokens but not all 4 KV pairs simultaneously. The cross-attention reader's softmax scores are dominated by vector norm magnitude rather than content direction, causing attention collapse onto 1-2 strong slots. L2 normalization of Q and K before the dot product removes magnitude effects, forcing the reader to distribute attention based on angular similarity alone. This should enable uniform retrieval across all M=4 memory vectors, converting partial token accuracy into full exact match.
+
+
