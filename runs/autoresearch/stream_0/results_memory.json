@@ -663,6 +663,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2672
+    },
+    {
+      "id": 21,
+      "iter_tag": "iter_021",
+      "description": "Adding RMSNorm after the MemoryWriter's out_proj normalizes memory vector magnitudes before GDN recurrent processing, providing stable inputs that improve state tracking at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding RMSNorm after the MemoryWriter's out_proj normalizes memory vector magnitudes before GDN recurrent processing, providing stable inputs that improve state tracking at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer's output vectors enter the GDN with uncontrolled magnitudes, unlike the reader which benefits from read_norm and FFN+residual (iter 19). Normalizing before the GDN (distinct from iter 13's post-GDN normalization) stabilizes the recurrent input distribution, helping the GDN maintain distinct states for all M=4 memory slots.",
+        "instruction": "In huggingface_rmm_v5p1.py: (1) In MemoryWriter.__init__, after the 'self.out_proj = nn.Linear(...)' line (inside the cross_attn block), add 'self.out_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5)'. (2) In MemoryWriter.forward(), replace 'out = self.out_proj(out)' with 'out = self.out_norm(self.out_proj(out))'. (3) In MemoryWriter.parallel(), replace 'out = self.out_proj(out)' with 'out = self.out_norm(self.out_proj(out))'.",
+        "run_name": "writer_output_rmsnorm"
+      },
+      "em_score": 0.0764,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_021_writer_output_rmsnorm",
+      "wall_time_min": 49.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778748116.9683022,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_021",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2771
     }
   ]
 }

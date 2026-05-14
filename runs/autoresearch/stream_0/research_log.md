@@ -263,3 +263,16 @@ executor failed after 4 attempts: None
 **Rationale:** The MemoryReader already has a non-linear FFN with residual from iter 19 (kept, EM=0.3194). However, the MemoryWriter's out_proj in cross_attn mode is a pure linear layer, bottlenecking the expressivity of memory vectors before they enter the GDN. Adding a 4x expand-ratio FFN after out_proj in both forward() and parallel() gives the writer matching non-linear capacity, enabling richer memory encodings for simultaneous multi-slot storage at N=4.
 
 
+## Iter 21 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm after the MemoryWriter's out_proj normalizes memory vector magnitudes before GDN recurrent processing, providing stable inputs that improve state tracking at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_021_writer_output_rmsnorm
+
+
+## Iter 21 — reverted — EM: 0.0764 (N=4)
+**Hypothesis:** Adding RMSNorm after the MemoryWriter's out_proj normalizes memory vector magnitudes before GDN recurrent processing, providing stable inputs that improve state tracking at N=4.
+**Wall time:** 49.2 min
+**Result:** EM=0.0764 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The writer's output vectors enter the GDN with uncontrolled magnitudes, unlike the reader which benefits from read_norm and FFN+residual (iter 19). Normalizing before the GDN (distinct from iter 13's post-GDN normalization) stabilizes the recurrent input distribution, helping the GDN maintain distinct states for all M=4 memory slots.
+
+
