@@ -402,3 +402,8 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** In the RecurrentMemoryLayerWrapper, the write and read paths are both normalized via RMSNorm (write_norm, read_norm) before their respective modules. However, the GDN receives unnormalized 512-dim write vectors directly, creating an inconsistency. The identity path already normalizes via fla_norm before the GDN. Adding a gdn_norm (RMSNorm on write_value_dim) before the GDN in the cross_attn path should stabilize the recurrent processing of memory vectors and improve state tracking capacity.
 
 
+## Iter 31 — RUNNING — N=4
+**Hypothesis:** Adding a channel-wise sigmoid gate to the MemoryReader's FFN residual lets the model selectively pass through raw cross-attention output vs FFN-transformed corrections per channel, improving simultaneous 4-pair retrieval at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_031_reader_ffn_gated_residual
+
+

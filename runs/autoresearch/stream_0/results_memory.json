@@ -980,6 +980,37 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.2831
+    },
+    {
+      "id": 31,
+      "iter_tag": "iter_031",
+      "description": "Adding a channel-wise sigmoid gate to the MemoryReader's FFN residual lets the model selectively pass through raw cross-attention output vs FFN-transformed corrections per channel, improving simultaneous 4-pair retrieval at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding a channel-wise sigmoid gate to the MemoryReader's FFN residual lets the model selectively pass through raw cross-attention output vs FFN-transformed corrections per channel, improving simultaneous 4-pair retrieval at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "iter 19 (reader FFN residual, EM=0.3194) showed that combining cross-attention output with FFN-transformed output helps. Currently: out = ca_out + FFN(ca_out), where ALL channels use the same 1:1 blend ratio. Different channels may carry different types of information \u2014 some benefit from raw attention (direct slot content), others from FFN processing (non-linear combinations). A channel-wise gate computed from the FFN hidden state lets the model learn per-channel blend ratios, preserving raw signal where needed while applying non-linear transforms where helpful. This is a lightweight addition (one Linear + sigmoid = 128*d gate params) that generalizes the fixed residual.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryReader class to add a channel-wise gate around the FFN residual. (1) In __init__, after the existing 'self.ffn_2 = nn.Linear(self.ffn_dim, hidden_size, bias=bias)' line, add: 'self.ffn_gate = nn.Linear(self.ffn_dim, hidden_size, bias=bias)'. (2) In forward(), for the unpool branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with: 'ffn_in = self.ffn_1(out); ffn_out = self.ffn_2(F.gelu(ffn_in)); gate = torch.sigmoid(self.ffn_gate(ffn_in)); out = out + gate * ffn_out'. For the cross_attn branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the same pattern. (3) In parallel(), apply the same gated residual pattern: for the unpool branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the gated version. For the cross_attn branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the gated version.",
+        "run_name": "reader_ffn_gated_residual"
+      },
+      "em_score": null,
+      "prev_best": 0.3194,
+      "verdict": "running",
+      "status": "running",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_031_reader_ffn_gated_residual",
+      "wall_time_min": 0.0,
+      "metric_step": null,
+      "metric_source": null,
+      "is_partial": false,
+      "recovery_status": "pending",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778783154.8568423,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_031",
+      "summary_logged": false,
+      "stream_id": "0"
     }
   ]
 }

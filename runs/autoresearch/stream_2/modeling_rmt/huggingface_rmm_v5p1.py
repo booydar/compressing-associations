@@ -180,13 +180,15 @@ class MemoryWriter(nn.Module):
 class MemoryReader(nn.Module):
     """unpool/cross_attn reader."""
 
-    def __init__(self, hidden_size, write_value_dim, mode='cross_attn', num_heads=1, bias=False):
+    def __init__(self, hidden_size, write_value_dim, mode='cross_attn', num_heads=1, bias=False, num_vectors=4):
         super().__init__()
         if mode not in ('unpool', 'cross_attn'):
             raise ValueError(f"MemoryReader mode must be 'unpool' or 'cross_attn', got '{mode}'")
         self.mode = mode
         self.hidden_size = hidden_size
         self.scaling = hidden_size ** -0.5
+        self.slot_pos_embed_reader = nn.Parameter(torch.zeros(num_vectors, write_value_dim))
+        nn.init.normal_(self.slot_pos_embed_reader, std=write_value_dim ** -0.5)
         if mode == 'unpool':
             self.k_proj = nn.Linear(write_value_dim, hidden_size, bias=bias)
             self.v_proj = nn.Linear(write_value_dim, hidden_size, bias=bias)
@@ -200,6 +202,7 @@ class MemoryReader(nn.Module):
         """Recurrent: (B, T, d), (B, M, d_v) -> (B, T, d)"""
         if self.mode == 'unpool':
             k = self.k_proj(memory_states)
+            k = k + self.slot_pos_embed_reader.unsqueeze(0)
             v = self.v_proj(memory_states)
             attn = torch.matmul(token_states, k.transpose(-1, -2)) * self.scaling
             attn = F.softmax(attn, dim=-1)
@@ -220,6 +223,7 @@ class MemoryReader(nn.Module):
         if self.mode == 'unpool':
             mem = mem_shifted.view(B, S, M, -1)
             k = self.k_proj(mem)                                  # (B, S, M, d)
+            k = k + self.slot_pos_embed_reader.view(1, 1, M, -1)
             v = self.v_proj(mem)                                  # (B, S, M, d)
             attn = torch.matmul(tokens, k.transpose(-1, -2)) * self.scaling   # (B, S, T, M)
             attn = F.softmax(attn, dim=-1)
@@ -274,6 +278,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
                 self.memory_reader = MemoryReader(
                     hidden_size=model_hidden_size, write_value_dim=self.write_value_dim,
                     mode=read_mode, num_heads=num_memory_heads,
+                    num_vectors=num_memory_vectors,
                 )
 
         self.cache = Cache()

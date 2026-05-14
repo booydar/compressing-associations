@@ -313,3 +313,8 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The MemoryWriter uses M=4 shared learnable queries that attend to segment tokens via content-only attention, so all slots lack structural identity and must learn to specialize purely through weight differentiation. Adding per-slot positional embeddings provides an explicit slot identity that complements content-based attention, helping the model distribute different KV associations across slots and improving retrieval discrimination. Unlike orthogonal init (iter_018, EM=0.206, reverted), positional embeddings are learnable throughout training and affect both write and read paths.
 
 
+## Iter 21 — RUNNING — N=4
+**Hypothesis:** Adding matching slot positional embeddings to the memory reader's key projections will give each memory slot a distinct identity during retrieval, complementing the writer's slot_pos_embed and improving slot disambiguation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_021_reader_slot_pos_embed
+
+
