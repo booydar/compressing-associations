@@ -332,3 +332,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader FFN residual (iter_019, EM=0.3194) was the breakthrough change. However, the cross-attention output feeds into the FFN without normalization, causing potentially unstable activations. The cross-attention compresses 512-dim memory vectors through 4 heads of head_dim=32 into 128-dim output, and the resulting activation magnitudes vary across training steps. Adding LayerNorm normalizes this output before the FFN residual, ensuring stable, well-conditioned inputs to the non-linear transformation. This complements the existing read_norm (input) and FFN residual by also stabilizing the intermediate representation.
 
 
+## Iter 25 — RUNNING — N=4
+**Hypothesis:** Halving write_value_dim from 512 to 256 better matches the GDN's state_size=32 tracking capacity, concentrating information into a narrower bottleneck that improves memory slot discrimination at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_025_n4_half_write_val_dim
+
+
+## Iter 25 — reverted — EM: 0.1372 (N=4)
+**Hypothesis:** Halving write_value_dim from 512 to 256 better matches the GDN's state_size=32 tracking capacity, concentrating information into a narrower bottleneck that improves memory slot discrimination at N=4.
+**Wall time:** 76.5 min
+**Result:** EM=0.1372 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The GDN processes 512-dim memory vectors but can only maintain 32 dims of state (64:1 compression ratio). With write_value_dim=256 the compression is 32:1, giving each retained dimension stronger signal. The reader's value projection (512->128) also becomes less lossy at 256->128. This avoids the architectural complexity that caused failures in iters 22-23.
+
+

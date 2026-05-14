@@ -789,6 +789,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.275
+    },
+    {
+      "id": 25,
+      "iter_tag": "iter_025",
+      "description": "Halving write_value_dim from 512 to 256 better matches the GDN's state_size=32 tracking capacity, concentrating information into a narrower bottleneck that improves memory slot discrimination at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Halving write_value_dim from 512 to 256 better matches the GDN's state_size=32 tracking capacity, concentrating information into a narrower bottleneck that improves memory slot discrimination at N=4.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The GDN processes 512-dim memory vectors but can only maintain 32 dims of state (64:1 compression ratio). With write_value_dim=256 the compression is 32:1, giving each retained dimension stronger signal. The reader's value projection (512->128) also becomes less lossy at 256->128. This avoids the architectural complexity that caused failures in iters 22-23.",
+        "instruction": "In the file .autoresearch/experiment_config.yaml, change the line 'write_value_dim: 512' to 'write_value_dim: 256'. Do not modify any other parameter.",
+        "run_name": "n4_half_write_val_dim"
+      },
+      "em_score": 0.1372,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_025_n4_half_write_val_dim",
+      "wall_time_min": 76.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778757727.2016895,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_025",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3912
     }
   ]
 }
