@@ -326,3 +326,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer's slot_pos_embed (iter_020, EM=0.518) was the single largest improvement, giving each slot a unique query identity. But the reader has no corresponding slot signal — it retrieves purely by content matching. Adding per-slot positional embeddings to the reader's keys means the model can leverage slot identity at retrieval time, improving disambiguation when content overlap between slots is high. Unlike previous failed attempts (iter_14-16), this adds only a small nn.Parameter with no new Linear layers.
 
 
+## Iter 22 — RUNNING — N=4
+**Hypothesis:** Making the memory read gate input-dependent will let each layer dynamically control how much memory to blend based on token activation strength, extending the successful pattern from the GDN skip gate.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_022_input_dep_read_gate
+
+
+## Iter 22 — reverted — EM: 0.1416 (N=4)
+**Hypothesis:** Making the memory read gate input-dependent will let each layer dynamically control how much memory to blend based on token activation strength, extending the successful pattern from the GDN skip gate.
+**Wall time:** 75.8 min
+**Result:** EM=0.1416 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The input-dependent GDN skip gate (iter_013, EM=0.222) showed that norm-based per-token gating outperforms static gating. The memory read gate was only tried as a static scalar (iter_012, EM=0.1566, reverted). Making it input-dependent lets the model blend more memory for low-activation tokens that need retrieval help, while suppressing memory for high-activation tokens that are already informative. This mirrors the proven GDN skip pattern and adds only 2 parameters per layer.
+
+
