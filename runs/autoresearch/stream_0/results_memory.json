@@ -1012,6 +1012,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.5523
+    },
+    {
+      "id": 32,
+      "iter_tag": "iter_032",
+      "description": "Widening the reader's cross-attention value projection from 128 to 256 dims doubles the information flowing from 512-dim memory vectors before the o_proj bottleneck, improving simultaneous 4-pair retrieval at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Widening the reader's cross-attention value projection from 128 to 256 dims doubles the information flowing from 512-dim memory vectors before the o_proj bottleneck, improving simultaneous 4-pair retrieval at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The reader's LlamaCrossAttention uses 4 heads of head_dim=32, so v_proj outputs only 128 total dims from 512-dim memory vectors (75% information loss). The FFN residual (iter_019, EM=0.3194) then operates on this severely compressed representation. Widening the value projection to 256 dims gives the attention mechanism richer information to work with before o_proj compresses back to 128. Q and K stay at 128 dims for attention scoring, so the attention weights are unchanged \u2014 only the value path is widened. iter_023 tried doubling head_dim entirely (affecting Q/K/V) but failed due to cascading code corruption from iter_022, so that hypothesis was never properly evaluated. This change isolates the value widening without touching Q/K projections.",
+        "instruction": "In huggingface_rmm_v5p1.py, widen the value projection in LlamaCrossAttention: (1) In __init__, add 'v_out_dim=None' to the constructor signature. After 'self.head_dim = head_dim if head_dim is not None else hidden_size // num_heads', add 'self.v_out_dim = v_out_dim if v_out_dim is not None else self.head_dim'. (2) Change 'self.v_proj = nn.Linear(kv_hidden_size, num_heads * self.head_dim, bias=bias)' to 'self.v_proj = nn.Linear(kv_hidden_size, num_heads * self.v_out_dim, bias=bias)'. (3) Change 'self.o_proj = nn.Linear(num_heads * self.head_dim, out_hidden_size or hidden_size, bias=bias)' to 'self.o_proj = nn.Linear(num_heads * self.v_out_dim, out_hidden_size or hidden_size, bias=bias)'. (4) In forward(), change 'v = self.v_proj(to_states).view(B, K_len, self.num_heads, self.head_dim).transpose(1, 2)' to 'v = self.v_proj(to_states).view(B, K_len, self.num_heads, self.v_out_dim).transpose(1, 2)'. (5) In MemoryReader.__init__, change the LlamaCrossAttention instantiation to add 'v_out_dim=256': 'self.cross_attn = LlamaCrossAttention(hidden_size=hidden_size, num_heads=num_heads, kv_hidden_size=write_value_dim, out_hidden_size=hidden_size, v_out_dim=256)'.",
+        "run_name": "reader_wide_values_n4"
+      },
+      "em_score": 0.2148,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_032_reader_wide_values_n4",
+      "wall_time_min": 75.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778788415.6119103,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_032",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.5605
     }
   ]
 }

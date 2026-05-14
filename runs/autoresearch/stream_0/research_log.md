@@ -415,3 +415,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** iter 19 (reader FFN residual, EM=0.3194) showed that combining cross-attention output with FFN-transformed output helps. Currently: out = ca_out + FFN(ca_out), where ALL channels use the same 1:1 blend ratio. Different channels may carry different types of information — some benefit from raw attention (direct slot content), others from FFN processing (non-linear combinations). A channel-wise gate computed from the FFN hidden state lets the model learn per-channel blend ratios, preserving raw signal where needed while applying non-linear transforms where helpful. This is a lightweight addition (one Linear + sigmoid = 128*d gate params) that generalizes the fixed residual.
 
 
+## Iter 32 — RUNNING — N=4
+**Hypothesis:** Widening the reader's cross-attention value projection from 128 to 256 dims doubles the information flowing from 512-dim memory vectors before the o_proj bottleneck, improving simultaneous 4-pair retrieval at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_032_reader_wide_values_n4
+
+
+## Iter 32 — reverted — EM: 0.2148 (N=4)
+**Hypothesis:** Widening the reader's cross-attention value projection from 128 to 256 dims doubles the information flowing from 512-dim memory vectors before the o_proj bottleneck, improving simultaneous 4-pair retrieval at N=4.
+**Wall time:** 75.0 min
+**Result:** EM=0.2148 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The reader's LlamaCrossAttention uses 4 heads of head_dim=32, so v_proj outputs only 128 total dims from 512-dim memory vectors (75% information loss). The FFN residual (iter_019, EM=0.3194) then operates on this severely compressed representation. Widening the value projection to 256 dims gives the attention mechanism richer information to work with before o_proj compresses back to 128. Q and K stay at 128 dims for attention scoring, so the attention weights are unchanged — only the value path is widened. iter_023 tried doubling head_dim entirely (affecting Q/K/V) but failed due to cascading code corruption from iter_022, so that hypothesis was never properly evaluated. This change isolates the value widening without touching Q/K projections.
+
+
