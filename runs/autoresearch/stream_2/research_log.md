@@ -119,3 +119,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** These are listed as unlocked knobs to sweep; testing expanded dimensions and larger conv kernels probes representational capacity limits without altering core recurrence.
 
 
+## Iter 8 — RUNNING — N=4
+**Hypothesis:** Reducing warmup_steps from 10000 to 2000 will let the model reach full learning rate faster, improving convergence on the associative retrieval task.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_008_warmup_2000
+
+
+## Iter 8 — reverted — EM: 0.1396 (N=4)
+**Hypothesis:** Reducing warmup_steps from 10000 to 2000 will let the model reach full learning rate faster, improving convergence on the associative retrieval task.
+**Wall time:** 67.2 min
+**Result:** EM=0.1396 vs prev best=0.2020
+**Metric source:** all_results
+**Rationale:** The current warmup_steps of 10000 consumes 40% of the 25000 total training steps, meaning the model spends most of training at a suppressed learning rate. Reducing to 2000 (8% of training) still provides sufficient warmup for stability while giving the model 18000 more steps at full learning rate for effective convergence on the N=4 retrieval task.
+
+
