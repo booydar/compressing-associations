@@ -153,6 +153,37 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.4328
+    },
+    {
+      "id": 5,
+      "iter_tag": "iter_005",
+      "description": "Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.",
+      "hypothesis": {
+        "hypothesis": "Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The directions suggest trying write_residual=true as a low-cost architectural shortcut to boost EM by adding a second read pathway for the current segment.",
+        "instruction": "Set `write_residual` to `true` in the experiment config file.",
+        "run_name": "write_residual_on"
+      },
+      "em_score": 0.1354,
+      "prev_best": 0.1872,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_005_write_residual_on",
+      "wall_time_min": 58.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778719274.5301292,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_005",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3939
     }
   ]
 }

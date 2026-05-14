@@ -80,3 +80,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** Re-introducing a smarter OrthogonalRotation is explicitly called out to improve state mixing beyond the current restricted implementation.
 
 
+## Iter 5 — RUNNING — N=4
+**Hypothesis:** Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_005_write_residual_on
+
+
+## Iter 5 — reverted — EM: 0.1354 (N=4)
+**Hypothesis:** Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.
+**Wall time:** 58.0 min
+**Result:** EM=0.1354 vs prev best=0.1872
+**Metric source:** all_results
+**Rationale:** The directions suggest trying write_residual=true as a low-cost architectural shortcut to boost EM by adding a second read pathway for the current segment.
+
+
