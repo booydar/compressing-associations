@@ -993,24 +993,25 @@
         "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryReader class to add a channel-wise gate around the FFN residual. (1) In __init__, after the existing 'self.ffn_2 = nn.Linear(self.ffn_dim, hidden_size, bias=bias)' line, add: 'self.ffn_gate = nn.Linear(self.ffn_dim, hidden_size, bias=bias)'. (2) In forward(), for the unpool branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with: 'ffn_in = self.ffn_1(out); ffn_out = self.ffn_2(F.gelu(ffn_in)); gate = torch.sigmoid(self.ffn_gate(ffn_in)); out = out + gate * ffn_out'. For the cross_attn branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the same pattern. (3) In parallel(), apply the same gated residual pattern: for the unpool branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the gated version. For the cross_attn branch, replace 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))' with the gated version.",
         "run_name": "reader_ffn_gated_residual"
       },
-      "em_score": null,
+      "em_score": 0.2258,
       "prev_best": 0.3194,
-      "verdict": "running",
-      "status": "running",
+      "verdict": "reverted",
+      "status": "completed",
       "n_level": 4,
       "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_031_reader_ffn_gated_residual",
-      "wall_time_min": 0.0,
-      "metric_step": null,
-      "metric_source": null,
+      "wall_time_min": 74.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
       "is_partial": false,
-      "recovery_status": "pending",
+      "recovery_status": "final",
       "needs_retry": false,
       "retry_of": null,
       "run_error": null,
       "started_at": 1778783154.8568423,
       "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_031",
       "summary_logged": false,
-      "stream_id": "0"
+      "stream_id": "0",
+      "token_accuracy": 0.5523
     }
   ]
 }

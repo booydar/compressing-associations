@@ -407,3 +407,11 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_031_reader_ffn_gated_residual
 
 
+## Iter 31 — reverted — EM: 0.2258 (N=4)
+**Hypothesis:** Adding a channel-wise sigmoid gate to the MemoryReader's FFN residual lets the model selectively pass through raw cross-attention output vs FFN-transformed corrections per channel, improving simultaneous 4-pair retrieval at N=4.
+**Wall time:** 74.1 min
+**Result:** EM=0.2258 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** iter 19 (reader FFN residual, EM=0.3194) showed that combining cross-attention output with FFN-transformed output helps. Currently: out = ca_out + FFN(ca_out), where ALL channels use the same 1:1 blend ratio. Different channels may carry different types of information — some benefit from raw attention (direct slot content), others from FFN processing (non-linear combinations). A channel-wise gate computed from the FFN hidden state lets the model learn per-channel blend ratios, preserving raw signal where needed while applying non-linear transforms where helpful. This is a lightweight addition (one Linear + sigmoid = 128*d gate params) that generalizes the fixed residual.
+
+
