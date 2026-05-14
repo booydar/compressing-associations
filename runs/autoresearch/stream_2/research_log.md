@@ -287,3 +287,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The MemoryWriter initializes write_queries with tiny random normals (std=hidden_size^-0.5), so all M slots start in nearly identical directions and attend to nearly the same tokens during early training. This symmetry slows the emergence of specialized memory slots. Orthogonal initialization gives each slot a well-separated direction from step 0, providing strong inductive bias for slot discrimination. Unlike the failed Linear-projection attempts (iter_14-16), this only touches the existing nn.Parameter initialization and adds no new parameters or forward-pass complexity.
 
 
+## Iter 19 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm to the memory reader output before the residual connection will stabilize the scale of retrieved memory signals, improving gradient flow and blending with hidden states.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_019_reader_out_norm
+
+
+## Iter 19 — reverted — EM: 0.1380 (N=4)
+**Hypothesis:** Adding RMSNorm to the memory reader output before the residual connection will stabilize the scale of retrieved memory signals, improving gradient flow and blending with hidden states.
+**Wall time:** 76.1 min
+**Result:** EM=0.1380 vs prev best=0.2220
+**Metric source:** all_results
+**Rationale:** With write_value_dim=256 >> n_embd=128, the reader projects from a richer memory space but its raw softmax-weighted output can have mismatched scale relative to hidden_states, destabilizing the residual addition. Normalizing the reader output before the residual ensures consistent signal magnitude, complementing the existing input-side read_norm. This is a minimal, safe change using only RMSNorm (no new Linear layers that caused iter_14-16 failures).
+
+

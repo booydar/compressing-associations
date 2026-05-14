@@ -595,6 +595,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.544
+    },
+    {
+      "id": 19,
+      "iter_tag": "iter_019",
+      "description": "Adding RMSNorm to the memory reader output before the residual connection will stabilize the scale of retrieved memory signals, improving gradient flow and blending with hidden states.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding RMSNorm to the memory reader output before the residual connection will stabilize the scale of retrieved memory signals, improving gradient flow and blending with hidden states.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "With write_value_dim=256 >> n_embd=128, the reader projects from a richer memory space but its raw softmax-weighted output can have mismatched scale relative to hidden_states, destabilizing the residual addition. Normalizing the reader output before the residual ensures consistent signal magnitude, complementing the existing input-side read_norm. This is a minimal, safe change using only RMSNorm (no new Linear layers that caused iter_14-16 failures).",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify RecurrentMemoryLayerWrapper: (1) In __init__, after the 'self.read_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)' line, add: 'self.read_out_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)'. (2) In _forward_recurrent, step 1 (READ), replace 'hidden_states = hidden_states + self.memory_reader(self.read_norm(hidden_states), self.last_write_output)' with: 'read_out = self.memory_reader(self.read_norm(hidden_states), self.last_write_output); hidden_states = hidden_states + self.read_out_norm(read_out)'. (3) In _forward_parallel, in the else branch (non-identity write), find the line 'hidden_states = hidden_states + read_out' after the seg_mask application and replace it with: 'read_out = self.read_out_norm(read_out); hidden_states = hidden_states + read_out'. Do not modify the write_residual path or any other code.",
+        "run_name": "reader_out_norm"
+      },
+      "em_score": 0.138,
+      "prev_best": 0.222,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_019_reader_out_norm",
+      "wall_time_min": 76.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778772055.8359098,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_019",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3916
     }
   ]
 }
