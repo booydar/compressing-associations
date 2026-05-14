@@ -1,24 +1,6 @@
 {
   "queue": [
     {
-      "hypothesis": "Splitting the GDN recurrent state into two parallel streams of width 16 each will improve gradient flow and state utilization compared to a single width-32 stream.",
-      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
-      "rationale": "Multi-stream GDN is encouraged to preserve the state_size <= 32 constraint while potentially improving effective capacity through independent pathway dynamics and reduced interference.",
-      "instruction": "Refactor the GDN layer in `huggingface_rmm_v5p1.py` to instantiate two parallel `GatedDeltaNet` modules with `state_size=16` each, concatenate their hidden outputs along the feature dimension, and sum their recurrent states before passing to the next layer.",
-      "run_name": "dual_stream_gdn_16",
-      "source": "human_directions",
-      "created_at": "2026-05-13T23:47:33.822458"
-    },
-    {
-      "hypothesis": "Replacing the last-dim-only rotation with a full state-mixing orthogonal matrix will enhance long-range dependency tracking across the GDN state.",
-      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
-      "rationale": "Re-introducing a smarter OrthogonalRotation is explicitly called out to improve state mixing beyond the current restricted implementation.",
-      "instruction": "In `huggingface_rmm_v5p1.py`, modify the orthogonal rotation module to apply a full `(state_size, state_size)` orthogonal matrix multiplication to the entire state tensor instead of only rotating the last dimension.",
-      "run_name": "full_orthogonal_rotation",
-      "source": "human_directions",
-      "created_at": "2026-05-13T23:47:33.822460"
-    },
-    {
       "hypothesis": "Enabling write_residual will provide a direct, un-shifted memory read path that improves retrieval accuracy for immediate context segments.",
       "target_component": ".autoresearch/experiment_config.yaml",
       "rationale": "The directions suggest trying write_residual=true as a low-cost architectural shortcut to boost EM by adding a second read pathway for the current segment.",
@@ -47,5 +29,5 @@
     }
   ],
   "last_directions_hash": "0189f232c368b95be0389601cb68c6e9",
-  "last_updated": "2026-05-14T00:59:46.222342"
+  "last_updated": "2026-05-14T02:22:24.585728"
 }
