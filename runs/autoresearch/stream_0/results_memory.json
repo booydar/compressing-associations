@@ -631,6 +631,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.5693
+    },
+    {
+      "id": 20,
+      "iter_tag": "iter_020",
+      "description": "Adding a GELU-activated FFN after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear capacity to produce more expressive memory vectors, complementing the reader's FFN (iter 19) and improving discrimination between KV pairs at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding a GELU-activated FFN after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear capacity to produce more expressive memory vectors, complementing the reader's FFN (iter 19) and improving discrimination between KV pairs at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The MemoryReader already has a non-linear FFN with residual from iter 19 (kept, EM=0.3194). However, the MemoryWriter's out_proj in cross_attn mode is a pure linear layer, bottlenecking the expressivity of memory vectors before they enter the GDN. Adding a 4x expand-ratio FFN after out_proj in both forward() and parallel() gives the writer matching non-linear capacity, enabling richer memory encodings for simultaneous multi-slot storage at N=4.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after the line 'self.out_proj = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)' inside the 'if mode == \"cross_attn\":' block, add two lines: 'self.ffn_1 = nn.Linear(self.write_value_dim, self.write_value_dim * 4, bias=bias)' and 'self.ffn_2 = nn.Linear(self.write_value_dim * 4, self.write_value_dim, bias=bias)'. (2) In forward(), replace 'out = self.out_proj(out)' with 'out = self.ffn_2(F.gelu(self.ffn_1(self.out_proj(out))))'. (3) In parallel(), replace 'out = self.out_proj(out)' with 'out = self.ffn_2(F.gelu(self.ffn_1(self.out_proj(out))))'.",
+        "run_name": "writer_ffn_cross_attn"
+      },
+      "em_score": 0.2522,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_020_writer_ffn_cross_attn",
+      "wall_time_min": 74.6,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778743324.1528645,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_020",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.2672
     }
   ]
 }

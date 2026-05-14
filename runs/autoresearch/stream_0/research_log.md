@@ -250,3 +250,16 @@ executor failed after 4 attempts: None
 **Rationale:** The MemoryReader applies FFN (hidden_size=128 -> ffn_dim=512 -> hidden_size=128) which replaces the cross-attention output entirely. This forces information through a bottleneck that may lose slot-specific details. Previous attempts at code modifications (iter 16, 17) failed, likely due to overly complex edits. A simple residual connection is a minimal, standard architectural change that preserves the cross-attention signal. With token_acc reaching ~0.54 (iter 5) but EM stuck at 0.22, the reader needs to retain more information from all 4 memory slots simultaneously.
 
 
+## Iter 20 — RUNNING — N=4
+**Hypothesis:** Adding a GELU-activated FFN after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear capacity to produce more expressive memory vectors, complementing the reader's FFN (iter 19) and improving discrimination between KV pairs at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_020_writer_ffn_cross_attn
+
+
+## Iter 20 — reverted — EM: 0.2522 (N=4)
+**Hypothesis:** Adding a GELU-activated FFN after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear capacity to produce more expressive memory vectors, complementing the reader's FFN (iter 19) and improving discrimination between KV pairs at N=4.
+**Wall time:** 74.6 min
+**Result:** EM=0.2522 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The MemoryReader already has a non-linear FFN with residual from iter 19 (kept, EM=0.3194). However, the MemoryWriter's out_proj in cross_attn mode is a pure linear layer, bottlenecking the expressivity of memory vectors before they enter the GDN. Adding a 4x expand-ratio FFN after out_proj in both forward() and parallel() gives the writer matching non-linear capacity, enabling richer memory encodings for simultaneous multi-slot storage at N=4.
+
+
