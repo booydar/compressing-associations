@@ -237,3 +237,16 @@ executor failed after 4 attempts: None
 **Rationale:** iter 14 showed that conv_kernel=2 combined with expand_v=1.0 and RMSNorm achieved the best EM=0.0788. Reducing conv_kernel further to 1 removes the convolution entirely, making the GDN operate as a pure pointwise recurrent cell. At tokens_per_segment=1 with M=4 memory vectors, even conv_kernel=2 mixes adjacent slots; conv_kernel=1 preserves each slot independently.
 
 
+## Iter 19 — RUNNING — N=4
+**Hypothesis:** Adding residual connections around the reader's FFN preserves cross-attention output directly, giving the network flexibility to use raw attended memory information alongside its non-linear transformation, improving simultaneous retrieval of all 4 KV pairs at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_019_reader_ffn_residual_n4
+
+
+## Iter 19 — kept — EM: 0.3194 (N=4)
+**Hypothesis:** Adding residual connections around the reader's FFN preserves cross-attention output directly, giving the network flexibility to use raw attended memory information alongside its non-linear transformation, improving simultaneous retrieval of all 4 KV pairs at N=4.
+**Wall time:** 73.8 min
+**Result:** EM=0.3194 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** The MemoryReader applies FFN (hidden_size=128 -> ffn_dim=512 -> hidden_size=128) which replaces the cross-attention output entirely. This forces information through a bottleneck that may lose slot-specific details. Previous attempts at code modifications (iter 16, 17) failed, likely due to overly complex edits. A simple residual connection is a minimal, standard architectural change that preserves the cross-attention signal. With token_acc reaching ~0.54 (iter 5) but EM stuck at 0.22, the reader needs to retain more information from all 4 memory slots simultaneously.
+
+

@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_005",
-    "em": 0.2188,
+    "variant": "iter_019",
+    "em": 0.3194,
     "n_level": 4
   },
   "n_level": 4,
@@ -599,6 +599,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.34425
+    },
+    {
+      "id": 19,
+      "iter_tag": "iter_019",
+      "description": "Adding residual connections around the reader's FFN preserves cross-attention output directly, giving the network flexibility to use raw attended memory information alongside its non-linear transformation, improving simultaneous retrieval of all 4 KV pairs at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding residual connections around the reader's FFN preserves cross-attention output directly, giving the network flexibility to use raw attended memory information alongside its non-linear transformation, improving simultaneous retrieval of all 4 KV pairs at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The MemoryReader applies FFN (hidden_size=128 -> ffn_dim=512 -> hidden_size=128) which replaces the cross-attention output entirely. This forces information through a bottleneck that may lose slot-specific details. Previous attempts at code modifications (iter 16, 17) failed, likely due to overly complex edits. A simple residual connection is a minimal, standard architectural change that preserves the cross-attention signal. With token_acc reaching ~0.54 (iter 5) but EM stuck at 0.22, the reader needs to retain more information from all 4 memory slots simultaneously.",
+        "instruction": "In huggingface_rmm_v5p1.py, add residual connections around the FFN in the MemoryReader class. In forward(): for the unpool branch, replace 'out = self.ffn_2(F.gelu(self.ffn_1(out)))' with 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))'. For the cross_attn branch, replace 'out = self.ffn_2(F.gelu(self.ffn_1(out)))' with 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))'. In parallel(): for the unpool branch, replace 'out = self.ffn_2(F.gelu(self.ffn_1(out)))' with 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))'. For the cross_attn branch, replace 'out = self.ffn_2(F.gelu(self.ffn_1(out)))' with 'out = out + self.ffn_2(F.gelu(self.ffn_1(out)))'. In experiment_config.yaml, ensure n_keys=4, n_values=4, tokens_per_segment=1.",
+        "run_name": "reader_ffn_residual_n4"
+      },
+      "em_score": 0.3194,
+      "prev_best": 0.2188,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_019_reader_ffn_residual_n4",
+      "wall_time_min": 73.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778738388.0305014,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_019",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.5693
     }
   ]
 }

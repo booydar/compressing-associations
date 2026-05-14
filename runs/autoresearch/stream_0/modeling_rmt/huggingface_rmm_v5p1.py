@@ -200,10 +200,10 @@ class MemoryReader(nn.Module):
             attn = torch.matmul(token_states, k.transpose(-1, -2)) * self.scaling
             attn = F.softmax(attn, dim=-1)
             out = torch.matmul(attn, v)
-            out = self.ffn_2(F.gelu(self.ffn_1(out)))
+            out = out + self.ffn_2(F.gelu(self.ffn_1(out)))
             return out
         out, _ = self.cross_attn(from_states=token_states, to_states=memory_states)
-        out = self.ffn_2(F.gelu(self.ffn_1(out)))
+        out = out + self.ffn_2(F.gelu(self.ffn_1(out)))
         return out
 
     def parallel(self, token_states, mem_shifted, S, T, M):
@@ -223,14 +223,14 @@ class MemoryReader(nn.Module):
             attn = torch.matmul(tokens, k.transpose(-1, -2)) * self.scaling   # (B, S, T, M)
             attn = F.softmax(attn, dim=-1)
             out = torch.matmul(attn, v)                           # (B, S, T, d)
-            out = self.ffn_2(F.gelu(self.ffn_1(out)))
+            out = out + self.ffn_2(F.gelu(self.ffn_1(out)))
             return out.reshape(B, S * T, d)
         # cross_attn: reuse LlamaCrossAttention per-segment via reshape into batch
         d_v = mem_shifted.shape[-1]
         from_states = tokens.reshape(B * S, T, d)
         to_states = mem_shifted.view(B, S, M, d_v).reshape(B * S, M, d_v)
         out, _ = self.cross_attn(from_states=from_states, to_states=to_states)
-        out = self.ffn_2(F.gelu(self.ffn_1(out)))
+        out = out + self.ffn_2(F.gelu(self.ffn_1(out)))
         return out.view(B, S * T, d)
 
 
