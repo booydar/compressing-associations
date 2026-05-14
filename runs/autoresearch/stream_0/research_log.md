@@ -428,3 +428,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader's LlamaCrossAttention uses 4 heads of head_dim=32, so v_proj outputs only 128 total dims from 512-dim memory vectors (75% information loss). The FFN residual (iter_019, EM=0.3194) then operates on this severely compressed representation. Widening the value projection to 256 dims gives the attention mechanism richer information to work with before o_proj compresses back to 128. Q and K stay at 128 dims for attention scoring, so the attention weights are unchanged — only the value path is widened. iter_023 tried doubling head_dim entirely (affecting Q/K/V) but failed due to cascading code corruption from iter_022, so that hypothesis was never properly evaluated. This change isolates the value widening without touching Q/K projections.
 
 
+## Iter 33 — RUNNING — N=4
+**Hypothesis:** Adding a gated FFN residual after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear refinement capacity matching the reader's design from iter_019, improving memory vector expressivity at N=4.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_033_writer_gated_ffn_residual
+
+
+## Iter 33 — reverted — EM: 0.1492 (N=4)
+**Hypothesis:** Adding a gated FFN residual after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear refinement capacity matching the reader's design from iter_019, improving memory vector expressivity at N=4.
+**Wall time:** 76.8 min
+**Result:** EM=0.1492 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The best N=4 result (iter_019, EM=0.3194) added a gated FFN residual to the reader. The writer in cross_attn mode still only has a linear out_proj with no non-linearity, creating an asymmetry: the reader can non-linearly transform attended memory but the writer can't non-linearly refine its attention output before the GDN. iter_020 tried a 4x FFN after out_proj without residual and it hurt performance. Using a smaller 1x expansion with gated residual avoids over-parameterization while giving the writer matching non-linear capacity. The sigmoid gate learns when FFN refinement is beneficial, and the residual preserves the original linear output as fallback.
+
+

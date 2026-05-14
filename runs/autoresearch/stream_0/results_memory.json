@@ -1044,6 +1044,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.5605
+    },
+    {
+      "id": 33,
+      "iter_tag": "iter_033",
+      "description": "Adding a gated FFN residual after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear refinement capacity matching the reader's design from iter_019, improving memory vector expressivity at N=4.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding a gated FFN residual after the writer's out_proj in cross_attn mode gives the MemoryWriter non-linear refinement capacity matching the reader's design from iter_019, improving memory vector expressivity at N=4.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The best N=4 result (iter_019, EM=0.3194) added a gated FFN residual to the reader. The writer in cross_attn mode still only has a linear out_proj with no non-linearity, creating an asymmetry: the reader can non-linearly transform attended memory but the writer can't non-linearly refine its attention output before the GDN. iter_020 tried a 4x FFN after out_proj without residual and it hurt performance. Using a smaller 1x expansion with gated residual avoids over-parameterization while giving the writer matching non-linear capacity. The sigmoid gate learns when FFN refinement is beneficial, and the residual preserves the original linear output as fallback.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after the line 'self.out_proj = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)' inside the 'if mode == \"cross_attn\":' block, add three lines: 'self.ffn_1 = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)', 'self.ffn_2 = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)', 'self.ffn_gate = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)'. (2) In forward(), replace 'out = self.out_proj(out)' with: 'out = self.out_proj(out); ffn_in = self.ffn_1(out); ffn_out = self.ffn_2(F.gelu(ffn_in)); gate = torch.sigmoid(self.ffn_gate(ffn_in)); out = out + gate * ffn_out'. (3) In parallel(), replace 'out = self.out_proj(out)' with: 'out = self.out_proj(out); ffn_in = self.ffn_1(out); ffn_out = self.ffn_2(F.gelu(ffn_in)); gate = torch.sigmoid(self.ffn_gate(ffn_in)); out = out + gate * ffn_out'.",
+        "run_name": "writer_gated_ffn_residual"
+      },
+      "em_score": 0.1492,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_033_writer_gated_ffn_residual",
+      "wall_time_min": 76.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778793619.117885,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_033",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3957
     }
   ]
 }
