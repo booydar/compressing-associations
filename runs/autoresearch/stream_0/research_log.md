@@ -212,3 +212,28 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** At N=4, token_acc reaches ~0.43 but EM stays near 0, meaning the reader retrieves some tokens but not all 4 KV pairs simultaneously. The cross-attention reader's softmax scores are dominated by vector norm magnitude rather than content direction, causing attention collapse onto 1-2 strong slots. L2 normalization of Q and K before the dot product removes magnitude effects, forcing the reader to distribute attention based on angular similarity alone. This should enable uniform retrieval across all M=4 memory vectors, converting partial token accuracy into full exact match.
 
 
+## Iter 16 — FAILED — N=4
+**Error:** executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 17 — FAILED — N=4
+**Error:** executor failed after 4 attempts: The previous iteration's training run failed with the following error. Take this into account when applying the change; if your edit must avoid the same failure, adjust accordingly.
+
+executor failed after 4 attempts: None
+**Recovery status:** not_attempted
+
+
+## Iter 18 — RUNNING — N=4
+**Hypothesis:** Setting conv_kernel=1 eliminates all cross-token convolutional mixing in the GDN, maximally preserving slot-specific information for N=4 retrieval where conv_kernel=2 already helped (iter 11).
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_018_conv_kernel_1
+
+
+## Iter 18 — reverted — EM: 0.0148 (N=4)
+**Hypothesis:** Setting conv_kernel=1 eliminates all cross-token convolutional mixing in the GDN, maximally preserving slot-specific information for N=4 retrieval where conv_kernel=2 already helped (iter 11).
+**Wall time:** 84.6 min
+**Result:** EM=0.0148 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** iter 14 showed that conv_kernel=2 combined with expand_v=1.0 and RMSNorm achieved the best EM=0.0788. Reducing conv_kernel further to 1 removes the convolution entirely, making the GDN operate as a pure pointwise recurrent cell. At tokens_per_segment=1 with M=4 memory vectors, even conv_kernel=2 mixes adjacent slots; conv_kernel=1 preserves each slot independently.
+
+

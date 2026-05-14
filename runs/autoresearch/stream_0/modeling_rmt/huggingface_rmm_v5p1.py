@@ -173,7 +173,7 @@ class MemoryWriter(nn.Module):
 class MemoryReader(nn.Module):
     """unpool/cross_attn reader."""
 
-    def __init__(self, hidden_size, write_value_dim, mode='cross_attn', num_heads=1, bias=False):
+    def __init__(self, hidden_size, write_value_dim, mode='cross_attn', num_heads=1, bias=False, ffn_dim=None):
         super().__init__()
         if mode not in ('unpool', 'cross_attn'):
             raise ValueError(f"MemoryReader mode must be 'unpool' or 'cross_attn', got '{mode}'")
@@ -188,6 +188,9 @@ class MemoryReader(nn.Module):
                 hidden_size=hidden_size, num_heads=num_heads,
                 kv_hidden_size=write_value_dim, out_hidden_size=hidden_size,
             )
+        self.ffn_dim = ffn_dim or write_value_dim
+        self.ffn_1 = nn.Linear(hidden_size, self.ffn_dim, bias=bias)
+        self.ffn_2 = nn.Linear(self.ffn_dim, hidden_size, bias=bias)
 
     def forward(self, token_states, memory_states):
         """Recurrent: (B, T, d), (B, M, d_v) -> (B, T, d)"""
@@ -196,8 +199,11 @@ class MemoryReader(nn.Module):
             v = self.v_proj(memory_states)
             attn = torch.matmul(token_states, k.transpose(-1, -2)) * self.scaling
             attn = F.softmax(attn, dim=-1)
-            return torch.matmul(attn, v)
+            out = torch.matmul(attn, v)
+            out = self.ffn_2(F.gelu(self.ffn_1(out)))
+            return out
         out, _ = self.cross_attn(from_states=token_states, to_states=memory_states)
+        out = self.ffn_2(F.gelu(self.ffn_1(out)))
         return out
 
     def parallel(self, token_states, mem_shifted, S, T, M):
@@ -217,12 +223,14 @@ class MemoryReader(nn.Module):
             attn = torch.matmul(tokens, k.transpose(-1, -2)) * self.scaling   # (B, S, T, M)
             attn = F.softmax(attn, dim=-1)
             out = torch.matmul(attn, v)                           # (B, S, T, d)
+            out = self.ffn_2(F.gelu(self.ffn_1(out)))
             return out.reshape(B, S * T, d)
         # cross_attn: reuse LlamaCrossAttention per-segment via reshape into batch
         d_v = mem_shifted.shape[-1]
         from_states = tokens.reshape(B * S, T, d)
         to_states = mem_shifted.view(B, S, M, d_v).reshape(B * S, M, d_v)
         out, _ = self.cross_attn(from_states=from_states, to_states=to_states)
+        out = self.ffn_2(F.gelu(self.ffn_1(out)))
         return out.view(B, S * T, d)
 
 
@@ -285,6 +293,7 @@ class RecurrentMemoryLayerWrapper(nn.Module):
                 self.memory_reader = MemoryReader(
                     hidden_size=model_hidden_size, write_value_dim=self.write_value_dim,
                     mode=read_mode, num_heads=num_memory_heads,
+                    ffn_dim=self.write_value_dim,
                 )
 
         self.last_write_output: torch.Tensor | None = None
