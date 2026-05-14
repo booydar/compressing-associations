@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_010",
-    "em": 0.2116,
+    "variant": "iter_013",
+    "em": 0.222,
     "n_level": 4
   },
   "n_level": 4,
@@ -406,6 +406,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3954
+    },
+    {
+      "id": 13,
+      "iter_tag": "iter_013",
+      "description": "Making the GDN skip gate input-dependent will let the model dynamically adjust how much recurrent output to blend per token, improving over the static per-layer gate.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Making the GDN skip gate input-dependent will let the model dynamically adjust how much recurrent output to blend per token, improving over the static per-layer gate.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The static gate in RecurrentLayerWithSkip (iter_010, EM=0.2116) showed that gating the GDN skip helps retrieval. But a single scalar per layer cannot adapt to varying input conditions across tokens. An input-dependent gate computed from the hidden state norm lets the model suppress GDN contributions for high-magnitude tokens (already informative) and amplify them for low-magnitude tokens (needing recurrent enrichment). This adds only 2 parameters per layer (weight + bias) and is a minimal, targeted extension of the best-performing change.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the RecurrentLayerWithSkip class: (1) In __init__, replace 'self.gate = nn.Parameter(torch.tensor(1.0))' with 'self.gate_weight = nn.Parameter(torch.tensor(0.0))' and 'self.gate_bias = nn.Parameter(torch.tensor(0.0))'. (2) In forward, replace 'gate_val = torch.sigmoid(self.gate)' with 'h_norm = hidden_states.pow(2).mean(dim=-1, keepdim=True).sqrt().clamp(min=1e-8); gate_val = torch.sigmoid(self.gate_weight * h_norm + self.gate_bias)'. This is the only change to make.",
+        "run_name": "input_dep_gdn_gate"
+      },
+      "em_score": 0.222,
+      "prev_best": 0.2116,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_013_input_dep_gdn_gate",
+      "wall_time_min": 74.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778755635.6241276,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_013",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5506
     }
   ]
 }

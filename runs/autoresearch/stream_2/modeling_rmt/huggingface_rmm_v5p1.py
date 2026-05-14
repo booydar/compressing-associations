@@ -71,12 +71,14 @@ class RecurrentLayerWithSkip(nn.Module):
     def __init__(self, original_layer: nn.Module):
         super().__init__()
         self.layer = original_layer
-        self.gate = nn.Parameter(torch.tensor(1.0))
+        self.gate_weight = nn.Parameter(torch.tensor(0.0))
+        self.gate_bias = nn.Parameter(torch.tensor(0.0))
 
     def forward(self, hidden_states, *args, **kwargs):
         output = self.layer(hidden_states, *args, **kwargs)
         out_tensor = output[0] if isinstance(output, tuple) else output
-        gate_val = torch.sigmoid(self.gate)
+        h_norm = hidden_states.pow(2).mean(dim=-1, keepdim=True).sqrt().clamp(min=1e-8)
+        gate_val = torch.sigmoid(self.gate_weight * h_norm + self.gate_bias)
         if isinstance(output, tuple):
             return (hidden_states + gate_val * out_tensor,) + output[1:]
         return hidden_states + gate_val * out_tensor

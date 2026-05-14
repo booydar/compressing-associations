@@ -184,3 +184,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The gated GDN skip (iter_10, EM=0.2116) showed that learnable per-layer gates improve retrieval by letting the model suppress unhelpful contributions. Currently the memory read path always adds the full reader output unconditionally. Adding a similar gate to the memory read residual gives the model control over memory blending per layer, which should help layers that don't benefit from the memory path suppress noise while letting beneficial layers use it fully.
 
 
+## Iter 13 — RUNNING — N=4
+**Hypothesis:** Making the GDN skip gate input-dependent will let the model dynamically adjust how much recurrent output to blend per token, improving over the static per-layer gate.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_013_input_dep_gdn_gate
+
+
+## Iter 13 — kept — EM: 0.2220 (N=4)
+**Hypothesis:** Making the GDN skip gate input-dependent will let the model dynamically adjust how much recurrent output to blend per token, improving over the static per-layer gate.
+**Wall time:** 74.4 min
+**Result:** EM=0.2220 vs prev best=0.2116
+**Metric source:** all_results
+**Rationale:** The static gate in RecurrentLayerWithSkip (iter_010, EM=0.2116) showed that gating the GDN skip helps retrieval. But a single scalar per layer cannot adapt to varying input conditions across tokens. An input-dependent gate computed from the hidden state norm lets the model suppress GDN contributions for high-magnitude tokens (already informative) and amplify them for low-magnitude tokens (needing recurrent enrichment). This adds only 2 parameters per layer (weight + bias) and is a minimal, targeted extension of the best-performing change.
+
+
