@@ -171,3 +171,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader path normalizes token states with read_norm but leaves memory states unnormalized, creating an attention scale mismatch. Normalizing memory states will ensure well-calibrated softmax attention between queries and keys, improving retrieval discrimination across memory slots.
 
 
+## Iter 12 — RUNNING — N=4
+**Hypothesis:** Adding a sigmoid-gated learnable scalar to the memory read residual will let the model control how much memory reader output to blend at each layer, extending the successful gating pattern from the GDN skip connection.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_012_gated_memory_read
+
+
+## Iter 12 — reverted — EM: 0.1566 (N=4)
+**Hypothesis:** Adding a sigmoid-gated learnable scalar to the memory read residual will let the model control how much memory reader output to blend at each layer, extending the successful gating pattern from the GDN skip connection.
+**Wall time:** 75.6 min
+**Result:** EM=0.1566 vs prev best=0.2116
+**Metric source:** all_results
+**Rationale:** The gated GDN skip (iter_10, EM=0.2116) showed that learnable per-layer gates improve retrieval by letting the model suppress unhelpful contributions. Currently the memory read path always adds the full reader output unconditionally. Adding a similar gate to the memory read residual gives the model control over memory blending per layer, which should help layers that don't benefit from the memory path suppress noise while letting beneficial layers use it fully.
+
+
