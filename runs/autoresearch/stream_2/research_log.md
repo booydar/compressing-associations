@@ -274,3 +274,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The config explicitly lists 384 as an unlocked value for write_value_dim. Current best (iter_13, EM=0.222) uses 256 with 4 memory vectors. Increasing to 384 gives the GDN a wider hidden representation (384 vs 256) and expands each memory vector from 256 to 384 dimensions, increasing total memory bank capacity from 1024 to 1536 dimensions without changing state_size or other constrained parameters.
 
 
+## Iter 18 — RUNNING — N=4
+**Hypothesis:** Initializing write queries with orthogonal directions in MemoryWriter will give each memory slot a distinct attention pattern from step 0, improving slot specialization and retrieval accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_018_ortho_write_queries
+
+
+## Iter 18 — reverted — EM: 0.2060 (N=4)
+**Hypothesis:** Initializing write queries with orthogonal directions in MemoryWriter will give each memory slot a distinct attention pattern from step 0, improving slot specialization and retrieval accuracy.
+**Wall time:** 72.2 min
+**Result:** EM=0.2060 vs prev best=0.2220
+**Metric source:** all_results
+**Rationale:** The MemoryWriter initializes write_queries with tiny random normals (std=hidden_size^-0.5), so all M slots start in nearly identical directions and attend to nearly the same tokens during early training. This symmetry slows the emergence of specialized memory slots. Orthogonal initialization gives each slot a well-separated direction from step 0, providing strong inductive bias for slot discrimination. Unlike the failed Linear-projection attempts (iter_14-16), this only touches the existing nn.Parameter initialization and adds no new parameters or forward-pass complexity.
+
+

@@ -563,6 +563,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3924
+    },
+    {
+      "id": 18,
+      "iter_tag": "iter_018",
+      "description": "Initializing write queries with orthogonal directions in MemoryWriter will give each memory slot a distinct attention pattern from step 0, improving slot specialization and retrieval accuracy.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Initializing write queries with orthogonal directions in MemoryWriter will give each memory slot a distinct attention pattern from step 0, improving slot specialization and retrieval accuracy.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The MemoryWriter initializes write_queries with tiny random normals (std=hidden_size^-0.5), so all M slots start in nearly identical directions and attend to nearly the same tokens during early training. This symmetry slows the emergence of specialized memory slots. Orthogonal initialization gives each slot a well-separated direction from step 0, providing strong inductive bias for slot discrimination. Unlike the failed Linear-projection attempts (iter_14-16), this only touches the existing nn.Parameter initialization and adds no new parameters or forward-pass complexity.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter.__init__ method: replace the two lines 'self.write_queries = nn.Parameter(torch.zeros(num_vectors, hidden_size))' and 'nn.init.normal_(self.write_queries, std=hidden_size ** -0.5)' with 'self.write_queries = nn.Parameter(torch.linalg.qr(torch.randn(num_vectors, hidden_size))[0] * (hidden_size ** -0.5))'. This replaces the random normal initialization with orthogonal directions scaled to the same magnitude. Handle the edge case where num_vectors > hidden_size by using torch.randn(hidden_size, num_vectors).T instead. This is the only change to make.",
+        "run_name": "ortho_write_queries"
+      },
+      "em_score": 0.206,
+      "prev_best": 0.222,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_018_ortho_write_queries",
+      "wall_time_min": 72.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778766949.9927518,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_018",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.544
     }
   ]
 }
