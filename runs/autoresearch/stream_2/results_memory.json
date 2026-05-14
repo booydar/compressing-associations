@@ -755,6 +755,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3926
+    },
+    {
+      "id": 24,
+      "iter_tag": "iter_024",
+      "description": "Adding a learnable query projection to the unpool MemoryReader will give token states a trainable mapping before attention over memory keys, producing more discriminative retrieval than raw token-memory dot-products.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding a learnable query projection to the unpool MemoryReader will give token states a trainable mapping before attention over memory keys, producing more discriminative retrieval than raw token-memory dot-products.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The unpool reader currently uses raw read_norm(token_states) as queries against k_proj(memory_states). With write_value_dim=256 producing rich memory representations, the unprojected 128-d token queries are a bottleneck for discrimination. A learnable q_proj lets the model adapt its query space for better matching over the expanded memory. Iter_016 attempted this but never ran (executor failed after iter_014's code break). The baseline is now clean on top of iter_020's slot_pos_embed (EM=0.518), so this can be tested properly. Identity initialization preserves current behavior at step 0.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryReader class: (1) In __init__, inside the 'if mode == \"unpool\"' block, add 'self.q_proj = nn.Linear(hidden_size, hidden_size, bias=bias)' before the existing k_proj line, then initialize it as identity with 'nn.init.eye_(self.q_proj.weight)' and if bias is True, 'nn.init.zeros_(self.q_proj.bias)'. (2) In forward() under the unpool branch, before 'k = self.k_proj(memory_states)', add 'q = self.q_proj(token_states)', then replace 'token_states' with 'q' in the attention matmul: 'attn = torch.matmul(q, k.transpose(-1, -2)) * self.scaling'. (3) In parallel() under the unpool branch, before 'mem = mem_shifted.view(B, S, M, -1)', add 'q = self.q_proj(tokens)' to project the token queries, then replace 'tokens' with 'q' in the attention matmul: 'attn = torch.matmul(q, k.transpose(-1, -2)) * self.scaling'. Do not modify the cross_attn branch or any other code.",
+        "run_name": "unpool_q_proj_retry"
+      },
+      "em_score": 0.078,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_024_unpool_q_proj_retry",
+      "wall_time_min": 76.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778796216.3265617,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_024",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.2788
     }
   ]
 }

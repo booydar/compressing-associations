@@ -352,3 +352,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The slot_pos_embed in the writer (iter_020, EM=0.518) gave each memory slot a distinct identity, but the attention still uses a fixed scaling of hidden_size^-0.5. A learnable temperature lets the model discover the optimal attention sharpness per layer — sharper focus for unambiguous token-slot assignments, softer for cases requiring distributed attention. This complements the positional identity signal with adaptive attention expressivity, adding only 1 parameter per layer with no new Linear layers (avoiding the iter_14-16 failure pattern).
 
 
+## Iter 24 — RUNNING — N=4
+**Hypothesis:** Adding a learnable query projection to the unpool MemoryReader will give token states a trainable mapping before attention over memory keys, producing more discriminative retrieval than raw token-memory dot-products.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_024_unpool_q_proj_retry
+
+
+## Iter 24 — reverted — EM: 0.0780 (N=4)
+**Hypothesis:** Adding a learnable query projection to the unpool MemoryReader will give token states a trainable mapping before attention over memory keys, producing more discriminative retrieval than raw token-memory dot-products.
+**Wall time:** 76.0 min
+**Result:** EM=0.0780 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The unpool reader currently uses raw read_norm(token_states) as queries against k_proj(memory_states). With write_value_dim=256 producing rich memory representations, the unprojected 128-d token queries are a bottleneck for discrimination. A learnable q_proj lets the model adapt its query space for better matching over the expanded memory. Iter_016 attempted this but never ran (executor failed after iter_014's code break). The baseline is now clean on top of iter_020's slot_pos_embed (EM=0.518), so this can be tested properly. Identity initialization preserves current behavior at step 0.
+
+
