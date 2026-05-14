@@ -409,6 +409,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3956
+    },
+    {
+      "id": 13,
+      "iter_tag": "iter_013",
+      "description": "Per-vector RMSNorm after the GDN stabilizes memory vector magnitudes so the reader's cross-attention relies on directional alignment rather than norm differences.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Per-vector RMSNorm after the GDN stabilizes memory vector magnitudes so the reader's cross-attention relies on directional alignment rather than norm differences.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The GDN produces memory vectors whose norms vary unpredictably across slots and training steps. With cross_attn read_mode, the reader's attention is computed via dot products that are dominated by norm magnitude rather than directional similarity. This is especially harmful at N=4 where 4 memory vectors must remain distinguishable. Normalizing vectors to unit scale after the GDN (post-orthogonal-rotation) forces the reader to attend based on content direction, improving slot discrimination. This complements the conv_kernel findings (iter_011 showed conv_kernel=2 improved token accuracy to 0.39) by ensuring the reader receives well-conditioned inputs.",
+        "instruction": "In huggingface_rmm_v5p1.py, add per-vector RMSNorm to RecurrentMemoryLayerWrapper: (1) In __init__, add self.mem_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5) after the existing norm initializations. (2) In _forward_parallel, apply self.mem_norm(mem) to the memory tensor after the orthogonal rotation (replace 'mem = self.orthogonal_rotation(mem, inverse=True)' with 'mem = self.orthogonal_rotation(mem, inverse=True)' then 'mem = self.mem_norm(mem)'). (3) In _forward_recurrent, apply self.mem_norm(fla_out) after the orthogonal rotation in the non-identity write branch (replace 'fla_out = self.orthogonal_rotation(fla_out, inverse=True)' with 'fla_out = self.orthogonal_rotation(fla_out, inverse=True)\\n            fla_out = self.mem_norm(fla_out)'). Set n_keys=4, n_values=4, tokens_per_segment=1 in experiment_config.yaml for the N=4 task.",
+        "run_name": "mem_norm_n4"
+      },
+      "em_score": 0.159,
+      "prev_best": 0.2188,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_013_mem_norm_n4",
+      "wall_time_min": 70.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778715432.0168924,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_013",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.4302
     }
   ]
 }

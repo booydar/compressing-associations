@@ -173,3 +173,16 @@ Previous N achieved EM=0.9890 >= threshold 0.95.
 **Rationale:** All N=4 experiments have collapsed (EM<0.22) while the GDN processes only 12 vectors per layer (S=3 context segments x M=4 memory vectors). With expand_v=2.0 and write_value_dim=512, the GDN's internal hidden dimension is 1024—8x the number of input vectors. This massive expansion creates a severely over-parameterized model that memorizes rather than generalizes. Reducing expand_v to 1.0 matches the GDN's hidden dimension to the input width (512), providing effective regularization while preserving full state_size=32 capacity for memory storage.
 
 
+## Iter 13 — RUNNING — N=4
+**Hypothesis:** Per-vector RMSNorm after the GDN stabilizes memory vector magnitudes so the reader's cross-attention relies on directional alignment rather than norm differences.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_013_mem_norm_n4
+
+
+## Iter 13 — reverted — EM: 0.1590 (N=4)
+**Hypothesis:** Per-vector RMSNorm after the GDN stabilizes memory vector magnitudes so the reader's cross-attention relies on directional alignment rather than norm differences.
+**Wall time:** 70.5 min
+**Result:** EM=0.1590 vs prev best=0.2188
+**Metric source:** all_results
+**Rationale:** The GDN produces memory vectors whose norms vary unpredictably across slots and training steps. With cross_attn read_mode, the reader's attention is computed via dot products that are dominated by norm magnitude rather than directional similarity. This is especially harmful at N=4 where 4 memory vectors must remain distinguishable. Normalizing vectors to unit scale after the GDN (post-orthogonal-rotation) forces the reader to attend based on content direction, improving slot discrimination. This complements the conv_kernel findings (iter_011 showed conv_kernel=2 improved token accuracy to 0.39) by ensuring the reader receives well-conditioned inputs.
+
+
