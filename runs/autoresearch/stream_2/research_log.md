@@ -339,3 +339,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The input-dependent GDN skip gate (iter_013, EM=0.222) showed that norm-based per-token gating outperforms static gating. The memory read gate was only tried as a static scalar (iter_012, EM=0.1566, reverted). Making it input-dependent lets the model blend more memory for low-activation tokens that need retrieval help, while suppressing memory for high-activation tokens that are already informative. This mirrors the proven GDN skip pattern and adds only 2 parameters per layer.
 
 
+## Iter 23 — RUNNING — N=4
+**Hypothesis:** Adding a learnable attention temperature to the MemoryWriter will let each layer adapt how sharply each slot focuses on its target tokens, improving over the fixed inverse-dim scaling.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_023_writer_attn_temp
+
+
+## Iter 23 — reverted — EM: 0.1368 (N=4)
+**Hypothesis:** Adding a learnable attention temperature to the MemoryWriter will let each layer adapt how sharply each slot focuses on its target tokens, improving over the fixed inverse-dim scaling.
+**Wall time:** 60.3 min
+**Result:** EM=0.1368 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The slot_pos_embed in the writer (iter_020, EM=0.518) gave each memory slot a distinct identity, but the attention still uses a fixed scaling of hidden_size^-0.5. A learnable temperature lets the model discover the optimal attention sharpness per layer — sharper focus for unambiguous token-slot assignments, softer for cases requiring distributed attention. This complements the positional identity signal with adaptive attention expressivity, adding only 1 parameter per layer with no new Linear layers (avoiding the iter_14-16 failure pattern).
+
+
