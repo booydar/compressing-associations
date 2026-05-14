@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_001",
-    "em": 0.1872,
+    "variant": "iter_007",
+    "em": 0.202,
     "n_level": 4
   },
   "n_level": 4,
@@ -215,6 +215,37 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3936
+    },
+    {
+      "id": 7,
+      "iter_tag": "iter_007",
+      "description": "Increasing expand_v to 2.0 and conv_kernel to 4 will broaden the receptive field of value projections, aiding pattern generalization for associative retrieval.",
+      "hypothesis": {
+        "hypothesis": "Increasing expand_v to 2.0 and conv_kernel to 4 will broaden the receptive field of value projections, aiding pattern generalization for associative retrieval.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "These are listed as unlocked knobs to sweep; testing expanded dimensions and larger conv kernels probes representational capacity limits without altering core recurrence.",
+        "instruction": "Set `expand_v` to `2.0` and `conv_kernel` to `4` in the experiment config file.",
+        "run_name": "expandv_2_conv4"
+      },
+      "em_score": 0.202,
+      "prev_best": 0.1872,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_007_expandv_2_conv4",
+      "wall_time_min": 78.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778727812.897701,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_007",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5272
     }
   ]
 }

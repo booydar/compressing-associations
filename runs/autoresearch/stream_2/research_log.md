@@ -106,3 +106,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** Layer-order experiments are encouraged to probe information flow dynamics; shifting reads before writes tests whether pre-updated memory yields better attention queries.
 
 
+## Iter 7 — RUNNING — N=4
+**Hypothesis:** Increasing expand_v to 2.0 and conv_kernel to 4 will broaden the receptive field of value projections, aiding pattern generalization for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_007_expandv_2_conv4
+
+
+## Iter 7 — kept — EM: 0.2020 (N=4)
+**Hypothesis:** Increasing expand_v to 2.0 and conv_kernel to 4 will broaden the receptive field of value projections, aiding pattern generalization for associative retrieval.
+**Wall time:** 78.9 min
+**Result:** EM=0.2020 vs prev best=0.1872
+**Metric source:** all_results
+**Rationale:** These are listed as unlocked knobs to sweep; testing expanded dimensions and larger conv kernels probes representational capacity limits without altering core recurrence.
+
+
