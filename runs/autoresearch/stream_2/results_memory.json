@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_007",
-    "em": 0.202,
+    "variant": "iter_010",
+    "em": 0.2116,
     "n_level": 4
   },
   "n_level": 4,
@@ -310,6 +310,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3885
+    },
+    {
+      "id": 10,
+      "iter_tag": "iter_010",
+      "description": "Adding a sigmoid-gated learnable scalar to the GDN skip connection in RecurrentLayerWithSkip will let the model dynamically control how much recurrent output to blend, improving retrieval accuracy over the unconditional residual.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding a sigmoid-gated learnable scalar to the GDN skip connection in RecurrentLayerWithSkip will let the model dynamically control how much recurrent output to blend, improving retrieval accuracy over the unconditional residual.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The current RecurrentLayerWithSkip always computes hidden_states + out_tensor, forcing the GDN contribution to be fully additive at every layer. For associative retrieval, some layers may benefit from suppressing the recurrent signal when the memory path already provides sufficient information. A per-layer gate initialized near 1.0 preserves the default behavior while allowing learned adaptation.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the RecurrentLayerWithSkip class: (1) In __init__, add self.gate = nn.Parameter(torch.tensor(1.0)). (2) In forward, replace the return statement so the output becomes: gate_val = torch.sigmoid(self.gate); if output is a tuple, return (hidden_states + gate_val * out_tensor,) + output[1:]; else return hidden_states + gate_val * out_tensor. This is the only change to make.",
+        "run_name": "gated_gdn_skip"
+      },
+      "em_score": 0.2116,
+      "prev_best": 0.202,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_010_gated_gdn_skip",
+      "wall_time_min": 70.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778741953.0469275,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_010",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.532
     }
   ]
 }

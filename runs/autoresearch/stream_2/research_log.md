@@ -145,3 +145,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The current unpool reader computes attention as matmul(token_states, k_proj(memory)), using raw post-attention token embeddings as queries directly. The cross_attn reader uses learnable Q/K/V projections via LlamaCrossAttention, allowing the model to transform token states into an optimal query space for memory retrieval. This added expressivity should improve EM on the associative retrieval task.
 
 
+## Iter 10 — RUNNING — N=4
+**Hypothesis:** Adding a sigmoid-gated learnable scalar to the GDN skip connection in RecurrentLayerWithSkip will let the model dynamically control how much recurrent output to blend, improving retrieval accuracy over the unconditional residual.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_010_gated_gdn_skip
+
+
+## Iter 10 — kept — EM: 0.2116 (N=4)
+**Hypothesis:** Adding a sigmoid-gated learnable scalar to the GDN skip connection in RecurrentLayerWithSkip will let the model dynamically control how much recurrent output to blend, improving retrieval accuracy over the unconditional residual.
+**Wall time:** 70.8 min
+**Result:** EM=0.2116 vs prev best=0.2020
+**Metric source:** all_results
+**Rationale:** The current RecurrentLayerWithSkip always computes hidden_states + out_tensor, forcing the GDN contribution to be fully additive at every layer. For associative retrieval, some layers may benefit from suppressing the recurrent signal when the memory path already provides sufficient information. A per-layer gate initialized near 1.0 preserves the default behavior while allowing learned adaptation.
+
+
