@@ -132,3 +132,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The current warmup_steps of 10000 consumes 40% of the 25000 total training steps, meaning the model spends most of training at a suppressed learning rate. Reducing to 2000 (8% of training) still provides sufficient warmup for stability while giving the model 18000 more steps at full learning rate for effective convergence on the N=4 retrieval task.
 
 
+## Iter 9 — RUNNING — N=4
+**Hypothesis:** Switching read_mode from unpool to cross_attn will give the memory reader learnable Q/K/V projections instead of raw token-state dot-products, producing more discriminative attention patterns over memory vectors.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_009_cross_attn_reader
+
+
+## Iter 9 — reverted — EM: 0.1322 (N=4)
+**Hypothesis:** Switching read_mode from unpool to cross_attn will give the memory reader learnable Q/K/V projections instead of raw token-state dot-products, producing more discriminative attention patterns over memory vectors.
+**Wall time:** 74.5 min
+**Result:** EM=0.1322 vs prev best=0.2020
+**Metric source:** all_results
+**Rationale:** The current unpool reader computes attention as matmul(token_states, k_proj(memory)), using raw post-attention token embeddings as queries directly. The cross_attn reader uses learnable Q/K/V projections via LlamaCrossAttention, allowing the model to transform token states into an optimal query space for memory retrieval. This added expressivity should improve EM on the associative retrieval task.
+
+
