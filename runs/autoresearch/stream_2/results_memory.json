@@ -979,6 +979,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3891
+    },
+    {
+      "id": 31,
+      "iter_tag": "iter_031",
+      "description": "Adding RMSNorm to the MemoryWriter's query projection output will stabilize the scale of projected write queries, producing better-calibrated attention scores and improving slot discrimination during memory writes.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding RMSNorm to the MemoryWriter's query projection output will stabilize the scale of projected write queries, producing better-calibrated attention scores and improving slot discrimination during memory writes.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer's cross_attn path projects queries through q_proj but leaves them unnormalized, creating a scale mismatch with the key projections. The reader's key RMSNorm (iter_27) degraded performance, but the writer side is a complementary path that hasn't been tested. Normalizing queries after q_proj stabilizes attention scores on the write side, improving how distinctively each memory slot attends to its target tokens. This is a minimal 2-parameter-per-layer change that only touches the writer path.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, when mode=='cross_attn', add 'self.q_norm = nn.RMSNorm(hidden_size, eps=1e-5)' after the 'self.q_proj = nn.Linear(...)' line. (2) In forward(), after 'queries = self.q_proj(queries)', add 'queries = self.q_norm(queries)'. (3) In parallel(), after 'queries = self.q_proj(queries)', add 'queries = self.q_norm(queries)'. This is the only change to make.",
+        "run_name": "writer_query_norm"
+      },
+      "em_score": 0.1986,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_031_writer_query_norm",
+      "wall_time_min": 60.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778826214.7162523,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_031",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5202
     }
   ]
 }

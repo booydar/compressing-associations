@@ -443,3 +443,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The GDN processes write vectors through a 256->32->256 bottleneck (write_value_dim=256, state_size=32). This severe compression means much of the original token information is lost in the recurrent state. A gated residual lets raw write information flow directly to the memory output, complementing the GDN's recurrent processing. Unlike prior attempts that added capacity (wvdim_384, iter_017 EM=0.1354) or normalization (iter_27/29), this preserves existing signal while the gate learns how much bypass is useful. Initialized at 0.0 so training starts from current behavior.
 
 
+## Iter 31 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm to the MemoryWriter's query projection output will stabilize the scale of projected write queries, producing better-calibrated attention scores and improving slot discrimination during memory writes.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_031_writer_query_norm
+
+
+## Iter 31 — reverted — EM: 0.1986 (N=4)
+**Hypothesis:** Adding RMSNorm to the MemoryWriter's query projection output will stabilize the scale of projected write queries, producing better-calibrated attention scores and improving slot discrimination during memory writes.
+**Wall time:** 60.1 min
+**Result:** EM=0.1986 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The writer's cross_attn path projects queries through q_proj but leaves them unnormalized, creating a scale mismatch with the key projections. The reader's key RMSNorm (iter_27) degraded performance, but the writer side is a complementary path that hasn't been tested. Normalizing queries after q_proj stabilizes attention scores on the write side, improving how distinctively each memory slot attends to its target tokens. This is a minimal 2-parameter-per-layer change that only touches the writer path.
+
+
