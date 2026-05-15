@@ -1076,6 +1076,38 @@
       "summary_logged": false,
       "stream_id": "0",
       "token_accuracy": 0.3957
+    },
+    {
+      "id": 34,
+      "iter_tag": "iter_034",
+      "description": "Adding sinusoidal positional encoding to memory slot identities before GDN processing gives each slot a distinct fixed signature, improving the GDN's ability to track 4 separate associations with state_size=32.",
+      "hypothesis": {
+        "stream_id": "0",
+        "hypothesis": "Adding sinusoidal positional encoding to memory slot identities before GDN processing gives each slot a distinct fixed signature, improving the GDN's ability to track 4 separate associations with state_size=32.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The GDN processes M=4 memory vectors sequentially with only state_size=32, making it difficult to distinguish which slot is which. The learnable write_queries provide soft identity but no explicit positional signal to the recurrent layer. Fixed sinusoidal position encoding added to write_vecs before the GDN gives the model a persistent, unique signature per slot, complementing the content-based attention. This is architecturally distinct from iter_026's per-slot bias (which was added to query keys) by encoding position directly into the vectors entering the recurrent compression bottleneck.",
+        "instruction": "In huggingface_rmm_v5p1.py, modify RecurrentMemoryLayerWrapper: (1) In __init__, after self.write_value_dim assignment, add: import math; M = num_memory_vectors; d_v = self.write_value_dim; pe = torch.zeros(M, d_v); for pos in range(M): for dim in range(0, d_v, 2): pe[pos, dim] = math.sin(pos * (10000 ** (-(2*(dim//2))/max(1, d_v)))) * (d_v ** 0.5); self.register_buffer('slot_pos_enc', pe). (2) In _forward_parallel inside the else block (write_mode != 'identity'), after the line 'write_vecs = self.memory_writer.parallel(...)' and before 'write_vecs_rot = ...', insert: write_vecs = write_vecs + self.slot_pos_enc.view(1, 1, M, self.write_value_dim).expand(B, S, -1, -1).reshape(B, S * M, self.write_value_dim). (3) In _forward_recurrent inside the else block (write_mode != 'identity'), after the line 'write_vecs = self.memory_writer(...)' and before 'write_vecs_rot = ...', insert: write_vecs = write_vecs + self.slot_pos_enc.unsqueeze(0).expand(B, -1, -1).",
+        "run_name": "slot_pos_enc_gdn"
+      },
+      "em_score": 0.144,
+      "prev_best": 0.3194,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_034_slot_pos_enc_gdn",
+      "wall_time_min": 75.8,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778799676.7478209,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_034",
+      "summary_logged": false,
+      "stream_id": "0",
+      "token_accuracy": 0.3888
     }
   ]
 }

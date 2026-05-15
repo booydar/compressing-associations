@@ -441,3 +441,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The best N=4 result (iter_019, EM=0.3194) added a gated FFN residual to the reader. The writer in cross_attn mode still only has a linear out_proj with no non-linearity, creating an asymmetry: the reader can non-linearly transform attended memory but the writer can't non-linearly refine its attention output before the GDN. iter_020 tried a 4x FFN after out_proj without residual and it hurt performance. Using a smaller 1x expansion with gated residual avoids over-parameterization while giving the writer matching non-linear capacity. The sigmoid gate learns when FFN refinement is beneficial, and the residual preserves the original linear output as fallback.
 
 
+## Iter 34 — RUNNING — N=4
+**Hypothesis:** Adding sinusoidal positional encoding to memory slot identities before GDN processing gives each slot a distinct fixed signature, improving the GDN's ability to track 4 separate associations with state_size=32.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/n4/iter_034_slot_pos_enc_gdn
+
+
+## Iter 34 — reverted — EM: 0.1440 (N=4)
+**Hypothesis:** Adding sinusoidal positional encoding to memory slot identities before GDN processing gives each slot a distinct fixed signature, improving the GDN's ability to track 4 separate associations with state_size=32.
+**Wall time:** 75.8 min
+**Result:** EM=0.1440 vs prev best=0.3194
+**Metric source:** all_results
+**Rationale:** The GDN processes M=4 memory vectors sequentially with only state_size=32, making it difficult to distinguish which slot is which. The learnable write_queries provide soft identity but no explicit positional signal to the recurrent layer. Fixed sinusoidal position encoding added to write_vecs before the GDN gives the model a persistent, unique signature per slot, complementing the content-based attention. This is architecturally distinct from iter_026's per-slot bias (which was added to query keys) by encoding position directly into the vectors entering the recurrent compression bottleneck.
+
+
