@@ -391,3 +391,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader's slot_pos_embed (iter_021, EM=0.3364) showed promise above the pre-slot baseline of 0.222, but hurt the overall EM=0.518 because full-strength embeddings overwhelmed content-based matching at keys. By adding a learnable scale initialized at 0.1, the content signal dominates initially (preserving iter_020's strong performance), while the model can gradually learn to leverage slot identity during retrieval if beneficial. This recovers the reader slot signal without the destructive interference.
 
 
+## Iter 27 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm after the reader's key projection will stabilize the scale of projected memory keys, producing better-calibrated attention scores and improving retrieval discrimination.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_027_key_norm_post_proj
+
+
+## Iter 27 — reverted — EM: 0.1436 (N=4)
+**Hypothesis:** Adding RMSNorm after the reader's key projection will stabilize the scale of projected memory keys, producing better-calibrated attention scores and improving retrieval discrimination.
+**Wall time:** 59.4 min
+**Result:** EM=0.1436 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The reader's k_proj receives unnormalized GDN output, so key norms vary with recurrent dynamics, causing attention score variance that harms slot discrimination. Post-projection key normalization ensures attention operates on consistently-scaled keys. This is distinct from iter_011's pre-projection mem_norm (EM=0.1454), which normalized raw memory states before the linear transform; normalizing in the key space after projection directly stabilizes the attention computation where it matters.
+
+

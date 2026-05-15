@@ -851,6 +851,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3894
+    },
+    {
+      "id": 27,
+      "iter_tag": "iter_027",
+      "description": "Adding RMSNorm after the reader's key projection will stabilize the scale of projected memory keys, producing better-calibrated attention scores and improving retrieval discrimination.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding RMSNorm after the reader's key projection will stabilize the scale of projected memory keys, producing better-calibrated attention scores and improving retrieval discrimination.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The reader's k_proj receives unnormalized GDN output, so key norms vary with recurrent dynamics, causing attention score variance that harms slot discrimination. Post-projection key normalization ensures attention operates on consistently-scaled keys. This is distinct from iter_011's pre-projection mem_norm (EM=0.1454), which normalized raw memory states before the linear transform; normalizing in the key space after projection directly stabilizes the attention computation where it matters.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryReader class: (1) In __init__, after the line 'self.k_proj = nn.Linear(write_value_dim, hidden_size, bias=bias)', add 'self.key_norm = nn.RMSNorm(hidden_size, eps=1e-5)'. (2) In forward(), under the unpool branch, replace 'k = self.k_proj(memory_states)' with 'k = self.k_proj(memory_states)\\n            k = self.key_norm(k)'. (3) In parallel(), under the unpool branch, replace 'k = self.k_proj(mem)' with 'k = self.k_proj(mem)\\n            k = self.key_norm(k)'. Do not modify any other code.",
+        "run_name": "key_norm_post_proj"
+      },
+      "em_score": 0.1436,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_027_key_norm_post_proj",
+      "wall_time_min": 59.4,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778810290.4896083,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_027",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3961
     }
   ]
 }
