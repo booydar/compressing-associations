@@ -560,3 +560,8 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The unpool reader uses raw token_states (n_embd=128) as queries against projected memory keys. With write_value_dim=256, memory vectors are richer than token states, but queries are unprojected. A learnable q_proj lets the reader adapt its query space for better discrimination over memory slots. Iter_016 attempted this but failed to train due to cascading executor failures from iter_014, so the hypothesis was never actually evaluated. The cross_attn reader (iter_009, EM=0.1322) was worse overall, but its full Q/K/V machinery added too many parameters; a single query projection is a minimal, targeted change that preserves unpool's effective key/value path while adding query expressivity.
 
 
+## Iter 40 — RUNNING — N=4
+**Hypothesis:** Adding slot_pos_embed_reader to the value projection in the unpool MemoryReader (currently only applied to keys) will give memory slots distinct value identities at retrieval time, complementing the key-side slot discrimination and the writer's per-slot value biases.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_040_reader_slot_val_embed
+
+

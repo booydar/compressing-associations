@@ -208,6 +208,7 @@ class MemoryReader(nn.Module):
             k = self.k_proj(memory_states)
             k = k + self.slot_pos_embed_reader.unsqueeze(0)
             v = self.v_proj(memory_states)
+            v = v + self.slot_pos_embed_reader.unsqueeze(0)
             attn = torch.matmul(token_states, k.transpose(-1, -2)) * self.scaling
             attn = F.softmax(attn, dim=-1)
             return torch.matmul(attn, v)
@@ -229,6 +230,7 @@ class MemoryReader(nn.Module):
             k = self.k_proj(mem)                                  # (B, S, M, d)
             k = k + self.slot_pos_embed_reader.view(1, 1, M, -1)
             v = self.v_proj(mem)                                  # (B, S, M, d)
+            v = v + self.slot_pos_embed_reader.view(1, 1, M, -1)
             attn = torch.matmul(tokens, k.transpose(-1, -2)) * self.scaling   # (B, S, T, M)
             attn = F.softmax(attn, dim=-1)
             out = torch.matmul(attn, v)                           # (B, S, T, d)
