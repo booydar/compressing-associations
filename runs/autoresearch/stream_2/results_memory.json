@@ -1011,6 +1011,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.5202
+    },
+    {
+      "id": 32,
+      "iter_tag": "iter_032",
+      "description": "Reducing warmup_steps from 10000 to 3000 will let the model reach full learning rate faster, improving convergence now that slot_pos_embed provides stable structural inductive bias.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Reducing warmup_steps from 10000 to 3000 will let the model reach full learning rate faster, improving convergence now that slot_pos_embed provides stable structural inductive bias.",
+        "target_component": ".autoresearch/experiment_config.yaml",
+        "rationale": "The current warmup_steps=10000 consumes 40% of 25000 training steps at suppressed learning rate. This was set before the slot_pos_embed breakthrough (iter_020, EM=0.518), which fundamentally stabilized training by giving each memory slot a distinct identity. With the writer's slot specialization providing strong structural signals from step 0, the model no needs such an extended warmup for stability. Reducing to 3000 (12% of training) still provides adequate warmup while giving the model 7000 more steps at full learning_rate=3e-4 for effective fine-tuning. The prior warmup reduction attempt (iter_008, 2000 steps, EM=0.1396) was before slot_pos_embed existed, when training was much less stable at EM~0.22.",
+        "instruction": "In /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/experiment_config.yaml, change the line 'warmup_steps: 10000' to 'warmup_steps: 3000'.",
+        "run_name": "warmup_3000"
+      },
+      "em_score": 0.0866,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_032_warmup_3000",
+      "wall_time_min": 39.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778830546.9365487,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_032",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.2781
     }
   ]
 }

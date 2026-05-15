@@ -456,3 +456,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer's cross_attn path projects queries through q_proj but leaves them unnormalized, creating a scale mismatch with the key projections. The reader's key RMSNorm (iter_27) degraded performance, but the writer side is a complementary path that hasn't been tested. Normalizing queries after q_proj stabilizes attention scores on the write side, improving how distinctively each memory slot attends to its target tokens. This is a minimal 2-parameter-per-layer change that only touches the writer path.
 
 
+## Iter 32 — RUNNING — N=4
+**Hypothesis:** Reducing warmup_steps from 10000 to 3000 will let the model reach full learning rate faster, improving convergence now that slot_pos_embed provides stable structural inductive bias.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_032_warmup_3000
+
+
+## Iter 32 — reverted — EM: 0.0866 (N=4)
+**Hypothesis:** Reducing warmup_steps from 10000 to 3000 will let the model reach full learning rate faster, improving convergence now that slot_pos_embed provides stable structural inductive bias.
+**Wall time:** 39.7 min
+**Result:** EM=0.0866 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The current warmup_steps=10000 consumes 40% of 25000 training steps at suppressed learning rate. This was set before the slot_pos_embed breakthrough (iter_020, EM=0.518), which fundamentally stabilized training by giving each memory slot a distinct identity. With the writer's slot specialization providing strong structural signals from step 0, the model no needs such an extended warmup for stability. Reducing to 3000 (12% of training) still provides adequate warmup while giving the model 7000 more steps at full learning_rate=3e-4 for effective fine-tuning. The prior warmup reduction attempt (iter_008, 2000 steps, EM=0.1396) was before slot_pos_embed existed, when training was much less stable at EM~0.22.
+
+
