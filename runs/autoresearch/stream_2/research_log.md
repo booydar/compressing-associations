@@ -404,3 +404,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader's k_proj receives unnormalized GDN output, so key norms vary with recurrent dynamics, causing attention score variance that harms slot discrimination. Post-projection key normalization ensures attention operates on consistently-scaled keys. This is distinct from iter_011's pre-projection mem_norm (EM=0.1454), which normalized raw memory states before the linear transform; normalizing in the key space after projection directly stabilizes the attention computation where it matters.
 
 
+## Iter 28 — RUNNING — N=4
+**Hypothesis:** Initializing the GDN skip gate bias at 1.0 instead of 0.0 will let more GDN contribution through from training step 0, improving memory vector differentiation for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_028_gdn_gate_bias_1
+
+
+## Iter 28 — reverted — EM: 0.2086 (N=4)
+**Hypothesis:** Initializing the GDN skip gate bias at 1.0 instead of 0.0 will let more GDN contribution through from training step 0, improving memory vector differentiation for associative retrieval.
+**Wall time:** 60.0 min
+**Result:** EM=0.2086 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The input-dependent GDN skip gate (iter_013, kept) uses gate_bias=0.0, giving initial gate=sigmoid(0)=0.5 equal blend. iter_010's successful static gate used init=1.0 (sigmoid(1.0)~0.73), showing higher initial GDN contribution helps. With slot_pos_embed providing strong structural signals (iter_020, EM=0.518), the GDN needs to differentiate memory vectors aggressively from the start. Starting the gate higher encourages the model to leverage the GDN's processing capacity earlier, while the input-dependent mechanism still allows per-token adaptation. This only changes a single initialization value with zero new parameters.
+
+

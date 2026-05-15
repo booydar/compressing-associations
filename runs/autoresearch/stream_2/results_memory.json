@@ -883,6 +883,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3961
+    },
+    {
+      "id": 28,
+      "iter_tag": "iter_028",
+      "description": "Initializing the GDN skip gate bias at 1.0 instead of 0.0 will let more GDN contribution through from training step 0, improving memory vector differentiation for associative retrieval.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Initializing the GDN skip gate bias at 1.0 instead of 0.0 will let more GDN contribution through from training step 0, improving memory vector differentiation for associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The input-dependent GDN skip gate (iter_013, kept) uses gate_bias=0.0, giving initial gate=sigmoid(0)=0.5 equal blend. iter_010's successful static gate used init=1.0 (sigmoid(1.0)~0.73), showing higher initial GDN contribution helps. With slot_pos_embed providing strong structural signals (iter_020, EM=0.518), the GDN needs to differentiate memory vectors aggressively from the start. Starting the gate higher encourages the model to leverage the GDN's processing capacity earlier, while the input-dependent mechanism still allows per-token adaptation. This only changes a single initialization value with zero new parameters.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the RecurrentLayerWithSkip.__init__ method: change the line 'self.gate_bias = nn.Parameter(torch.tensor(0.0))' to 'self.gate_bias = nn.Parameter(torch.tensor(1.0))'. This is the only change to make.",
+        "run_name": "gdn_gate_bias_1"
+      },
+      "em_score": 0.2086,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_028_gdn_gate_bias_1",
+      "wall_time_min": 60.0,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778814613.286731,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_028",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5342
     }
   ]
 }
