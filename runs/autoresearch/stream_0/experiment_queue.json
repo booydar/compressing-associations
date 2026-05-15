@@ -1,5 +1,22 @@
 {
-  "queue": [],
+  "queue": [
+    {
+      "stream_id": "0",
+      "hypothesis": "Adding a residual connection from the writer's projected queries to its attention output preserves each memory slot's identity signal through the attention mechanism, improving the GDN's ability to distinguish 4 associations at N=4.",
+      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+      "rationale": "The MemoryWriter's attention completely replaces queries with attended token information, losing each slot's identity. The reader benefits from FFN residual (iter_019, EM=0.3194) but the writer has no residual path. At N=4, preserving slot identity through the writer's attention is critical for the GDN to track 4 distinct associations with state_size=32. The query residual lets each memory vector retain its slot-specific signature while incorporating attended token content, analogous to how transformer feed-forward layers use residuals.",
+      "instruction": "In huggingface_rmm_v5p1.py, modify the MemoryWriter class to add a query residual in cross_attn mode: (1) In forward(), replace 'out = self.out_proj(out)' inside the 'if self.mode == \"cross_attn\":" block with 'out = self.out_proj(out + queries)'. (2) In parallel(), replace 'out = self.out_proj(out)' inside the 'if self.mode == \"cross_attn\":" block with 'out = self.out_proj(out + queries)'. This adds the projected queries as a residual to the attention output before out_proj, preserving slot identity information through the writer's attention mechanism.",
+      "run_name": "writer_query_residual_n4"
+    },
+    {
+      "stream_id": "0",
+      "hypothesis": "Adding RMSNorm to memory vectors after GDN processing before the reader's cross-attention stabilizes the 512-dim memory representations, improving attention weight quality and EM at N=4.",
+      "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+      "rationale": "The best result so far was iter 30 (EM=0.084) which added RMSNorm before the GDN input, confirming normalization is critical in this architecture. The writer path has write_norm before the MemoryWriter, and the reader path has read_norm on token states. But the memory vectors flowing from GDN output into the reader's cross-attention have no normalization — the GDN's recurrent transformations can produce vectors with unstable norms across slots, degrading the reader's attention weights. Adding mem_norm symmetrically normalizes the GDN-processed memory before cross-attention, matching the normalization pattern already used for write_norm and read_norm.",
+      "instruction": "In huggingface_rmm_v5p1.py, modify the RecurrentMemoryLayerWrapper class: (1) In __init__, after 'self.read_norm = nn.RMSNorm(model_hidden_size, eps=1e-5)', add 'self.mem_norm = nn.RMSNorm(self.write_value_dim, eps=1e-5)'. (2) In _forward_recurrent(), in the 'else:' branch (non-identity write_mode), replace 'self.last_write_output = fla_out' with 'self.last_write_output = self.mem_norm(fla_out)'. (3) In _forward_parallel(), in the 'else:' branch (non-identity write_mode), after computing 'mem = self.orthogonal_rotation(mem, inverse=True)', add 'mem = self.mem_norm(mem)' before 'self.last_write_output = mem[:, -M:, :].contiguous()'. This normalizes the GDN-processed memory vectors before they enter the reader's cross-attention.",
+      "run_name": "mem_norm_before_reader_n4"
+    }
+  ],
   "last_directions_hash": "0189f232c368b95be0389601cb68c6e9",
   "last_updated": "2026-05-15T01:58:25.352411"
 }

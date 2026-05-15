@@ -454,3 +454,878 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The GDN processes M=4 memory vectors sequentially with only state_size=32, making it difficult to distinguish which slot is which. The learnable write_queries provide soft identity but no explicit positional signal to the recurrent layer. Fixed sinusoidal position encoding added to write_vecs before the GDN gives the model a persistent, unique signature per slot, complementing the content-based attention. This is architecturally distinct from iter_026's per-slot bias (which was added to query keys) by encoding position directly into the vectors entering the recurrent compression bottleneck.
 
 
+## Iter 35 — FAILED — N=4
+**Error:** planner failed after 2 attempts: planner failed after 2 attempts: Command '['opencode', 'run', '-m', 'llama_local/unsloth/Qwen3.5-122B-A10B-GGUF', 'Follow the research instructions in the attached file exactly.', '-f', '/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_0/artifacts/iter_035/planner_prompt.txt']' timed out after 900 seconds
+**Recovery status:** not_attempted
+
+
+## Iter 36 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 37 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 38 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 39 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 40 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 41 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 42 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 43 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 44 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 45 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 46 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 47 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 48 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 49 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 50 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 51 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 52 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 53 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 54 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 55 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 56 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 57 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 58 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 59 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 60 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 61 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 62 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 63 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 64 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 65 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 66 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 67 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 68 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 69 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 70 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 71 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 72 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 73 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 74 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 75 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 76 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 77 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 78 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 79 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 80 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 81 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 82 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 83 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 84 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 85 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 86 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 87 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 88 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 89 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 90 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 91 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 92 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 93 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 94 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 95 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 96 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 97 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 98 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 99 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 100 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 101 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 102 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 103 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 104 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 105 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 106 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 107 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 108 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 109 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 110 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 111 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 112 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 113 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 114 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 115 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 116 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 117 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 118 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 119 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 120 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 121 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 122 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 123 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 124 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 125 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 126 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 127 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 128 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 129 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 130 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 131 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 132 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 133 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 134 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 135 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 136 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 137 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 138 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 139 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 140 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 141 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 142 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 143 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 144 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 145 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 146 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 147 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 148 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 149 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 150 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 151 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 152 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 153 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 154 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 155 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 156 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 157 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 158 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 159 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 160 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 161 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 162 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 163 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 164 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 165 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 166 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 167 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 168 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 169 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 170 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 171 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 172 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 173 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 174 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 175 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 176 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 177 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 178 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 179 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 180 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 181 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 182 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 183 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 184 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 185 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 186 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 187 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 188 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 189 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 190 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 191 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 192 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 193 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 194 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 195 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 196 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 197 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 198 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 199 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 200 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 201 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 202 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 203 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 204 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 205 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 206 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 207 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 208 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
+## Iter 209 — FAILED — N=4
+**Error:** unhandled: Expecting ',' delimiter: line 8 column 223 (char 1154)
+**Recovery status:** not_attempted
+
+
