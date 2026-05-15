@@ -1235,6 +1235,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.7333
+    },
+    {
+      "id": 39,
+      "iter_tag": "iter_039",
+      "description": "Adding a learnable query projection to the unpool MemoryReader will transform token states into an optimal query space for memory retrieval, improving discrimination over the expanded 256-dim memory value space.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding a learnable query projection to the unpool MemoryReader will transform token states into an optimal query space for memory retrieval, improving discrimination over the expanded 256-dim memory value space.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The unpool reader uses raw token_states (n_embd=128) as queries against projected memory keys. With write_value_dim=256, memory vectors are richer than token states, but queries are unprojected. A learnable q_proj lets the reader adapt its query space for better discrimination over memory slots. Iter_016 attempted this but failed to train due to cascading executor failures from iter_014, so the hypothesis was never actually evaluated. The cross_attn reader (iter_009, EM=0.1322) was worse overall, but its full Q/K/V machinery added too many parameters; a single query projection is a minimal, targeted change that preserves unpool's effective key/value path while adding query expressivity.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryReader class: (1) In __init__, when mode=='unpool', add 'self.q_proj = nn.Linear(hidden_size, hidden_size, bias=bias)' before the existing k_proj and v_proj lines. (2) In forward() under the unpool branch, add 'q = self.q_proj(token_states)' before the k_proj line, then use 'q' instead of 'token_states' in the matmul: 'attn = torch.matmul(q, k.transpose(-1, -2)) * self.scaling'. (3) In parallel() under the unpool branch, add 'q = self.q_proj(tokens)' before the k_proj line, then use 'q' instead of 'tokens' in the matmul: 'attn = torch.matmul(q, k.transpose(-1, -2)) * self.scaling'. Keep all other code unchanged.",
+        "run_name": "unpool_qproj_retry"
+      },
+      "em_score": 0.0764,
+      "prev_best": 0.6794,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_039_unpool_qproj_retry",
+      "wall_time_min": 39.3,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778857385.924049,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_039",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.2748
     }
   ]
 }

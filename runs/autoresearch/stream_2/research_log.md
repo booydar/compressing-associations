@@ -547,3 +547,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer's value path is: v_proj -> +slot_value_bias -> out_proj -> GELU. The slot_value_bias (iter_36, EM=0.6794) was the largest single improvement, breaking T=1 symmetry by giving each slot distinct stored content. But there is only one non-linearity (GELU after out_proj), so the entire value path is GELU(o_proj(bias + attn*v)). Adding GELU between the bias and out_proj creates GELU(o_proj(GELU(bias + attn*v))), a two-layer non-linear transform that lets the output projection operate on rectified biased values. This enables richer interactions between the per-slot bias and the linear projection, improving memory vector differentiation. Unlike iter_035's GELU after out_proj (which was reverted because it replaced the existing GELU), this adds a second GELU while keeping the existing one. No new parameters, avoiding the Linear-layer failure pattern from iter_14-16.
 
 
+## Iter 39 — RUNNING — N=4
+**Hypothesis:** Adding a learnable query projection to the unpool MemoryReader will transform token states into an optimal query space for memory retrieval, improving discrimination over the expanded 256-dim memory value space.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_039_unpool_qproj_retry
+
+
+## Iter 39 — reverted — EM: 0.0764 (N=4)
+**Hypothesis:** Adding a learnable query projection to the unpool MemoryReader will transform token states into an optimal query space for memory retrieval, improving discrimination over the expanded 256-dim memory value space.
+**Wall time:** 39.3 min
+**Result:** EM=0.0764 vs prev best=0.6794
+**Metric source:** all_results
+**Rationale:** The unpool reader uses raw token_states (n_embd=128) as queries against projected memory keys. With write_value_dim=256, memory vectors are richer than token states, but queries are unprojected. A learnable q_proj lets the reader adapt its query space for better discrimination over memory slots. Iter_016 attempted this but failed to train due to cascading executor failures from iter_014, so the hypothesis was never actually evaluated. The cross_attn reader (iter_009, EM=0.1322) was worse overall, but its full Q/K/V machinery added too many parameters; a single query projection is a minimal, targeted change that preserves unpool's effective key/value path while adding query expressivity.
+
+
