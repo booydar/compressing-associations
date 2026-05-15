@@ -378,3 +378,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The reader's unpool attention uses fixed hidden_size^-0.5 scaling, but keys are projected from write_value_dim=256 to hidden_size=128, creating different norm characteristics than standard attention. Unlike the writer (iter_23, reverted), the reader faces a slot-retrieval task requiring sharp, focused attention for exact match. A learnable logit temperature lets the model discover the optimal retrieval sharpness, complementing the successful slot positional embeddings (iter_20, EM=0.518).
 
 
+## Iter 26 — RUNNING — N=4
+**Hypothesis:** Adding a learnable scale to the reader's slot_pos_embed initialized at 0.1 will let the model recover the beneficial slot-identity signal for retrieval while preventing the content-overwhelm that caused iter_021's degradation.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_026_reader_slot_scale
+
+
+## Iter 26 — reverted — EM: 0.1334 (N=4)
+**Hypothesis:** Adding a learnable scale to the reader's slot_pos_embed initialized at 0.1 will let the model recover the beneficial slot-identity signal for retrieval while preventing the content-overwhelm that caused iter_021's degradation.
+**Wall time:** 64.1 min
+**Result:** EM=0.1334 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The reader's slot_pos_embed (iter_021, EM=0.3364) showed promise above the pre-slot baseline of 0.222, but hurt the overall EM=0.518 because full-strength embeddings overwhelmed content-based matching at keys. By adding a learnable scale initialized at 0.1, the content signal dominates initially (preserving iter_020's strong performance), while the model can gradually learn to leverage slot identity during retrieval if beneficial. This recovers the reader slot signal without the destructive interference.
+
+
