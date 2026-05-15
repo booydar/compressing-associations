@@ -1107,6 +1107,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.394
+    },
+    {
+      "id": 35,
+      "iter_tag": "iter_035",
+      "description": "Adding GELU activation after the MemoryWriter's attention-weighted value aggregation will introduce non-linearity into memory vector formation, giving the writer more expressive power to create discriminative slot-specialized representations.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding GELU activation after the MemoryWriter's attention-weighted value aggregation will introduce non-linearity into memory vector formation, giving the writer more expressive power to create discriminative slot-specialized representations.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer currently produces memory vectors as a linear softmax-weighted sum of value projections, followed by a linear out_proj. This means the entire write path is piecewise-linear (softmax + two Linear layers). Adding GELU between the attention aggregation and out_proj creates a non-linear transform that lets the writer learn richer, more discriminative memory representations. Unlike iter_029's output RMSNorm which destroyed learned magnitude signals, GELU only rectifies negative dimensions and preserves positive signal strength. Unlike the failed Linear-projection attempts (iter_14-16), this uses no new learnable parameters. The slot_pos_embed (iter_020, EM=0.518) shows the writer benefits from enhanced expressivity; GELU extends this by making the aggregation itself non-linear.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In forward(), inside the 'if self.mode == \"cross_attn\"' block, replace 'out = self.out_proj(out)' with 'out = F.gelu(self.out_proj(out))'. (2) In parallel(), inside the 'if self.mode == \"cross_attn\"' block, replace 'out = self.out_proj(out)' with 'out = F.gelu(self.out_proj(out))'. F is already imported as torch.nn.functional. This is the only change to make.",
+        "run_name": "writer_gelu_activation"
+      },
+      "em_score": 0.202,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_035_writer_gelu_activation",
+      "wall_time_min": 58.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778841715.1889071,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_035",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5315
     }
   ]
 }

@@ -495,3 +495,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer's attention uses fixed 1/sqrt(d) scaling, so all 4 memory slots share the same attention sharpness. The reader's temperature was tried (iter_25, reverted) but the writer is fundamentally different: writer temperature controls slot specialization (how distinctly each slot captures different tokens), while reader temperature controls token-level discrimination. Better slot specialization should produce more differentiated memory vectors, improving downstream retrieval accuracy.
 
 
+## Iter 35 — RUNNING — N=4
+**Hypothesis:** Adding GELU activation after the MemoryWriter's attention-weighted value aggregation will introduce non-linearity into memory vector formation, giving the writer more expressive power to create discriminative slot-specialized representations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_035_writer_gelu_activation
+
+
+## Iter 35 — reverted — EM: 0.2020 (N=4)
+**Hypothesis:** Adding GELU activation after the MemoryWriter's attention-weighted value aggregation will introduce non-linearity into memory vector formation, giving the writer more expressive power to create discriminative slot-specialized representations.
+**Wall time:** 58.2 min
+**Result:** EM=0.2020 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The writer currently produces memory vectors as a linear softmax-weighted sum of value projections, followed by a linear out_proj. This means the entire write path is piecewise-linear (softmax + two Linear layers). Adding GELU between the attention aggregation and out_proj creates a non-linear transform that lets the writer learn richer, more discriminative memory representations. Unlike iter_029's output RMSNorm which destroyed learned magnitude signals, GELU only rectifies negative dimensions and preserves positive signal strength. Unlike the failed Linear-projection attempts (iter_14-16), this uses no new learnable parameters. The slot_pos_embed (iter_020, EM=0.518) shows the writer benefits from enhanced expressivity; GELU extends this by making the aggregation itself non-linear.
+
+
