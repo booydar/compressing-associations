@@ -521,3 +521,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** With tokens_per_segment=1, all M=4 slots attend to the same single token and aggregate identical values. The writer's slot_pos_embed (iter_020, EM=0.518) differentiates queries but not stored content, forcing the GDN to differentiate slots purely through sequential processing order. Per-slot value biases in the write_value_dim=256 space give each slot a distinct content offset from step 0, creating differentiated memory vectors even before GDN processing. This adds only M*d_v = 1024 parameters total and avoids the Linear-layer pattern that caused iter_14-16 failures.
 
 
+## Iter 37 — RUNNING — N=4
+**Hypothesis:** Adding per-slot value biases to the MemoryReader will give each memory slot a distinct value identity at retrieval time, complementing the writer's per-slot value biases and the reader's key-side slot_pos_embed.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_037_reader_slot_value_bias
+
+
+## Iter 37 — reverted — EM: 0.1434 (N=4)
+**Hypothesis:** Adding per-slot value biases to the MemoryReader will give each memory slot a distinct value identity at retrieval time, complementing the writer's per-slot value biases and the reader's key-side slot_pos_embed.
+**Wall time:** 50.2 min
+**Result:** EM=0.1434 vs prev best=0.6794
+**Metric source:** all_results
+**Rationale:** The writer's per-slot value bias (iter_36, EM=0.6794) broke T=1 symmetry at write time by giving each slot a unique stored content identity. The reader already has slot_pos_embed_reader on the key side for attention discrimination, but the value projections are slot-agnostic. Adding per-slot value biases to the reader creates a symmetric design: both write and read paths have explicit per-slot value differentiation, allowing the reader to produce more slot-discriminative retrieved representations.
+
+

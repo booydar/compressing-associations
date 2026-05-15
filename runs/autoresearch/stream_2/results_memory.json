@@ -1171,6 +1171,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.8266
+    },
+    {
+      "id": 37,
+      "iter_tag": "iter_037",
+      "description": "Adding per-slot value biases to the MemoryReader will give each memory slot a distinct value identity at retrieval time, complementing the writer's per-slot value biases and the reader's key-side slot_pos_embed.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding per-slot value biases to the MemoryReader will give each memory slot a distinct value identity at retrieval time, complementing the writer's per-slot value biases and the reader's key-side slot_pos_embed.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer's per-slot value bias (iter_36, EM=0.6794) broke T=1 symmetry at write time by giving each slot a unique stored content identity. The reader already has slot_pos_embed_reader on the key side for attention discrimination, but the value projections are slot-agnostic. Adding per-slot value biases to the reader creates a symmetric design: both write and read paths have explicit per-slot value differentiation, allowing the reader to produce more slot-discriminative retrieved representations.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryReader class: (1) In __init__, after the slot_pos_embed_reader initialization lines, add: 'self.slot_value_bias_reader = nn.Parameter(torch.zeros(num_vectors, hidden_size))' then 'nn.init.normal_(self.slot_value_bias_reader, std=hidden_size ** -0.5)'. (2) In forward(), in the unpool branch, after 'v = self.v_proj(memory_states)', add: 'v = v + self.slot_value_bias_reader.unsqueeze(0)'. (3) In parallel(), in the unpool branch, after 'v = self.v_proj(mem)', add: 'v = v + self.slot_value_bias_reader.view(1, 1, M, -1)'. Do not modify the cross_attn branch. This is the only change to make.",
+        "run_name": "reader_slot_value_bias"
+      },
+      "em_score": 0.1434,
+      "prev_best": 0.6794,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_037_reader_slot_value_bias",
+      "wall_time_min": 50.2,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778849486.952488,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_037",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3942
     }
   ]
 }
