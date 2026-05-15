@@ -1075,6 +1075,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.5501
+    },
+    {
+      "id": 34,
+      "iter_tag": "iter_034",
+      "description": "Adding a learnable attention temperature to the MemoryWriter will let the model adapt how sharply each memory slot attends to tokens, improving slot specialization for associative retrieval.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding a learnable attention temperature to the MemoryWriter will let the model adapt how sharply each memory slot attends to tokens, improving slot specialization for associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer's attention uses fixed 1/sqrt(d) scaling, so all 4 memory slots share the same attention sharpness. The reader's temperature was tried (iter_25, reverted) but the writer is fundamentally different: writer temperature controls slot specialization (how distinctly each slot captures different tokens), while reader temperature controls token-level discrimination. Better slot specialization should produce more differentiated memory vectors, improving downstream retrieval accuracy.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after the 'self.scaling = hidden_size ** -0.5' line, add 'self.attn_temperature = nn.Parameter(torch.tensor(0.0))'. (2) In forward(), replace 'attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling' with 'attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling * torch.exp(self.attn_temperature)'. (3) In parallel(), replace 'attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling' with 'attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling * torch.exp(self.attn_temperature)'. Using exp() ensures the temperature modifier is always positive. Init at 0.0 means exp(0)=1.0, preserving the default 1/sqrt(d) scaling at training start. This is the only change to make.",
+        "run_name": "writer_attn_temp"
+      },
+      "em_score": 0.1562,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_034_writer_attn_temp",
+      "wall_time_min": 49.5,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778837436.8478985,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_034",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.394
     }
   ]
 }

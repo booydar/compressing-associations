@@ -482,3 +482,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The current input-dependent GDN skip gate (iter_13, EM=0.518) computes gate from hidden_states norm, which captures input activation magnitude but not the GDN output's quality. An output-dependent gate lets the model adapt blending based on what the recurrent layer actually produced: strong informative outputs get amplified while weak noisy outputs get suppressed. This is a fundamentally different inductive bias from input-dependent gating, adding zero new parameters, and avoids the Linear-layer pattern that caused iter_14-16 failures.
 
 
+## Iter 34 — RUNNING — N=4
+**Hypothesis:** Adding a learnable attention temperature to the MemoryWriter will let the model adapt how sharply each memory slot attends to tokens, improving slot specialization for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_034_writer_attn_temp
+
+
+## Iter 34 — reverted — EM: 0.1562 (N=4)
+**Hypothesis:** Adding a learnable attention temperature to the MemoryWriter will let the model adapt how sharply each memory slot attends to tokens, improving slot specialization for associative retrieval.
+**Wall time:** 49.5 min
+**Result:** EM=0.1562 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The writer's attention uses fixed 1/sqrt(d) scaling, so all 4 memory slots share the same attention sharpness. The reader's temperature was tried (iter_25, reverted) but the writer is fundamentally different: writer temperature controls slot specialization (how distinctly each slot captures different tokens), while reader temperature controls token-level discrimination. Better slot specialization should produce more differentiated memory vectors, improving downstream retrieval accuracy.
+
+
