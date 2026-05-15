@@ -534,3 +534,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer's per-slot value bias (iter_36, EM=0.6794) broke T=1 symmetry at write time by giving each slot a unique stored content identity. The reader already has slot_pos_embed_reader on the key side for attention discrimination, but the value projections are slot-agnostic. Adding per-slot value biases to the reader creates a symmetric design: both write and read paths have explicit per-slot value differentiation, allowing the reader to produce more slot-discriminative retrieved representations.
 
 
+## Iter 38 — RUNNING — N=4
+**Hypothesis:** Adding an intermediate GELU activation between the slot value bias and the output projection in the MemoryWriter will create a two-stage non-linearity, giving the writer more expressive power to create discriminative slot-specialized memory representations.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_038_writer_intermediate_gelu
+
+
+## Iter 38 — reverted — EM: 0.5070 (N=4)
+**Hypothesis:** Adding an intermediate GELU activation between the slot value bias and the output projection in the MemoryWriter will create a two-stage non-linearity, giving the writer more expressive power to create discriminative slot-specialized memory representations.
+**Wall time:** 59.9 min
+**Result:** EM=0.5070 vs prev best=0.6794
+**Metric source:** all_results
+**Rationale:** The writer's value path is: v_proj -> +slot_value_bias -> out_proj -> GELU. The slot_value_bias (iter_36, EM=0.6794) was the largest single improvement, breaking T=1 symmetry by giving each slot distinct stored content. But there is only one non-linearity (GELU after out_proj), so the entire value path is GELU(o_proj(bias + attn*v)). Adding GELU between the bias and out_proj creates GELU(o_proj(GELU(bias + attn*v))), a two-layer non-linear transform that lets the output projection operate on rectified biased values. This enables richer interactions between the per-slot bias and the linear projection, improving memory vector differentiation. Unlike iter_035's GELU after out_proj (which was reverted because it replaced the existing GELU), this adds a second GELU while keeping the existing one. No new parameters, avoiding the Linear-layer failure pattern from iter_14-16.
+
+

@@ -1203,6 +1203,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.3942
+    },
+    {
+      "id": 38,
+      "iter_tag": "iter_038",
+      "description": "Adding an intermediate GELU activation between the slot value bias and the output projection in the MemoryWriter will create a two-stage non-linearity, giving the writer more expressive power to create discriminative slot-specialized memory representations.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding an intermediate GELU activation between the slot value bias and the output projection in the MemoryWriter will create a two-stage non-linearity, giving the writer more expressive power to create discriminative slot-specialized memory representations.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The writer's value path is: v_proj -> +slot_value_bias -> out_proj -> GELU. The slot_value_bias (iter_36, EM=0.6794) was the largest single improvement, breaking T=1 symmetry by giving each slot distinct stored content. But there is only one non-linearity (GELU after out_proj), so the entire value path is GELU(o_proj(bias + attn*v)). Adding GELU between the bias and out_proj creates GELU(o_proj(GELU(bias + attn*v))), a two-layer non-linear transform that lets the output projection operate on rectified biased values. This enables richer interactions between the per-slot bias and the linear projection, improving memory vector differentiation. Unlike iter_035's GELU after out_proj (which was reverted because it replaced the existing GELU), this adds a second GELU while keeping the existing one. No new parameters, avoiding the Linear-layer failure pattern from iter_14-16.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In forward(), after the line 'out = out + self.slot_value_bias.unsqueeze(0)' and before the 'if self.mode == \"cross_attn\"' block, add 'out = F.gelu(out)'. (2) In parallel(), after the line 'out = out + self.slot_value_bias.view(1, 1, M, -1)' and before the 'if self.mode == \"cross_attn\"' block, add 'out = F.gelu(out)'. F is already imported as torch.nn.functional. This is the only change to make.",
+        "run_name": "writer_intermediate_gelu"
+      },
+      "em_score": 0.507,
+      "prev_best": 0.6794,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_038_writer_intermediate_gelu",
+      "wall_time_min": 59.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778853108.1786478,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_038",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.7333
     }
   ]
 }
