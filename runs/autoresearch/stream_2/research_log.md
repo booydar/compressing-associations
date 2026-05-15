@@ -430,3 +430,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The MemoryWriter produces M=4 vectors of dimension write_value_dim=256 that are processed sequentially by the GDN. Unlike the reader side where normalization consistently hurt (iter_11, iter_19, iter_27 all reverted), the writer's output normalization has never been tried. With wide value projections (256-d), attention-aggregated vectors can have large and variable norms across slots, destabilizing the GDN's recurrent processing. Normalizing at the source produces well-scaled GDN inputs without affecting the reader's learned sensitivity to memory vector magnitudes.
 
 
+## Iter 30 — RUNNING — N=4
+**Hypothesis:** Adding a gated residual around the GDN in the writer path will let raw write vectors bypass the state_size=32 bottleneck, preserving token information that would otherwise be compressed through the recurrent layer.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_030_gdn_write_residual
+
+
+## Iter 30 — reverted — EM: 0.1472 (N=4)
+**Hypothesis:** Adding a gated residual around the GDN in the writer path will let raw write vectors bypass the state_size=32 bottleneck, preserving token information that would otherwise be compressed through the recurrent layer.
+**Wall time:** 58.1 min
+**Result:** EM=0.1472 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The GDN processes write vectors through a 256->32->256 bottleneck (write_value_dim=256, state_size=32). This severe compression means much of the original token information is lost in the recurrent state. A gated residual lets raw write information flow directly to the memory output, complementing the GDN's recurrent processing. Unlike prior attempts that added capacity (wvdim_384, iter_017 EM=0.1354) or normalization (iter_27/29), this preserves existing signal while the gate learns how much bypass is useful. Initialized at 0.0 so training starts from current behavior.
+
+

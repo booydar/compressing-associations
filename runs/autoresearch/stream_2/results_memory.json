@@ -947,6 +947,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.2767
+    },
+    {
+      "id": 30,
+      "iter_tag": "iter_030",
+      "description": "Adding a gated residual around the GDN in the writer path will let raw write vectors bypass the state_size=32 bottleneck, preserving token information that would otherwise be compressed through the recurrent layer.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding a gated residual around the GDN in the writer path will let raw write vectors bypass the state_size=32 bottleneck, preserving token information that would otherwise be compressed through the recurrent layer.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The GDN processes write vectors through a 256->32->256 bottleneck (write_value_dim=256, state_size=32). This severe compression means much of the original token information is lost in the recurrent state. A gated residual lets raw write information flow directly to the memory output, complementing the GDN's recurrent processing. Unlike prior attempts that added capacity (wvdim_384, iter_017 EM=0.1354) or normalization (iter_27/29), this preserves existing signal while the gate learns how much bypass is useful. Initialized at 0.0 so training starts from current behavior.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify RecurrentMemoryLayerWrapper: (1) In __init__, after the self.read_norm line, add: self.write_residual_gate = nn.Parameter(torch.tensor(0.0)). (2) In _forward_recurrent, in the WRITE step (step 3, else branch), replace 'self.last_write_output = fla_out' with 'self.last_write_output = fla_out + torch.sigmoid(self.write_residual_gate) * write_vecs'. (3) In _forward_parallel, in the else branch (non-identity), replace 'self.last_write_output = mem[:, -M:, :].contiguous()' with 'self.last_write_output = mem[:, -M:, :].contiguous() + torch.sigmoid(self.write_residual_gate) * write_vecs[:, -M:, :].contiguous()'. Then update mem_shifted to use the new last_write_output logic: replace 'mem_shifted = torch.zeros_like(mem)' and the shift logic with 'mem = mem + torch.sigmoid(self.write_residual_gate) * write_vecs' before computing mem_shifted from the blended mem. Specifically, insert 'mem_blended = mem + torch.sigmoid(self.write_residual_gate) * write_vecs' after the inverse rotation line, then use mem_blended for last_write_output, mem_shifted, and the write_residual path instead of mem. This is the only change to make.",
+        "run_name": "gdn_write_residual"
+      },
+      "em_score": 0.1472,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_030_gdn_write_residual",
+      "wall_time_min": 58.1,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778822431.6074297,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_030",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.3891
     }
   ]
 }
