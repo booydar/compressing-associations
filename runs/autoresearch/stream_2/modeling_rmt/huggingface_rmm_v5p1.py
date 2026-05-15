@@ -138,6 +138,8 @@ class MemoryWriter(nn.Module):
         if mode == 'cross_attn':
             self.q_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
             self.out_proj = nn.Linear(self.write_value_dim, self.write_value_dim, bias=bias)
+        self.slot_value_bias = nn.Parameter(torch.zeros(num_vectors, self.write_value_dim))
+        nn.init.normal_(self.slot_value_bias, std=self.write_value_dim ** -0.5)
 
     def forward(self, hidden_states):
         """Recurrent path: (B, T, d) -> (B, M, d_v)"""
@@ -151,6 +153,7 @@ class MemoryWriter(nn.Module):
         attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling
         attn = F.softmax(attn, dim=-1)
         out = torch.matmul(attn, v)
+        out = out + self.slot_value_bias.unsqueeze(0)
         if self.mode == 'cross_attn':
             out = self.out_proj(out)
         return out
@@ -172,6 +175,7 @@ class MemoryWriter(nn.Module):
         attn = torch.matmul(queries, k.transpose(-1, -2)) * self.scaling   # (B, S, M, T)
         attn = F.softmax(attn, dim=-1)
         out = torch.matmul(attn, v)                                # (B, S, M, d_v)
+        out = out + self.slot_value_bias.view(1, 1, M, -1)
         if self.mode == 'cross_attn':
             out = self.out_proj(out)
         return out.reshape(B, S * M, self.write_value_dim)

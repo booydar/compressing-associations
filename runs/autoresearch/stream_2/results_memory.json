@@ -1,7 +1,7 @@
 {
   "current_best": {
-    "variant": "iter_020",
-    "em": 0.518,
+    "variant": "iter_036",
+    "em": 0.6794,
     "n_level": 4
   },
   "n_level": 4,
@@ -1139,6 +1139,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.5315
+    },
+    {
+      "id": 36,
+      "iter_tag": "iter_036",
+      "description": "Adding per-slot value biases to the MemoryWriter will break the T=1 symmetry where all memory slots aggregate identical values, giving each slot a distinct stored content identity that complements the query-side slot_pos_embed.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Adding per-slot value biases to the MemoryWriter will break the T=1 symmetry where all memory slots aggregate identical values, giving each slot a distinct stored content identity that complements the query-side slot_pos_embed.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "With tokens_per_segment=1, all M=4 slots attend to the same single token and aggregate identical values. The writer's slot_pos_embed (iter_020, EM=0.518) differentiates queries but not stored content, forcing the GDN to differentiate slots purely through sequential processing order. Per-slot value biases in the write_value_dim=256 space give each slot a distinct content offset from step 0, creating differentiated memory vectors even before GDN processing. This adds only M*d_v = 1024 parameters total and avoids the Linear-layer pattern that caused iter_14-16 failures.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the MemoryWriter class: (1) In __init__, after the last nn.Linear initialization (self.out_proj for cross_attn mode), add: 'self.slot_value_bias = nn.Parameter(torch.zeros(num_vectors, self.write_value_dim))' then 'nn.init.normal_(self.slot_value_bias, std=self.write_value_dim ** -0.5)'. (2) In forward(), after 'out = torch.matmul(attn, v)' and before the 'if self.mode == \"cross_attn\"' block, add: 'out = out + self.slot_value_bias.unsqueeze(0)'. This broadcasts (M, d_v) over batch dimension. (3) In parallel(), after 'out = torch.matmul(attn, v)' which produces (B, S, M, d_v) and before the 'if self.mode == \"cross_attn\"' block, add: 'out = out + self.slot_value_bias.view(1, 1, M, -1)'. This broadcasts per-slot bias over batch and segment dimensions. Do not modify any other code.",
+        "run_name": "slot_value_bias"
+      },
+      "em_score": 0.6794,
+      "prev_best": 0.518,
+      "verdict": "kept",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_036_slot_value_bias",
+      "wall_time_min": 57.7,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778845611.0184033,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_036",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.8266
     }
   ]
 }

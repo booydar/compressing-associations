@@ -508,3 +508,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The writer currently produces memory vectors as a linear softmax-weighted sum of value projections, followed by a linear out_proj. This means the entire write path is piecewise-linear (softmax + two Linear layers). Adding GELU between the attention aggregation and out_proj creates a non-linear transform that lets the writer learn richer, more discriminative memory representations. Unlike iter_029's output RMSNorm which destroyed learned magnitude signals, GELU only rectifies negative dimensions and preserves positive signal strength. Unlike the failed Linear-projection attempts (iter_14-16), this uses no new learnable parameters. The slot_pos_embed (iter_020, EM=0.518) shows the writer benefits from enhanced expressivity; GELU extends this by making the aggregation itself non-linear.
 
 
+## Iter 36 — RUNNING — N=4
+**Hypothesis:** Adding per-slot value biases to the MemoryWriter will break the T=1 symmetry where all memory slots aggregate identical values, giving each slot a distinct stored content identity that complements the query-side slot_pos_embed.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_036_slot_value_bias
+
+
+## Iter 36 — kept — EM: 0.6794 (N=4)
+**Hypothesis:** Adding per-slot value biases to the MemoryWriter will break the T=1 symmetry where all memory slots aggregate identical values, giving each slot a distinct stored content identity that complements the query-side slot_pos_embed.
+**Wall time:** 57.7 min
+**Result:** EM=0.6794 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** With tokens_per_segment=1, all M=4 slots attend to the same single token and aggregate identical values. The writer's slot_pos_embed (iter_020, EM=0.518) differentiates queries but not stored content, forcing the GDN to differentiate slots purely through sequential processing order. Per-slot value biases in the write_value_dim=256 space give each slot a distinct content offset from step 0, creating differentiated memory vectors even before GDN processing. This adds only M*d_v = 1024 parameters total and avoids the Linear-layer pattern that caused iter_14-16 failures.
+
+
