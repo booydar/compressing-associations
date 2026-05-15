@@ -365,3 +365,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The unpool reader currently uses raw read_norm(token_states) as queries against k_proj(memory_states). With write_value_dim=256 producing rich memory representations, the unprojected 128-d token queries are a bottleneck for discrimination. A learnable q_proj lets the model adapt its query space for better matching over the expanded memory. Iter_016 attempted this but never ran (executor failed after iter_014's code break). The baseline is now clean on top of iter_020's slot_pos_embed (EM=0.518), so this can be tested properly. Identity initialization preserves current behavior at step 0.
 
 
+## Iter 25 — RUNNING — N=4
+**Hypothesis:** Adding a learnable attention temperature to the MemoryReader's unpool mode will let the model adapt its retrieval sharpness, improving slot discrimination for exact match.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_025_reader_attn_temperature
+
+
+## Iter 25 — reverted — EM: 0.1518 (N=4)
+**Hypothesis:** Adding a learnable attention temperature to the MemoryReader's unpool mode will let the model adapt its retrieval sharpness, improving slot discrimination for exact match.
+**Wall time:** 69.0 min
+**Result:** EM=0.1518 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The reader's unpool attention uses fixed hidden_size^-0.5 scaling, but keys are projected from write_value_dim=256 to hidden_size=128, creating different norm characteristics than standard attention. Unlike the writer (iter_23, reverted), the reader faces a slot-retrieval task requiring sharp, focused attention for exact match. A learnable logit temperature lets the model discover the optimal retrieval sharpness, complementing the successful slot positional embeddings (iter_20, EM=0.518).
+
+
