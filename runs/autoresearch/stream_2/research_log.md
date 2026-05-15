@@ -469,3 +469,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The current warmup_steps=10000 consumes 40% of 25000 training steps at suppressed learning rate. This was set before the slot_pos_embed breakthrough (iter_020, EM=0.518), which fundamentally stabilized training by giving each memory slot a distinct identity. With the writer's slot specialization providing strong structural signals from step 0, the model no needs such an extended warmup for stability. Reducing to 3000 (12% of training) still provides adequate warmup while giving the model 7000 more steps at full learning_rate=3e-4 for effective fine-tuning. The prior warmup reduction attempt (iter_008, 2000 steps, EM=0.1396) was before slot_pos_embed existed, when training was much less stable at EM~0.22.
 
 
+## Iter 33 — RUNNING — N=4
+**Hypothesis:** Making the GDN skip gate output-dependent instead of input-dependent will let the model gate based on the recurrent output's characteristics rather than the input token's activation strength, producing better-calibrated blending for associative retrieval.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_033_output_dep_gdn_gate
+
+
+## Iter 33 — reverted — EM: 0.2102 (N=4)
+**Hypothesis:** Making the GDN skip gate output-dependent instead of input-dependent will let the model gate based on the recurrent output's characteristics rather than the input token's activation strength, producing better-calibrated blending for associative retrieval.
+**Wall time:** 58.9 min
+**Result:** EM=0.2102 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The current input-dependent GDN skip gate (iter_13, EM=0.518) computes gate from hidden_states norm, which captures input activation magnitude but not the GDN output's quality. An output-dependent gate lets the model adapt blending based on what the recurrent layer actually produced: strong informative outputs get amplified while weak noisy outputs get suppressed. This is a fundamentally different inductive bias from input-dependent gating, adding zero new parameters, and avoids the Linear-layer pattern that caused iter_14-16 failures.
+
+

@@ -1043,6 +1043,38 @@
       "summary_logged": false,
       "stream_id": "2",
       "token_accuracy": 0.2781
+    },
+    {
+      "id": 33,
+      "iter_tag": "iter_033",
+      "description": "Making the GDN skip gate output-dependent instead of input-dependent will let the model gate based on the recurrent output's characteristics rather than the input token's activation strength, producing better-calibrated blending for associative retrieval.",
+      "hypothesis": {
+        "stream_id": "2",
+        "hypothesis": "Making the GDN skip gate output-dependent instead of input-dependent will let the model gate based on the recurrent output's characteristics rather than the input token's activation strength, producing better-calibrated blending for associative retrieval.",
+        "target_component": "modeling_rmt/huggingface_rmm_v5p1.py",
+        "rationale": "The current input-dependent GDN skip gate (iter_13, EM=0.518) computes gate from hidden_states norm, which captures input activation magnitude but not the GDN output's quality. An output-dependent gate lets the model adapt blending based on what the recurrent layer actually produced: strong informative outputs get amplified while weak noisy outputs get suppressed. This is a fundamentally different inductive bias from input-dependent gating, adding zero new parameters, and avoids the Linear-layer pattern that caused iter_14-16 failures.",
+        "instruction": "In modeling_rmt/huggingface_rmm_v5p1.py, modify the RecurrentLayerWithSkip.forward method: replace 'h_norm = hidden_states.pow(2).mean(dim=-1, keepdim=True).sqrt().clamp(min=1e-8)' with 'o_norm = out_tensor.pow(2).mean(dim=-1, keepdim=True).sqrt().clamp(min=1e-8)' and replace 'gate_val = torch.sigmoid(self.gate_weight * h_norm + self.gate_bias)' with 'gate_val = torch.sigmoid(self.gate_weight * o_norm + self.gate_bias)'. This computes the gate from the GDN output norm instead of the input hidden state norm. This is the only change to make.",
+        "run_name": "output_dep_gdn_gate"
+      },
+      "em_score": 0.2102,
+      "prev_best": 0.518,
+      "verdict": "reverted",
+      "status": "completed",
+      "n_level": 4,
+      "exp_path": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_033_output_dep_gdn_gate",
+      "wall_time_min": 58.9,
+      "metric_step": 0,
+      "metric_source": "all_results",
+      "is_partial": false,
+      "recovery_status": "final",
+      "needs_retry": false,
+      "retry_of": null,
+      "run_error": null,
+      "started_at": 1778833538.8129628,
+      "artifacts_dir": "/cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/artifacts/iter_033",
+      "summary_logged": false,
+      "stream_id": "2",
+      "token_accuracy": 0.5501
     }
   ]
 }
