@@ -417,3 +417,16 @@ subprocess.CalledProcessError: Command '['/cephfs/home/bulatov/envs/gpu8/bin/pyt
 **Rationale:** The input-dependent GDN skip gate (iter_013, kept) uses gate_bias=0.0, giving initial gate=sigmoid(0)=0.5 equal blend. iter_010's successful static gate used init=1.0 (sigmoid(1.0)~0.73), showing higher initial GDN contribution helps. With slot_pos_embed providing strong structural signals (iter_020, EM=0.518), the GDN needs to differentiate memory vectors aggressively from the start. Starting the gate higher encourages the model to leverage the GDN's processing capacity earlier, while the input-dependent mechanism still allows per-token adaptation. This only changes a single initialization value with zero new parameters.
 
 
+## Iter 29 — RUNNING — N=4
+**Hypothesis:** Adding RMSNorm to the MemoryWriter's output will stabilize the scale of memory vectors before GDN processing, producing better-calibrated recurrent states and improving retrieval accuracy.
+**exp_path:** /cephfs/home/bulatov/2026/autoresearch/compressing-associations-gdn/runs/autoresearch/stream_2/n4/iter_029_writer_output_norm
+
+
+## Iter 29 — reverted — EM: 0.0762 (N=4)
+**Hypothesis:** Adding RMSNorm to the MemoryWriter's output will stabilize the scale of memory vectors before GDN processing, producing better-calibrated recurrent states and improving retrieval accuracy.
+**Wall time:** 58.2 min
+**Result:** EM=0.0762 vs prev best=0.5180
+**Metric source:** all_results
+**Rationale:** The MemoryWriter produces M=4 vectors of dimension write_value_dim=256 that are processed sequentially by the GDN. Unlike the reader side where normalization consistently hurt (iter_11, iter_19, iter_27 all reverted), the writer's output normalization has never been tried. With wide value projections (256-d), attention-aggregated vectors can have large and variable norms across slots, destabilizing the GDN's recurrent processing. Normalizing at the source produces well-scaled GDN inputs without affecting the reader's learned sensitivity to memory vector magnitudes.
+
+
