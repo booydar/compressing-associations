@@ -1,29 +1,21 @@
-# Test Time Gradient Descend for Memory Update
+# Compressing Associations (segment-level memory on GDN)
 
-This repository contains small experiments around "test time" gradient updates for key--value retrieval tasks. The main goal is to train compact GPT style models (both vanilla and models with an adaptive memory) to recover values that appear in the context.
+Small experiments on key--value retrieval: compress context segments into a fixed recurrent state (Gated DeltaNet), then answer queries. Older scripts train GPT-style LMs and test-time `[mem]` gradient updates.
 
 
 ## Intro
 Large-context transformers pay a **quadratic cost** every time they reread long prompts.
 
-Our goal is to compress those prompts into a **small, writable parameter block `[mem]`** that we update with a few gradient steps at test time, then drop the original text entirely.
+Our goal is to compress each context **segment** into a few memory vectors, update a **GDN state** across segments, then read back for the query—without keeping the full token history in the recurrent path.
 
-### How it works
+### How it works (RMM)
 
-| Phase | What happens | N_iters | Input size |
-|-------|--------------|--------------|------------|
-| **Write (inner loop, *K* steps)** | Show the context, compute an LM loss **L<sub>inner</sub>**, update **`[mem]` only** | *K* | `[mem]` + `context` |
-| **Read (outer loop)** | Discard the context; answer the query with the **updated `[mem]`** and compute **L<sub>outer</sub>** | 1 |  `query` |
+| Phase | What happens | Per segment | Input |
+|-------|--------------|-------------|--------|
+| **Write** | Segment tokens → `M` write vectors (`pool` / `cross_attn` / `identity`) → rank-1 updates to GDN state | 1 | segment tokens |
+| **Read** | State + write cache → `unpool` / `cross_attn` / `identity` → local LM on query segment | 1 | query segment |
 
-*Back-propagating L<sub>outer</sub> meta-trains both the Transformer weights θ and the **initial memory `[mem]_0`**, so the model learns how to “write quickly.”*
-
-### Gradient-flow modes
-
-| Flag | What gradients reach `[mem]_0`? | Extra VRAM cost | Typical use-case |
-|------|---------------------------------|-----------------|------------------|
-| `none` (“Frozen”) | **None** (detach) | None | Baseline sanity check |
-| `first` (“1st-order”) | Straight-through, no Hessian term | None | Fast runs, XX% of full accuracy |
-| `second` (“2nd-order”) | Full MAML (keeps full graph through the *K* inner steps) | **≈ K × activation-memory** (parameters are shared; what multiplies is the *activations* for each inner forward/backward) | Highest accuracy when GPU RAM is sufficient |
+`tokens_per_segment` (`tps`) sets segment length; `num_memory_vectors` (`M`) is write rank. **`identity`** ≈ token-level GDN (one update per token). See `knowledge/RESEARCH_DIRECTION.md` for paper framing.
 
 
 ## Prerequisites
@@ -44,32 +36,33 @@ Accelerate is configured via `accelerate.yaml`. The default configuration uses B
 
 Datasets consist of sequences containing random text segments with embedded `!key:value!` pairs. The last segment queries one of the previous keys (e.g. `?!K:`) and the model must output the corresponding value.
 
-To generate a dataset run the notebook `notebooks/dump_dataset.ipynb`. It relies on `kv_dataset_utils.generate_sequence` to create individual samples and dumps them using Hugging Face `datasets`. The resulting directory will be saved under `./data/<DATASET_NAME>` where `DATASET_NAME` encodes generation parameters, for example `N10-K4V4-S4(32-64)_1M`.
+Use `kv_dataset_utils.generate_sequence` to create samples and dump with Hugging Face `datasets`. Data lives under `./data/<DATASET_NAME>`, e.g. `N4-K2V2-V62_1M` (4 pairs, key len 2, value len 2).
 
 ## Training
 
-Two entry points are provided:
+**Current line:** RMM over GDN — trainers `run_rmm_on_kv_retrieval-v5.py`, `v5p1`, `v5p2`, `v6` (models in `modeling_rmt/huggingface_rmm_v5*.py`). Example launchers: `scripts/assoc-comp-rmm/` (e.g. `run_rmm_v5_on_kv_retrieval-id.sh`, `run_rmm_v5p2_on_kv_retrieval-pool-7tps.sh`, `run_baseline_rmt_armt.sh`).
 
-* `run_gpt2_on_kv_retrieval.py` &ndash; trains a standard causal LM.
-* `run_gradmemgpt_on_kv_retrieval.py` &ndash; trains a small LM with writable memory (see `grad_memgpt.py`).
+**Baselines:** `run_original_armt_on_kv_retrieval.py`, `run_original_rmt_on_kv_retrieval-v3-gen.py`, `run_fla_on_kv_retrieval-default.py`.
 
-Both scripts accept the same arguments (batch size, number of layers, dataset path, etc.). They should be launched through `accelerate`:
+**Legacy:** `run_gpt2_on_kv_retrieval.py`, `run_gradmemgpt_on_kv_retrieval.py` (test-time `[mem]` updates; gradient modes `none` / `first` / `second`).
 
-```bash
-accelerate launch --config_file accelerate.yaml \
-  run_gpt2_on_kv_retrieval.py \
-  --exp_path ./runs/gpt2_example \
-  --per_device_batch_size 64 \
-  --data_path ./data/N10-K4V4-S4(32-64)_1M
-```
+Launch via `accelerate` from the repo root:
 
 ```bash
 accelerate launch --config_file accelerate.yaml \
-  run_gradmemgpt_on_kv_retrieval.py \
-  --exp_path ./runs/gradmem_example \
+  run_rmm_on_kv_retrieval-v5p2.py \
+  --exp_path ./runs-rmmv5p2/N4-K2V2-V62_1M/my_run/run_1 \
   --per_device_batch_size 64 \
-  --data_path ./data/N10-K4V4-S4(32-64)_1M
+  --data_path ./data/N4-K2V2-V62_1M \
+  --tokenizer_path ./tokenizers/kv_alphabet_62/ \
+  --num_memory_vectors 4 --write_mode pool --read_mode unpool \
+  --tokens_per_segment 7 --n_pairs 4
 ```
 
-The scripts log metrics and save checkpoints to the directory specified via `--exp_path`.
+Or run a sweep script:
 
+```bash
+bash scripts/assoc-comp-rmm/run_rmm_v5_on_kv_retrieval-pool.sh
+```
+
+Checkpoints and metrics go to `--exp_path`; aggregate with `notebooks/collect_results_rmmv5.ipynb`.
