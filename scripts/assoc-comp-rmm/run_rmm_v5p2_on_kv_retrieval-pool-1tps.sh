@@ -51,7 +51,7 @@ READ_MODE=unpool
 for NUM_MEMORY_VECTORS in 1 4; do
   for N in 1 2; do
     for N_PAIRS in 4 8 16 32; do
-      for TOKENS_PER_SEGMENT in 7; do
+      for TOKENS_PER_SEGMENT in 1; do
         for STATE_SIZE in 32; do
           for LR in 3e-04 1e-04; do
 
