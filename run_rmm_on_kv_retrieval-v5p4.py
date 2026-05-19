@@ -233,8 +233,7 @@ class ExperimentArgs:
     read_mode:                Optional[str]  = field(default='cross_attn')  # 'identity'|'unpool'|'cross_attn'|'gdn_readout'
     write_value_dim:          Optional[int]  = field(default=None)          # None = model hidden_size
     num_memory_heads:         Optional[int]  = field(default=1)
-    write_residual:           Optional[bool] = field(default=False)         # v5 intra-segment residual
-    use_sliding_window:       Optional[bool] = field(default=False)         # v5p2: sliding-window (W=T) instead of block-diag mask
+    use_parallel_prefill:     Optional[bool] = field(default=True)          # v5p3: parallel-prefill context pass (equivalent to recurrent)
     # Dataset / task
     memory_task_freq:         Optional[float]= field(default=0.0)
     memory_task:              Optional[str]  = field(default=None)
@@ -295,7 +294,7 @@ if __name__ == '__main__':
     config.bos_token_id  = tokenizer.convert_tokens_to_ids('[BOS]')
     config.eos_token_id  = tokenizer.convert_tokens_to_ids('[EOS]')
 
-    from modeling_rmt.huggingface_rmm_v5p2 import RecurrentMemoryBase, RecurrentMemoryConfig
+    from modeling_rmt.huggingface_rmm_v5p4 import RecurrentMemoryBase, RecurrentMemoryConfig
 
     head_dim = args.state_size // args.n_head
 
@@ -312,8 +311,7 @@ if __name__ == '__main__':
         read_mode          = args.read_mode,
         write_value_dim    = args.write_value_dim,
         num_memory_heads   = args.num_memory_heads,
-        write_residual     = args.write_residual,
-        use_sliding_window = args.use_sliding_window,
+        use_parallel_prefill = args.use_parallel_prefill,
         max_n_segments     = 10,
         think_token_id     = tokenizer.convert_tokens_to_ids('[THINK]'),
         answer_token_id    = tokenizer.convert_tokens_to_ids('[ANSWER]'),
