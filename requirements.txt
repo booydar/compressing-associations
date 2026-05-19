@@ -1,0 +1,15 @@
+# Training scripts (RMM v5p2, FLA mamba/mamba2/GDN, etc.) — all via flash-linear-attention.
+# Install PyTorch with CUDA first if pip picks a CPU wheel:
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+
+torch
+transformers
+accelerate
+datasets
+flash-linear-attention
+einops
+
+# Optional:
+# munch      # run_original_armt_on_kv_retrieval-v3-gen.py
+# matplotlib seaborn jupyter  # notebooks/collect_results_*.ipynb
+# deepspeed  # accelerate launch --config_file deepspeed_bf16.yaml
