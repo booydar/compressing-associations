@@ -41,9 +41,9 @@ READ_MODE=unpool
 USE_PARALLEL_PREFILL=True
 
 # ── sweep ──────────────────────────────────────────────────────────────────
-for NUM_MEMORY_VECTORS in 2 1; do
-  for N in 1 2; do
-    for N_PAIRS in 8 4; do
+for N in 1 2; do
+  for N_PAIRS in 8 4 16; do
+    for NUM_MEMORY_VECTORS in 4 8; do
       for TOKENS_PER_SEGMENT in 7; do
         for STATE_SIZE in 32; do
           for LR in 3e-04 1e-04 1e-03; do

@@ -46,7 +46,7 @@ for NUM_MEMORY_VECTORS in 1; do
     for N_PAIRS in 8 4; do
       for TOKENS_PER_SEGMENT in 1; do
         for STATE_SIZE in 32; do
-          for LR in 3e-04 1e-04; do
+          for LR in 3e-04 1e-04 1e-03; do
 
             DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
             PAIRS_PER_SEGMENT=0
