@@ -1,0 +1,23 @@
+setup:
+  # commands are executed in this order:
+  # shell_init -> conda_env -> pre_command -> check_hf_auth -> workdir -> print_pwd -> job.script
+  # optional; if omitted and conda_env is set, CLI uses: eval "$(conda shell.bash hook)"
+  shell_init: 'eval "$(conda shell.bash hook)"'
+  conda_env: "/workspace-SR006.nfs2/bulatov/envs/mamba2/"
+  workdir: "/workspace-SR006.nfs2/bulatov/rmt/test-time/compressing-associations"
+  check_hf_auth: true
+  print_pwd: true
+  pre_command:
+    - nvidia-smi
+
+job:
+  script: none
+  base_image: "cr.ai.cloud.ru/4eff24de-62e2-472f-b207-69f22e0588c2/py3.11_cu12.1_torch2-reasoning"
+  instance_type: "a100plus.1gpu.80vG.12C.96G"
+  region: "SR006"
+  job_type: "binary"
+  job_desc: "compressing associations"
+  n_workers: 1
+  processes_per_worker: 1
+  env_variables:
+    HF_HOME: "/workspace-SR006.nfs2/bulatov/.cache/huggingface/"
