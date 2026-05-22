@@ -1,0 +1,275 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[review]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+% -----
+\usepackage{amsmath}
+
+\title{Compressing Associations: Why Segment-Level Recurrent Memory Fails on Associative Recall (and How to Fix It)}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{First Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\\And
+  Second Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\}
+
+%\author{
+%  \textbf{First Author\textsuperscript{1}},
+%  \textbf{Second Author\textsuperscript{1,2}},
+%  \textbf{Third T. Author\textsuperscript{1}},
+%  \textbf{Fourth Author\textsuperscript{1}},
+%\\
+%  \textbf{Fifth Author\textsuperscript{1,2}},
+%  \textbf{Sixth Author\textsuperscript{1}},
+%  \textbf{Seventh Author\textsuperscript{1}},
+%  \textbf{Eighth Author \textsuperscript{1,2,3,4}},
+%\\
+%  \textbf{Ninth Author\textsuperscript{1}},
+%  \textbf{Tenth Author\textsuperscript{1}},
+%  \textbf{Eleventh E. Author\textsuperscript{1,2,3,4,5}},
+%  \textbf{Twelfth Author\textsuperscript{1}},
+%\\
+%  \textbf{Thirteenth Author\textsuperscript{3}},
+%  \textbf{Fourteenth F. Author\textsuperscript{2,4}},
+%  \textbf{Fifteenth Author\textsuperscript{1}},
+%  \textbf{Sixteenth Author\textsuperscript{1}},
+%\\
+%  \textbf{Seventeenth S. Author\textsuperscript{4,5}},
+%  \textbf{Eighteenth Author\textsuperscript{3,4}},
+%  \textbf{Nineteenth N. Author\textsuperscript{2,5}},
+%  \textbf{Twentieth Author\textsuperscript{1}}
+%\\
+%\\
+%  \textsuperscript{1}Affiliation 1,
+%  \textsuperscript{2}Affiliation 2,
+%  \textsuperscript{3}Affiliation 3,
+%  \textsuperscript{4}Affiliation 4,
+%  \textsuperscript{5}Affiliation 5
+%\\
+%  \small{
+%    \textbf{Correspondence:} \href{mailto:email@domain}{email@domain}
+%  }
+%}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+Segment-level recurrent memory models such as RMT and ARMT achieve linear scaling by compressing each segment into a small set of memory tokens that are passed forward across segments. Despite their success on extremely long retrieval tasks, they underperform token-level recurrent models (Mamba, GatedDeltaNet) by a striking margin on the basic associative-recall (AR) benchmark, even at matched parameter counts. We analyse this gap and show that the bottleneck of segment-level recurrent memory is \emph{not a single quantity} but a triple: (i) state capacity, (ii) per-segment write rank, and (iii) per-write binding capacity. Token-level recurrent models bypass all three for free, as their rank-1 outer-product update doubles as a binder when applied to consecutive (key, value) tokens. We introduce \textbf{RMM}, a Recurrent Memory Model that disentangles the three axes by parameterising write granularity and write rank as architectural knobs, and show that a binding-capable writer recovers token-level AR performance while retaining the deliberation benefits of segment-level memory. RMM admits a parallel training form and a true recurrent inference form, enabling parallel prefill that is unavailable to RMT and ARMT.
+\end{abstract}
+
+\section{Introduction}
+
+Modern sequence-processing models are predominantly Transformers~\citep{vaswani2017attention}: every token stores a fixed-size representation, and pairwise dependencies are recomputed by attention at each step. This avoids representational compression, but at the cost of quadratic compute and a linearly growing KV cache, which makes context length scaling impractical on fixed-memory hardware regardless of computational tricks~\citep{flashattention}. Additionally, large numbers of tokens in attention lead to resolution loss~\citep{niah} and information being missed in the middle of the context~\citep{liu2023lost}.
+
+The alternative is recurrence: a fixed-size state is sequentially updated as the sequence is consumed, so the memory cost no longer grows with context length. Modern linear-recurrent models~\citep{gu2021ssm, gu2023mamba, sun2023retnet, yang2024gateddeltanet} achieve parallel training via the parallel form of state-space recurrence and match Transformers on many long-context benchmarks. Yet fully recurrent models consistently underperform Transformers on memory-intensive tasks such as state tracking and copying~\citep{merrill2024statetracking, jelassi2024repeat}, and on tasks requiring instruction following~\citep{park2024canmambalearn}.
+
+A complementary line of work introduces \emph{segment-level} recurrence into Transformers: the input is split into fixed-size segments, the Transformer is run on one segment at a time, and a small set of memory tokens carries information across segments~\citep{dai2019trxl, rae2019compressive, wu2020memformer, bulatov2022rmt, rodkin2024armt}. Segment-level recurrence enables processing of extremely long inputs~\citep{kuratov2024babilong} and combines Transformer-grade in-segment attention with linear scaling across segments. Despite these advances, however, segment-level models remain limited as foundational architectures: they require expensive curriculum training~\citep{kuzmin2026extending} and \textbf{collapse on basic associative recall} where token-level recurrent models of the same size succeed.
+
+This collapse is the focus of our paper. At $N{=}8$ key-value pairs, GatedDeltaNet at state size $32$ reaches $\sim$99\% exact match, while parameter-matched RMT and ARMT with a single memory token achieve $\sim$3\%. Increasing the write value dimension does not fix it. Aligning segments with KV-pair boundaries does not fix it. Shortening the BPTT horizon does not fix it. The failure is structural.
+
+\paragraph{Contributions.}
+\begin{itemize}
+    \item We identify three independent bottlenecks of segment-level recurrent memory: (1) \emph{state capacity} (state-size $\times$ value dim), (2) \emph{per-segment write rank} (number of independent updates injected into the state per segment), and (3) \emph{per-write binding capacity} (whether a single write update can express structured intra-segment associations, not just summaries). Token-level GDN bypasses all three at once via its rank-1 outer-product update.
+    \item We introduce \textbf{RMM} (Recurrent Memory Model), a segment-level memory framework that exposes write granularity $M$, write value dimension $d_v$, and write/read operators as orthogonal architectural axes, and reduces to token-level GDN ($S{=}1$, $M{=}T$) and to ARMT-style compression ($M{\ll}T$, soft-pool writer) as endpoints of a single design space.
+    \item We give a two-way implementation of RMM in SSM style: a parallel training form that admits parallel prefill (unavailable to RMT/ARMT) and a true recurrent inference form with constant per-token memory cost.
+    \item We show empirically that a binding-capable writer (intra-segment attention, or a recursive GDN binder) recovers token-level AR performance at $M{=}1$, while plain soft-pool writers cannot, regardless of capacity or rank.
+\end{itemize}
+
+
+
+\section{Related Work}
+
+\paragraph{Token-level linear-recurrent models.}
+RNNs~\citep{elman1990finding} are the traditional fixed-state sequence processor. They suffer from limited state and are notoriously hard to train~\citep{pascanu2013difficulty}; LSTM~\citep{hochreiter1997lstm}, GRU~\citep{cho2014gru} and LRU~\citep{orvieto2023lru} address gradient flow and introduce structured gating. Modern linear-recurrent models drop the nonlinearity of the state update in favour of parallelism: SSM-based architectures~\citep{gu2020hippo, gu2022s4} match or outperform Transformers on specific long-context tasks~\citep{tay2021lra}, while later families enrich the recurrence with selective filtering~\citep{gu2023mamba, dao2024mamba2}, outer-product associations~\citep{schlag2021linear, sun2023retnet}, and delta update rules~\citep{schlag2021linear, yang2024deltanet, yang2024gateddeltanet}. Despite the gains, this family is repeatedly shown to be brittle on tasks that require precise memory operations: copying~\citep{jelassi2024repeat}, state tracking~\citep{merrill2024statetracking}, and instruction following~\citep{park2024canmambalearn}. \citet{arora2023zoology, arora2024just} pinpoint the same brittleness specifically on synthetic associative recall and motivate hybrid attention-recurrence designs, but do not characterise it for segment-level memory architectures.
+
+\paragraph{Segment-level recurrent memory.}
+Transformer-XL~\citep{dai2019trxl} introduced fixed-segment processing with a truncated cross-segment KV cache. Compressive Transformer~\citep{rae2019compressive} replaced the cache with a fixed-size compressed memory; Memformer~\citep{wu2020memformer} added a separate memory module; Recurrent Memory Transformer (RMT)~\citep{bulatov2022rmt} placed trainable memory tokens at the segment boundary so that read and write are handled by the backbone's own attention layers, simplifying training and improving long-context performance~\citep{kuratov2024babilong}. ARMT~\citep{rodkin2024armt} adds per-layer memory state with a DeltaNet-style associative update applied by a separate set of weights. Diagonal batching~\citep{kuzmin2026extending} speeds up ARMT inference by reordering computation across segments, but does not perform a single forward pass through the input. Our RMM admits exactly this latter form via its parallel training mode.
+
+\paragraph{Memory binding.}
+A separate thread of research highlights that associative recall fundamentally requires \emph{binding} of paired tokens~\citep{schlag2021linear, ba2016fastweights, hopfield2020modern}. Token-level linear recurrence performs this binding implicitly via the rank-1 outer product update across consecutive $(k, v)$ tokens. Soft-pool compression as used in RMT/ARMT instead produces a convex blend of value-projected tokens, which cannot represent recoverable $\textsc{bind}(k, v)$. We make this observation precise in \S\ref{sec:method}.
+
+We note that there exists an alternative line of work focused on LLM or agent pipelines in order to achieve linear context scaling~\citep{packer2023memgpt, gao2024memorybank}. In this work we focus on native architectural improvements.
+
+
+\section{Method}
+\label{sec:method}
+
+\subsection{Preliminaries: Two Families of Fixed-State Recurrence}
+
+We consider two families of linear-complexity sequence models that compress a growing input into a fixed-size state.
+
+\paragraph{Token-level (GatedDeltaNet).} A linear recurrent layer maintains a state matrix $S_t \in \mathbb{R}^{d_v \times d_k}$ and, at every token $t$, performs a rank-1 gated update
+\begin{equation}
+    S_t = \alpha_t \, S_{t-1} + \beta_t \, v_t k_t^\top,
+    \label{eq:gdn}
+\end{equation}
+with $(k_t, v_t, \alpha_t, \beta_t)$ derived from $x_t$ via input-dependent projections~\citep{yang2024gateddeltanet}. Across $T$ tokens the state accumulates $T$ rank-1 updates; the update itself binds $k_t$ and $v_t$ in a recoverable outer-product form. We denote the operator $S_t = \mathrm{GDN}(S_{t-1}, x_t)$ and its $T$-step parallel-form composition over a segment as $\mathrm{GDN}^*$.
+
+\paragraph{Segment-level (RMT/ARMT).} The input is split into segments $X^{(1)}, \dots, X^{(L)}$ of $T$ tokens each. At each segment, the backbone Transformer is augmented with $M$ memory tokens that read from and write to the previous segment's memory $\mathcal{M}^{(\ell-1)}$. In RMT, $\mathcal{M}^{(\ell)} \in \mathbb{R}^{M \times d}$ is the hidden state of the trailing memory tokens. In ARMT, an additional per-layer associative store $W^{(\ell)} \in \mathbb{R}^{d_v \times d_k}$ is updated by a single DeltaNet-style call per segment.
+
+\subsection{Three Bottlenecks of Segment-Level Memory}
+\label{sec:three-bottlenecks}
+
+Define the \emph{effective per-segment write} of a recurrent memory system as the linear operator
+\begin{equation}
+    \mathcal{W}(X^{(\ell)}) : \mathbb{R}^{T \times d} \to \mathbb{R}^{r \times d_v},
+\end{equation}
+that produces $r$ vectors fed into the state update of \eqref{eq:gdn}. Three quantities characterise it:
+
+\begin{enumerate}
+    \item[\textbf{(C)}] \textbf{State capacity} — the dimension of $S$, i.e. $d_v \cdot d_k$. The hard ceiling on what the model can remember.
+    \item[\textbf{(R)}] \textbf{Write rank per segment} — the number $r$ of independent rank-1 updates injected into $S$ per segment.
+    \item[\textbf{(B)}] \textbf{Per-write binding capacity} — the expressive class of a single update with respect to intra-segment content. A soft-pool query produces a convex combination of value-projected tokens and cannot represent $\textsc{bind}(k, v)$ recoverably; an outer-product update over a $(k, v)$ pair can.
+\end{enumerate}
+
+Token-level GDN satisfies all three at once: $r{=}T$, each update is itself a binder, and capacity is paid in $d_v \cdot d_k$. Segment-level memory, in contrast, decouples $r$ from $T$: typically $r{=}M{\ll}T$, with each of the $M$ writes computed by attention pooling of the segment. Independently varying $C$, $R$, and $B$ predicts the failure mode of each family.
+
+\subsection{RMM: A Unified Framework}
+\label{sec:rmm}
+
+\paragraph{Layer wrapper.} RMM wraps each transformer layer with a memory channel parameterised by a long-term linear-recurrent store of the GDN form (eq.~\ref{eq:gdn}). For segment $\ell$, given input tokens $h \in \mathbb{R}^{T \times d}$ and the previous segment's memory readout $z^{(\ell-1)} \in \mathbb{R}^{M \times d_v}$, the layer performs:
+\begin{align}
+    &\text{1.\ Read:}    && \tilde h = h + \mathrm{Reader}(h,\, z^{(\ell-1)}), \\
+    &\text{2.\ Backbone:}&& h' = \mathrm{Layer}(\tilde h), \\
+    &\text{3.\ Write:}   && w = \mathrm{Writer}(h') \in \mathbb{R}^{M \times d_v}, \\
+    &                    && z^{(\ell)},\, S^{(\ell)} = \mathrm{GDN}^*(S^{(\ell-1)},\, w),
+\end{align}
+where $\mathrm{GDN}^*$ unrolls eq.~\eqref{eq:gdn} over $M$ steps in parallel form. $S$ is the long-term state; $z$ is the per-segment readout cached for the next segment's read.
+
+\paragraph{Writer family.} The $\mathrm{Writer}$ admits three modes that vary in expressivity and parameter count:
+\begin{itemize}
+    \item \emph{identity}: $w = h'$ ($M{=}T$, $d_v{=}d$). RMM reduces to a token-level GDN layer fused on top of the backbone.
+    \item \emph{pool}: $M$ learnable queries softmax-attend over $K{=}W_k h',\, V{=}W_v h'$ with $W_v \!\in\! \mathbb{R}^{d \times d_v}$. No query projection, no output projection.
+    \item \emph{cross\_attn}: same as \emph{pool} plus a learnable query projection $W_q$ and output projection $W_o$.
+\end{itemize}
+
+\paragraph{Reader family.} Symmetrically, $\mathrm{Reader}$ admits three modes:
+\begin{itemize}
+    \item \emph{identity}: reads the GDN state of the previous segment with the current tokens as queries (token-level GDN readout). Must be paired with \emph{identity} writer.
+    \item \emph{unpool}: tokens attend to $z^{(\ell-1)}$ with $K, V$ projected from $d_v$ to $d$; no query projection. Dual of \emph{pool}.
+    \item \emph{cross\_attn}: full cross-attention $\mathrm{Attn}(Q{=}h, K, V{=}z^{(\ell-1)})$ with $K, V$ from $\mathbb{R}^{d_v}$.
+\end{itemize}
+
+\paragraph{Design knobs.} RMM exposes the three bottleneck axes as explicit hyperparameters: state capacity via $(d_v, d_k)$; write rank via $M$; binding via the choice of writer mode. The continuum from token-level GDN ($M{=}T$) to ARMT-like segment compression ($M{\ll}T$, soft-pool writer) is one model class.
+
+\paragraph{Binding-capable writer.} Soft-pool writers (RMT-style cross-attention with $M$ queries) are convex combinations of value-projected tokens and provably cannot encode $\textsc{bind}(k, v)$ recoverably. We propose three minimal binding-capable writers as drop-in replacements:
+\begin{itemize}
+    \item \emph{Self-attn writer:} one intra-segment self-attention layer applied to $h'$ before pooling, allowing $k$--$v$ binding to occur before compression.
+    \item \emph{Bilinear writer:} explicit outer-product readout, $w = W_o(q_k \otimes q_v)$ with two learned queries.
+    \item \emph{Recursive-GDN writer:} a small GDN run over the segment whose final state is projected to $\mathbb{R}^{M \times d_v}$. The same primitive that stores long-term then also binds within-segment.
+\end{itemize}
+
+\subsection{Two Forms: Parallel Training and Recurrent Inference}
+\label{sec:two-forms}
+
+The long-term state $S$ is updated only via the GDN operator (eq.~\ref{eq:gdn}), which admits both a chunkwise parallel form and a strict recurrent form~\citep{yang2024gateddeltanet}. RMM inherits both:
+\begin{itemize}
+    \item \emph{Parallel form (training and prefill):} all $L$ segments are processed in a single forward pass with segment-level parallelism for the backbone, and GDN's parallel form across the concatenated $L \cdot M$ write vectors. Unlike RMT and ARMT, prefill does not require sequentially looping over segments.
+    \item \emph{Recurrent form (autoregressive inference):} per segment, GDN runs in $O(M)$ recurrent steps with constant per-step memory; the backbone runs once per segment.
+\end{itemize}
+We report wall-clock and peak-memory measurements for both forms in \S\ref{sec:experiments}.
+
+
+\section{Experiments}
+\label{sec:experiments}
+
+\paragraph{Setup.} All experiments use the synthetic key--value retrieval benchmark (AR) of~\citet{arora2023zoology}: $N$ key--value pairs followed by a query, character-level tokenisation over a $62$-symbol alphabet, exact-match (EM) metric. We use 4-layer backbones at $d{=}128$ with matched parameter counts across families, $1$M training samples, and report best EM across seeds and learning rates per config. Hyperparameters are held fixed at $\mathrm{lr}{=}2\!\times\!10^{-4}$, $\mathrm{warmup}{=}10\mathrm{k}$, $\mathrm{bs}{=}64$ unless noted.
+
+\paragraph{E1 — AR collapse of segment-level memory.}
+We compare GDN, Mamba, RMT, ARMT, and RMM on AR with $N \in \{4, 8, 16\}$ KV pairs at matched parameters. Prediction: GDN/Mamba succeed; RMT/ARMT with $M{=}1$ collapse to chance.
+
+\paragraph{E2 — Capacity vs rank vs binding.}
+On AR at $N{=}8$, with RMM (pool writer), sweep state capacity (state-size $\in \{8, 16, 32\}$, $d_v \in \{128, 256\}$) and write rank ($M \in \{1, 2, 4, 8, 16\}$). Headline figure: a 2-axis plot showing that (i) widening $d_v$ alone does not rescue $M{=}1$, (ii) raising $M$ alone monotonically closes the gap to identity, and (iii) the gap closes fully only when both axes are matched to token-level GDN's effective capacity.
+
+\paragraph{E3 — Binding is independent of rank.}
+At $M{=}1$, replace the soft-pool writer with the three binding-capable variants of \S\ref{sec:rmm}. Prediction: at least one variant lifts EM from near chance to $\gtrsim 0.9$ without increasing rank, isolating $B$ as a separate axis from $C$ and $R$.
+
+\paragraph{E4 — Scaling with $N$.}
+With the winning writer of E3, sweep $N \in \{4, 8, 16\}$. Test whether the binder-equipped RMM retains AR performance where ARMT-style writers collapse at $N{=}16$~\citep{kuzmin2026extending}.
+
+\paragraph{E5 — Noisy AR (deliberation test).}
+Following the Noisy-AR design of~\citet{arora2024just}, insert $D \in \{0, 4, 8, 16\}$ distractor tokens between KV pairs. Prediction: when $D$ is large, RMM with self-attention writer outperforms identity (token-level GDN) because intra-segment attention filters noise before writing.
+
+\paragraph{E6 — Two-form efficiency.}
+Wall-clock and peak-memory comparison of parallel-form RMM prefill vs sequential RMT/ARMT prefill, plus recurrent-form RMM decoding vs ARMT decoding, at matched parameters.
+
+
+\section{Conclusion}
+
+We diagnosed the AR-collapse of segment-level memory architectures as a triple bottleneck — capacity, write rank, and binding — and introduced RMM, a unified framework that exposes each axis as an architectural knob. RMM connects token-level recurrent models and segment-level memory architectures as endpoints of a single design space, supports a binding-capable writer that recovers token-level AR performance at minimal write rank, and admits a parallel training and prefill form unavailable to RMT and ARMT.
+
+\section*{Limitations}
+Our analysis is restricted to a single synthetic benchmark (AR) at a single model scale ($d{=}128$, $4$ layers). While the diagnostic claim is architecture-level and the predictions transfer to other recurrent-memory designs in principle, large-scale language-modelling pretraining with RMM is left to future work. The Noisy-AR experiment (E5) is a proxy for real-world signal-to-noise tradeoffs, not a substitute. The parallel-form efficiency claim (E6) does not yet include a custom CUDA kernel; reported speedups reflect framework-level parallelism only.
+
+% \section*{Acknowledgments}
+
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+\bibliography{custom}
+
+\appendix
+
+\section{Example Appendix}
+\label{sec:appendix}
+
+This is an appendix.
+
+\end{document}

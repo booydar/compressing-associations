@@ -1,0 +1,195 @@
+\documentclass[11pt]{article}
+
+% Change "review" to "final" to generate the final (sometimes called camera-ready) version.
+% Change to "preprint" to generate a non-anonymous version with page numbers.
+\usepackage[review]{acl}
+
+% Standard package includes
+\usepackage{times}
+\usepackage{latexsym}
+
+% For proper rendering and hyphenation of words containing Latin characters (including in bib files)
+\usepackage[T1]{fontenc}
+% For Vietnamese characters
+% \usepackage[T5]{fontenc}
+% See https://www.latex-project.org/help/documentation/encguide.pdf for other character sets
+
+% This assumes your files are encoded as UTF8
+\usepackage[utf8]{inputenc}
+
+% This is not strictly necessary, and may be commented out,
+% but it will improve the layout of the manuscript,
+% and will typically save some space.
+\usepackage{microtype}
+
+% This is also not strictly necessary, and may be commented out.
+% However, it will improve the aesthetics of text in
+% the typewriter font.
+\usepackage{inconsolata}
+
+%Including images in your LaTeX document requires adding
+%additional package(s)
+\usepackage{graphicx}
+
+% If the title and author information does not fit in the area allocated, uncomment the following
+%
+%\setlength\titlebox{<dim>}
+%
+% and set <dim> to something 5cm or larger.
+
+\title{Instructions for *ACL Proceedings}
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         Address line \\ ... \\ Address line}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% For authors from different institutions:
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \And  ... \And
+%         Author n \\ Address line \\ ... \\ Address line}
+% To start a separate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ Address line \\  ... \\ Address line
+%         \AND
+%         Author 2 \\ Address line \\ ... \\ Address line \And
+%         Author 3 \\ Address line \\ ... \\ Address line}
+
+\author{First Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\\And
+  Second Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  \texttt{email@domain} \\}
+
+%\author{
+%  \textbf{First Author\textsuperscript{1}},
+%  \textbf{Second Author\textsuperscript{1,2}},
+%  \textbf{Third T. Author\textsuperscript{1}},
+%  \textbf{Fourth Author\textsuperscript{1}},
+%\\
+%  \textbf{Fifth Author\textsuperscript{1,2}},
+%  \textbf{Sixth Author\textsuperscript{1}},
+%  \textbf{Seventh Author\textsuperscript{1}},
+%  \textbf{Eighth Author \textsuperscript{1,2,3,4}},
+%\\
+%  \textbf{Ninth Author\textsuperscript{1}},
+%  \textbf{Tenth Author\textsuperscript{1}},
+%  \textbf{Eleventh E. Author\textsuperscript{1,2,3,4,5}},
+%  \textbf{Twelfth Author\textsuperscript{1}},
+%\\
+%  \textbf{Thirteenth Author\textsuperscript{3}},
+%  \textbf{Fourteenth F. Author\textsuperscript{2,4}},
+%  \textbf{Fifteenth Author\textsuperscript{1}},
+%  \textbf{Sixteenth Author\textsuperscript{1}},
+%\\
+%  \textbf{Seventeenth S. Author\textsuperscript{4,5}},
+%  \textbf{Eighteenth Author\textsuperscript{3,4}},
+%  \textbf{Nineteenth N. Author\textsuperscript{2,5}},
+%  \textbf{Twentieth Author\textsuperscript{1}}
+%\\
+%\\
+%  \textsuperscript{1}Affiliation 1,
+%  \textsuperscript{2}Affiliation 2,
+%  \textsuperscript{3}Affiliation 3,
+%  \textsuperscript{4}Affiliation 4,
+%  \textsuperscript{5}Affiliation 5
+%\\
+%  \small{
+%    \textbf{Correspondence:} \href{mailto:email@domain}{email@domain}
+%  }
+%}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}
+
+- visual abstract: transformer OOM, recurrence ok, segment level bad. RMM good!
+- too general intro -> key idea
+
+The modern artificial intelligence research is heavily focused on sequence processing models. Motivated by text processing, the development of new architectures focuses on representing data as sequences and processing them with a length-wise deep learning architecture, applying the same principle to other fields and domains. The main objective of such models is to efficiently capture the essence of sequential data and perform various transformations in order to solve a specific task. The fundamental property of such models is the ability to understand and utilize the relations between sequence elements, whether they are words, video frames or genomic sequence tokens. 
+
+The traditional approach to sequence processing is recurrent, where an architecture with a fixed number of weights is sequentially applied to sequence elements one by one, augmented with a constant-size memory state. This way, the relations between sequence elements have to be represented in this fixed-size memory state, which requires to perform compression in order to remember increasingly large amounts of data. Furthermore, due to sequential processing, interaction of each pair of sequence elements on distance n requires O(n) steps.
+
+The majority of modern approaches relies on Transformers that have a fixed representation size for each token and store the whole cache at each time step. This way, Transformer does not necessarily need to store all the dependencies between elements and can recompute them if needed. However this way one cannot grow Transformer's context indefinitely due to quadratic scaling of compute and vRAM requirements. Additionally, large number of tokens in attention leads to resolution loss (NIAH) and missing information in some parts of the context (Lost in the middle). 
+
+Architectures with linear scaling are mostly based on linear recurrence (SSM, Mamba1,2, DN, GDN) for parallelizable training. However fully recurrent models still underperform Transformers in memory-intensive~\citep{state tracking, copying} and instruction following~\citep{Can Mamba Learn How to Learn} tasks. Hybrid models comprised of Transformer and recurrent layers are a popular way of reducing Transformer complexity, but they still don't eliminate the problem of quadratic scaling.
+
+For an all-around foundational model, the architecture needs to have both Transformer's powerful short-term memory and efficient long-context scaling of state space LLMs. Recent works~\citep{TrXL, Compressive, Memformer, RMT} have introduced long-term memory to Transformer models, which enabled long-context processing of extremely long tasks~\citep{Scaling RMT}. 
+
+But despite these advances, the application of segment-level Transformers as foundational architectures remains limited due to limited performance on downstream tasks and complex training, requiring expensive curriculum~\citep{kuzmin2026extending}. 
+
+\paragraph{Contributions}
+
+In this work we show that the main factors of limited segment-level Transformer performance are: memory state size, bottlenecks in memory tokens and rank of operations with memory state. 
+
+We introduce a recurrent memory model RMM that is intended to unite segment-level and token-level recurrence in a single framework and is able to interpolate between these modes. 
+
+We introduce a two-way implementation of RMM in SSM style: parallel form for efficient training and the true recurrent form for memory and speed-efficient inference. -> RMM unlocks parallel prefill unlike RMt and ARMT
+
+
+
+\section{Relevant Works}
+
+RNNs~\citep{elman} are traditionally employed in foundational sequence-processing architectures. Widely used for their efficient inference, RNNs still suffer from limited memory state and are notoriously hard to train~\citep{on the complexities of training RNN}. LSTM~\citep{lstm} and more modern options~\citep{GRU, LRU} address the problem of vanishing gradients and introduce more capacious separate memory states and operations. 
+Modern linear models predominantly choose to omit nonlinearity of memory state update in favor of training efficiency. With roots in state space theory, SSM models~\citep{Hippo, S4} proved that linear models can match or outperform Transformers on specific long-context tasks~\citep{LRA}. Further development focused on providing RNNs with more expressive memory operations such as filtering, resetting, outer product storage and delta update rules~\citep{Mamba, Mamba2, DN, parallelizing with DN, GDN}. Despite significant advances, recurrent models are widely shown to struggle at tasks that require precise memory operations: copying~\citep{}, state tracking~\citep{} and instruction following~\citep{}.
+
+Another approach to building linear-complexity models uses segment-level recurrence. Transformer-XL~\citep{} proposed splitting the inputs to fixed-size segments and processing them sequentially with Transformer model augmented with truncated kv-cache from previous segments. To reduce the excessive cost of such memory, Compressive Transformer~\citep{} introduced compressing to a fixed-size state and Recurrent Memory Transformer (RMT)~\citep{} utilized memory tokens, processed by the backbone model itself to achieve expressive read and write operations. The successor ARMT~\citep{} introduced a more capacious memory state at each layer and DeltaNet-like memory update operation, performed by a separate set of weights. 
+
+
+- Zoology, SSM-AR, they already pinpoint the brittleness of recurrent models on AR, but don't provide the estimates for segment level models. 
+
+- Diagonal batching speeds up ARMT but doesn't utilize single forward pass for speedup.
+
+We note that there exists an alternative line of work focused on LLM or agent pipelines in order to achieve linear context scaling. In this work however we focus on native architectural improvements.
+
+
+\section{Method}
+
+- Segment-level recurrence intro, memory transformers, ARMT
+First, ARMT compresses the segment tokens into a fixed number of memory tokens, usually from 16 to 128, with self-attention, and then writes the compressed value to the matrix-valued long-term memory. 
+We argue that despite having scalable long-term memory, the compression operation is the bottleneck limiting ARMT performance on memory-intensive tasks. Both RMT and ARMT shine on extremely long tasks with sparse distribution of important information and excessive amount of irrelevant one. By stressing the capacity of a single memory update operation, we show that this mechanism leaves a large room for improvement. 
+
+- GDN intro
+
+- RMM
+    Scheme
+    Comparison table: Tr vs token level vs segment level
+
+- Two forms of RMM: parallel training, recurrent inference
+    Scheme
+    Speed and memory measurements
+
+
+\section{Experiments}
+
+- show on AR that RMT \& ARMT fail, but Mamba and GDN dont. Motivate its because capacity limitation, verify with GDN experiments with lower state size.
+- AR with increasing number of pairs: RMM holds up better than RMT/ARMT
+- Vary compression ratio for RMM, number of write vs granularity tradeoff
+
+% \section*{Limitations}
+
+% \section*{Acknowledgments}
+
+
+% Bibliography entries for the entire Anthology, followed by custom entries
+%\bibliography{anthology,custom}
+% Custom bibliography entries only
+\bibliography{custom}
+
+\appendix
+
+\section{Example Appendix}
+\label{sec:appendix}
+
+This is an appendix.
+
+\end{document}
