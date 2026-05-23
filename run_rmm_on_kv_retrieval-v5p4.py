@@ -105,9 +105,23 @@ def collate_fn(batch):
         })
         segments_batch.append(segments)
 
+    # Pad each sample to max_segments first (handles variable-noise data:
+    # samples may have different context lengths → different segment counts).
+    # Empty padding segments inserted at the FRONT to keep QT aligned at end.
+    max_segments_in_batch = max(len(s) for s in segments_batch)
+    _pad_id = tokenizer.pad_token_id if hasattr(tokenizer, 'pad_token_id') and tokenizer.pad_token_id is not None else 0
+    for s in segments_batch:
+        while len(s) < max_segments_in_batch:
+            s.insert(0, {
+                'input_ids':      torch.tensor([_pad_id], dtype=torch.long),
+                'attention_mask': torch.zeros(1, dtype=torch.long),
+                'labels':         torch.tensor([-100], dtype=torch.long),
+                'labels_mask':    torch.zeros(1, dtype=torch.bool),
+            })
+
     # Pad segments across the batch
     batch_segments = []
-    num_segments   = len(segments_batch[0])
+    num_segments   = max_segments_in_batch
     id_pad_value   = tokenizer.pad_token_id if hasattr(tokenizer, "pad_token_id") and tokenizer.pad_token_id is not None else 0
     for i in range(num_segments):
         input_ids    = pad_sequence([s[i]['input_ids']    for s in segments_batch], batch_first=True, padding_value=id_pad_value)
@@ -362,6 +376,15 @@ if __name__ == '__main__':
         dataset = datasets.load_from_disk(args.data_path)
     except Exception as e:
         logger.info(f'Generating dataset: {e}')
+        # noisy-AR datasets must be built explicitly — see scripts/assoc-comp-noisy-ar/00_build_data.sh
+        import re as _re
+        _noisy = _re.search(r'_K\d+(-vary)?-B\d+_', str(args.data_path if hasattr(args, 'data_path') else data_path))
+        if _noisy:
+            raise FileNotFoundError(
+                f"noisy-AR dataset not present and refusing to auto-generate clean data at "
+                f"{args.data_path if hasattr(args, 'data_path') else data_path}. "
+                f"Build it first: bash scripts/assoc-comp-noisy-ar/00_build_data.sh"
+            )
         from kv_dataset_utils import generate_sequence
         raw_samples = [
             generate_sequence(num_kv_pairs=args.n_pairs, n_segments=1,
