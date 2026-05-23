@@ -329,6 +329,15 @@ if __name__ == '__main__':
         logger.info(f'Successfully loaded existing dataset from {args.data_path}')
     except Exception as e:
         logger.info(f'Could not load dataset from {args.data_path}: {e}')
+        # noisy-AR datasets must be built explicitly — see scripts/assoc-comp-noisy-ar/00_build_data.sh
+        import re as _re
+        _noisy = _re.search(r'_K\d+(-vary)?-B\d+_', str(args.data_path if hasattr(args, 'data_path') else data_path))
+        if _noisy:
+            raise FileNotFoundError(
+                f"noisy-AR dataset not present and refusing to auto-generate clean data at "
+                f"{args.data_path if hasattr(args, 'data_path') else data_path}. "
+                f"Build it first: bash scripts/assoc-comp-noisy-ar/00_build_data.sh"
+            )
         from kv_dataset_utils import generate_sequence
 
         logger.info('Generating raw samples...')
