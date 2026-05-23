@@ -186,3 +186,5 @@ runs-baselines/
 *artifacts/
 *checkpoint-*
 *.lock
+
+.agentic

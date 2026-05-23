@@ -245,6 +245,9 @@ class ExperimentArgs:
     lr_scheduler_type: Optional[str] = field(default='constant_with_warmup')
     early_stopping_patience: Optional[int] = field(default=50)
     seed: Optional[int] = field(default=142)
+    report_to: Optional[str] = field(default='tensorboard')
+    run_name: Optional[str] = field(default=None)
+    wandb_project: Optional[str] = field(default=None)
     base_model: Optional[str] = field(default='gpt2')
     n_layer: Optional[int] = field(default=4)
     n_head: Optional[int] = field(default=4)
@@ -488,6 +491,9 @@ if __name__ == '__main__':
 
     output_dir = Path(args.exp_path)
 
+    if args.wandb_project:
+        os.environ.setdefault('WANDB_PROJECT', args.wandb_project)
+
     if args.total_batch_size is None:
         args.total_batch_size = args.per_device_batch_size * accel.num_processes * args.gradient_accumulation_steps
     else:
@@ -513,7 +519,8 @@ if __name__ == '__main__':
         save_steps=args.eval_steps,
         eval_steps=args.eval_steps,
         logging_steps=args.logging_steps,
-        report_to='tensorboard',
+        report_to=args.report_to,
+        run_name=args.run_name,
         metric_for_best_model=args.metric_for_best_model,
         load_best_model_at_end=True,
         eval_on_start=True,
