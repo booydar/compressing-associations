@@ -183,6 +183,15 @@ runs-rebuttal/
 runs-rebuttal-default/
 runs-rmm*
 runs-baselines/
+runs-conv-study/
+runs-*
+
+assoc-comp-fla-conv-study/
+*-conv-study*
+
+# **/archive/
+N8-K2V2-V62_D*
+
 *artifacts/
 *checkpoint-*
 *.lock
