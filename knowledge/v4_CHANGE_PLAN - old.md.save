@@ -827,7 +827,7 @@
   └───────────────────────┴──────────────────┘
 
   That's 2×2×4×2×2×3 = 192 runs total. Uses the
-  /cephfs/home/bulatov/envs/fla/bin/accelerate binary directly (no conda 
+  accelerate binary directly (no conda 
   activate needed). Results go to ./runs-rmmv3/.
 
   To launch from the project root on gpu8:
