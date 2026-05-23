@@ -31,6 +31,19 @@ logger = logging.getLogger('')
 
 logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
+def split_context_by_tokens(context, tokens_per_segment):
+    """Chunk context into fixed-length char/token windows. Robust to noise
+    between KV pairs (unlike the !!-boundary splitter)."""
+    # Drop trailing '|' segment terminator if present so the chunking lines up
+    # with the same convention used by run_rmm_on_kv_retrieval-v5p*.py.
+    if context.endswith("|"):
+        context = context[:-1]
+    if tokens_per_segment is None or tokens_per_segment <= 0:
+        return [context]
+    return [context[i:i + tokens_per_segment]
+            for i in range(0, len(context), tokens_per_segment)]
+
+
 def split_context_into_segments(context, pairs_per_segment=None):
     if pairs_per_segment is None:
         return [context]
@@ -72,7 +85,10 @@ def collate_fn(batch):
         query_ids = encode(query)
         target_ids = encode(target)
         qt_ids = query_ids + target_ids
-        context_pairs = split_context_into_segments(context, pairs_per_segment=args.pairs_per_segment)
+        if args.tokens_per_segment is not None:
+            context_pairs = split_context_by_tokens(context, args.tokens_per_segment)
+        else:
+            context_pairs = split_context_into_segments(context, pairs_per_segment=args.pairs_per_segment)
 
         segments = []
         for context_pair in context_pairs:
@@ -105,9 +121,24 @@ def collate_fn(batch):
         })
         segments_batch.append(segments)
 
-    # Pad segments across the batch
+    # Pad segments across the batch. With variable-noise data each
+    # sample may have a different number of context segments, so the
+    # shorter ones are padded with empty (zero-length) segments at the
+    # FRONT to keep the QT (last) segment aligned.
+    max_segments_in_batch = max(len(s) for s in segments_batch)
+    pad_id = tokenizer.pad_token_id if hasattr(tokenizer, 'pad_token_id') and tokenizer.pad_token_id is not None else 0
+    for s in segments_batch:
+        while len(s) < max_segments_in_batch:
+            empty_seg = {
+                'input_ids':      torch.tensor([pad_id], dtype=torch.long),
+                'attention_mask': torch.zeros(1, dtype=torch.long),
+                'labels':         torch.tensor([-100], dtype=torch.long),
+                'labels_mask':    torch.zeros(1, dtype=torch.bool),
+            }
+            s.insert(0, empty_seg)
+
     batch_segments = []
-    num_segments = len(segments_batch[0])
+    num_segments = max_segments_in_batch
     id_pad_value = tokenizer.pad_token_id if hasattr(tokenizer, "pad_token_id") and tokenizer.pad_token_id is not None else 0
     for i in range(num_segments):
         input_ids = [s[i]['input_ids'] for s in segments_batch]
@@ -136,6 +167,10 @@ def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
     # Shift logits and labels for next-token prediction
     predictions, labels, inputs = eval_pred.predictions, eval_pred.label_ids, eval_pred.inputs
     # logits, inner_loop_stats = predictions
+    print("DEBUG predictions: outer type=", type(predictions), "n_elts=", len(predictions) if hasattr(predictions, "__len__") else "NA")
+    if isinstance(predictions, (list, tuple)):
+        for _i, _p in enumerate(predictions):
+            print(f"  [{_i}] type={type(_p).__name__} shape={getattr(_p, "shape", _p)}")
     logits = predictions
     # ARMT can return a tuple (logits, ...) when extra outputs are emitted.
     if isinstance(logits, (list, tuple)):
@@ -260,6 +295,7 @@ class ExperimentArgs:
     memory_value_size: Optional[int] = field(default=4)
     model_cpt: Optional[str] = field(default=None)
     pairs_per_segment: Optional[int] = field(default=None)
+    tokens_per_segment: Optional[int] = field(default=None)
     n_pairs: Optional[int] = field(default=None)
     n_keys: Optional[int] = field(default=None)
     n_values: Optional[int] = field(default=None)
@@ -446,6 +482,15 @@ if __name__ == '__main__':
         logger.info(f'Successfully loaded existing dataset from {data_path}')
     except Exception as e:
         logger.info(f'Could not load dataset from {data_path}: {e}')
+        # noisy-AR datasets must be built explicitly — see scripts/assoc-comp-noisy-ar/00_build_data.sh
+        import re as _re
+        _noisy = _re.search(r'_K\d+(-vary)?-B\d+_', str(args.data_path if hasattr(args, 'data_path') else data_path))
+        if _noisy:
+            raise FileNotFoundError(
+                f"noisy-AR dataset not present and refusing to auto-generate clean data at "
+                f"{args.data_path if hasattr(args, 'data_path') else data_path}. "
+                f"Build it first: bash scripts/assoc-comp-noisy-ar/00_build_data.sh"
+            )
         logger.info(f'Generating new dataset with n_pairs={args.n_pairs}, n_keys={args.n_keys}, n_values={args.n_values}')
         from kv_dataset_utils import generate_sequence
         
