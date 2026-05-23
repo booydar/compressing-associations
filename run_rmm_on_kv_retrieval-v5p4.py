@@ -241,6 +241,7 @@ class ExperimentArgs:
     state_size:               Optional[int]  = field(default=32)    # num_heads * head_dim
     expand_v:                 Optional[float]= field(default=2.0)
     conv_kernel:              Optional[int]  = field(default=4)
+    use_short_conv:           Optional[bool] = field(default=True)
     # v5 memory-path parameters
     num_memory_vectors:       Optional[int]  = field(default=1)             # M
     write_mode:               Optional[str]  = field(default='cross_attn')  # 'identity'|'pool'|'cross_attn'
@@ -319,6 +320,7 @@ if __name__ == '__main__':
         head_dim           = head_dim,
         expand_v           = args.expand_v,
         conv_size          = args.conv_kernel,
+        use_short_conv     = args.use_short_conv,
         # v5 memory path
         num_memory_vectors = args.num_memory_vectors,
         write_mode         = args.write_mode,
