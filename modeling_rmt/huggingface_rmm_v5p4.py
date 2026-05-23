@@ -356,6 +356,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         head_dim=64,
         expand_v=2.0,
         conv_size=4,
+        use_short_conv=True,
         state_size=32,
         write_mode='cross_attn',
         read_mode='cross_attn',
@@ -379,6 +380,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
         self.head_dim = head_dim
         self.expand_v = expand_v
         self.conv_size = conv_size
+        self.use_short_conv = use_short_conv
         self.state_size = state_size
         self.write_mode = write_mode
         self.read_mode = read_mode
@@ -403,6 +405,7 @@ class RecurrentMemoryConfig(PretrainedConfig):
             "expand": self.expand_v,
             "conv_size": self.conv_size,
             "conv_kernel": self.conv_size,
+            "use_short_conv": self.use_short_conv,
         }
 
 
