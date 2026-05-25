@@ -49,7 +49,7 @@ STATE_SIZE=16
 for N in 1 2; do
   for LR in 3e-04 1e-04; do
     for CONV_KERNEL in 2; do
-      for NUM_MEMORY_VECTORS in 16; do
+      for NUM_MEMORY_VECTORS in 16 8; do
 
         DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
 
@@ -64,7 +64,7 @@ for N in 1 2; do
         fi
 
         echo "Launching: $EXP_PATH"
-        accelerate launch \
+        CUDA_LAUNCH_BLOCKING=1 TORCH_USE_CUDA_DSA=1 accelerate launch \
           --main_process_port 0 \
           --num_processes $NP \
           --mixed_precision bf16 \
