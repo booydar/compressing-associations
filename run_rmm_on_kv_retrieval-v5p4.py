@@ -255,6 +255,9 @@ class ExperimentArgs:
     memory_key_size:          Optional[int]  = field(default=4)
     memory_value_size:        Optional[int]  = field(default=4)
     model_cpt:                Optional[str]  = field(default=None)
+    # Full-state resume (model + optimizer + scheduler + RNG + callbacks + step).
+    # Pass a `checkpoint-XXXX` dir, or `latest`/`True` to auto-detect in exp_path.
+    checkpoint:               Optional[str]  = field(default=None)
     tokens_per_segment:       Optional[int]  = field(default=None)          # v5: replaces pairs_per_segment; 1 ⇒ token-level recurrence
     n_pairs:                  Optional[int]  = field(default=None)
     n_keys:                   Optional[int]  = field(default=None)
@@ -457,7 +460,14 @@ if __name__ == '__main__':
             StopOnMetricValue('exact_match_None', 0.99, higher_is_better=True),
         ],
     )
-    trainer.train()
+    resume_arg = None
+    if args.checkpoint and args.checkpoint != 'None':
+        if args.checkpoint.lower() in ('latest', 'true'):
+            resume_arg = True
+        else:
+            resume_arg = args.checkpoint
+        logger.info(f'Resuming full training state from: {resume_arg}')
+    trainer.train(resume_from_checkpoint=resume_arg)
     logger.info('training done. running final evaluation...')
     metrics = trainer.evaluate(dataset['valid'])
     logger.info(f'{metrics}')
