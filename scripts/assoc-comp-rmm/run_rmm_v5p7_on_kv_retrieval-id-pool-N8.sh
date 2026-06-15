@@ -6,7 +6,7 @@ set -e
 # Per-layer order: ATTN -> COMPRESS -> GDN -> DECOMPRESS(prev_mem) -> residual.
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 cd "$REPO_ROOT"
 
 # ── resources ──────────────────────────────────────────────────────────────
@@ -22,6 +22,7 @@ D=128
 BASE_MODEL=llama
 FLA_LAYER=GatedDeltaNet
 EXPAND_V=2.0
+CONV_KERNEL=4
 
 # ── data ───────────────────────────────────────────────────────────────────
 K=2
@@ -34,30 +35,28 @@ WARMUP=10000
 EVAL_STEPS=500
 EARLY_STOP=500
 
-# ── RMM v5p4 memory path ───────────────────────────────────────────────────
+# ── RMM v5p7 memory path ───────────────────────────────────────────────────
 WRITE_MODE=pool
-READ_MODE=unpool
+READ_MODE=identity
 USE_PARALLEL_PREFILL=True
 
-
 TOKENS_PER_SEGMENT=7
-PAIRS_PER_SEGMENT=1
-N_PAIRS=8
-STATE_SIZE=16
+STATE_SIZE=32
 
 # ── sweep ──────────────────────────────────────────────────────────────────
-for N in 1 2; do
+for NUM_MEMORY_VECTORS in 8 16; do
   for LR in 3e-04 1e-04; do
-    for CONV_KERNEL in 2; do
-      for NUM_MEMORY_VECTORS in 16; do
+    for N in 1 2; do
+      for N_PAIRS in 8 16; do
 
         DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
+        PAIRS_PER_SEGMENT=$((TOKENS_PER_SEGMENT / 7))
 
-        RUN_NAME="rmmv5p4_${FLA_LAYER}_${BASE_MODEL}_L${L}H${H}D${D}"
-        RUN_NAME="${RUN_NAME}_ss${STATE_SIZE}_ck${CONV_KERNEL}_M${NUM_MEMORY_VECTORS}_${READ_MODE}_${WRITE_MODE}"
+        RUN_NAME="rmmv5p7_${FLA_LAYER}_${BASE_MODEL}_L${L}H${H}D${D}"
+        RUN_NAME="${RUN_NAME}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${READ_MODE}_${WRITE_MODE}"
         RUN_NAME="${RUN_NAME}_lr${LR}_bs${TBS}_pps${PAIRS_PER_SEGMENT}_tps${TOKENS_PER_SEGMENT}"
 
-        EXP_PATH="./runs-rmmv5p4/${DATA_PATH}/${RUN_NAME}/run_${N}"
+        EXP_PATH="./runs-rmmv5p7/${DATA_PATH}/${RUN_NAME}/run_${N}"
         if [ -d "$EXP_PATH" ]; then
           echo "Skipping existing: $EXP_PATH"
           continue
@@ -69,7 +68,7 @@ for N in 1 2; do
           --num_processes $NP \
           --mixed_precision bf16 \
           --config_file accelerate.yaml \
-          run_rmm_on_kv_retrieval-v5p4.py \
+          run_rmm_on_kv_retrieval-v5p7.py \
           --exp_path                    "$EXP_PATH" \
           --per_device_batch_size       $PER_DEVICE_BATCH_SIZE \
           --gradient_accumulation_steps $GRAD_ACC_STEPS \

@@ -67,7 +67,7 @@ for N_PAIRS in 4 2; do
         fi
 
         echo "Launching: $EXP_PATH"
-        /cephfs/home/bulatov/envs/fla/bin/accelerate launch \
+        accelerate launch \
           --main_process_port 0 \
           --num_processes $NP \
           --mixed_precision bf16 \

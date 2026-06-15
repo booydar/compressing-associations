@@ -1,0 +1,50 @@
+Monday
+
+
+if have jobs left: 
+TARGET=./scripts/assoc-comp-rmm/state-size-match/run_rmm_v5p4_on_kv_retrieval-id-7tps-h1-ss128.sh  - one more
+
+---
+
+Sunday
+
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p7_on_kv_retrieval-id-7tpsh1.sh
+gpu8
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p7_on_kv_retrieval-id-7tps.sh
+jobs
+
+more lr
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-id-7tps-2.sh
+jobs
+
+1head
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-id-7tps-3.sh
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-pool-7tps-2.sh
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/conv-state-ablation/run_rmm_v5p4_on_kv_retrieval-n8conv2h1.sh
+gpu8
+
+test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/conv-state-ablation/run_rmm_v5p4_on_kv_retrieval-n8conv4h1.sh
+jobs
+
+
+
+Saturday
+main - identity
+2-4x - 12 runs - test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-id-7tps.sh
+2x running on jobs
+
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-pool-N8.sh
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-pool-N16.sh
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/run_rmm_v5p4_on_kv_retrieval-pool-N16-1pps.sh
+running on jobs
+
+conv ablation
+1x - ./scripts/assoc-comp-rmm/conv-state-ablation/run_rmm_v5p4_on_kv_retrieval-n8conv2.sh
+1x - ./scripts/assoc-comp-rmm/conv-state-ablation/run_rmm_v5p4_on_kv_retrieval-n8conv4.sh
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-rmm/conv-state-ablation/run_rmm_v5p4_on_kv_retrieval-conv-layer.sh
+running on jobs
+
+baselines
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-fla-default/run_fla_on_kv_retrieval-gdn-state32.sh - 2h100-airi
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-fla-default/run_fla_on_kv_retrieval-mamba-state32.sh - gpu8
+2x - test-time/compressing-associations-gdn/scripts/assoc-comp-fla-default/run_fla_on_kv_retrieval-mamba2-state32.sh - gpu8
