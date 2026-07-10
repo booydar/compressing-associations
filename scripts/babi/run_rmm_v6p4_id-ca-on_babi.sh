@@ -22,22 +22,26 @@ GRAD_ACC_STEPS=$(( TBS / (PER_DEVICE_BATCH_SIZE * NP) ))
 BASE_MODEL=gpt2
 PRETRAINED_MODEL=gpt2   # tokenizer
 L=4; H=1; D=128
+NUM_COMPRESS_HEADS=4
+THREAD_MEMORY=True     # v6p4 cross-layer query threading
 # GDN / RMM v6p0 memory path
 FLA_LAYER=GatedDeltaNet
 STATE_SIZE=32; EXPAND_V=2.0; CONV_KERNEL=4
-WRITE_MODE=pool
+WRITE_MODE=cross_attn
 READ_MODE=identity
 MAX_CONTEXT_LENGTH=1024
 
 N=1
 for LR in 1e-04 3e-04 ; do
-  for NUM_MEMORY_VECTORS in 32 64; do
+  for NUM_MEMORY_VECTORS in 32; do
     # for task_name in "qa1" "qa2" "qa3" "qa4" "qa5"; do
     for task_name in "qa1"; do
       DATA_NAME="babilong_${task_name}_0k"
       DATA_PATH="./data/${DATA_NAME}"
-      RUN_NAME="rmmv6p2_${BASE_MODEL}_L${L}H${H}D${D}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${WRITE_MODE}_${READ_MODE}_lr${LR}_bs${TBS}"
-      EXP_PATH="./runs-rmmv6p2/babi/${DATA_NAME}/${RUN_NAME}/run_${N}"
+      THR_TAG=$([ "$THREAD_MEMORY" = "True" ] && echo thrON || echo thrOFF)
+      RUN_NAME="rmmv6p4_${BASE_MODEL}_L${L}H${H}D${D}NCH${NUM_COMPRESS_HEADS}"
+      RUN_NAME="${RUN_NAME}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${WRITE_MODE}_${READ_MODE}_${THR_TAG}_lr${LR}_bs${TBS}"
+      EXP_PATH="./runs-rmmv6p4/babi/${DATA_NAME}/${RUN_NAME}/run_${N}"
       if [ -d "$EXP_PATH" ]; then echo "exists, skip $EXP_PATH"; continue; fi
 
       accelerate launch \
@@ -45,7 +49,7 @@ for LR in 1e-04 3e-04 ; do
         --num_processes $NP \
         --mixed_precision bf16 \
         --config_file accelerate.yaml \
-        run_rmm_on_babi-v6p2.py \
+        run_rmm_on_babi-v6p4.py \
         --exp_path                    "$EXP_PATH" \
         --per_device_batch_size       $PER_DEVICE_BATCH_SIZE \
         --gradient_accumulation_steps $GRAD_ACC_STEPS \

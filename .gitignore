@@ -186,6 +186,8 @@ runs-baselines/
 runs-conv-study/
 runs-*
 
+logs-*
+
 assoc-comp-fla-conv-study/
 *-conv-study*
 

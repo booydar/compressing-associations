@@ -36,8 +36,8 @@ for LR in 1e-04 3e-04 ; do
     for task_name in "qa1"; do
       DATA_NAME="babilong_${task_name}_0k"
       DATA_PATH="./data/${DATA_NAME}"
-      RUN_NAME="rmmv6p2_${BASE_MODEL}_L${L}H${H}D${D}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${WRITE_MODE}_${READ_MODE}_lr${LR}_bs${TBS}"
-      EXP_PATH="./runs-rmmv6p2/babi/${DATA_NAME}/${RUN_NAME}/run_${N}"
+      RUN_NAME="rmmv6p3_${BASE_MODEL}_L${L}H${H}D${D}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${WRITE_MODE}_${READ_MODE}_lr${LR}_bs${TBS}"
+      EXP_PATH="./runs-rmmv6p3/babi/${DATA_NAME}/${RUN_NAME}/run_${N}"
       if [ -d "$EXP_PATH" ]; then echo "exists, skip $EXP_PATH"; continue; fi
 
       accelerate launch \
@@ -45,7 +45,7 @@ for LR in 1e-04 3e-04 ; do
         --num_processes $NP \
         --mixed_precision bf16 \
         --config_file accelerate.yaml \
-        run_rmm_on_babi-v6p2.py \
+        run_rmm_on_babi-v6p3.py \
         --exp_path                    "$EXP_PATH" \
         --per_device_batch_size       $PER_DEVICE_BATCH_SIZE \
         --gradient_accumulation_steps $GRAD_ACC_STEPS \

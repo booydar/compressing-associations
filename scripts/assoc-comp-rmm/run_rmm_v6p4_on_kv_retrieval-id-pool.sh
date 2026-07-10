@@ -43,24 +43,26 @@ EARLY_STOP=500
 # ── RMM v6p2 memory path ───────────────────────────────────────────────────
 WRITE_MODE=pool
 READ_MODE=identity
+THREAD_MEMORY=True     # v6p4 cross-layer query threading
 USE_PARALLEL_PREFILL=True
 
 # ── sweep ──────────────────────────────────────────────────────────────────
 for LR in 3e-04 1e-04; do
-  for NUM_MEMORY_VECTORS in 32 64; do
+  for NUM_MEMORY_VECTORS in 32; do
     for N in 1 2; do
-      for N_PAIRS in 32; do
+      for N_PAIRS in 16 8; do
         for TOKENS_PER_SEGMENT in 7; do
           for STATE_SIZE in 32; do
 
             DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
             PAIRS_PER_SEGMENT=$((TOKENS_PER_SEGMENT / 7))
 
-            RUN_NAME="rmmv6p2_${FLA_LAYER}_${BASE_MODEL}_L${L}H${H}D${D}"
+            RUN_NAME="rmmv6p4_${FLA_LAYER}_${BASE_MODEL}_L${L}H${H}D${D}"
             RUN_NAME="${RUN_NAME}_ss${STATE_SIZE}_M${NUM_MEMORY_VECTORS}_${READ_MODE}_${WRITE_MODE}"
-            RUN_NAME="${RUN_NAME}_lr${LR}_bs${TBS}_pps${PAIRS_PER_SEGMENT}_tps${TOKENS_PER_SEGMENT}"
+            THR_TAG=$([ "$THREAD_MEMORY" = "True" ] && echo thrON || echo thrOFF)
+            RUN_NAME="${RUN_NAME}_${THR_TAG}_lr${LR}_bs${TBS}_pps${PAIRS_PER_SEGMENT}_tps${TOKENS_PER_SEGMENT}"
 
-            EXP_PATH="./runs-rmmv6p2/${DATA_PATH}/${RUN_NAME}/run_${N}"
+            EXP_PATH="./runs-rmmv6p4/${DATA_PATH}/${RUN_NAME}/run_${N}"
             if [ -d "$EXP_PATH" ]; then
               echo "Skipping existing: $EXP_PATH"
               continue
@@ -72,7 +74,7 @@ for LR in 3e-04 1e-04; do
               --num_processes $NP \
               --mixed_precision bf16 \
               --config_file accelerate.yaml \
-              run_rmm_on_kv_retrieval-v6p2.py \
+              run_rmm_on_kv_retrieval-v6p4.py \
               --exp_path                    "$EXP_PATH" \
               --per_device_batch_size       $PER_DEVICE_BATCH_SIZE \
               --gradient_accumulation_steps $GRAD_ACC_STEPS \
@@ -90,6 +92,7 @@ for LR in 3e-04 1e-04; do
               --num_memory_vectors          $NUM_MEMORY_VECTORS \
               --write_mode                  $WRITE_MODE \
               --read_mode                   $READ_MODE \
+              --thread_memory               $THREAD_MEMORY \
               --use_parallel_prefill        $USE_PARALLEL_PREFILL \
               --tokens_per_segment          $TOKENS_PER_SEGMENT \
               --n_pairs                     $N_PAIRS \

@@ -25,8 +25,8 @@ L=4; H=1; D=128
 # GDN / RMM v6p0 memory path
 FLA_LAYER=GatedDeltaNet
 STATE_SIZE=32; EXPAND_V=2.0; CONV_KERNEL=4
-WRITE_MODE=pool
-READ_MODE=identity
+WRITE_MODE=cross_attn
+READ_MODE=cross_attn
 MAX_CONTEXT_LENGTH=1024
 
 N=1
