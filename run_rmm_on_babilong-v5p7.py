@@ -244,6 +244,7 @@ class ExperimentArgs:
     num_memory_heads:         Optional[int]  = field(default=1)
     use_parallel_prefill:     Optional[bool] = field(default=True)
     model_cpt:                Optional[str]  = field(default=None)
+    validate_only:            Optional[bool] = field(default=False)  # load model_cpt, eval on test only (no train, no model_best.pt overwrite)
 
 
 def build_rmm_model(args, tokenizer):
@@ -383,7 +384,15 @@ if __name__ == '__main__':
     model = build_rmm_model(args, tokenizer)
 
     if args.model_cpt and args.model_cpt != 'None':
-        model.load_state_dict(torch.load(args.model_cpt, map_location='cpu'), strict=False)
+        # accept both our flat model_best.pt state_dict and an HF Trainer
+        # checkpoint-XXX/model.safetensors (torch.load can't read safetensors).
+        if args.model_cpt.endswith('.safetensors'):
+            from safetensors.torch import load_file
+            state_dict = load_file(args.model_cpt, device='cpu')
+        else:
+            # our own checkpoints are trusted; weights_only=False for torch>=2.6
+            state_dict = torch.load(args.model_cpt, map_location='cpu', weights_only=False)
+        model.load_state_dict(state_dict, strict=False)
         print(f"Loaded checkpoint: {args.model_cpt}")
 
     logger.info(f"parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -446,14 +455,23 @@ if __name__ == '__main__':
             StopOnMetricValue('exact_match', 1.0, higher_is_better=True),
         ],
     )
-    trainer.train()
-    accel.wait_for_everyone()
-    # best weights are loaded (load_best_model_at_end); save a flat .pt for
-    # curriculum chaining via --model_cpt
-    if accel.is_main_process:
-        torch.save(trainer.model.state_dict(), os.path.join(args.exp_path, 'model_best.pt'))
-        logger.info(f"saved best model to {os.path.join(args.exp_path, 'model_best.pt')}")
-    logger.info('training done. running final evaluation...')
-    metrics = trainer.evaluate(test_dataset)
-    logger.info(f'{metrics}')
-    trainer.save_metrics(split='all', metrics=metrics)
+    if args.validate_only:
+        # extrapolation eval: evaluate the loaded --model_cpt on test at the
+        # requested max_n_segments. No training, and model_best.pt is NOT touched.
+        logger.info(f'validate_only: evaluating {args.model_cpt} at max_n_segments={args.max_n_segments}')
+        metrics = trainer.evaluate(test_dataset)
+        logger.info(f'{metrics}')
+        if accel.is_main_process:
+            trainer.save_metrics(split='all', metrics=metrics)
+    else:
+        trainer.train()
+        accel.wait_for_everyone()
+        # best weights are loaded (load_best_model_at_end); save a flat .pt for
+        # curriculum chaining via --model_cpt
+        if accel.is_main_process:
+            torch.save(trainer.model.state_dict(), os.path.join(args.exp_path, 'model_best.pt'))
+            logger.info(f"saved best model to {os.path.join(args.exp_path, 'model_best.pt')}")
+        logger.info('training done. running final evaluation...')
+        metrics = trainer.evaluate(test_dataset)
+        logger.info(f'{metrics}')
+        trainer.save_metrics(split='all', metrics=metrics)

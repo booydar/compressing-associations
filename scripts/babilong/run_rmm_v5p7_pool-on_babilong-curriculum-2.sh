@@ -37,7 +37,7 @@ NUM_MEMORY_VECTORS=16  # MEMORY_SIZE=16 in the original scripts
 NOISE_DATASET=emozilla/pg19
 SEGMENT_SIZE=512
 STAGES=(1 2 4 6 8 16 32)
-BSS=(64 16 16 8 8 4 2)
+BSS=(64 16 16 8 8 4 1)
 
 declare -A TASK_NAMES=(
   [qa1]=qa1_single-supporting-fact
