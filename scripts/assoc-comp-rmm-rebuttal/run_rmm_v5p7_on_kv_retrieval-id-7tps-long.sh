@@ -47,9 +47,9 @@ READ_MODE=identity
 USE_PARALLEL_PREFILL=True
 
 # ── sweep ──────────────────────────────────────────────────────────────────
-for LR in 5e-05 1e-04 3e-04; do
-  for N in 1 2; do
-    for N_PAIRS in 8; do
+for N in 1 2; do
+  for LR in 1e-03 3e-03; do
+    for N_PAIRS in 32; do
       for NUM_MEMORY_VECTORS in 32; do
         for STATE_SIZE in 32; do
           TOKENS_PER_SEGMENT=7

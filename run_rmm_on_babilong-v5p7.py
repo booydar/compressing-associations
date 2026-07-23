@@ -121,7 +121,8 @@ def collate_fn(batch):
 
 
 def preprocess_logits_for_metrics(logits, labels):
-    return logits.argmax(dim=-1)
+    # streameval returns (B, S*T) int predictions; leave those untouched
+    return logits if logits.dim() == 2 else logits.argmax(dim=-1)
 
 
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
@@ -243,12 +244,16 @@ class ExperimentArgs:
     write_value_dim:          Optional[int]  = field(default=None)
     num_memory_heads:         Optional[int]  = field(default=1)
     use_parallel_prefill:     Optional[bool] = field(default=True)
+    eval_stream_logits:       Optional[bool] = field(default=False)  # memory-frugal recurrent eval (streameval modeling variant)
     model_cpt:                Optional[str]  = field(default=None)
     validate_only:            Optional[bool] = field(default=False)  # load model_cpt, eval on test only (no train, no model_best.pt overwrite)
 
 
 def build_rmm_model(args, tokenizer):
-    from modeling_rmt.huggingface_rmm_v5p7 import RecurrentMemoryBase, RecurrentMemoryConfig
+    if getattr(args, 'eval_stream_logits', False):
+        from modeling_rmt.huggingface_rmm_v5p7_streameval import RecurrentMemoryBase, RecurrentMemoryConfig
+    else:
+        from modeling_rmt.huggingface_rmm_v5p7 import RecurrentMemoryBase, RecurrentMemoryConfig
 
     base_config = None
     from_pretrained = None
@@ -299,6 +304,7 @@ def build_rmm_model(args, tokenizer):
         write_value_dim    = args.write_value_dim,
         num_memory_heads   = args.num_memory_heads,
         use_parallel_prefill = args.use_parallel_prefill,
+        **({'eval_stream_logits': True} if getattr(args, 'eval_stream_logits', False) else {}),
         max_n_segments     = args.max_n_segments + 1,
         think_token_id     = None,
         answer_token_id    = None,

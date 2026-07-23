@@ -131,6 +131,7 @@ for task in "qa1"; do
       --fla_layer $FLA_LAYER --state_size $STATE_SIZE --expand_v $EXPAND_V --conv_kernel $CONV_KERNEL \
       --write_mode $WRITE_MODE --read_mode $READ_MODE \
       --use_parallel_prefill ${PARALLEL_PREFILL:-False} \
+      --eval_stream_logits           ${EVAL_STREAM_LOGITS:-True} \
       --max_steps 1 --warmup_steps 0 --eval_steps 1 --logging_steps 1 \
       --metric_for_best_model exact_match \
       --seed $(( N + 42 ))

@@ -23,7 +23,7 @@ GRAD_ACC_STEPS=$(( TBS / (PER_DEVICE_BATCH_SIZE * NP) ))
 
 # ── model ──────────────────────────────────────────────────────────────────
 L=4
-H=1
+H=4
 D=128
 BASE_MODEL=llama
 FLA_LAYER=GatedDeltaNet
@@ -47,13 +47,13 @@ READ_MODE=identity
 USE_PARALLEL_PREFILL=True
 
 # ── sweep ──────────────────────────────────────────────────────────────────
-for LR in 5e-05 1e-04 3e-04; do
+for LR in 1e-05 5e-05 1e-04 3e-04 5e-04 7e-04 1e-03; do
   for N in 1 2; do
     for N_PAIRS in 8; do
       for NUM_MEMORY_VECTORS in 32; do
         for STATE_SIZE in 32; do
-          TOKENS_PER_SEGMENT=7
-          PAIRS_PER_SEGMENT=1
+          TOKENS_PER_SEGMENT=$((N_PAIRS * 7))
+          PAIRS_PER_SEGMENT=$N_PAIRS
 
 
           DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
