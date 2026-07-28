@@ -36,12 +36,13 @@ from torch.utils.flop_counter import FlopCounterMode
 # reuse everything from the timing benchmark
 import run_efficiency as re
 
-SEGMENT_VARIANTS = {"armt", "rmm-parallel", "rmm-recurrent"}
+SEGMENT_VARIANTS = {"armt", "rmm-parallel", "rmm-recurrent", "rmm-identity"}
 
 
 def build_payload(variant: str, tps: int, seq_tokens: int, cfg: "re.BenchCfg", bs: int = 1):
     if variant in SEGMENT_VARIANTS:
-        return re.make_segments(bs, seq_tokens, tps if tps > 0 else 7,
+        seg_tps = tps if (tps > 0 or tps == re.TPS_ALL) else 7
+        return re.make_segments(bs, seq_tokens, seg_tps,
                                 cfg.vocab_size, cfg.device)
     return re.make_inputs(bs, seq_tokens, cfg.vocab_size, cfg.device)
 
@@ -60,7 +61,7 @@ def main():
     p.add_argument("--variants", type=str,
                    default="selfattn-1seg,gdn,armt,rmm-parallel,rmm-recurrent")
     p.add_argument("--seq_len_pairs", type=str, default="32,128,256")
-    p.add_argument("--tokens_per_seg", type=str, default="1,7,28")
+    p.add_argument("--tokens_per_seg", type=str, default="7,28")
     p.add_argument("--tokens_per_pair", type=int, default=7)
     p.add_argument("--rmm_layers", type=int, default=4)
     p.add_argument("--rmm_M", type=int, default=4)
@@ -68,11 +69,17 @@ def main():
     p.add_argument("--armt_n_mem_tokens", type=int, default=1)
     p.add_argument("--armt_d_mem", type=int, default=32)
     p.add_argument("--state_size", type=int, default=32)
+    p.add_argument("--rmm_module", type=str, default="huggingface_rmm_v5p7",
+                   help="modeling_rmt module backing the rmm-* variants. With "
+                        "huggingface_rmm_v5p7_eff the parallel form no longer runs a "
+                        "masked full T x T attention, so the counter reports the true "
+                        "block-diagonal cost directly and rmm-parallel/rmm-recurrent "
+                        "agree without the manual correction the notebook applies.")
     args = p.parse_args()
 
     variants = args.variants.split(",")
     seq_pairs = [int(x) for x in args.seq_len_pairs.split(",")]
-    tps_list = [int(x) for x in args.tokens_per_seg.split(",")]
+    tps_list = [re.parse_tps(x) for x in args.tokens_per_seg.split(",")]
 
     cfg = re.BenchCfg(
         L_rmm=args.rmm_layers,
@@ -81,6 +88,7 @@ def main():
         intermediate_mult=args.intermediate_mult,
         armt_n_mem_tokens=args.armt_n_mem_tokens,
         armt_d_mem=args.armt_d_mem,
+        rmm_module=args.rmm_module,
     )
 
     rows = []
@@ -97,12 +105,12 @@ def main():
                     flops = count_flops(model, payload, variant)
                     params_M = re.param_count_M(model)
                     gflops = flops / 1e9
-                    print(f"{variant:16s} tps={tps:<3d} N={N:<4d} "
+                    print(f"{variant:16s} tps={re.tps_label(tps):<4s} N={N:<4d} "
                           f"T={seq_tokens:<5d}  {gflops:12.4f} GFLOPs/seq  "
                           f"params={params_M:.3f}M")
                     rows.append({
                         "variant": variant,
-                        "tokens_per_seg": tps,
+                        "tokens_per_seg": re.tps_label(tps),
                         "seq_pairs": N,
                         "seq_tokens": seq_tokens,
                         "batch_size": 1,
@@ -113,7 +121,7 @@ def main():
                         "dtype": "bf16",
                     })
                 except Exception as e:  # noqa: BLE001
-                    print(f"[error] {variant} tps={tps} N={N}: {e}")
+                    print(f"[error] {variant} tps={re.tps_label(tps)} N={N}: {e}")
                 finally:
                     if "model" in dir():
                         del model

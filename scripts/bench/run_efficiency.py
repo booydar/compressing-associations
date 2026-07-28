@@ -14,12 +14,22 @@ Variants:
     armt            Original ARMT (segment-level memory, sequential prefill).
     rmm-parallel    RMM v5p7 with use_parallel_prefill=True.
     rmm-recurrent   RMM v5p7 with use_parallel_prefill=False (python segment loop).
+    rmm-identity    RMM v5p7 with write_mode=read_mode=identity (M == T, no
+                    compress/decompress), parallel prefill.
 
 Sweep:
     seq_len_pairs  in {32, 128, 256}   ==> tokens = 7 * N_pairs
-    tokens_per_seg in {1, 7, 28}       (RMM/ARMT only; "1 token" = identity / 1-pair
-                                        for ARMT = tps==7 only)
+    tokens_per_seg in {7, 28, all}     (RMM/ARMT only). "all" = whole context in one
+                                        segment + query segment == 2 segments total.
     batch_size     prefill: 8; decode: 1
+
+NOTE: tps=1 is not a valid setting and has been removed. In identity mode the GDN
+scans every token position regardless of segment size (huggingface_rmm_v5p7.py:308),
+so memory is already written per-token at tps=7; tps=1 only shrinks the attention
+window to a single token, where softmax over one key is identically 1 and attention
+is a no-op. It measures a model nobody trains, at maximum kernel-launch overhead.
+The two identity configs that were actually trained are tps=7 (one KV pair per
+segment) and tps=all — see scripts/assoc-comp-rmm-rebuttal/.
 
 Honest knobs:
     - bf16 everywhere
@@ -59,6 +69,24 @@ import torch
 REPO_ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO_ROOT))
 
+# Sentinel for --tokens_per_seg all: the whole context is a single segment, so the
+# payload is [context, query] == 2 segments total. This mirrors collate_fn in
+# run_rmm_on_kv_retrieval-v5p7.py, which chunks the context by tokens_per_segment
+# and then appends the query/answer as a separate final segment — at
+# tokens_per_segment >= context_len that yields exactly 2 segments (cf.
+# scripts/assoc-comp-rmm-rebuttal/run_rmm_v5p7_on_kv_retrieval-id-N16.sh, where
+# TOKENS_PER_SEGMENT = N_PAIRS * 7 = the full context).
+TPS_ALL = -1
+
+
+def parse_tps(tok: str) -> int:
+    tok = tok.strip().lower()
+    return TPS_ALL if tok == "all" else int(tok)
+
+
+def tps_label(tps: int) -> str:
+    return "all" if tps == TPS_ALL else str(tps)
+
 
 # --------------------------------------------------------------------------- #
 # Shared config                                                               #
@@ -90,6 +118,13 @@ class BenchCfg:
     armt_n_mem_tokens: int = 1
     armt_d_mem: int = 32
     armt_n_heads_mem: int = 1
+    # Which RMM implementation to benchmark. "huggingface_rmm_v5p7_eff" is the
+    # same model with the O(L^2) block-diagonal mask replaced by folding the
+    # segments into the batch dim (see that module's docstring); "…_v5p7" is the
+    # original. Both are numerically equivalent — see
+    # tests/test_rmm_v5p7_eff_equivalence.py — so this only moves the memory
+    # curve, never the maths.
+    rmm_module: str = "huggingface_rmm_v5p7"
 
 
 # --------------------------------------------------------------------------- #
@@ -135,9 +170,10 @@ def make_gdn(cfg: BenchCfg) -> torch.nn.Module:
 
 
 def make_rmm(cfg: BenchCfg, parallel: bool, tokens_per_segment: int) -> torch.nn.Module:
-    from modeling_rmt.huggingface_rmm_v5p7 import (
-        RecurrentMemoryBase, RecurrentMemoryConfig,
-    )
+    import importlib
+    mod = importlib.import_module(f"modeling_rmt.{cfg.rmm_module}")
+    RecurrentMemoryBase = mod.RecurrentMemoryBase
+    RecurrentMemoryConfig = mod.RecurrentMemoryConfig
     base = _llama_base_config(cfg)
     base.num_hidden_layers = cfg.L_rmm   # may differ from cfg.L (e.g. L_rmm=2 for layer-matched comparison)
     head_dim = cfg.state_size // cfg.H
@@ -152,12 +188,13 @@ def make_rmm(cfg: BenchCfg, parallel: bool, tokens_per_segment: int) -> torch.nn
         conv_size               = cfg.conv_kernel,
         use_short_conv          = True,
         num_memory_vectors      = cfg.num_memory_vectors,
-        write_mode              = cfg.write_mode if tokens_per_segment > 1 else "identity",
-        read_mode               = cfg.read_mode  if tokens_per_segment > 1 else "identity",
+        write_mode              = cfg.write_mode,
+        read_mode               = cfg.read_mode,
         write_value_dim         = cfg.D,
         num_memory_heads        = cfg.H,
         use_parallel_prefill    = parallel,
-        max_n_segments          = 4096 // max(tokens_per_segment, 1),
+        max_n_segments          = 4 if tokens_per_segment == TPS_ALL
+                                  else 4096 // max(tokens_per_segment, 1),
         think_token_id          = 0,
         answer_token_id         = 0,
         bos_token_id            = 0,
@@ -208,14 +245,23 @@ def make_inputs(batch_size: int, seq_len: int, vocab: int, device: str) -> torch
     return torch.randint(low=1, high=vocab, size=(batch_size, seq_len), device=device)
 
 
-def make_segments(batch_size: int, seq_len: int, tps: int, vocab: int, device: str) -> Dict:
+def make_segments(batch_size: int, seq_len: int, tps: int, vocab: int, device: str,
+                  query_len: int = 7) -> Dict:
     """Build a `segments=[{input_ids, attention_mask, labels, labels_mask}, ...], labels=...`
-    payload as expected by RMM v5p7 / ARMT forward()."""
-    assert seq_len % tps == 0, f"seq_len {seq_len} not divisible by tps {tps}"
-    n_seg = seq_len // tps
+    payload as expected by RMM v5p7 / ARMT forward().
+
+    tps == TPS_ALL puts the entire ``seq_len``-token context in one segment and
+    appends a ``query_len``-token query segment, giving 2 segments total. Every
+    other tps chops ``seq_len`` uniformly, unchanged from before.
+    """
+    if tps == TPS_ALL:
+        seg_lens = [seq_len, query_len]
+    else:
+        assert seq_len % tps == 0, f"seq_len {seq_len} not divisible by tps {tps}"
+        seg_lens = [tps] * (seq_len // tps)
     segments = []
-    for _ in range(n_seg):
-        ids = torch.randint(1, vocab, (batch_size, tps), device=device)
+    for slen in seg_lens:
+        ids = torch.randint(1, vocab, (batch_size, slen), device=device)
         segments.append({
             "input_ids":      ids,
             "attention_mask": torch.ones_like(ids),
@@ -392,7 +438,9 @@ def main():
     p.add_argument("--variants", type=str,
                    default="selfattn-1seg,gdn,armt,rmm-parallel,rmm-recurrent")
     p.add_argument("--seq_len_pairs", type=str, default="32,128,256")
-    p.add_argument("--tokens_per_seg", type=str, default="1,7,28")
+    p.add_argument("--tokens_per_seg", type=str, default="7,28",
+                   help="Comma-separated segment sizes for RMM/ARMT. 'all' puts the "
+                        "whole context in one segment (2 segments total, incl. query).")
     p.add_argument("--prefill_bs", type=int, default=8)
     p.add_argument("--decode_bs",  type=int, default=1)
     p.add_argument("--warmup",  type=int, default=3)
@@ -412,6 +460,10 @@ def main():
                    help="Llama FFN intermediate_size = D * mult. Use 2 to halve the MLP cost.")
     p.add_argument("--armt_n_mem_tokens", type=int, default=1)
     p.add_argument("--armt_d_mem", type=int, default=32)
+    p.add_argument("--rmm_module", type=str, default="huggingface_rmm_v5p7",
+                   help="modeling_rmt module backing the rmm-* variants. "
+                        "huggingface_rmm_v5p7_eff is the same model without the "
+                        "O(L^2) block-diagonal attention mask.")
     p.add_argument("--state_size", type=int, default=32,
                    help="GDN state size = num_heads * head_dim. Larger state makes GDN's "
                         "per-token update expensive (O(state^2)); RMM only pays this M times "
@@ -427,10 +479,11 @@ def main():
         state_size=args.state_size,
         armt_n_mem_tokens=args.armt_n_mem_tokens,
         armt_d_mem=args.armt_d_mem,
+        rmm_module=args.rmm_module,
     )
     variants       = [v.strip() for v in args.variants.split(",") if v.strip()]
     pair_lens      = [int(x) for x in args.seq_len_pairs.split(",")]
-    tps_list       = [int(x) for x in args.tokens_per_seg.split(",")]
+    tps_list       = [parse_tps(x) for x in args.tokens_per_seg.split(",")]
     phases         = set(args.phases.split(","))
     skip_decode    = set(args.skip_decode_for.split(","))
 
@@ -441,6 +494,7 @@ def main():
         "variant", "tokens_per_seg", "seq_pairs", "seq_tokens", "batch_size",
         "phase", "median_ms_per_seq", "ms_per_tok", "tok_per_s",
         "peak_vram_mb", "params_M", "n_warmup", "n_measure", "dtype",
+        "rmm_module",
     ]
     f = open(out_path, "w", newline="")
     w = csv.DictWriter(f, fieldnames=fieldnames)
@@ -448,6 +502,8 @@ def main():
     f.flush()
 
     def emit(row: Dict):
+        # provenance: which RMM implementation produced the rmm-* rows
+        row.setdefault("rmm_module", cfg.rmm_module)
         w.writerow(row)
         f.flush()
 
@@ -480,8 +536,10 @@ def main():
                 # build the right kind of input payload
                 def _payload(bs):
                     if variant in rmm_like:
-                        return make_segments(bs, seq_tokens, tps if tps > 0 else 7,
-                                             cfg.vocab_size, cfg.device)
+                        seg_tps = tps if (tps > 0 or tps == TPS_ALL) else 7
+                        return make_segments(bs, seq_tokens, seg_tps,
+                                             cfg.vocab_size, cfg.device,
+                                             query_len=args.tokens_per_pair)
                     return make_inputs(bs, seq_tokens, cfg.vocab_size, cfg.device)
 
                 # ----- prefill -----
@@ -491,7 +549,7 @@ def main():
                         ms, vram = bench_prefill(model, ids, variant, cfg)
                         tok_per_s = (args.prefill_bs * seq_tokens) / (ms / 1000)
                         emit(dict(
-                            variant=variant, tokens_per_seg=tps,
+                            variant=variant, tokens_per_seg=tps_label(tps),
                             seq_pairs=n_pairs, seq_tokens=seq_tokens,
                             batch_size=args.prefill_bs, phase="prefill",
                             median_ms_per_seq=round(ms, 3),
@@ -511,7 +569,7 @@ def main():
                         ms, vram = bench_train_step(model, ids, variant, cfg)
                         tok_per_s = (args.prefill_bs * seq_tokens) / (ms / 1000)
                         emit(dict(
-                            variant=variant, tokens_per_seg=tps,
+                            variant=variant, tokens_per_seg=tps_label(tps),
                             seq_pairs=n_pairs, seq_tokens=seq_tokens,
                             batch_size=args.prefill_bs, phase="train_step",
                             median_ms_per_seq=round(ms, 3),
@@ -529,7 +587,7 @@ def main():
                     try:
                         ms_tok, vram = bench_decode(model, variant, cfg, prefill_len=seq_tokens)
                         emit(dict(
-                            variant=variant, tokens_per_seg=tps,
+                            variant=variant, tokens_per_seg=tps_label(tps),
                             seq_pairs=n_pairs, seq_tokens=seq_tokens,
                             batch_size=args.decode_bs, phase="decode",
                             median_ms_per_seq=None,

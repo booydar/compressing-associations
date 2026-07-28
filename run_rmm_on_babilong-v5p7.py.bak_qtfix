@@ -9,22 +9,15 @@ must answer the question from memory after reading the noisy context.
 Differences from the babi qaX_0k runners (run_rmm_on_babi-*.py, no noise):
   - data is built on the fly from raw bAbI txt (babilong_utils.TaskDataset /
     SentenceSampler / NoiseInjectionDataset) instead of load_from_disk;
-  - exactly like the RMT reference, the flat sequence
-    input_tokens + question_tokens + target_tokens is split into
-    ceil(len / segment_size) uniform segments (parallel prefill requires
-    uniform T). The question+answer ride in the LAST context segment (they
-    self-attend together with the context tail, and read earlier context via
-    memory) -- NOT in a dedicated extra segment. So the model sees
-    max_n_segments segments, and at max_n_segments=1 it is a plain single
-    causal forward over the whole sample (memory unused);
+  - the context is split into max_n_segments uniform segments of segment_size
+    tokens (parallel prefill requires uniform T); the question+answer ride in
+    ONE extra final segment, so the model sees max_n_segments+1 segments;
   - --vary_n_segments samples the context length per sample from
-    {segment_size*1..segment_size*max_n_segments} (original curriculum trick);
-  - qa_margin (build_babilong_datasets) reserves room so question+answer never
-    spill past the segment budget into an extra segment.
+    {segment_size*1..segment_size*max_n_segments} (original curriculum trick).
 
 Context tokens are RIGHT-aligned: with mixed lengths in a batch the padding
 goes into the EARLIEST segments, so memory written from all-pad segments is
-overwritten by the real segments before the question tokens arrive.
+overwritten by the real segments before the question segment arrives.
 
 Prereq: bash scripts/babilong/download_babilong_data.sh
 """
@@ -64,66 +57,63 @@ logger.info(f"CUDA DEVICE COUNT: {torch.cuda.device_count()}")
 
 def collate_babilong(batch, tokenizer, segment_size):
     """babilong sample (input_tokens/question_tokens/target_tokens) ->
-    RMM segment list of S = ceil(max_len / segment_size) uniform segments.
+    RMM segment list [ctx_seg_1 .. ctx_seg_S, qt_seg].
 
-    Matches the RMT reference (run_finetuning_babilong_rmt.py): the flat
-    sequence  input_tokens + question_tokens + target_tokens  is right-aligned
-    into uniform segments. The question+answer land in the LAST segment (which
-    the model runs as its query segment: self-attention over the context tail +
-    question + answer, plus a memory read of the earlier segments) -- there is
-    NO dedicated extra question segment. labels cover the answer tokens only;
-    labels_mask is the predict-next shift (position p is in the loss iff token
-    p+1 is a target token). qa_margin (build_babilong_datasets) guarantees the
-    question+answer fit inside the segment budget, so S <= max_n_segments.
+    Context tokens are right-aligned into S = ceil(max_ctx_len / segment_size)
+    uniform segments; the final segment is question+answer with labels on the
+    answer tokens only. labels_mask follows the babi runner's predict-next
+    shift: position p is in the loss iff p+1 is a target token.
     """
     pad_id = tokenizer.pad_token_id
     B = len(batch)
     T = segment_size
 
-    seqs, tgt_lens = [], []
-    for b in batch:
-        q, t = list(b['question_tokens']), list(b['target_tokens'])
-        seqs.append(list(b['input_tokens']) + q + t)
-        tgt_lens.append(len(t))
-
-    S = max(1, math.ceil(max(len(s) for s in seqs) / T))
+    ctx = [b['input_tokens'] for b in batch]
+    S = max(1, math.ceil(max(len(c) for c in ctx) / T))
     L = S * T
-    input_ids = torch.full((B, L), pad_id, dtype=torch.long)
-    attention_mask = torch.zeros((B, L), dtype=torch.long)
-    labels = torch.full((B, L), -100, dtype=torch.long)
-    labels_mask = torch.zeros((B, L), dtype=torch.bool)
-    for i, (s, tl) in enumerate(zip(seqs, tgt_lens)):
-        s = s[-L:]  # safety; qa_margin keeps len(s) <= S*T
-        n = len(s)
-        row = torch.tensor(s, dtype=torch.long)
-        input_ids[i, L - n:] = row
-        attention_mask[i, L - n:] = 1
-        # answer tokens are the last tl tokens of the right-aligned sequence
-        labels[i, L - tl:] = row[-tl:]
-        # predict-next: position p is in the loss iff token p+1 is a target token
-        labels_mask[i, L - tl - 1: L - 1] = True
+    context_input_ids = torch.full((B, L), pad_id, dtype=torch.long)
+    context_attention_mask = torch.zeros((B, L), dtype=torch.long)
+    for i, c in enumerate(ctx):
+        c = c[-L:]  # safety; noise injection already fits sample_size <= S*T
+        context_input_ids[i, L - len(c):] = torch.tensor(c, dtype=torch.long)
+        context_attention_mask[i, L - len(c):] = 1
+    context_labels = torch.full_like(context_input_ids, -100)
+    context_labels_mask = torch.zeros_like(context_input_ids, dtype=torch.bool)
 
     segments = []
     for s in range(S):
         sl = slice(s * T, (s + 1) * T)
         segments.append({
-            'input_ids': input_ids[:, sl],
-            'attention_mask': attention_mask[:, sl],
-            'labels': labels[:, sl],
-            'labels_mask': labels_mask[:, sl],
+            'input_ids': context_input_ids[:, sl],
+            'attention_mask': context_attention_mask[:, sl],
+            'labels': context_labels[:, sl],
+            'labels_mask': context_labels_mask[:, sl],
         })
-    if getattr(args, 'eval_last_segment_only', False):
-        # CONSTANT-MEMORY EVAL. The Trainer accumulates preds/labels/inputs for
-        # the WHOLE eval set before compute_metrics, on GPU (eval_accumulation_steps
-        # is unset), so a (B, S*T) label tensor costs 999*S*512*8 B per copy and
-        # three copies are kept (main_input_name='labels' makes `inputs` a third).
-        # That is 12.3 MB * S -- 12.6 GB at S=1024, and it is what OOMs, not the
-        # model. Answer labels live solely in the final segment, so keeping only
-        # that segment is exact and makes the cost O(1) in S.
-        out_labels = segments[-1]['labels']
-    else:
-        out_labels = torch.cat([s['labels'] for s in segments], dim=1)
-    return {"segments": segments, "labels": out_labels}
+
+    qt_lens = [len(b['question_tokens']) + len(b['target_tokens']) for b in batch]
+    qt_max = max(qt_lens)
+    qt_max += (-qt_max) % 8  # pad_to_multiple_of=8, as the babi runner
+    qt_input_ids = torch.full((B, qt_max), pad_id, dtype=torch.long)
+    qt_attention_mask = torch.zeros((B, qt_max), dtype=torch.long)
+    tgt = torch.zeros((B, qt_max), dtype=torch.bool)
+    for i, b in enumerate(batch):
+        q, t = b['question_tokens'], b['target_tokens']
+        qt_input_ids[i, :len(q) + len(t)] = torch.tensor(list(q) + list(t), dtype=torch.long)
+        qt_attention_mask[i, :len(q) + len(t)] = 1
+        tgt[i, len(q):len(q) + len(t)] = True
+
+    qt_labels = torch.where(tgt, qt_input_ids, torch.full_like(qt_input_ids, -100))
+    qt_labels_mask = torch.zeros_like(qt_input_ids, dtype=torch.bool)
+    qt_labels_mask[:, :-1] = tgt[:, 1:]
+
+    segments.append({
+        'input_ids': qt_input_ids,
+        'attention_mask': qt_attention_mask,
+        'labels': qt_labels,
+        'labels_mask': qt_labels_mask,
+    })
+    full_labels = torch.cat([s['labels'] for s in segments], dim=1)
+    return {"segments": segments, "labels": full_labels}
 
 
 def collate_fn(batch):
@@ -132,12 +122,7 @@ def collate_fn(batch):
 
 def preprocess_logits_for_metrics(logits, labels):
     # streameval returns (B, S*T) int predictions; leave those untouched
-    preds = logits if logits.dim() == 2 else logits.argmax(dim=-1)
-    if getattr(args, 'eval_last_segment_only', False):
-        # keep only the final segment, matching the labels the collate emits;
-        # this is what caps the Trainer's cross-batch accumulation at O(1) in S
-        preds = preds[:, -labels.shape[1]:]
-    return preds
+    return logits if logits.dim() == 2 else logits.argmax(dim=-1)
 
 
 def compute_metrics_fn(eval_pred, ignore_token_ids, tokenizer):
@@ -219,7 +204,7 @@ class ExperimentArgs:
     task_end_pct:             Optional[float]= field(default=None)
     # segmentation
     segment_size:             Optional[int]  = field(default=512)
-    max_n_segments:           Optional[int]  = field(default=8)   # total segments; question+answer ride in the last one
+    max_n_segments:           Optional[int]  = field(default=8)   # context segments; +1 final qt segment
     sample_size:              Optional[int]  = field(default=None)  # default: segment_size * max_n_segments
     vary_n_segments:          Optional[bool] = field(default=False)
     mixed_length_ratio:       Optional[float]= field(default=0.0)
@@ -260,43 +245,15 @@ class ExperimentArgs:
     num_memory_heads:         Optional[int]  = field(default=1)
     use_parallel_prefill:     Optional[bool] = field(default=True)
     eval_stream_logits:       Optional[bool] = field(default=False)  # memory-frugal recurrent eval (streameval modeling variant)
-    # v5p7_eff: same model, O(L^2)-free parallel prefill (segments folded into
-    # the batch dim, no dense block-diag mask). Required to run parallel prefill
-    # at the long extrapolation lengths; --stream_context_logits is its parallel
-    # -path analog of --eval_stream_logits and needs --efficient_model.
-    efficient_model:          Optional[bool] = field(default=False)
-    stream_context_logits:    Optional[bool] = field(default=False)
-    # Constant-memory eval: emit/keep only the final segment's labels and
-    # predictions. Exact (answer labels live only there) and required at the
-    # long extrapolation lengths. Needs a streaming path, because the default
-    # process_outputs computes its loss over the full-concatenation labels.
-    eval_last_segment_only:   Optional[bool] = field(default=False)
-    # SentenceSampler slices sample_size*10 characters of pg19 per draw and
-    # Punkt-tokenises it, per worker -- host RAM therefore scales with both the
-    # context length and the worker count. Tunable so long evals can cut it.
-    dataloader_num_workers:   Optional[int]  = field(default=4)
-    # Truncate the eval set. Only for diagnostics (memory scaling vs number of
-    # batches) and smoke tests -- never for reported numbers.
-    eval_max_samples:         Optional[int]  = field(default=None)
     model_cpt:                Optional[str]  = field(default=None)
     validate_only:            Optional[bool] = field(default=False)  # load model_cpt, eval on test only (no train, no model_best.pt overwrite)
 
 
 def build_rmm_model(args, tokenizer):
-    if getattr(args, 'efficient_model', False):
-        # superset of v5p7 + streameval: same weights, same forward, both
-        # streaming knobs, and no L^2 tensor on the parallel path
-        from modeling_rmt.huggingface_rmm_v5p7_eff import RecurrentMemoryBase, RecurrentMemoryConfig
-    elif getattr(args, 'eval_stream_logits', False):
+    if getattr(args, 'eval_stream_logits', False):
         from modeling_rmt.huggingface_rmm_v5p7_streameval import RecurrentMemoryBase, RecurrentMemoryConfig
     else:
         from modeling_rmt.huggingface_rmm_v5p7 import RecurrentMemoryBase, RecurrentMemoryConfig
-    if getattr(args, 'stream_context_logits', False) and not getattr(args, 'efficient_model', False):
-        raise ValueError('--stream_context_logits requires --efficient_model')
-    if getattr(args, 'eval_last_segment_only', False) and not (
-            getattr(args, 'eval_stream_logits', False) or getattr(args, 'stream_context_logits', False)):
-        raise ValueError('--eval_last_segment_only requires --eval_stream_logits '
-                         'or --stream_context_logits (the default path needs full-length labels)')
 
     base_config = None
     from_pretrained = None
@@ -348,8 +305,7 @@ def build_rmm_model(args, tokenizer):
         num_memory_heads   = args.num_memory_heads,
         use_parallel_prefill = args.use_parallel_prefill,
         **({'eval_stream_logits': True} if getattr(args, 'eval_stream_logits', False) else {}),
-        **({'stream_context_logits': True} if getattr(args, 'stream_context_logits', False) else {}),
-        max_n_segments     = args.max_n_segments,
+        max_n_segments     = args.max_n_segments + 1,
         think_token_id     = None,
         answer_token_id    = None,
         bos_token_id       = tokenizer.bos_token_id,
@@ -372,16 +328,12 @@ def build_babilong_datasets(args, tokenizer):
     task_train = TaskDataset(train_path, max_n_facts=args.max_n_facts)
     task_test = TaskDataset(test_path, max_n_facts=args.max_n_facts)
 
-    # reserve room so question+answer fit inside the segment budget and never
-    # spill into an extra segment (matches the RMT reference qa_margin=20).
-    qa_margin = 20
     if args.vary_n_segments:
-        train_sample_size = [args.segment_size * i for i in range(1, args.max_n_segments)] + [args.sample_size]
-        train_sample_size = [s - qa_margin for s in train_sample_size]
+        train_sample_size = [args.segment_size * i for i in range(1, args.max_n_segments + 1)]
         logger.info(f'Will be choosing train sample size randomly from {train_sample_size}')
     else:
-        train_sample_size = args.sample_size - qa_margin
-    test_sample_size = args.sample_size - qa_margin
+        train_sample_size = args.sample_size
+    test_sample_size = args.sample_size
 
     max_sentence_len = None
     if (args.task_start_pct is not None) and (args.task_end_pct is not None):
@@ -452,10 +404,6 @@ if __name__ == '__main__':
     logger.info(f"parameters: {sum(p.numel() for p in model.parameters()):,}")
 
     train_dataset, test_dataset = build_babilong_datasets(args, tokenizer)
-    if args.eval_max_samples is not None:
-        from torch.utils.data import Subset
-        test_dataset = Subset(test_dataset, range(min(args.eval_max_samples, len(test_dataset))))
-        logger.info(f'DIAGNOSTIC: eval set truncated to {len(test_dataset)} samples')
 
     ignore_token_ids = []
 
@@ -495,7 +443,7 @@ if __name__ == '__main__':
         include_num_input_tokens_seen = False,
         include_for_metrics     = ['inputs'],
         save_total_limit        = 1,
-        dataloader_num_workers  = args.dataloader_num_workers,
+        dataloader_num_workers  = 4,
         dataloader_pin_memory   = True,
         seed                    = args.seed,
     )
@@ -518,19 +466,6 @@ if __name__ == '__main__':
         # requested max_n_segments. No training, and model_best.pt is NOT touched.
         logger.info(f'validate_only: evaluating {args.model_cpt} at max_n_segments={args.max_n_segments}')
         metrics = trainer.evaluate(test_dataset)
-        # This process's own peak GPU use -- nvidia-smi device totals are
-        # useless here because the box is shared. resource.ru_maxrss is the
-        # host-side counterpart. Both land in all_results.json so the long
-        # extrapolation runs leave an auditable memory trace.
-        if torch.cuda.is_available():
-            metrics['peak_gpu_alloc_mib'] = round(torch.cuda.max_memory_allocated() / 2**20, 1)
-            metrics['peak_gpu_reserved_mib'] = round(torch.cuda.max_memory_reserved() / 2**20, 1)
-        try:
-            import resource
-            metrics['peak_host_rss_mib'] = round(
-                resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024, 1)
-        except Exception:
-            pass
         logger.info(f'{metrics}')
         if accel.is_main_process:
             trainer.save_metrics(split='all', metrics=metrics)

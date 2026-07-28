@@ -1,0 +1,19 @@
+--- a/run_rmm_on_kv_retrieval-v6p6.py
++++ b/run_rmm_on_kv_retrieval-v6p6.py
+@@ ExperimentArgs: after the `model_cpt` field
+     model_cpt:                Optional[str]  = field(default=None)
++    # Full-state resume (model + optimizer + scheduler + RNG + callbacks + step).
++    # Pass a `checkpoint-XXXX` dir, or `latest`/`True` to auto-detect in exp_path.
++    checkpoint:               Optional[str]  = field(default=None)
+     tokens_per_segment:       Optional[int]  = field(default=None)
+
+@@ around line 470, the bare trainer.train() call
+-    trainer.train()
++    resume_arg = None
++    if args.checkpoint and args.checkpoint != 'None':
++        if args.checkpoint.lower() in ('latest', 'true'):
++            resume_arg = True
++        else:
++            resume_arg = args.checkpoint
++        logger.info(f'Resuming full training state from: {resume_arg}')
++    trainer.train(resume_from_checkpoint=resume_arg)

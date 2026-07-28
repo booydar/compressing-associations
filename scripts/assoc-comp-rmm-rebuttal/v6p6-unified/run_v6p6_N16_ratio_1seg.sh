@@ -1,28 +1,47 @@
 #!/bin/bash
 set -e
 
-# ── v6p6: unified single-path memory (identity mode REMOVED) ─────────────────
-# One memory path: compress -> [read_queries | write_vecs] one GDN scan (read-only
-# valve, no shift) -> decompress. Mechanism = WRITE_MODE/READ_MODE (pool/unpool or
-# cross_attn/cross_attn). "Token-level / identity" is NOT a mode: it is simply
-# NUM_MEMORY_VECTORS == T (mem size == segment size). The query banks hold
-# MAX_MEMORY_VECTORS rows (capacity); each segment uses the first
-# min(NUM_MEMORY_VECTORS, T) rows, so ONE weight set runs at any M <= capacity.
+# ── STAGE 2: compression-ratio curve at fixed segmentation (the paper figure) ─
 #
-# PRIORITY: AR / kv_retrieval, N16, IDENTITY first (NUM_MEMORY_VECTORS = T = 7).
-# Sweep NUM_MEMORY_VECTORS (e.g. 7 4 2 1) to trace token->segment compression.
+# Identical to run_v6p6_N16_ctrl_1seg.sh in every respect except NUM_MEMORY_VECTORS.
+# Same weight set, same code path, same state budget, same tps=112 segmentation --
+# only M changes. That is the point of v6p6 and it is the one comparison the
+# current grid cannot produce: every "identity vs compressed" pair in Table 2 also
+# swaps the model AND the segmentation.
+#
+#   M = 112  ->  M/T = 1      (identity; comes from the ctrl script, don't repeat)
+#   M =  32  ->  M/T = 0.29
+#   M =   8  ->  M/T = 0.07
+#   M =   4  ->  M/T = 0.036
+#
+# GATED ON STAGE 1. If the ctrl run does not reach ~98, this sweep measures a
+# broken path and every point on the curve is meaningless. Do not start it early.
+#
+# Plot eval_token_accuracy against M/T, with EM as a secondary axis -- EM ~= tokacc^2
+# throughout this grid, so tokacc is where the curve shape actually lives.
+#
+# PRIOR: at tps=7, M=4 (M/T=0.57) sat at exactly 0.0 EM / 1.5% tokacc for 169k
+# steps -- never escaped. If that reproduces here at tps=112, the finding is that
+# compression fails discontinuously rather than degrading, which is a result worth
+# reporting on its own and is a much sharper claim than "55.1".
+#
+# Env overrides:
+#   RUNS="1 2"        seed indices (seed = 142 + N)
+#   MS="32 8 4"       memory sizes
+#   LRS="1e-04"       learning rates
+#
+# Usage:
+#   CUDA_VISIBLE_DEVICES=1 RUNS="1 2" MS="32" ./run_v6p6_N16_ratio_1seg.sh
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 cd "$REPO_ROOT"
 
-# ── resources ──────────────────────────────────────────────────────────────
 NP=${NP:-1}
 TBS=64
 PER_DEVICE_BATCH_SIZE=64
 GRAD_ACC_STEPS=$(( TBS / (PER_DEVICE_BATCH_SIZE * NP) ))
 
-# ── model ──────────────────────────────────────────────────────────────────
 L=4
 H=1
 D=128
@@ -31,37 +50,37 @@ FLA_LAYER=GatedDeltaNet
 EXPAND_V=2.0
 CONV_KERNEL=4
 STATE_SIZE=32
-MAX_MEMORY_VECTORS=32     # bank capacity. >= max segment size you'll ever use.
 
-# ── memory mechanism (pool/unpool or cross_attn/cross_attn) ──────────────────
 WRITE_MODE=pool
 READ_MODE=unpool
+IDENTITY_INIT=True
 
-# ── data ───────────────────────────────────────────────────────────────────
 K=2
 V=2
 N_PAIRS=16
 TOKENIZER_PATH="./tokenizers/kv_alphabet_62/"
 DATA_PATH="N${N_PAIRS}-K${K}V${V}-V62_1M"
 
-# ── training ───────────────────────────────────────────────────────────────
-ITERS=200000
+TOKENS_PER_SEGMENT=$((N_PAIRS * 7))     # 112, same as ctrl
+MAX_MEMORY_VECTORS=112                  # same bank capacity as ctrl -- do not
+                                        # shrink it, or M and cap co-vary and the
+                                        # curve confounds capacity with M
+
+ITERS=${ITERS:-200000}
 WARMUP=10000
 EVAL_STEPS=500
 EARLY_STOP=500
-TOKENS_PER_SEGMENT=7     # segment = 1 KV pair -> T=7
 
 USE_PARALLEL_PREFILL=True
 THREAD_MEMORY=True
-IDENTITY_INIT=True
 
-# ── sweep ──────────────────────────────────────────────────────────────────
-for LR in 1e-03; do
-  for N in 1 2; do
-    for NUM_MEMORY_VECTORS in 7 4; do          # 7 == T == identity; add "4 2 1" to compress
+for LR in ${LRS:-1e-04}; do
+  for N in ${RUNS:-1 2}; do
+    for NUM_MEMORY_VECTORS in ${MS:-32 8 4}; do
+
       RUN_NAME="rmmv6p6_${WRITE_MODE}_${BASE_MODEL}_L${L}H${H}D${D}_ss${STATE_SIZE}"
       RUN_NAME="${RUN_NAME}_cap${MAX_MEMORY_VECTORS}_M${NUM_MEMORY_VECTORS}_lr${LR}_bs${TBS}_tps${TOKENS_PER_SEGMENT}_id_init"
-      EXP_PATH="./runs-rmmv6p6/${DATA_PATH}/${RUN_NAME}/run_${N}"
+      EXP_PATH="./runs-rebuttal/rmmv6p6-unified/${DATA_PATH}/${RUN_NAME}/run_${N}"
       if [ -d "$EXP_PATH" ]; then
         echo "Skipping existing: $EXP_PATH"
         continue
@@ -110,4 +129,4 @@ for LR in 1e-03; do
   done
 done
 
-echo "Done"
+echo "ratio_1seg worker done (RUNS='${RUNS:-1 2}' MS='${MS:-32 8 4}' LRS='${LRS:-1e-04}')"

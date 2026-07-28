@@ -1,11 +1,16 @@
+"""v5p4gi: run_rmm_on_kv_retrieval-v5p4.py + opt-in open-gate GDN init.
+
+Identical to v5p4 when --gate_init none (the default): the only addition is
+apply_open_gate_init(), which is a no-op in that case. Forked rather than
+edited in place because the repo is not under version control and v5p4
+backs published numbers.
+"""
 import json
 import logging
 import os
 from pathlib import Path
 
 import torch
-import torch.multiprocessing as _mp
-_mp.set_sharing_strategy("file_system")  # avoid fd exhaustion in dataloader workers
 from torch.nn.utils.rnn import pad_sequence
 
 import numpy as np
@@ -257,10 +262,84 @@ class ExperimentArgs:
     memory_key_size:          Optional[int]  = field(default=4)
     memory_value_size:        Optional[int]  = field(default=4)
     model_cpt:                Optional[str]  = field(default=None)
+    # Full-state resume (model + optimizer + scheduler + RNG + callbacks + step).
+    # Pass a `checkpoint-XXXX` dir, or `latest`/`True` to auto-detect in exp_path.
+    checkpoint:               Optional[str]  = field(default=None)
     tokens_per_segment:       Optional[int]  = field(default=None)          # v5: replaces pairs_per_segment; 1 ⇒ token-level recurrence
     n_pairs:                  Optional[int]  = field(default=None)
     n_keys:                   Optional[int]  = field(default=None)
     n_values:                 Optional[int]  = field(default=None)
+    # --- v5p4gi: GDN gate initialisation (default 'none' == plain v5p4) ---
+    gate_init:                Optional[str]  = field(default='none')        # 'none'|'beta'|'decay'|'both'
+    gate_init_beta_bias:      Optional[float]= field(default=2.0)           # b_proj bias; beta0 = sigmoid(bias)
+    gate_init_dt_max:         Optional[float]= field(default=1e-3)          # dt ~ logU(1e-5, dt_max) => alpha ~ 1
+
+
+
+def apply_open_gate_init(model, mode='none', beta_bias=2.0, dt_max=1e-3, logger=None):
+    """Open the GDN write/retention gates at initialisation.
+
+    FLA's GatedDeltaNet writes with   beta  = sigmoid(b_proj(x))
+    and retains with                  alpha = exp(-exp(A_log) * softplus(a_proj(x) + dt_bias)).
+
+    At FLA's default init b_proj has no bias, so beta ~ 0.5, and
+    A ~ U(0, 16) with dt ~ logU(1e-3, 1e-1) puts alpha anywhere in ~[0.2, 1.0]:
+    a sizeable fraction of heads forget most of the state every step.
+
+    The collapse mode measured on this task is layer-0 write-gate death
+    (beta ~ 0.01 vs ~0.11 on healthy seeds), so this starts the model at the
+    opposite corner instead of penalising the symptom during training:
+
+      'beta'  -> add a positive bias to b_proj      : beta0  = sigmoid(beta_bias)
+      'decay' -> resample dt so A*dt << 1           : alpha0 ~ 1 (no forgetting)
+      'both'  -> both of the above
+
+    Both are pure initialisation changes: the parameters stay fully trainable and
+    the loss is untouched, so unlike a gate floor there is nothing to route around.
+    """
+    if mode in (None, 'none'):
+        return 0
+    if mode not in ('beta', 'decay', 'both'):
+        raise ValueError(f"gate_init must be 'none'|'beta'|'decay'|'both', got '{mode}'")
+
+    import math
+    do_beta = mode in ('beta', 'both')
+    do_decay = mode in ('decay', 'both')
+    dt_min = 1e-5
+    touched = 0
+
+    for mod in model.modules():
+        if not (hasattr(mod, 'b_proj') and hasattr(mod, 'dt_bias') and hasattr(mod, 'A_log')):
+            continue
+        touched += 1
+        if do_beta:
+            lin = mod.b_proj
+            if lin.bias is None:
+                lin.bias = torch.nn.Parameter(torch.empty(
+                    lin.out_features, dtype=lin.weight.dtype, device=lin.weight.device))
+            with torch.no_grad():
+                lin.bias.fill_(beta_bias)
+            lin.bias._no_weight_decay = True
+        if do_decay:
+            n = mod.dt_bias.numel()
+            dt = torch.exp(
+                torch.rand(n, device=mod.dt_bias.device)
+                * (math.log(dt_max) - math.log(dt_min)) + math.log(dt_min)
+            ).clamp(min=1e-6)
+            inv_dt = dt + torch.log(-torch.expm1(-dt))          # inverse softplus
+            with torch.no_grad():
+                mod.dt_bias.copy_(inv_dt.to(mod.dt_bias.dtype))
+
+    if logger is not None:
+        msg = f"gate_init='{mode}' applied to {touched} GDN layers"
+        if do_beta:
+            msg += f"; beta0=sigmoid({beta_bias})={1/(1+math.exp(-beta_bias)):.3f}"
+        if do_decay:
+            msg += f"; dt~logU({dt_min},{dt_max}) => alpha0>~{math.exp(-16*dt_max):.4f}"
+        logger.info(msg)
+    if touched == 0:
+        raise RuntimeError("gate_init requested but no GatedDeltaNet layers were found")
+    return touched
 
 
 if __name__ == '__main__':
@@ -311,7 +390,7 @@ if __name__ == '__main__':
     config.bos_token_id  = tokenizer.convert_tokens_to_ids('[BOS]')
     config.eos_token_id  = tokenizer.convert_tokens_to_ids('[EOS]')
 
-    from modeling_rmt.huggingface_rmm_v5p7 import RecurrentMemoryBase, RecurrentMemoryConfig
+    from modeling_rmt.huggingface_rmm_v5p4 import RecurrentMemoryBase, RecurrentMemoryConfig
 
     head_dim = args.state_size // args.n_head
 
@@ -370,6 +449,14 @@ if __name__ == '__main__':
         else:
             model.load_state_dict(torch.load(model_cpt_path, map_location='cpu'), strict=False)
         print(f"Loaded checkpoint: {model_cpt_path}")
+
+    apply_open_gate_init(
+        model,
+        mode=args.gate_init,
+        beta_bias=args.gate_init_beta_bias,
+        dt_max=args.gate_init_dt_max,
+        logger=logger,
+    )
 
     logger.info(f'model: {model}')
     logger.info(f"parameters: {sum(p.numel() for p in model.parameters()):,}")
@@ -459,7 +546,14 @@ if __name__ == '__main__':
             StopOnMetricValue('exact_match_None', 0.99, higher_is_better=True),
         ],
     )
-    trainer.train()
+    resume_arg = None
+    if args.checkpoint and args.checkpoint != 'None':
+        if args.checkpoint.lower() in ('latest', 'true'):
+            resume_arg = True
+        else:
+            resume_arg = args.checkpoint
+        logger.info(f'Resuming full training state from: {resume_arg}')
+    trainer.train(resume_from_checkpoint=resume_arg)
     logger.info('training done. running final evaluation...')
     metrics = trainer.evaluate(dataset['valid'])
     logger.info(f'{metrics}')

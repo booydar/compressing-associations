@@ -198,3 +198,5 @@ N8-K2V2-V62_D*
 *artifacts/
 *checkpoint-*
 *.lock
+*.bak
+*.out
